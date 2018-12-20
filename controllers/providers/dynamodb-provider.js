@@ -19,9 +19,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	instantiateDynamo(){
-
-		du.debug('Set Dynamo Objects');
-
 		let dynamo_region = (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'dynamodb.region'))?global.SixCRM.configuration.site_config.dynamodb.region:this.getRegion();
 
 		let parameters = {
@@ -45,17 +42,11 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	unmarshall(data, options){
-
-		du.debug('Unmarshall');
-
 		return this.AWS.DynamoDB.Converter.unmarshall(data, options);
 
 	}
 
 	get(table, key){
-
-		du.debug('Get');
-
 		let parameters = {
 			TableName: table,
 			Key: key
@@ -66,9 +57,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	scanRecords(table, additional_parameters){
-
-		du.debug('Scan Records');
-
 		var parameters = {
 			TableName: table
 		};
@@ -79,9 +67,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	queryRecords(table, additional_parameters, index){
-
-		du.debug('Query Records');
-
 		var parameters = {
 			TableName: table,
 			IndexName: index
@@ -100,9 +85,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	executeRecursiveQuery({parameters, aggregated_results}){
-
-		du.debug('Execute Recursive Query');
-
 		if(!_.has(parameters, 'Limit')){
 			parameters.Limit = 100;
 		}
@@ -171,8 +153,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	executeRecursiveScan({parameters, aggregated_results}){
-
-		du.debug('Execute Recursive Query');
 		du.debug('parameters', parameters);
 
 		if(!_.has(parameters, 'Limit')){
@@ -194,8 +174,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 
 		return this.executeDynamoDBMethod({method: 'scan', parameters: parameters}).then(result => {
 			let result_index = 0;
-
-			du.debug('scan results', result);
 
 			if(arrayutilities.nonEmpty(result.Items) > 0){
 				//While we haven't met the limit and there are more results in the set.
@@ -231,9 +209,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	determineLastEvaluatedKey(result, result_index){
-
-		du.debug('Determine LastEvaluatedKey');
-
 		if(!_.has(result, 'LastEvaluatedKey')){
 			throw eu.getError('server', 'determineLastEvaluatedKey requires the LastEvaluatedKey property to be set');
 		}
@@ -256,9 +231,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	countRecords(table, additional_parameters, index){
-
-		du.debug('Count Records');
-
 		var parameters = {
 			TableName: table,
 			IndexName: index,
@@ -272,9 +244,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	saveRecord(table, item){
-
-		du.debug('Save Record');
-
 		item = JSON.parse(JSON.stringify(this.removeEmptyValues(item)));
 
 		var parameters = {
@@ -287,9 +256,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	updateRecord(table, key, expression, expression_params){
-
-		du.debug('Update Record');
-
 		var parameters = {
 			TableName:table,
 			Key: key,
@@ -303,9 +269,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	deleteRecord(table, key, expression, expression_parameters){
-
-		du.debug('Delete Record');
-
 		var parameters = {
 			TableName:table,
 			Key: key,
@@ -319,9 +282,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 
 	//Technical Debt:  This belongs in a query builder helper
 	createINQueryParameters(field_name, in_array){
-
-		du.debug('Create IN Query Parameters');
-
 		stringutilities.nonEmpty(field_name, true);
 		arrayutilities.nonEmpty(in_array, true);
 
@@ -353,9 +313,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	appendDisjunctionQueryParameters(query_parameters, field_name, array){
-
-		du.debug('Append Disjunction Query Parameters');
-
 		// instantiate query_parameters object if undefined, or complete if incomplete
 		if (!query_parameters) {
 			query_parameters = {};
@@ -389,9 +346,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	translateParameters(parameters, new_parameter_object){
-
-		du.debug('Translate Parameters');
-
 		if(_.isUndefined(new_parameter_object)){ new_parameter_object = {}; }
 
 		let parameter_map = {
@@ -420,25 +374,16 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	createTable(parameters){
-
-		du.debug('Create Table');
-
 		return this.executeDynamoDBMethod({method: 'createTable', parameters: parameters});
 
 	}
 
 	updateTable(parameters){
-
-		du.debug('Update Table');
-
 		return this.executeDynamoDBMethod({method: 'updateTable', parameters: parameters});
 
 	}
 
 	describeTable(parameters, fatal) {
-
-		du.debug('Describe Table');
-
 		if(_.isString(parameters)){
 			parameters = {
 				TableName:parameters
@@ -450,9 +395,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	deleteTable(parameters){
-
-		du.debug('Delete Table');
-
 		if(_.isString(parameters)){
 			parameters = {
 				TableName:parameters
@@ -464,9 +406,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	listTables(parameters){
-
-		du.debug('List Tables');
-
 		parameters = (_.isUndefined(parameters) || _.isNull(parameters))?{}:parameters;
 
 		return this.executeDynamoDBMethod({method: 'listTables', parameters: parameters});
@@ -474,9 +413,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	createBackup(parameters){
-
-		du.debug('Create Backup');
-
 		if(_.isString(parameters)){
 			parameters = {
 				TableName: parameters
@@ -492,9 +428,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	waitFor(parameters, status){
-
-		du.debug('Wait For');
-
 		if(_.isString(parameters)){
 			parameters = {
 				TableName:parameters
@@ -506,9 +439,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	executeDynamoDBMethod({method, parameters, status}){
-
-		du.debug('Execute Dynamo DB Method');
-
 		du.debug('Method: '+method);
 
 		du.debug('Parameters', parameters);
@@ -561,9 +491,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	batchGet({table_name, ids, parameters}) {
-
-		du.debug('Batch Get');
-
 		if (!parameters) {
 
 			parameters = {
@@ -582,9 +509,6 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	}
 
 	test(){
-
-		du.debug('Test');
-
 		return this.describeTable('products').then(result => {
 			if(_.has(result, 'Table')){
 				return {status:'OK', message: 'Successfully connected to DynamoDB.'};

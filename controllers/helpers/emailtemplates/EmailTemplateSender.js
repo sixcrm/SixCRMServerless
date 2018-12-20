@@ -1,6 +1,3 @@
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 const CustomerMailerHelper = global.SixCRM.routes.include('helpers', 'email/CustomerMailer.js');
 const EmailTemplateController = global.SixCRM.routes.include('entities', 'EmailTemplate.js');
 const SMTPPRoviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
@@ -19,10 +16,6 @@ module.exports = class EmailTemplateSender {
 	}
 
 	async sendEmailWithTemplate({template_id}) {
-
-		du.debug('EmailTemplateSender.sendEmailWithTemplate()', template_id);
-
-
 		let template = await this.emailTemplatesController.get({id: template_id});
 		let smtp_provider = await this.smtpPRoviderController.get({id: template.smtp_provider});
 
@@ -36,7 +29,6 @@ module.exports = class EmailTemplateSender {
 			recepient_emails:[global.user.id],
 			recepient_name: global.user.id
 		};
-		du.debug(options);
 
 		const customerEmailer = new CustomerMailerHelper({smtp_provider: smtp_provider});
 		return customerEmailer.sendEmail({send_options: options});
@@ -51,8 +43,6 @@ module.exports = class EmailTemplateSender {
 	}
 
 	compileBodyWithExampleData({template}) {
-		du.debug('Compile Body With Example', template);
-
 		let context = require('./example_context');
 
 		return this.accountDetailsController.get({ id: global.account }).then((account_details) => {

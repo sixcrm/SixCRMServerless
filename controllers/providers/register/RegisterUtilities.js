@@ -23,9 +23,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 	}
 
 	acquireRebillProperties(){
-
-		du.debug('Acquire Rebill Properties');
-
 		let rebill = this.parameters.get('rebill');
 
 		return this.rebillController.getParentSession(rebill).then(result => {
@@ -36,9 +33,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 	}
 
 	acquireRebill(){
-
-		du.debug('Acquire Rebill');
-
 		let transaction = this.parameters.get('transaction');
 
 		if (!_.has(transaction, 'rebill')) {
@@ -56,9 +50,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 	}
 
 	validateRebillForProcessing(){
-
-		du.debug('Validate Rebill For Processing');
-
 		return this.validateRebillTimestamp()
 			.then(() => this.validateAttemptRecord())
 			.then(() => this.validateSession())
@@ -70,9 +61,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 	}
 
 	validateSession(){
-
-		du.debug('Validate Session');
-
 		let parentsession = this.parameters.get('parentsession');
 
 		let day_in_cycle = this.rebillHelperController.calculateDayInCycle(parentsession.created_at);
@@ -86,9 +74,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 	}
 
 	validateAttemptRecord(){
-
-		du.debug('Validate Attempt Record');
-
 		let rebill = this.parameters.get('rebill');
 
 		if(_.has(rebill, 'second_attempt')){
@@ -114,9 +99,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 	}
 
 	validateRebillTimestamp(){
-
-		du.debug('Validate Rebill Timestamp');
-
 		let rebill = this.parameters.get('rebill');
 
 		if(!this.rebillHelperController.isAvailable({rebill: rebill})){
@@ -128,9 +110,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 	}
 
 	acquireRebillSubProperties(){
-
-		du.debug('Acquire Rebill Sub-Properties');
-
 		return this.acquireCustomer()
 			.then(() => this.acquireCustomerCreditCards())
 			.then(() => this.selectCustomerCreditCard())
@@ -139,8 +118,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 	}
 
 	async updateRebillMerchantProviderSelections() {
-		du.debug('Update Rebill Merchant Provider Selections');
-
 		const rebill = this.parameters.get('rebill');
 		const merchant_provider_groups = this.parameters.get('merchantprovidergroups');
 		rebill.merchant_provider_selections = Object.entries(merchant_provider_groups).reduce((result, [merchant_provider, product_groups]) => {
@@ -152,9 +129,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 	}
 
 	acquireMerchantProviderGroups(){
-
-		du.debug('Acquire Merchant Provider Groups');
-
 		let rebill =  this.parameters.get('rebill');
 		let creditcard = this.parameters.get('selectedcreditcard');
 
@@ -204,9 +178,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 	}
 
 	hydrateTransaction(){
-
-		du.debug('Hydrate Transaction');
-
 		let transaction = this.parameters.get('transaction');
 
 		return this.transactionController.get({id: transaction, fatal: true}).then(transaction => {
@@ -220,9 +191,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 	}
 
 	hydrateSelectedCreditCard(){
-
-		du.debug('Hydrate Selected CreditCard');
-
 		let selected_creditcard = this.parameters.get('selectedcreditcard');
 
 		if(_.has(selected_creditcard, 'number')){
@@ -251,9 +219,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 	}
 
 	selectCustomerCreditCard(){
-
-		du.debug('Select Customer Credit Card');
-
 		let selected_creditcard = this.parameters.get('selectedcreditcard', {fatal: false});
 
 		if(_.isNull(selected_creditcard)){
@@ -297,9 +262,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 	}
 
 	appendCVV(selected_creditcard){
-
-		du.debug('selected_creditcard');
-
 		let raw_creditcard = this.parameters.get('rawcreditcard', {fatal: false});
 
 		if(_.has(raw_creditcard, 'cvv')){
@@ -309,9 +271,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 	}
 
 	acquireCustomer(){
-
-		du.debug('Acquire Customer');
-
 		let parentsession  = this.parameters.get('parentsession');
 
 		return this.customerController.get({id: parentsession.customer}).then(customer => {
@@ -323,9 +282,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 	}
 
 	acquireCustomerCreditCards(){
-
-		du.debug('Acquire Customer Creditcard');
-
 		let selected_creditcard = this.parameters.get('selectedcreditcard', {fatal: false});
 
 		if(!_.isNull(selected_creditcard) && _.has(selected_creditcard, 'id')){
@@ -346,9 +302,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 	}
 
 	acquireMerchantProvider({id}){
-
-		du.debug('Acquire Merchant Provider');
-
 		return this.merchantProviderController.get({id: id}).then(result => {
 			return result;
 

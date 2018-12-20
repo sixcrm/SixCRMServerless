@@ -1,6 +1,4 @@
-
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
@@ -14,9 +12,6 @@ module.exports = class MerchantProviderSummaryController extends entityControlle
 	}
 
 	listByMerchantProviderAndDateRange({merchant_providers, start, end, type, pagination}){
-
-		du.debug('List By Merchant Provider And Date Range');
-
 		merchant_providers = arrayutilities.map(merchant_providers, merchant_provider => this.getID(merchant_provider));
 		end = (_.isNull(end) || _.isUndefined(end))?timestamp.getISO8601():end;
 
@@ -37,9 +32,6 @@ module.exports = class MerchantProviderSummaryController extends entityControlle
 	}
 
 	listByMerchantProviders({merchant_providers, type, pagination}){
-
-		du.debug('List By Merchant Providers');
-
 		merchant_providers = arrayutilities.map(merchant_providers, merchant_provider => this.getID(merchant_provider));
 
 		let query_parameters = this.createINQueryParameters({field: 'merchant_provider', list_array: merchant_providers});
@@ -55,9 +47,6 @@ module.exports = class MerchantProviderSummaryController extends entityControlle
 	}
 
 	listByDateRange({start, end, type, pagination}){
-
-		du.debug('List By Date Range');
-
 		let query_parameters = {
 			expression_attribute_values: {':date_startv':start,':date_endv':end},
 			filter_expression: '#date > :date_startv AND #date < :date_endv',

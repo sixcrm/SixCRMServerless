@@ -45,9 +45,6 @@ module.exports = class archiveController extends workerController {
 	}
 
 	execute(message){
-
-		du.debug('Execute');
-
 		return this.preamble(message)
 			.then(() => this.setArchiveFilter())
 			.then(() => this.archive())
@@ -60,9 +57,6 @@ module.exports = class archiveController extends workerController {
 	}
 
 	setArchiveFilter(){
-
-		du.debug('Set Archive Filter');
-
 		if(_.has(process.env, "archivefilter")){
 			this.parameters.set('archivefilter', process.env.archivefilter);
 		}
@@ -72,9 +66,6 @@ module.exports = class archiveController extends workerController {
 	}
 
 	confirmSecondAttempt() {
-
-		du.debug('Confirm Second Attempt');
-
 		let rebill = this.parameters.get('rebill');
 
 		let response_code = 'noaction';
@@ -90,9 +81,6 @@ module.exports = class archiveController extends workerController {
 	}
 
 	getRebillTransactions(){
-
-		du.debug('Get Rebill Transactions');
-
 		let rebill = this.parameters.get('rebill');
 
 		return this.rebillController.listTransactions(rebill).then((transactions) => {
@@ -106,9 +94,6 @@ module.exports = class archiveController extends workerController {
 	}
 
 	getTransactionProducts(){
-
-		du.debug('Get Transaction Products');
-
 		let transactions = this.parameters.get('transactions');
 
 		let product_promises = arrayutilities.map(transactions, transaction => {
@@ -137,9 +122,6 @@ module.exports = class archiveController extends workerController {
 	}
 
 	areProductsNoShip(){
-
-		du.debug('Are Products No Ship');
-
 		let products = this.parameters.get('products');
 
 		return arrayutilities.every(products, (product) => {
@@ -149,9 +131,6 @@ module.exports = class archiveController extends workerController {
 	}
 
 	confirmNoShip(){
-
-		du.debug('Confirm No Ship');
-
 		return this.getRebillTransactions()
 			.then(() => this.getTransactionProducts())
 			.then(() => this.areProductsNoShip())
@@ -172,9 +151,6 @@ module.exports = class archiveController extends workerController {
 	}
 
 	archive(){
-
-		du.debug('Archive');
-
 		let archive_filter = this.parameters.get('archivefilter', {fatal: false});
 
 		if(_.isNull(archive_filter)){
@@ -189,9 +165,6 @@ module.exports = class archiveController extends workerController {
 	}
 
 	respond(){
-
-		du.debug('Respond');
-
 		let response_code = this.parameters.get('responsecode');
 
 		return super.respond(response_code);

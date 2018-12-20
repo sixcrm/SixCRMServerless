@@ -38,9 +38,6 @@ module.exports = class IndexEntitiesController extends workerController {
 	}
 
 	execute(messages){
-
-		du.debug('Execute');
-
 		return this.setParameters({argumentation: {messages: messages}, action: 'execute'})
 			.then(() => this.preprocessing())
 			.then(() => this.createIndexingDocument())
@@ -51,17 +48,11 @@ module.exports = class IndexEntitiesController extends workerController {
 	}
 
 	preprocessing(){
-
-		du.debug('Preprocessing');
-
 		return this.parseMessages();
 
 	}
 
 	parseMessages(){
-
-		du.debug('Parse Messages');
-
 		let messages = this.parameters.get('messages');
 
 		let message_bodies = arrayutilities.map(messages, (message) => {
@@ -91,9 +82,6 @@ module.exports = class IndexEntitiesController extends workerController {
 	}
 
 	createIndexingDocument(){
-
-		du.debug('Create Indexing Document');
-
 		let parsedmessagebodies = this.parameters.get('parsedmessagebodies');
 
 		return this.indexingHelperController.createIndexingDocument(parsedmessagebodies).then(result => {
@@ -104,9 +92,6 @@ module.exports = class IndexEntitiesController extends workerController {
 	}
 
 	pushDocumentToCloudsearch(){
-
-		du.debug('Push Document To Cloudsearch');
-
 		let index_document = this.parameters.get('indexingdocument');
 
 		return this.cloudsearchprovider.uploadDocuments(index_document)
@@ -126,9 +111,6 @@ module.exports = class IndexEntitiesController extends workerController {
 	}
 
 	setResponseCode(){
-
-		du.debug('Set Response Code');
-
 		let cloudsearch_response = this.parameters.get('cloudsearchresponse', {fatal: false});
 
 		if(cloudsearch_response.status == 'success'){
@@ -143,9 +125,6 @@ module.exports = class IndexEntitiesController extends workerController {
 	}
 
 	respond(){
-
-		du.debug('Respond');
-
 		let response_code = this.parameters.get('responsecode');
 
 		return super.respond(response_code);

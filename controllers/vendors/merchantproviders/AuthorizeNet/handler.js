@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const MerchantProvider = global.SixCRM.routes.include('vendors', 'merchantproviders/MerchantProvider.js');
 const AuthorizeNetAPI = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/AuthorizeNet/api.js');
@@ -49,7 +48,6 @@ class AuthorizeNetController extends MerchantProvider {
 	}
 
 	async process({customer, creditcard, amount}) {
-		du.debug('Process');
 		const action = 'process';
 		this.parameters.setParameters({
 			argumentation: {customer, creditcard, amount},
@@ -99,7 +97,6 @@ class AuthorizeNetController extends MerchantProvider {
 	}
 
 	async refund({transaction, amount}) {
-		du.debug('Refund');
 		const action = 'refund';
 		this.parameters.setParameters({
 			argumentation: {transaction, amount},
@@ -113,7 +110,6 @@ class AuthorizeNetController extends MerchantProvider {
 	}
 
 	async reverse({transaction}) {
-		du.debug('Reverse');
 		const action = 'reverse';
 		this.parameters.setParameters({
 			argumentation: {transaction},
@@ -126,7 +122,6 @@ class AuthorizeNetController extends MerchantProvider {
 	}
 
 	async test() {
-		du.debug('Test');
 		const action = 'test';
 		this.parameters.setParameters({
 			argumentation: {},

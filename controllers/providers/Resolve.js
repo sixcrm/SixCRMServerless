@@ -1,6 +1,5 @@
 
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const DownloadController = global.SixCRM.routes.include('providers', 'Download');
 
 module.exports = class ResolveController {
@@ -27,9 +26,6 @@ module.exports = class ResolveController {
 	}
 
 	resolve(data_aquisition_function){
-
-		du.debug('Resolve');
-
 		if(_.has(this, 'cache_parameters') && _.has(this.cache_parameters, 'use_cache')){
 
 			global.use_cache = false;

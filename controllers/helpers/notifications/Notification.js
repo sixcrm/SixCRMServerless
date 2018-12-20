@@ -10,9 +10,6 @@ module.exports = class NotificationHelperClass {
 	constructor(){}
 
 	async executeNotifications({event_type, context}){
-
-		du.debug('Execute Notifications', event_type);
-
 		this.validateNotification(event_type, context);
 
 		if(!this.isNotificationEventType(event_type)){
@@ -34,9 +31,6 @@ module.exports = class NotificationHelperClass {
 	}
 
 	validateNotification(event_type, context){
-
-		du.debug('Validate Notification');
-
 		if(_.isUndefined(event_type) || _.isNull(event_type)){
 			throw eu.getError('server','Expected "event_type" property to be set.');
 		}
@@ -48,9 +42,6 @@ module.exports = class NotificationHelperClass {
 	}
 
 	isNotificationEventType(event_type){
-
-		du.debug('Is Notification Event Type');
-
 		//Note:  These are a subset of event types which are notification events
 		let valid_event_type = global.SixCRM.validate(event_type, global.SixCRM.routes.path('model', 'helpers/notifications/notificationevent.json'), false);
 
@@ -63,9 +54,6 @@ module.exports = class NotificationHelperClass {
 	}
 
 	async instantiateNotificationClass(event_type){
-
-		du.debug('Instantiate Notification Class', event_type);
-
 		let directory_files = await fileutilities.getDirectoryFiles(global.SixCRM.routes.path('helpers','notifications/notificationtypes/'));
 
 		let matching_notification_file = arrayutilities.find(directory_files, directory_file => {
@@ -87,17 +75,11 @@ module.exports = class NotificationHelperClass {
 	}
 
 	transformContext(notification_class, context){
-
-		du.debug('Transform Context');
-
 		return notification_class.transformContext(context);
 
 	}
 
 	executeNotificationActions(notification_class, transformed_context){
-
-		du.debug('Execute Notification Actions');
-
 		return notification_class.triggerNotifications(transformed_context);
 
 	}

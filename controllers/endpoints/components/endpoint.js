@@ -19,9 +19,6 @@ module.exports = class EndpointController {
 
 	// run the lambda lifecycle
 	execute(event) {
-
-		du.debug('EndpointController.execute()');
-
 		return this.preamble(event)
 			.then(() => this.body(event))
 			.then((res) => this.epilogue().then(() => Promise.resolve(res)))
@@ -31,9 +28,6 @@ module.exports = class EndpointController {
 	// override
 	// eslint-disable-next-line no-unused-vars
 	preamble(event) {
-
-		du.debug('EndpointController.preamble()');
-
 		return Promise.resolve();
 
 	}
@@ -42,18 +36,12 @@ module.exports = class EndpointController {
 	// override
 	// eslint-disable-next-line no-unused-vars
 	body(event) {
-
-		du.debug('EndpointController.body()');
-
 		return Promise.resolve();
 
 	}
 
 	// override
 	epilogue() {
-
-		du.debug('EndpointController.epilogue()');
-
 		return Promise.resolve();
 
 	}
@@ -61,9 +49,6 @@ module.exports = class EndpointController {
 	/* end lambda lifecycle */
 
 	normalizeEvent(event) {
-
-		du.debug('Normalize Event');
-
 		let normalized = event;
 
 		try {
@@ -78,17 +63,12 @@ module.exports = class EndpointController {
 
 	//Technical Debt:  This is gross.  Refactor!
 	clearState() {
-
-		du.debug('Clear State');
-
 		this.pathParameters = undefined;
 		this.queryString = undefined;
 
 	}
 
 	acquireRequestProperties(event) {
-
-		du.debug('Acquire Request Properties');
 		du.info(event);
 		let path_parameters = this.acquirePathParameters(event);
 		let body = this.acquireBody(event);
@@ -102,9 +82,6 @@ module.exports = class EndpointController {
 	}
 
 	acquireBody(event) {
-
-		du.debug('Acquire Body');
-
 		let return_object = {};
 
 		if (_.has(event, 'body')) {
@@ -135,9 +112,6 @@ module.exports = class EndpointController {
 	}
 
 	acquirePathParameters(event) {
-
-		du.debug('Acquire Path Parameters');
-
 		let return_object = {};
 
 		if (_.has(event, 'pathParameters') && objectutilities.isObject(event.pathParameters)) {
@@ -149,9 +123,6 @@ module.exports = class EndpointController {
 	}
 
 	acquireQueryStringParameters(event) {
-
-		du.debug('Acquire Query String');
-
 		let return_object = {};
 
 		if (_.has(event, 'queryStringParameters')) {
@@ -183,10 +154,6 @@ module.exports = class EndpointController {
 
 
 	validateEvent(event) {
-
-		du.debug('Validate Event');
-
-
 		try {
 			global.SixCRM.validate(event, global.SixCRM.routes.path('model', 'general/lambda/event.json'));
 		} catch (error) {
@@ -199,9 +166,6 @@ module.exports = class EndpointController {
 	}
 
 	parseEventQueryString(event) {
-
-		du.debug('Parse Event Query String');
-
 		return Promise.resolve().then(() => {
 			if (!_.has(event, 'queryStringParameters') || _.isNull(event.queryStringParameters)) {
 				return event;
@@ -225,9 +189,6 @@ module.exports = class EndpointController {
 	}
 
 	throwUnexpectedEventStructureError(event) {
-
-		du.debug('Throw Unexpected Event Structure Error');
-
 		du.warning(event);
 
 		throw eu.getError('bad_request', 'Unexpected event structure.');

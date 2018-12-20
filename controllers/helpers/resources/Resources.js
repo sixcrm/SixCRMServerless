@@ -1,7 +1,3 @@
-
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 const Parameters  = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class ResourceUtilities {
@@ -17,9 +13,6 @@ module.exports = class ResourceUtilities {
 	}
 
 	augmentParameters(){
-
-		du.debug('Augment Parameters');
-
 		this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
 		this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
 

@@ -2,7 +2,6 @@ const _ = require('lodash');
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 
 module.exports = class CustomerHelperController {
@@ -31,9 +30,6 @@ module.exports = class CustomerHelperController {
 	}
 
 	setGlobalCustomer(customer){
-
-		du.debug('Set Global Customer');
-
 		if(!_.has(this, 'customerController')){
 			const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 			this.customerController = new CustomerController();
@@ -44,9 +40,6 @@ module.exports = class CustomerHelperController {
 	}
 
 	async getCustomerJWT({customer = null, session = null}){
-
-		du.debug('Get Customer JWT');
-
 		if(_.isNull(customer)){
 
 			if(_.isNull(session)){
@@ -91,9 +84,6 @@ module.exports = class CustomerHelperController {
 	}
 
 	customerSessionBySecondaryIdentifier({customer, secondary_identifier}){
-
-		du.debug('Customer Session By Secondary Identifier');
-
 		return Promise.resolve()
 			.then(() =>  this.parameters.setParameters({argumentation: arguments[0], action:'customerSessionBySecondaryIdentifier'}))
 			.then(() => {
@@ -125,9 +115,6 @@ module.exports = class CustomerHelperController {
 	}
 
 	getFullName(customer){
-
-		du.debug('Get Full Name');
-
 		let fullname = [];
 
 		if(_.has(customer, 'firstname')){
@@ -147,9 +134,6 @@ module.exports = class CustomerHelperController {
 	}
 
 	getPublicFields(customer){
-
-		du.debug('Get Public Fields');
-
 		return objectutilities.transcribe(
 			{
 				"email":"email",
@@ -166,9 +150,6 @@ module.exports = class CustomerHelperController {
 	}
 
 	async getTag(entity, name){
-
-		du.debug('Get Tag');
-
 		const TagController = global.SixCRM.routes.include('entities', 'Tag.js');
 		let tagController = new TagController();
 
@@ -183,8 +164,6 @@ module.exports = class CustomerHelperController {
 	}
 
 	async getPastRebills({customer, pagination}){
-		du.debug('Get Past Rebills');
-
 		if (!_.has(this, 'rebillController')){
 			const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 			this.rebillController = new RebillController();
@@ -224,9 +203,6 @@ module.exports = class CustomerHelperController {
 	}
 
 	async getPendingRebills({customer, pagination}){
-
-		du.debug('Get Pending Rebills');
-
 		if (!_.has(this, 'rebillController')){
 			const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 			this.rebillController = new RebillController();

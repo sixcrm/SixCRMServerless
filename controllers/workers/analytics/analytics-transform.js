@@ -3,9 +3,6 @@ const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 module.exports = class AnalyticsTransform {
 
 	async execute(record) {
-
-		du.debug('AnalyticsTransform.execute()');
-
 		try {
 
 			return await this.transform(record)

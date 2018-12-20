@@ -2,7 +2,6 @@
 const _ = require('lodash');
 const graphql = require('graphql').graphql;
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 
 const userAuthenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/userauthenticated.js');
@@ -22,9 +21,6 @@ module.exports = class graphController extends userAuthenticatedController {
 	}
 
 	preamble() {
-
-		du.debug('GraphController.preamble()');
-
 		global.SixCRM.setResource('auroraContext', auroraContext);
 
 		return auroraContext.init();
@@ -32,9 +28,6 @@ module.exports = class graphController extends userAuthenticatedController {
 	}
 
 	body(event) {
-
-		du.debug('GraphController.body()');
-
 		return this.preprocessing(event)
 			.then((event) => this.parseEventQueryString(event))
 			.then((event) => this.acquireQuery(event))
@@ -46,9 +39,6 @@ module.exports = class graphController extends userAuthenticatedController {
 	}
 
 	epilogue() {
-
-		du.debug('GraphController.epilogue()');
-
 		if (auroraContext._connection) {
 			return auroraContext.dispose();
 		}
@@ -59,9 +49,6 @@ module.exports = class graphController extends userAuthenticatedController {
 
 
 	parseEventQueryString(event) {
-
-		du.debug('Parse Event Query String');
-
 		return super.parseEventQueryString(event).then(event => {
 
 			if (_.has(event, 'queryStringParameters')) {
@@ -75,9 +62,6 @@ module.exports = class graphController extends userAuthenticatedController {
 	}
 
 	setCacheParameters(event) {
-
-		du.debug('Set Cache Parameters');
-
 		if (_.has(this.queryString, 'use_cache')) {
 
 			this.resolveController.setCacheParameters({use_cache: this.queryString.use_cache});
@@ -89,9 +73,6 @@ module.exports = class graphController extends userAuthenticatedController {
 	}
 
 	acquireOutputParameters(event) {
-
-		du.debug('Acquire Output Parameters');
-
 		if (_.has(this, 'queryString') && _.has(this.queryString, 'download') && !_.isNull(this.queryString.download)) {
 
 			this.resolveController.setDownloadParameters({type: this.queryString.download});
@@ -103,9 +84,6 @@ module.exports = class graphController extends userAuthenticatedController {
 	}
 
 	acquireQuery(event) {
-
-		du.debug('Acquire Query');
-
 		this.query = this.sanitizeQuery(event.body);
 
 		return Promise.resolve(event);
@@ -114,17 +92,11 @@ module.exports = class graphController extends userAuthenticatedController {
 
 	//Technical Debt:  This is largely inadequate...
 	sanitizeQuery(query) {
-
-		du.debug('Sanitize Query');
-
 		return query.replace(/[\n\r\t]+/g, '');
 
 	}
 
 	graphQuery() {
-
-		du.debug('Graph Query');
-
 		let graph_resolver = () => {
 
 			return graphql(this.sixSchema, this.query, null, null, this.query_parameters);

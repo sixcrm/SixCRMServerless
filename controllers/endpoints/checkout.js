@@ -1,6 +1,3 @@
-
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
@@ -62,9 +59,6 @@ module.exports = class CheckoutController extends transactionEndpointController{
 	}
 
 	execute(event){
-
-		du.debug('Execute');
-
 		return this.preamble(event)
 			.then(() => this.validateParameters())
 			.then(() => this.createLead())
@@ -77,8 +71,6 @@ module.exports = class CheckoutController extends transactionEndpointController{
 
 	async validateParameters() {
 		const event = this.parameters.get('event');
-
-		du.debug('Checkout.js Validate Parameters', event);
 
 		if (event.product_schedules) {
 			if (event.product_schedules.length > 1) {
@@ -105,9 +97,6 @@ module.exports = class CheckoutController extends transactionEndpointController{
 	}
 
 	setSession(){
-
-		du.debug('Set Session');
-
 		let session = this.parameters.get('session');
 
 		let event = this.parameters.get('event');
@@ -121,9 +110,6 @@ module.exports = class CheckoutController extends transactionEndpointController{
 	}
 
 	confirmOrder(){
-
-		du.debug('Confirm Order');
-
 		let event = this.parameters.get('event');
 
 		return this.confirmOrderController.confirmOrder(event).then(result => {
@@ -134,9 +120,6 @@ module.exports = class CheckoutController extends transactionEndpointController{
 	}
 
 	createOrder(){
-
-		du.debug('Create Order');
-
 		let event = this.parameters.get('event');
 
 		this.createOrderController.parameters.set('event', event);
@@ -149,9 +132,6 @@ module.exports = class CheckoutController extends transactionEndpointController{
 	}
 
 	createLead(){
-
-		du.debug('Create Lead');
-
 		let event = this.parameters.get('event');
 
 		this.createLeadController.parameters.set('event', event);

@@ -294,7 +294,6 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 					});
 				}
 				getResult(result, field) {
-					du.debug('Get Result');
 					if (_.isUndefined(field)) {
 						field = this.descriptive_name + 's';
 					}
@@ -369,7 +368,6 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 					});
 				}
 				getResult(result, field) {
-					du.debug('Get Result');
 					if (_.isUndefined(field)) {
 						field = this.descriptive_name + 's';
 					}
@@ -1240,7 +1238,6 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 					});
 				}
 				getResult(result, field) {
-					du.debug('Get Result');
 					if (_.isUndefined(field)) {
 						field = this.descriptive_name + 's';
 					}
@@ -1265,7 +1262,6 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 					});
 				}
 				getResult(result, field) {
-					du.debug('Get Result');
 					if (_.isUndefined(field)) {
 						field = this.descriptive_name + 's';
 					}

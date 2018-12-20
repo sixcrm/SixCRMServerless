@@ -56,9 +56,6 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 	}
 
 	tableExists(table_name){
-
-		du.debug('Table Exists');
-
 		return this.dynamodbprovider.describeTable(table_name, false).then((results) => {
 
 			du.info('Table found: '+table_name);
@@ -74,9 +71,6 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 	}
 
 	purgeTables() {
-
-		du.debug('Purge Tables');
-
 		return this.getTableDefinitionFilenames().then((table_definition_filenames) => {
 
 			let table_deployment_promises = arrayutilities.map(table_definition_filenames, (table_definition_filename) => {
@@ -94,9 +88,6 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 	}
 
 	getAllTableKeys(table_name){
-
-		du.debug('Get All Table Keys');
-
 		du.warning(table_name);
 
 		return this.dynamodbprovider.scanRecords(table_name).then(results => {
@@ -115,9 +106,6 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 	}
 
 	purgeTable(table_definition_filename){
-
-		du.debug('Purge Table');
-
 		let table_definition = global.SixCRM.routes.include('tabledefinitions', table_definition_filename);
 
 		return this.tableExists(table_definition.Table.TableName).then((result) => {
@@ -187,9 +175,6 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 	}
 
 	deployTables() {
-
-		du.debug('Deploy Tables');
-
 		return this.getTableDefinitionFilenames().then((table_definition_filenames) => {
 
 			let table_deployment_promises = arrayutilities.map(table_definition_filenames, (table_definition_filename) => {
@@ -282,9 +267,6 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 	}
 
 	async seedTables(live = false, table = null) {
-
-		du.debug('Seed Tables');
-
 		permissionutilities.disableACLs();
 		permissionutilities.setPermissions('*',['*/*'],[]);
 
@@ -313,9 +295,6 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 	}
 
 	seedTable(table_seed_definition_filename){
-
-		du.debug('Seed Table');
-
 		let seed_definitions = null;
 
 		try {
@@ -352,9 +331,6 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 	}
 
 	getTableNameFromFilename(table_seed_definition_filename){
-
-		du.debug('Get Table Name From Filename');
-
 		let filename_array = table_seed_definition_filename.split('/');
 
 		return filename_array.pop().replace(/\.json/,'');
@@ -362,9 +338,6 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 	}
 
 	executeSeedViaController(table_description, seed_definitions){
-
-		du.debug('Execute Seed Via Controller');
-
 		let entity_name = this.getEntityName(table_description.Table.TableName);
 
 		let controller = this.getController(entity_name);
@@ -385,9 +358,6 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 	}
 
 	getEntityName(table_name){
-
-		du.debug('Get Entity Name');
-
 		if(table_name.match(/^.*ies$/)){
 
 			return table_name.replace(/ies$/, 'y');
@@ -399,9 +369,6 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 	}
 
 	initializeControllers(){
-
-		du.debug('Initialize Controllers');
-
 		if (this.controllers.length > 0) {
 			return Promise.resolve();
 		}
@@ -427,9 +394,6 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 	}
 
 	getController(entity_name){
-
-		du.debug('Get Controller');
-
 		let matched_controllers =  this.controllers
 			.filter(controller => controller.descriptive_name)
 			.filter(controller => controller.descriptive_name === entity_name);
@@ -471,9 +435,6 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 	}
 
 	getTableDefinitionFilenames(){
-
-		du.debug('Get Table Definition Filenames');
-
 		let directory_path = global.SixCRM.routes.path('tabledefinitions');
 
 		return fileutilities.getDirectoryFiles(directory_path);
@@ -481,9 +442,6 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 	}
 
 	async getTableSeedFilenames(live = false){
-
-		du.debug('Get Table Seed Filenames');
-
 		let directory_path = null;
 
 		if(live == true){
@@ -517,9 +475,6 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 	}
 
 	getControllerFilenames(){
-
-		du.debug('Get Table Seed Filenames');
-
 		let directory_path = global.SixCRM.routes.path('controllers', 'entities');
 
 		return fileutilities.getDirectoryFiles(directory_path);

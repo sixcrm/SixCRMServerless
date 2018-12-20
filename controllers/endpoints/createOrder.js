@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
@@ -99,9 +98,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	}
 
 	execute(event) {
-
-		du.debug('createOrder Execute');
-
 		return this.preamble(event)
 			.then(() => this.validateParameters(this.parameters.get('event')))
 			.then(() => this.createOrder(this.parameters.get('event')));
@@ -109,8 +105,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	}
 
 	async validateParameters(event) {
-		du.debug('createOrder.js Validate Parameters', event);
-
 		if (event.product_schedules) {
 			if (event.product_schedules.length > 1) {
 				throw eu.getError('bad_request', 'There can only be one product schedule per request')
@@ -136,9 +130,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	}
 
 	async createOrder(event) {
-
-		du.debug('Create Order');
-
 		let session = await this.hydrateSession(event);
 
 		if (session.product_schedules && session.product_schedules.length) {
@@ -150,9 +141,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		}
 
 		let customer = await this.getCustomer(event, session);
-		du.debug('session', session);
-		du.debug('global.account', global.account);
-
 		let [rawcreditcard, creditcard, campaign, previous_rebill] = await Promise.all([
 			this.getRawCreditCard(event),
 			this.getCreditCard(event, customer),
@@ -236,9 +224,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	}
 
 	getTransactionSubtype(event){
-
-		du.debug('Set Transaction Subtype');
-
 		let return_value = 'main';
 
 		if(_.has(event, 'transaction_subtype')){
@@ -250,17 +235,11 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	}
 
 	hydrateSession(event) {
-
-		du.debug('Hydrate Session');
-
 		return this.sessionController.get({ id: event.session });
 
 	}
 
 	async getCustomer(event, session) {
-
-		du.debug('Get Customer');
-
 		let customer = await this.customerController.get({ id: session.customer });
 
 		if (_.has(event, 'customer')) {
@@ -274,9 +253,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	}
 
 	async getRawCreditCard(event) {
-
-		du.debug('Get Raw Credit Card');
-
 		let rawcreditcard;
 		if (_.has(event, 'creditcard')) {
 
@@ -290,9 +266,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	}
 
 	async getCreditCard(event, customer) {
-
-		du.debug('Get Credit Card');
-
 		let creditcard;
 		if (_.has(event, 'creditcard')) {
 
@@ -308,18 +281,12 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	}
 
 	addCreditCardToCustomer(creditcard, customer) {
-
-		du.debug('Add Credit Card to Customer');
-
 		this.customerController.sanitize(false);
 		return this.customerController.addCreditCard(customer.id, creditcard);
 
 	}
 
 	getCampaign(session) {
-
-		du.debug('Get Campaign');
-
 		return this.campaignController.get({ id: session.campaign });
 
 	}
@@ -334,18 +301,12 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	}
 
 	validateSession(session) {
-
-		du.debug('Validate Session');
-
 		this.isCurrentSession(session);
 		this.isCompleteSession(session);
 
 	}
 
 	isCurrentSession(session) {
-
-		du.debug('Is Current Session');
-
 		if (!this.sessionHelperController.isCurrent({ session: session })) {
 			if (!_.includes(['*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c'], global.account)) {
 				throw eu.getError('bad_request', 'Session has expired.');
@@ -355,9 +316,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	}
 
 	isCompleteSession(session) {
-
-		du.debug('Is Complete Session');
-
 		if (this.sessionHelperController.isComplete({ session: session })) {
 			throw eu.getError('bad_request', 'The session is already complete.');
 		}
@@ -365,9 +323,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	}
 
 	createRebill(session, product_schedules, products) {
-
-		du.debug('Create Rebill');
-
 		if (!product_schedules && !products) {
 			throw eu.getError('server', 'Nothing to add to the rebill.');
 		}
@@ -389,9 +344,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	}
 
 	async processRebill(rebill, event, rawcreditcard) {
-
-		du.debug('Process Rebill');
-
 		let argumentation = {
 			rebill,
 			transactionsubtype: this.getTransactionSubType(event)
@@ -454,9 +406,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	}
 
 	incrementMerchantProviderSummary(transactions) {
-
-		du.debug('Increment Merchant Provider Summary');
-
 		if (_.isNull(transactions) || !arrayutilities.nonEmpty(transactions)) {
 			return false;
 		}
@@ -479,9 +428,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	}
 
 	updateSessionWithWatermark(session, product_schedules, products) {
-
-		du.debug('Update Session With Watermark');
-
 		if (!_.has(session, 'watermark')) {
 			session.watermark = {
 				products: [],
@@ -517,9 +463,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	}
 
 	markNonSuccessfulRebill(result, rebill) {
-
-		du.debug('Mark Non-Successful Rebill');
-
 		if (result !== 'success') {
 
 			rebill.no_process = true;
@@ -531,9 +474,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	}
 
 	markNonSuccessfulSession(result, session) {
-
-		du.debug('Mark Non-Successful Session');
-
 		if (result !== 'success') {
 
 			session.concluded = true;

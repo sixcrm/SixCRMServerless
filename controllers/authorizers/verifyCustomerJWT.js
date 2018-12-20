@@ -38,9 +38,6 @@ module.exports = class VerifyCustomerJWTController {
 	}
 
 	async execute(event) {
-
-		du.debug('Execute');
-
 		this.setParameters(event);
 
 		try{
@@ -60,9 +57,6 @@ module.exports = class VerifyCustomerJWTController {
 	}
 
 	decodeToken() {
-
-		du.debug('Decode Token');
-
 		let token = this.parameters.get('encoded_authorization_token');
 
 		let decoded_token = this.jwtprovider.decodeJWT(token);
@@ -81,9 +75,6 @@ module.exports = class VerifyCustomerJWTController {
 
 	//Technical Debt:  Is this redundant?  Note that the decodeToken method already appears to verify the signing string.
 	verifyEncodedTokenWithCustomerSecretKey() {
-
-		du.debug('Verify Encoded Token With Customer Secret Key');
-
 		let encoded_token = this.parameters.get('encoded_authorization_token');
 
 		if(this.jwtprovider.verifyJWT(encoded_token, 'customer')) {
@@ -101,9 +92,6 @@ module.exports = class VerifyCustomerJWTController {
 	}
 
 	respond() {
-
-		du.debug('Respond');
-
 		let verified_token = this.parameters.get('verified_authorization_token', {fatal: false});
 
 		if (!_.isNull(verified_token)) {
@@ -117,9 +105,6 @@ module.exports = class VerifyCustomerJWTController {
 	}
 
 	setParameters(event) {
-
-		du.debug('Set Parameters');
-
 		this.parameters.setParameters({
 			argumentation: event,
 			action: 'event'

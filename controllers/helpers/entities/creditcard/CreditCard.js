@@ -1,6 +1,4 @@
-
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
@@ -13,19 +11,11 @@ module.exports = class CreditCardHelper {
 	}
 
 	formatRawCreditCard(creditcard){
-
-		du.debug('Format Raw Credit Card');
-
 		return creditcard;
 
 	}
 
 	getFirstName(creditcard){
-
-		du.debug('Get First Name');
-
-		du.debug('Get Last Name');
-
 		if(_.has(creditcard, 'name') && stringutilities.nonEmpty(creditcard.name)){
 
 			let ccnamesplit = _.trim(creditcard.name).replace(/\s+/g,' ').split(' ');
@@ -39,9 +29,6 @@ module.exports = class CreditCardHelper {
 	}
 
 	getLastName(creditcard){
-
-		du.debug('Get Last Name');
-
 		if(_.has(creditcard, 'name') && stringutilities.nonEmpty(creditcard.name)){
 
 			let ccnamesplit = _.trim(creditcard.name).replace(/\s+/g,' ').split(' ');
@@ -54,9 +41,6 @@ module.exports = class CreditCardHelper {
 	}
 
 	getExpirationMonth(creditcard){
-
-		du.debug('Get Expiration Month');
-
 		if(!_.has(creditcard, 'expiration')){
 			throw eu.getError('server', 'CreditCardHelper.getExpirationMonth assumes creditcard object contains the expiration property.');
 		}
@@ -84,9 +68,6 @@ module.exports = class CreditCardHelper {
 	}
 
 	getExpirationYear(creditcard){
-
-		du.debug('Get Expiration Year');
-
 		if(!_.has(creditcard, 'expiration')){
 			throw eu.getError('server', 'CreditCardHelper.getExpirationYear assumes creditcard object contains the expiration property.');
 		}
@@ -98,9 +79,6 @@ module.exports = class CreditCardHelper {
 	}
 
 	getBINNumber(creditcard){
-
-		du.debug('Get BIN Number');
-
 		let cc_number = null;
 
 		if(_.has(creditcard, 'first_six')){
@@ -124,17 +102,11 @@ module.exports = class CreditCardHelper {
 	}
 
 	getAddress(creditcard){
-
-		du.debug('Get Address');
-
 		return Promise.resolve(creditcard.address);
 
 	}
 
 	sameCard(creditcard, test_card, fatal){
-
-		du.debug('Same Card');
-
 		fatal = (_.isUndefined(fatal))?false:fatal;
 
 		let bad_field = arrayutilities.find(objectutilities.getKeys(creditcard), creditcard_field => {
@@ -181,9 +153,6 @@ module.exports = class CreditCardHelper {
 	}
 
 	lastFour(creditcard_number){
-
-		du.debug('Last Four');
-
 		let last = creditcard_number.slice(-4);
 		let first = creditcard_number.replace(/[^0-9]/g,'').slice(0, -4).replace(/[0-9]/g, '*');
 
@@ -192,9 +161,6 @@ module.exports = class CreditCardHelper {
 	}
 
 	async getTag(entity, name){
-
-		du.debug('Get Tag');
-
 		const TagController = global.SixCRM.routes.include('entities', 'Tag.js');
 		let tagController = new TagController();
 

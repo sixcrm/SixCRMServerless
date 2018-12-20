@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
@@ -64,18 +63,12 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 	}
 
 	execute(event) {
-
-		du.debug('Execute');
-
 		return this.preamble(event)
 			.then(() => this.createLead(this.parameters.get('event')));
 
 	}
 
 	async createLead(event) {
-
-		du.debug('Create Lead');
-
 		let [customer, campaign, affiliates] = await this.getLeadProperties(event);
 		let session_prototype = this.createSessionPrototype(customer, campaign, affiliates);
 		let session = await this.assureSession(session_prototype);
@@ -87,9 +80,6 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 	}
 
 	getLeadProperties(event) {
-
-		du.debug('Assure Lead Properties');
-
 		return Promise.all([
 			this.getCustomer(event),
 			this.getCampaign(event),
@@ -99,17 +89,11 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 	}
 
 	getCampaign(event) {
-
-		du.debug('Get Campaign');
-
 		return this.campaignController.get({ id: event.campaign });
 
 	}
 
 	getAffiliates(event) {
-
-		du.debug('Assure Affiliates');
-
 		return this.affiliateHelperController.handleAffiliateInformation(event).then(result => {
 
 			return result.affiliates;
@@ -119,9 +103,6 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 	}
 
 	getCustomer(event) {
-
-		du.debug('Assure Customer');
-
 		return this.customerController.getCustomerByEmail(event.customer.email).then((customer) => {
 
 			if (_.has(customer, 'id')) {
@@ -137,9 +118,6 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 	//Technical Debt:  Session Helper!
 	createSessionPrototype(customer, campaign, affiliates) {
-
-		du.debug('Create Session Prototype');
-
 		let session_prototype = {
 			customer: customer.id,
 			campaign: campaign.id,
@@ -155,18 +133,12 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 	}
 
 	assureSession(session_prototype) {
-
-		du.debug('Assure Session');
-
 		//Technical Debt: test this 100%
 		return this.sessionController.assureSession(session_prototype);
 
 	}
 
 	postProcessing(session, campaign, affiliates, customer) {
-
-		du.debug('Post Processing');
-
 		return Promise.all(
 			[
 				this.pushEvent({event_type: 'lead', context: {

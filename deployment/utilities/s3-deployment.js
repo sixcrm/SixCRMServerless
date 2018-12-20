@@ -23,9 +23,6 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 	}
 
 	createBuckets() {
-
-		du.debug('Create Buckets');
-
 		let bucket_group_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 's3/buckets'));
 
 		if (!_.isArray(bucket_group_files)) {
@@ -54,9 +51,6 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 
 	}
 	createBackupBuckets() {
-
-		du.debug('Create Backup Buckets');
-
 		let bucket_group_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 's3/buckets_backup'));
 
 		if (!_.isArray(bucket_group_files)) {
@@ -86,9 +80,6 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 	}
 
 	destroyBuckets() {
-
-		du.debug('Destroy Buckets');
-
 		let bucket_group_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 's3/buckets'));
 
 		if (!_.isArray(bucket_group_files)) { throw eu.getError('server', 'S3Deployment.destroyBuckets assumes that the bucket_group_files is an array of file names.'); }
@@ -128,9 +119,6 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 	}
 
 	createBucketFromGroupFileDefinition(group_file_definition) {
-
-		du.debug('Create Bucket From Group File Definition');
-
 		let group_file_definition_promises = group_file_definition.map((sub_definition) => {
 
 			let bucket_name = this.createEnvironmentSpecificBucketName(sub_definition.Bucket);
@@ -184,9 +172,6 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 	}
 
 	configureBackups() {
-
-		du.debug('Configure Bucket Backup');
-
 		let bucket_replication_promises = [];
 
 		let backup_definitions = global.SixCRM.routes.include('deployment', 's3/configuration/backup_defintions.json');
@@ -207,9 +192,6 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 	}
 
 	executeConfigureBackups(backup_definition) {
-
-		du.debug('Execute Bucket Backup');
-
 		let source_bucket = this.createEnvironmentSpecificBucketName(backup_definition.source);
 		let destination_bucket = this.createEnvironmentSpecificBucketName(backup_definition.destination);
 
@@ -227,9 +209,6 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 	}
 
 	getReplicationRole() {
-
-		du.debug('Get Replication Role');
-
 		let role_definition = global.SixCRM.routes.include('deployment', 'iam/roles/s3_replication.json');
 
 		du.warning(role_definition);

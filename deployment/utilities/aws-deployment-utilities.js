@@ -36,9 +36,6 @@ module.exports = class AWSDeploymentUtilities {
 	}
 
 	getRoleCredentials(environment_key){
-
-		du.debug('Get Role Credentials');
-
 		du.debug('Environment Key: '+environment_key);
 
 		let assume_role_parameters = this.getEnvironmentAssumedRoleParameters(environment_key);
@@ -56,9 +53,6 @@ module.exports = class AWSDeploymentUtilities {
 	}
 
 	setRole(environment_key){
-
-		du.debug('Set Role');
-
 		let assume_role_parameters = this.getEnvironmentAssumedRoleParameters(environment_key);
 
 		return this.stsprovider.assumeRole(assume_role_parameters).then(result => {
@@ -72,9 +66,6 @@ module.exports = class AWSDeploymentUtilities {
 	}
 
 	setAssumedRoleProperties(assumed_role_json){
-
-		du.debug('Set Assumed Role Properties');
-
 		global.SixCRM.validate(assumed_role_json, global.SixCRM.routes.path('model', 'deployment/sts/assumedroleresponse.json'));
 
 		process.env.AWS_ACCESS_KEY_ID = assumed_role_json.Credentials.AccessKeyId;
@@ -105,9 +96,6 @@ module.exports = class AWSDeploymentUtilities {
 	}
 
 	createParameterGroup(action, subaction, object){
-
-		du.debug('Create Parameter Group');
-
 		if(!_.has(this.parameter_groups, action)){
 			throw eu.getError('server', 'AWSDeploymentUtilities.createParameterGroup assumes parameter group has action property.');
 		}

@@ -2535,9 +2535,6 @@ describe('controllers/providers/Register.js', () => {
 					});
 				}
 				getResult(result, field) {
-
-					du.debug('Get Result');
-
 					if (_.isUndefined(field)) {
 						field = this.descriptive_name + 's';
 					}
@@ -2680,9 +2677,6 @@ describe('controllers/providers/Register.js', () => {
 					});
 				}
 				getResult(result, field) {
-
-					du.debug('Get Result');
-
 					if (_.isUndefined(field)) {
 						field = this.descriptive_name + 's';
 					}

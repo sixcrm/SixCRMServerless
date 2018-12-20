@@ -25,9 +25,6 @@ module.exports = class ElasticSearchProvider extends AWSProvider {
 	}
 
 	describeDomain(domain_definition) {
-
-		du.debug('Describe Domain');
-
 		let parameters = objectutilities.transcribe(
 			{
 				DomainName: 'DomainName'
@@ -42,9 +39,6 @@ module.exports = class ElasticSearchProvider extends AWSProvider {
 	}
 
 	createDomain(domain_definition) {
-
-		du.debug('Create Domain');
-
 		let parameters = domain_definition;
 
 		return this.elasticsearch.createElasticsearchDomain(parameters).promise();
@@ -52,9 +46,6 @@ module.exports = class ElasticSearchProvider extends AWSProvider {
 	}
 
 	updateDomain(domain_definition) {
-
-		du.debug('Update Domain');
-
 		let parameters = domain_definition;
 
 		return this.elasticsearch.updateElasticsearchDomainConfig(parameters).promise();
@@ -62,13 +53,9 @@ module.exports = class ElasticSearchProvider extends AWSProvider {
 	}
 
 	waitFor(domain_definition, waitfor_status = 'ready', count = 0) {
-
-		du.debug('Wait For');
-
 		if (count > this.max_attempts) {
 
 			if (process.env.TEST_MODE === 'true') {
-				du.debug('Test Mode');
 				return Promise.resolve(true);
 			}
 
@@ -97,9 +84,6 @@ module.exports = class ElasticSearchProvider extends AWSProvider {
 	}
 
 	test() {
-
-		du.debug('Test');
-
 		let httpprovider = new HTTPProvider();
 
 		return httpprovider.getJSON({

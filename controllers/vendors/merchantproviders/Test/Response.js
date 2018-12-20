@@ -1,7 +1,5 @@
 
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 
@@ -16,9 +14,6 @@ module.exports = class TestResponse extends Response {
 	}
 
 	getTransactionID(transaction){
-
-		du.debug('Get Transaction ID');
-
 		let processor_response = null;
 
 		if(_.has(transaction, 'processor_response')){
@@ -39,9 +34,6 @@ module.exports = class TestResponse extends Response {
 	}
 
 	mapResponseCode({parsed_response}){
-
-		du.debug('Map Response Code');
-
 		if(parsed_response.success == true){
 			return 'success';
 		}else if(parsed_response.response == '2'){
@@ -53,9 +45,6 @@ module.exports = class TestResponse extends Response {
 	}
 
 	mapResponseMessage({parsed_response}){
-
-		du.debug('Map Response Message');
-
 		if(_.has(parsed_response, 'success')){
 			return 'Success';
 		}
@@ -64,26 +53,11 @@ module.exports = class TestResponse extends Response {
 
 	}
 
-	parseResponse({ body:body}){
-
-		du.debug('Parse Response');
-
+	parseResponse({body}){
 		return body;
-
-
-	}
-
-	determineMerchantCode(vendor_response) {
-
-		du.debug('Determine Merchant Code (Test)', vendor_response);
-
-		return super.determineMerchantCode(vendor_response);
-
 	}
 
 	determineMerchantMessage(vendor_response) {
-
-		du.debug('Determine Merchant Message (Test)', vendor_response);
 
 		if (this.getCode() === 'success') {
 			return 'Test success';

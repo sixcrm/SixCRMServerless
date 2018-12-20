@@ -1,8 +1,6 @@
 
 const _ = require('lodash');
 const uuidV4 = require('uuid/v4');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
@@ -34,9 +32,6 @@ module.exports = class fulfillmentProviderController {
 	}
 
 	augmentParameters(){
-
-		du.debug('Augment Parameters');
-
 		this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
 		this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
 
@@ -45,9 +40,6 @@ module.exports = class fulfillmentProviderController {
 	}
 
 	respond({additional_parameters}){
-
-		du.debug('Respond');
-
 		let vendor_response = this.parameters.get('vendorresponse');
 		let action = this.parameters.get('action');
 
@@ -70,9 +62,6 @@ module.exports = class fulfillmentProviderController {
 	}
 
 	setReferenceNumber(){
-
-		du.debug('Set Reference Number');
-
 		let shipping_receipt = this.parameters.get('shippingreceipt', {fatal: false});
 
 		if(!_.isNull(shipping_receipt)){
@@ -90,17 +79,11 @@ module.exports = class fulfillmentProviderController {
 	}
 
 	createReferenceNumber(){
-
-		du.debug('Create Reference Number');
-
 		return uuidV4();
 
 	}
 
 	setMethod(){
-
-		du.debug('Set Method');
-
 		let action = this.parameters.get('action');
 
 		if(objectutilities.hasRecursive(this, 'methods.'+action)){

@@ -354,9 +354,6 @@ describe('helpers/events/Event.spec.js', () => {
 
 	/*
 	async pushContextToS3({event_type, context}){
-
-		du.debug('Push Context to S3');
-
 		let context_id = event_type+'-'+hashutilities.toSHA1(timestamp.now()+random.createRandomString(20));
 
 		let body = (_.isString(context))?context:JSON.stringify(context);
@@ -373,9 +370,6 @@ describe('helpers/events/Event.spec.js', () => {
 	*/
 	/*
 	async handleContext({context, event_type}){
-
-		du.debug('Handle Context');
-
 		context = (_.isString(context))?context:JSON.stringify(context);
 
 		const context_size = stringutilities.getBytes(context);

@@ -14,9 +14,6 @@ module.exports = class ProductScheduleHelper {
 	}
 
 	getHydrated({id}){
-
-		du.debug('Get Hydrated');
-
 		let ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 		const productScheduleController = new ProductScheduleController();
 
@@ -34,9 +31,6 @@ module.exports = class ProductScheduleHelper {
 
 	//Tested
 	marryProductsToSchedule({product_schedule, products}){
-
-		du.debug('Marry Products To Schedules');
-
 		if(_.has(product_schedule, 'schedule') && arrayutilities.nonEmpty(product_schedule.schedule)){
 
 			if(arrayutilities.nonEmpty(products)){
@@ -67,7 +61,6 @@ module.exports = class ProductScheduleHelper {
 
 	//Tested
 	getScheduleElementsOnDayInSchedule({product_schedule, day}){
-		du.debug('Get Schedule Element By Day In Schedule');
 		return arrayutilities.filter(product_schedule.schedule, ({start, end, period}) => {
 			const product_is_active = day >= start && (!end || day < end);
 			const day_is_start_of_new_period = Number.isInteger(day / period);
@@ -77,9 +70,6 @@ module.exports = class ProductScheduleHelper {
 
 	//Tested
 	calculateNextBillingInSchedule({schedule_element, day}){
-
-		du.debug('Calculate Next Billing In Schedule');
-
 		if(!_.has(schedule_element, 'samedayofmonth') || schedule_element.samedayofmonth !== true){
 			return this.calculateNextStandardRecurringBillingInSchedule({schedule_element: schedule_element, day: day});
 		}else{
@@ -90,17 +80,11 @@ module.exports = class ProductScheduleHelper {
 	}
 
 	calculateNextStandardRecurringBillingInSchedule({schedule_element, day}){
-
-		du.debug('Calculate Next Standard Recurring Billing In Schedule');
-
 		return day + (parseInt(schedule_element.period) - (mathutilities.signIdempotentModulus((parseInt(day) - parseInt(schedule_element.start)), parseInt(schedule_element.period))));
 
 	}
 
 	calculateNextMonthlyBillingInSchedule({schedule_element, day}){
-
-		du.debug('Calculare Next Monthly Billing In Schedule');
-
 		if(schedule_element.start > day){
 
 			//A number representing day of the month (1-31)
@@ -159,9 +143,6 @@ module.exports = class ProductScheduleHelper {
 
 	//Tested
 	getNextScheduleElement({product_schedule, day}){
-
-		du.debug('Get Next Schedule Element');
-
 		//need to validate?
 		//has schedule, is non-empty array
 
@@ -179,19 +160,12 @@ module.exports = class ProductScheduleHelper {
 
 		});
 
-		if(_.isNull(next_schedule_element) || _.isUndefined(next_schedule_element)){
-			du.debug(day, product_schedule.schedule);
-		}
-
 		return next_schedule_element;
 
 	}
 
 	//Tested
 	getNextScheduleElementStartDayNumber({day}){
-
-		du.debug('Get Next Period Day');
-
 		let schedule_element = this.getNextScheduleElement(arguments[0]);
 
 		if(_.has(schedule_element, 'start')){
@@ -210,9 +184,6 @@ module.exports = class ProductScheduleHelper {
 
 	//Tested
 	getTransactionProducts({day, product_schedules}){
-
-		du.debug('Get Transaction Products');
-
 		let transaction_products = [];
 
 		product_schedules.forEach((product_schedule) => {
@@ -232,9 +203,6 @@ module.exports = class ProductScheduleHelper {
 
 	//Tested
 	getScheduleElementByDay({day, schedule}){
-
-		du.debug('Get Schedule Element By Day');
-
 		schedule = arrayutilities.sort(schedule, (a, b) => { return a.start - b.start; });
 
 		let return_product = arrayutilities.find(schedule, (schedule_element) => {
@@ -257,31 +225,8 @@ module.exports = class ProductScheduleHelper {
 
 	}
 
-	/* Deprecated?
-  productSum({day, product_schedules}){
-
-    du.debug('Product Sum');
-
-    let return_amount = 0.0;
-
-    arrayutilities.reduce(schedules, (sum, schedule) => {
-
-      let schedule_element = this.getScheduleElementByDay({day: day, schedule: schedule.schedule});
-
-      return_amount += parseFloat(schedule_element.price);
-
-    });
-
-    return parseFloat(return_amount);
-
-  }
-  */
-
-
 	getSchedule({product_schedule}){
-
 		//Note:  This is a graph utility method
-		du.debug('Get Schedule');
 
 		if(arrayutilities.nonEmpty(product_schedule.schedule)){
 
@@ -299,9 +244,6 @@ module.exports = class ProductScheduleHelper {
 
 	//Tested
 	transformScheduleElement({schedule_element}){
-
-		du.debug('Get Scheduled Product');
-
 		//Technical Debt:  Use the objectutilities.transcribe method.
 		let return_object = {
 			price: schedule_element.price,

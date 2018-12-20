@@ -22,9 +22,6 @@ module.exports = class CreditCardController extends entityController {
 	associatedEntitiesCheck({
 		id
 	}) {
-
-		du.debug('Associated Entities Check');
-
 		let return_array = [];
 
 		let data_acquisition_promises = [
@@ -53,9 +50,6 @@ module.exports = class CreditCardController extends entityController {
 	}
 
 	listByAccount(){
-
-		du.debug('CreditCard.listByAccount()');
-
 		return super.listByAccount(arguments[0]).then(result => {
 
 			if(_.has(result, 'creditcards') && arrayutilities.nonEmpty(result.creditcards)){
@@ -74,9 +68,6 @@ module.exports = class CreditCardController extends entityController {
 	}
 
 	batchGet(){
-
-		du.debug('CreditCard.batchGet()');
-
 		return super.batchGet(arguments[0]).then(result => {
 
 			if(_.isArray(result) && arrayutilities.nonEmpty(result)){
@@ -98,9 +89,6 @@ module.exports = class CreditCardController extends entityController {
 		id,
 		hydrate_token
 	}) {
-
-		du.debug('Get Detokenized');
-
 		hydrate_token = (_.isUndefined(hydrate_token) || _.isNull(hydrate_token)) ? false : hydrate_token;
 
 		return super.get({
@@ -137,9 +125,6 @@ module.exports = class CreditCardController extends entityController {
 	create({
 		entity
 	}) {
-
-		du.debug('CreditCard.create()');
-
 		//Technical Debt:  Validate that this is a creditcard with a number and cvv etc...
 
 		return Promise.resolve(entity)
@@ -200,9 +185,6 @@ module.exports = class CreditCardController extends entityController {
 	update({
 		entity
 	}) {
-
-		du.debug('CreditCard.update()');
-
 		return Promise.resolve(entity)
 			.then((entity) => {
 
@@ -275,8 +257,6 @@ module.exports = class CreditCardController extends entityController {
 	delete({
 		id
 	}) {
-
-		du.debug('CreditCard.delete()');
 		return Promise.resolve(id)
 			.then((id) => this.exists({
 				entity: {
@@ -311,9 +291,6 @@ module.exports = class CreditCardController extends entityController {
 		id,
 		properties
 	}) {
-
-		du.debug('Update Properties');
-
 		return Promise.resolve(id)
 			.then((id) => {
 
@@ -372,9 +349,6 @@ module.exports = class CreditCardController extends entityController {
 	}
 
 	listCustomers(creditcard) {
-
-		du.debug('List Customers');
-
 		if (_.has(creditcard, "customers") && arrayutilities.nonEmpty(creditcard.customers)) {
 
 			return this.executeAssociatedEntityFunction('CustomerController', 'batchGet', {
@@ -389,9 +363,6 @@ module.exports = class CreditCardController extends entityController {
 	}
 
 	assureCreditCard(creditcard) {
-
-		du.debug('Assure Credit Card', creditcard);
-
 		if (this.sanitization) {
 			throw eu.getError('server', 'Cannot Assure Credit Card while sanitizing results');
 		}
@@ -433,9 +404,6 @@ module.exports = class CreditCardController extends entityController {
 	}
 
 	setLastFour(attributes) {
-
-		du.debug('Set Last Four');
-
 		if(!_.has(attributes, 'last_four')){
 			if (_.has(attributes, 'number') && stringutilities.isString(attributes.number)) {
 				attributes.last_four = attributes.number.slice(-4);
@@ -445,9 +413,6 @@ module.exports = class CreditCardController extends entityController {
 	}
 
 	setFirstSix(attributes) {
-
-		du.debug('Set First Six');
-
 		if(!_.has(attributes, 'first_six')){
 			if (_.has(attributes, 'number') && stringutilities.isString(attributes.number)) {
 				attributes.first_six = attributes.number.substring(0, 6);
@@ -457,7 +422,6 @@ module.exports = class CreditCardController extends entityController {
 	}
 
 	setChecksum(attributes) {
-		du.debug('Set Checksum');
 		if (
 			_.has(attributes, 'first_six') &&
 			_.has(attributes, 'last_four') &&
@@ -471,9 +435,6 @@ module.exports = class CreditCardController extends entityController {
 	}
 
 	setType(attributes, fatal = false){
-
-		du.debug('Set Type');
-
 		if(!_.has(attributes, 'type')){
 
 			let bin = null;

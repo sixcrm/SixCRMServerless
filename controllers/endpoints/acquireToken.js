@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
 const jwtprovider = new JWTProvider();
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
@@ -42,9 +41,6 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
 	}
 
 	execute(event) {
-
-		du.debug('Execute');
-
 		return this.preamble(event)
 			.then(() => this.validateCampaign())
 			.then(() => this.acquireToken())
@@ -56,9 +52,6 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
 	}
 
 	validateCampaign() {
-
-		du.debug('Validate Campaign');
-
 		let event = this.parameters.get('event');
 
 		if (!_.has(this, 'campaignController')) {
@@ -83,9 +76,6 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
 	}
 
 	acquireToken() {
-
-		du.debug('Acquire Token');
-
 		let jwt_prototype = {
 			user: {
 				user_alias: global.user.alias
@@ -101,9 +91,6 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
 	}
 
 	async postProcessing() {
-
-		du.debug('Post Processing');
-
 		await this.handleAffiliateInformation();
 
 		let affiliates = this.parameters.get('affiliates', {fatal: false});
@@ -123,9 +110,6 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
 	}
 
 	handleAffiliateInformation() {
-
-		du.debug('Handle Affiliate Information');
-
 		let event = this.parameters.get('event');
 
 		if (!_.has(this, 'affiliateHelperController')) {

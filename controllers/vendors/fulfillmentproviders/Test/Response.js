@@ -1,7 +1,5 @@
 
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
@@ -17,9 +15,6 @@ module.exports = class TestResponse extends FulfillmentProviderVendorResponse {
 	}
 
 	translateResponse(response){
-
-		du.debug('Translate Response');
-
 		let action = this.parameters.get('action');
 
 		let translation_methods = {
@@ -33,9 +28,6 @@ module.exports = class TestResponse extends FulfillmentProviderVendorResponse {
 	}
 
 	translateInfo(response){
-
-		du.debug('Translate Info');
-
 		global.SixCRM.validate(response.body, global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/Test/responsebody.json'));
 
 		return {
@@ -50,9 +42,6 @@ module.exports = class TestResponse extends FulfillmentProviderVendorResponse {
 	}
 
 	translateTest(response){
-
-		du.debug('Translate Test');
-
 		if(!objectutilities.nonEmpty(response.body)){
 			return null;
 		}
@@ -65,9 +54,6 @@ module.exports = class TestResponse extends FulfillmentProviderVendorResponse {
 	}
 
 	translateFulfill(){
-
-		du.debug('Translate Fulfill');
-
 		let reference_number = this.acquireReferenceNumber();
 
 		let response_prototype = {
@@ -82,9 +68,6 @@ module.exports = class TestResponse extends FulfillmentProviderVendorResponse {
 	}
 
 	acquireReferenceNumber(fatal){
-
-		du.debug('Acquire Reference Number');
-
 		fatal = _.isUndefined(fatal)?true:fatal;
 
 		let additional_parameters = this.parameters.get('additionalparameters', {fatal: false});
@@ -110,20 +93,4 @@ module.exports = class TestResponse extends FulfillmentProviderVendorResponse {
 		return null;
 
 	}
-
-	/*
-  parseGetInfoResponse(response){
-
-    du.debug('Parse Get Info Response');
-
-    return {
-      customer: this.createCustomer(order),
-      shipping: this.createShippingInformation(order),
-      reference_number: this.createReferenceNumber(order),
-      created_at: this.createCreatedAt(order)
-    };
-
-  }
-  */
-
 }
