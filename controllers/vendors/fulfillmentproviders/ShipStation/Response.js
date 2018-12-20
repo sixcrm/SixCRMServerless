@@ -1,5 +1,6 @@
 
 const _ = require('lodash');
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
@@ -81,6 +82,7 @@ module.exports = class ShipStationResponse extends FulfillmentProviderVendorResp
 
 		}
 
+		du.debug(response);
 		throw eu.getError('server', 'Unrecognized response from ShipStation');
 
 	}
