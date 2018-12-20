@@ -9,3 +9,4 @@ npm-debug.log
 .nyc*
 /extract
 test.txt
+yarn-error.log

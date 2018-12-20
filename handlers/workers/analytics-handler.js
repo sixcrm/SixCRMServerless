@@ -1,6 +1,6 @@
 const LambdaHandler = require('../lambda-handler');
 const LambdaResponse = global.SixCRM.routes.include('controllers', 'providers/lambda-response.js');
-const AnalyticsEventHandler = global.SixCRM.routes.include('controllers', 'workers/analytics/analytics-event-handler.js');
+const AnalyticsEventHandler = require('@6crm/sixcrmanalytics/lib/workers/analytics-event-handler').default;
 const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
 
 module.exports = class AnalyticsHandler extends LambdaHandler {
