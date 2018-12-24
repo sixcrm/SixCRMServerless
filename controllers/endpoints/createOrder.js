@@ -339,8 +339,13 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			argumentation.products = products;
 		}
 
-		return this.rebillCreatorHelperController.createRebill(argumentation);
+		const result = this.rebillCreatorHelperController.createRebill(argumentation);
 
+		if (_.includes(['CONCLUDE', 'CONCLUDED'], result)) {
+			throw eu.getError('bad_request', 'Session has been concluded.');
+		}
+
+		return result;
 	}
 
 	async processRebill(rebill, event, rawcreditcard) {
