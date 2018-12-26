@@ -45,7 +45,7 @@ jobs:
           command: stage=circle yarn run test-unit-circle
       - run:
           name: 'Unit Tests (TypeScript)'
-          command: stage=circle yarn run ts-unit
+          command: stage=circle yarn run ts-test
   query_tests:
     machine: true
     steps:
