@@ -18,9 +18,6 @@ jobs:
       - run:
           name: Install
           command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && yarn install --frozen-lockfile
-      - run:
-          name: Build TypeScript
-          command: npm run ts-build
       - save_cache:
           key: v1-dependency-cache-{{ checksum "yarn.lock" }}
           paths:
@@ -123,6 +120,9 @@ jobs:
           key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - attach_workspace:
           at: .
+      - run:
+          name: Build TypeScript
+          command: npm run ts-build
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
