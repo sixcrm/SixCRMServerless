@@ -238,6 +238,7 @@ module.exports = class RebillCreatorHelper {
 	}
 
 	getTransactionProducts({bill_day, normalized_product_schedules, normalized_products}) {
+		du.debug(`getTransactionProducts: ${JSON.stringify({bill_day, normalized_product_schedules, normalized_products})}`);
 		const transaction_products = [];
 		const schedule_elements = this.getScheduleElementsOnBillDay({bill_day, normalized_product_schedules});
 		this.addScheduleElementsToTransactionProducts(schedule_elements, transaction_products);
