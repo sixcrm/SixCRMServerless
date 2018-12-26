@@ -18,9 +18,9 @@ jobs:
       - run:
           name: Install
           command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && yarn install --frozen-lockfile
-     - run:
-         name: Build TypeScript
-         command: npm run ts-build
+      - run:
+          name: Build TypeScript
+          command: npm run ts-build
       - save_cache:
           key: v1-dependency-cache-{{ checksum "yarn.lock" }}
           paths:
@@ -43,9 +43,9 @@ jobs:
       - run:
           name: 'Unit Tests (JavaScript)'
           command: stage=circle yarn run test-unit-circle
-       - run:
-           name: 'Unit Tests (TypeScript)'
-           command: stage=circle yarn run ts-unit
+      - run:
+          name: 'Unit Tests (TypeScript)'
+          command: stage=circle yarn run ts-unit
   query_tests:
     machine: true
     steps:
