@@ -85,6 +85,7 @@ module.exports = class RebillCreatorHelper {
 		}
 
 		const prototype_rebill = await this.buildRebillPrototype({session, day, normalized_products, normalized_product_schedules});
+		du.debug(`Prototype rebill for session ${session.id} with amount ${prototype_rebill.amount}`);
 		return rebillController.create({entity: prototype_rebill});
 	}
 
@@ -370,6 +371,7 @@ module.exports = class RebillCreatorHelper {
 		const {merchant_provider, merchant_provider_selections} = await this.getMerchantProviderSelections(session, day);
 		const transaction_products = this.getTransactionProducts({bill_day, normalized_product_schedules, normalized_products});
 		const amount = this.calculateAmount(transaction_products);
+		du.debug(`Rebill for session ${session.id}, amount ${amount}`);
 		const bill_at = this.calculateBillAt(session, bill_day);
 		const cycle = await this.calculateCycle(session, bill_at);
 
@@ -424,6 +426,7 @@ module.exports = class RebillCreatorHelper {
 	}
 
 	calculateAmount(products) {
+		du.debug('calculateAmount', products);
 		let amount = 0.0;
 
 		if (!_.isNull(products) && arrayutilities.nonEmpty(products)) {
