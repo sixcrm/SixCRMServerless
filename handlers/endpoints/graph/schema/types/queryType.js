@@ -1962,20 +1962,6 @@ const fields = Object.assign({}, {
 			}
 		}
 	},
-	/*
-  //Technical Debt:  User settings are always queried by the user.  And the user setting is unique to the user.
-  usersettinglist: {
-  		type: userSettingListType.graphObj,
-  		args: {
-  				pagination: {type: paginationInputType.graphObj}
-  		},
-  		resolve: function(root, user_setting) {
-  				const userSettingController = new UserSettingController();
-
-  				return userSettingController.list({pagination: user_setting.pagination, fatal:list_fatal});
-  		}
-  },
-  */
 	usersigningstring: {
 		type: userSigningStringType.graphObj,
 		args: {

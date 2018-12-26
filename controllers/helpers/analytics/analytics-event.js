@@ -7,12 +7,6 @@ const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-p
 module.exports = class AnalyticsEvent {
 
 	static push(eventType, context) {
-
-		du.debug('AnalyticsEvent.push()', eventType, require('util').inspect(context, {
-			showHidden: false,
-			depth: null
-		}));
-
 		const message = {
 			event_type: eventType,
 			context: Object.assign({
@@ -24,7 +18,7 @@ module.exports = class AnalyticsEvent {
 		};
 
 		if (!context.account) {
-			du.error('Context has no account', context, eventType);
+			du.warning('Context has no account', context, eventType);
 		}
 
 		return (new SQSProvider()).sendMessage({

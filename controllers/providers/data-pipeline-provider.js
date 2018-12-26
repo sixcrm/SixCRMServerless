@@ -18,10 +18,6 @@ module.exports = class DataPipelineProvider extends AWSProvider {
 	//Technical Debt: test me!
 	createPipeline({ parameters }) {
 
-		du.debug('Create Pipeline');
-
-		du.debug(parameters);
-
 		return new Promise((resolve, reject) => {
 
 			this.datapipeline.createPipeline(parameters, (error, data) => {
@@ -43,9 +39,6 @@ module.exports = class DataPipelineProvider extends AWSProvider {
 
 	//Technical Debt: test me!
 	activatePipeline({ parameters }) {
-
-		du.debug('Activate Pipeline');
-
 		return new Promise((resolve, reject) => {
 
 			this.datapipeline.activatePipeline(parameters, (error, data) => {
@@ -67,9 +60,6 @@ module.exports = class DataPipelineProvider extends AWSProvider {
 
 	//Technical Debt: test me!
 	describePipeline({ pipeline_id }) {
-
-		du.debug('Describe Pipeline');
-
 		return new Promise((resolve) => {
 
 			var parameters = {
@@ -95,9 +85,6 @@ module.exports = class DataPipelineProvider extends AWSProvider {
 
 	//Technical Debt: test me!
 	listPipelines() {
-
-		du.debug('Describe Pipeline');
-
 		return new Promise((resolve, reject) => {
 
 			this.datapipeline.listPipelines(null, (error, data) => {
@@ -119,9 +106,6 @@ module.exports = class DataPipelineProvider extends AWSProvider {
 
 	//Technical Debt: test me!
 	getPipelineDefinition({ pipeline_id }) {
-
-		du.debug('Get Pipeline Definition');
-
 		let parameters = {
 			pipelineId: `${pipeline_id}`
 		}
@@ -149,9 +133,6 @@ module.exports = class DataPipelineProvider extends AWSProvider {
 
 	//Technical Debt: test me!
 	putPipelineDefinition({ parameters }) {
-
-		du.debug('Put Pipeline Definition');
-
 		return new Promise((resolve, reject) => {
 
 			this.datapipeline.putPipelineDefinition(parameters, (error, data) => {
@@ -177,10 +158,6 @@ module.exports = class DataPipelineProvider extends AWSProvider {
 	}
 
 	validatePipelineDefinition({ parameters }) {
-
-		du.debug('Validate Pipeline Definition');
-
-
 		return new Promise((resolve, reject) => {
 
 			this.datapipeline.validatePipelineDefinition(parameters, (error, data) => {

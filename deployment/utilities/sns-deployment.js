@@ -26,9 +26,6 @@ module.exports = class SNSDeployment extends AWSDeploymentUtilities {
 	}
 
 	createTopics() {
-
-		du.debug('Create Topics');
-
 		let topic_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 'sns/configuration/topics/'));
 
 		if (!_.isArray(topic_files)) {
@@ -48,9 +45,6 @@ module.exports = class SNSDeployment extends AWSDeploymentUtilities {
 	}
 
 	createTopic(topic_file) {
-
-		du.debug('Create Topic');
-
 		let topic_file_contents = global.SixCRM.routes.include('deployment', 'sns/configuration/topics/' + topic_file);
 
 		return this.snsprovider.createTopic(topic_file_contents).then(result => {
@@ -60,9 +54,6 @@ module.exports = class SNSDeployment extends AWSDeploymentUtilities {
 	}
 
 	addSubscriptions() {
-
-		du.debug('Add Subscriptions');
-
 		let subscription_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 'sns/configuration/subscriptions/'));
 
 		if (!_.isArray(subscription_files)) {
@@ -84,9 +75,6 @@ module.exports = class SNSDeployment extends AWSDeploymentUtilities {
 	}
 
 	createSubscriptions(subscription_file) {
-
-		du.debug('Create Subscriptions');
-
 		let subscription_file_contents = global.SixCRM.routes.include('deployment', 'sns/configuration/subscriptions/' + subscription_file);
 
 		subscription_file_contents = this.parseTokensIntoSubscriptionParameters(subscription_file_contents);
@@ -116,9 +104,6 @@ module.exports = class SNSDeployment extends AWSDeploymentUtilities {
 	}
 
 	addSubscriptionAttributes(subscribe_result, subscription) {
-
-		du.debug('Add Subscription Attributes');
-
 		if (!_.has(subscription, 'Attributes') || !arrayutilities.nonEmpty(subscription.Attributes)) {
 			return Promise.resolve(true);
 		}
@@ -142,9 +127,6 @@ module.exports = class SNSDeployment extends AWSDeploymentUtilities {
 	}
 
 	getSubscriptionARN(subscription_result) {
-
-		du.debug('Get Subscription ARN');
-
 		if (_.has(subscription_result, 'SubscriptionArn')) {
 			return subscription_result.SubscriptionArn;
 		}
@@ -154,9 +136,6 @@ module.exports = class SNSDeployment extends AWSDeploymentUtilities {
 	}
 
 	addSubscriptionPermissions(subscription) {
-
-		du.debug('Add Subscription Permissions');
-
 		let parameters = {
 			Action: 'lambda:invokeFunction',
 			FunctionName: subscription.Endpoint,
@@ -170,9 +149,6 @@ module.exports = class SNSDeployment extends AWSDeploymentUtilities {
 	}
 
 	parseTokensIntoSubscriptionParameters(subscription_file_contents) {
-
-		du.debug('Parse Tokens Into Subscription Parameters');
-
 		let data = {
 			region: this.snsprovider.getRegion(),
 			account: global.SixCRM.configuration.site_config.aws.account,

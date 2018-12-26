@@ -1,6 +1,3 @@
-
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 
@@ -18,9 +15,6 @@ module.exports = class NotificationController extends entityController {
 	}
 
 	numberOfUnseenNotifications() {
-
-		du.debug('Number of Unseen Notifications');
-
 		return this.executeAssociatedEntityFunction('NotificationReadController', 'getLastSeenTime', {})
 			.then(last_seen_time => {
 
@@ -56,9 +50,6 @@ module.exports = class NotificationController extends entityController {
 
 	//Technical Debt:  Why is this necessarily a promise?
 	isValidNotification(notification_object) {
-
-		du.debug('Is Valid Notification');
-
 		return Promise.resolve(global.SixCRM.validate(notification_object, global.SixCRM.routes.path('model', 'entities/notification.json')));
 
 	}
@@ -71,9 +62,6 @@ module.exports = class NotificationController extends entityController {
 	}
 
 	listByType({type, pagination, fatal}){
-
-		du.debug('List By Type');
-
 		let access_string = this.getID(global.user) + '-' + global.account + '-' + type;
 
 		return this.queryBySecondaryIndex({field: 'access_string', index_value: access_string, index_name: 'access_string-index', pagination: pagination, fatal: fatal});

@@ -1,7 +1,5 @@
 
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
@@ -18,9 +16,6 @@ module.exports = class AffiliateHelperController {
 	}
 
 	transcribeAffiliates(source_object, destination_object){
-
-		du.debug('Transcribe Affiliates');
-
 		destination_object = (_.isUndefined(destination_object))?{}:destination_object;
 
 		let affiliate_mapping_object = {};
@@ -34,9 +29,6 @@ module.exports = class AffiliateHelperController {
 	}
 
 	handleAffiliateInformation(event){
-
-		du.debug('Handle Affiliate Information');
-
 		if(_.has(event, 'affiliates')){
 
 			let affiliate_codes = this.extractAffiliateCodes(event);
@@ -70,9 +62,6 @@ module.exports = class AffiliateHelperController {
 	}
 
 	extractAffiliateCodes(event){
-
-		du.debug('Extract Affiliate Codes');
-
 		let affiliate_codes = [];
 
 		if(_.has(event, 'affiliates')){
@@ -90,9 +79,6 @@ module.exports = class AffiliateHelperController {
 	}
 
 	replaceAffiliateIDs(event, affiliates){
-
-		du.debug('Replace Affiliate IDs');
-
 		arrayutilities.map(this.affiliate_fields, affiliate_field => {
 
 			if(_.has(event.affiliates, affiliate_field)){
@@ -114,9 +100,6 @@ module.exports = class AffiliateHelperController {
 	}
 
 	validateAllAffiliatesReplaced(event){
-
-		du.debug('Validate All Affiliates Replaced');
-
 		if(_.isUndefined(event) || _.isNull(event)){
 			throw eu.getError('server', 'validateAllAffiliatesReplaced assumes event input.');
 		}
@@ -137,9 +120,6 @@ module.exports = class AffiliateHelperController {
 	}
 
 	validateAssureAffiliatesArray(affiliate_ids){
-
-		du.debug('Validate Assure Affiliates Array');
-
 		arrayutilities.nonEmpty(affiliate_ids, true);
 
 		let all_strings = arrayutilities.every(affiliate_ids, (affiliate_id) => {
@@ -153,9 +133,6 @@ module.exports = class AffiliateHelperController {
 	}
 
 	assureAffiliates(affiliate_ids){
-
-		du.debug('Assure Affiliates');
-
 		this.validateAssureAffiliatesArray(affiliate_ids);
 
 		affiliate_ids = arrayutilities.unique(affiliate_ids);
@@ -173,9 +150,6 @@ module.exports = class AffiliateHelperController {
 	}
 
 	validateAssuredAffiliates({affiliate_ids, assured_affiliates}){
-
-		du.debug('Validate Assured Affiliates');
-
 		if(_.isUndefined(affiliate_ids) || _.isNull(affiliate_ids)){
 			throw eu.getError('server', 'validateAssuredAffiliates assumes affiliate_ids input.');
 		}
@@ -196,9 +170,6 @@ module.exports = class AffiliateHelperController {
 	}
 
 	assureAffiliatesArrayTransform({affiliate_ids, affiliates}){
-
-		du.debug('Assure Affiliates Array Transform');
-
 		if(_.isUndefined(affiliate_ids) || _.isNull(affiliate_ids)){
 			throw eu.getError('server', 'assureAffiliatesArrayTransform assumes affiliate_ids input.');
 		}
@@ -238,9 +209,6 @@ module.exports = class AffiliateHelperController {
 	}
 
 	hasAffiliateMatch({affiliate_id, affiliates}){
-
-		du.debug('Has Affiliate Match');
-
 		if(arrayutilities.nonEmpty(affiliates)){
 
 			let affiliate_record = arrayutilities.find(affiliates, affiliate => {

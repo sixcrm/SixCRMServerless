@@ -56,9 +56,6 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 	}
 
 	async setCloudsearchDomainEndpoint() {
-
-		du.debug('Set Cloudsearch Domain Endpoint');
-
 		let endpoint;
 
 		if (global.SixCRM.configuration.isLocal()) {
@@ -104,9 +101,6 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 	}
 
 	CSDExists() {
-
-		du.debug('CSD Exists');
-
 		if (_.has(this, 'csd') && _.isFunction(this.csd.search)) {
 			return true;
 		}
@@ -116,11 +110,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 	}
 
 	setDomainName() {
-
-		du.debug('Set Domain Name');
-
 		if (process.env.TEST_MODE === 'true') {
-			du.debug('Test Mode');
 			this.domainname = 'cloudsearch.local';
 
 			return true;
@@ -140,9 +130,6 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 	}
 
 	search(search_parameters) {
-
-		du.debug('Search');
-
 		let params = {};
 
 		for (var k in search_parameters) {
@@ -156,9 +143,6 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 	}
 
 	executeStatedSearch(parameters) {
-
-		du.debug('Execute Stated Search');
-
 		return new Promise((resolve, reject) => {
 
 			if (this.CSDExists()) {
@@ -172,8 +156,6 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 						return reject(error);
 
 					} else {
-
-						du.debug('Raw search results:', data);
 
 						return resolve(data);
 
@@ -196,8 +178,6 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 	suggest(suggest_parameters) {
 
 		return new Promise((resolve, reject) => {
-
-			du.debug(suggest_parameters);
 
 			let params = {};
 
@@ -223,8 +203,6 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 	async uploadDocuments(structured_documents) {
 
-		du.debug('Uploading documents to Cloudsearch', structured_documents);
-
 		let params = {
 			contentType: 'application/json',
 			documents: structured_documents
@@ -239,9 +217,6 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 	}
 
 	defineIndexField(index_object) {
-
-		du.debug('Define Index Field');
-
 		return new Promise((resolve) => {
 
 			let handle = this.cs.defineIndexField(index_object);
@@ -260,36 +235,25 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 	}
 
 	describeDomains(domainnames) {
-
-		du.debug('Describe Domains');
-
 		if (process.env.TEST_MODE === 'true') {
-			du.debug('Test Mode');
-
-			return Promise.resolve(this.AWSCallback(null, {
+			return Promise.resolve({
 				DomainStatusList: [{
 					DocService: {
 						Endpoint: 'cloudsearch.domain'
 					}
 				}]
-			}));
+			});
 		}
 
-		return new Promise((resolve) => {
+		if (_.isUndefined(domainnames)) {
+			domainnames = [this.domainname];
+		}
 
-			if (_.isUndefined(domainnames)) {
-				domainnames = [this.domainname];
-			}
+		var parameters = {
+			DomainNames: domainnames
+		};
 
-			var parameters = {
-				DomainNames: domainnames
-			};
-
-			return this.cs.describeDomains(parameters, (error, data) => {
-				return resolve(this.AWSCallback(error, data))
-			});
-
-		});
+		return this.cs.describeDomains(parameters).promise();
 
 	}
 
@@ -324,9 +288,6 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 	}
 
 	indexDocuments(domain_name) {
-
-		du.debug('Index Documents');
-
 		if (_.isUndefined(domain_name)) {
 			domain_name = this.domainname;
 		}
@@ -356,9 +317,6 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 	}
 
 	getDomainNames() {
-
-		du.debug('Get Domain Names');
-
 		return new Promise((resolve, reject) => {
 
 			this.cs.listDomainNames((error, data) => {
@@ -378,9 +336,6 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 	}
 
 	deleteDomain(domain_name) {
-
-		du.debug('Delete Domain');
-
 		if (_.isUndefined(domain_name)) {
 			domain_name = this.domainname;
 		}
@@ -407,11 +362,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 	//Technical Debt:  This totally doesn't belong here.  This is domain logic.
 	saveDomainConfiguration() {
-
-		du.debug('Save Domain Configuration');
-
 		if (process.env.TEST_MODE === 'true') {
-			du.debug('Test Mode');
 			return Promise.resolve();
 		}
 
@@ -445,9 +396,6 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 	}
 
 	waitFor(waitfor_status, domainname, count) {
-
-		du.debug('Wait For');
-
 		return new Promise((resolve) => {
 
 			if (_.isUndefined(domainname) || _.isNull(domainname)) {
@@ -461,7 +409,6 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 			if (count > this.max_attempts) {
 
 				if (process.env.TEST_MODE === 'true') {
-					du.debug('Test Mode');
 					return Promise.resolve(true);
 				}
 
@@ -503,9 +450,6 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 	}
 
 	test() {
-
-		du.debug('Test');
-
 		let parameters = {
 			query: 'A'
 		};

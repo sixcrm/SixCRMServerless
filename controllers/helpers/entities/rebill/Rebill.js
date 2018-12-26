@@ -92,9 +92,6 @@ module.exports = class RebillHelper {
 		argumentation,
 		action
 	}) {
-
-		du.debug('Set Parameters');
-
 		this.parameters.setParameters({
 			argumentation: argumentation,
 			action: action
@@ -105,9 +102,6 @@ module.exports = class RebillHelper {
 	}
 
 	async getMostRecentRebill({session, on_or_before = timestamp.getISO8601()}){
-
-		du.debug('Get Most Recent Rebill');
-
 		if(!_.has(this, 'rebillController')){
 			const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 			this.rebillController = new RebillController();
@@ -139,9 +133,6 @@ module.exports = class RebillHelper {
 
 
 	updateRebillProcessing() {
-
-		du.debug('Mark Rebill Processing');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({
 				argumentation: arguments[0],
@@ -154,9 +145,6 @@ module.exports = class RebillHelper {
 	}
 
 	acquireRebill() {
-
-		du.debug('Acquire Rebill');
-
 		let rebill = this.parameters.get('rebill');
 
 		if (!_.has(this, 'rebillController')) {
@@ -174,9 +162,6 @@ module.exports = class RebillHelper {
 	}
 
 	setRebillProcessing() {
-
-		du.debug('Set Rebill Processing');
-
 		let rebill = this.parameters.get('rebill');
 		let processing = this.parameters.get('processing');
 
@@ -189,9 +174,6 @@ module.exports = class RebillHelper {
 	}
 
 	updateRebill() {
-
-		du.debug('Update Rebill');
-
 		let rebill = this.parameters.get('rebill');
 
 		if (!_.has(this, 'rebillController')) {
@@ -212,9 +194,6 @@ module.exports = class RebillHelper {
 	}
 
 	updateRebillState() {
-
-		du.debug('Updating Rebill State');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({
 				argumentation: arguments[0],
@@ -229,9 +208,6 @@ module.exports = class RebillHelper {
 	}
 
 	setConditionalProperties() {
-
-		du.debug('Set Conditional Properties');
-
 		if (!this.parameters.isSet('newstate')) {
 			return true;
 		}
@@ -247,8 +223,6 @@ module.exports = class RebillHelper {
 	}
 
 	updateRebillUpsell() {
-		du.debug('Update Rebill Upsell');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({
 				argumentation: arguments[0],
@@ -271,9 +245,6 @@ module.exports = class RebillHelper {
 	}
 
 	buildUpdatedRebillPrototype() {
-
-		du.debug('Build Updated Rebill Prototype');
-
 		let rebill = this.parameters.get('rebill');
 
 		this.parameters.set('statechangedat', timestamp.getISO8601());
@@ -294,9 +265,6 @@ module.exports = class RebillHelper {
 	}
 
 	createUpdatedHistoryObjectPrototype() {
-
-		du.debug('Create Updated History Object Prototype');
-
 		let rebill = this.parameters.get('rebill');
 
 		if (_.has(rebill, 'history') && arrayutilities.nonEmpty(rebill.history)) {
@@ -318,9 +286,6 @@ module.exports = class RebillHelper {
 	}
 
 	updateHistoryPreviousStateWithNewExit() {
-
-		du.debug('Update History With New Exit');
-
 		let rebill = this.parameters.get('rebill');
 
 		let last_matching_state = this.getLastMatchingStatePrototype();
@@ -336,9 +301,6 @@ module.exports = class RebillHelper {
 	}
 
 	getLastMatchingStatePrototype() {
-
-		du.debug('Get Last Matching State Prototype');
-
 		let rebill = this.parameters.get('rebill');
 		let previous_state = this.parameters.get('previousstate');
 		let state_changed_at = this.parameters.get('statechangedat');
@@ -377,9 +339,6 @@ module.exports = class RebillHelper {
 		exited_at,
 		error_message
 	}) {
-
-		du.debug('Create Rebill History Element Prototype');
-
 		state = (!_.isUndefined(state) && !_.isNull(state)) ? state : this.parameters.get('newstate');
 		entered_at = (!_.isUndefined(entered_at) && !_.isNull(entered_at)) ? entered_at : this.parameters.get('statechangedat');
 		exited_at = (!_.isUndefined(exited_at) && !_.isNull(exited_at)) ? exited_at : this.parameters.get('exitedat', {fatal: false});
@@ -403,9 +362,6 @@ module.exports = class RebillHelper {
 	}
 
 	updateRebillFromUpdatedRebillPrototype() {
-
-		du.debug('Update Rebill');
-
 		let updated_rebill_prototype = this.parameters.get('updatedrebillprototype');
 
 		if (!_.has(this, 'rebillController')) {
@@ -426,9 +382,6 @@ module.exports = class RebillHelper {
 	}
 
 	getAvailableRebillsAsMessages() {
-
-		du.debug('Get Available Rebills As Messages');
-
 		return this.getBillableRebills()
 			.then(() => this.spoofRebillMessages())
 			.then(() => {
@@ -438,9 +391,6 @@ module.exports = class RebillHelper {
 	}
 
 	spoofRebillMessages() {
-
-		du.debug('Spoof Rebill Messages');
-
 		let billable_rebills = this.parameters.get('billablerebills');
 
 		let spoofed_rebill_messages = [];
@@ -462,9 +412,6 @@ module.exports = class RebillHelper {
 	}
 
 	createRebillMessageSpoof(rebill) {
-
-		du.debug('Create Rebill Message Spoof');
-
 		let body = JSON.stringify({
 			id: rebill.id
 		});
@@ -482,9 +429,6 @@ module.exports = class RebillHelper {
 	}
 
 	getBillableRebills() {
-
-		du.debug('Get Billable Rebills');
-
 		let now = timestamp.createDate();
 
 		if (!_.has(this, 'rebillController')) {
@@ -513,9 +457,6 @@ module.exports = class RebillHelper {
 	}
 
 	addRebillToQueue() {
-
-		du.debug('Add Rebill To Queue');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({
 				argumentation: arguments[0],
@@ -528,9 +469,6 @@ module.exports = class RebillHelper {
 	}
 
 	addQueueMessageToQueue() {
-
-		du.debug('Add Queue Message To Queue');
-
 		let message_body = this.parameters.get('queuemessagebodyprototype');
 		let queue_name = this.parameters.get('queuename');
 
@@ -547,9 +485,6 @@ module.exports = class RebillHelper {
 	}
 
 	createQueueMessageBodyPrototype() {
-
-		du.debug('Create Queue Message Body Prototype');
-
 		let rebill = this.parameters.get('rebill');
 
 		let queue_message_body_prototype = JSON.stringify({
@@ -563,9 +498,6 @@ module.exports = class RebillHelper {
 	}
 
 	getShippingReceipts() {
-
-		du.debug('Get Shipping Receipts');
-
 		return Promise.resolve(true)
 			.then(() => this.setParameters({
 				argumentation: arguments[0],
@@ -588,9 +520,6 @@ module.exports = class RebillHelper {
 	}
 
 	acquireTransactions() {
-
-		du.debug('Acquire Transactions');
-
 		let rebill = this.parameters.get('rebill');
 
 		if (!_.has(this, 'rebillController')) {
@@ -613,9 +542,6 @@ module.exports = class RebillHelper {
 	}
 
 	getShippingReceiptIDs() {
-
-		du.debug('Get Shipping Receipt IDs');
-
 		let transactions = this.parameters.get('transactions', {fatal: false});
 
 		if (_.isNull(transactions)) {
@@ -652,9 +578,6 @@ module.exports = class RebillHelper {
 	}
 
 	acquireShippingReceipts() {
-
-		du.debug('Acquire Shipping Receipts');
-
 		let shipping_receipt_ids = this.parameters.get('shippingreceiptids', {fatal: false});
 
 		if (_.isNull(shipping_receipt_ids)) {
@@ -682,9 +605,6 @@ module.exports = class RebillHelper {
 	}
 
 	async pushRebillStateChangeEvent() {
-
-		du.debug('Pushing Rebill State Change Event');
-
 		await this.transformRebill();
 		await AnalyticsEvent.push('rebill', { transformedrebill: this.parameters.get('transformedrebill', {fatal: false})});
 		return this.parameters.get('rebill');
@@ -714,9 +634,6 @@ module.exports = class RebillHelper {
 	}
 
 	assureProductScheduleHelperController() {
-
-		du.debug('Assure Product Schedule Helper Controller');
-
 		if (!_.has(this, 'productScheduleHelperController')) {
 			const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 
@@ -730,9 +647,6 @@ module.exports = class RebillHelper {
 	isAvailable({
 		rebill
 	}) {
-
-		du.debug('Is Available');
-
 		let bill_at_timestamp = timestamp.dateToTimestamp(rebill.bill_at);
 
 		return !(timestamp.getTimeDifference(bill_at_timestamp) < 0);
@@ -740,25 +654,16 @@ module.exports = class RebillHelper {
 	}
 
 	createAlias(){
-
-		du.debug('Create Alias');
-
 		return 'R'+random.createRandomString(9);
 
 	}
 
 	getYearMonth(bill_at){
-
-		du.debug('Get Year Month');
-
 		return bill_at.substring(0,7).replace('-', '');
 
 	}
 
 	async getAvailableRebills(now = timestamp.getISO8601(), last_evaluated_key = null){
-
-		du.debug('Get Available Rebills');
-
 		if(!_.has(this, 'rebillController')){
 			const RebillController = global.SixCRM.routes.include('entities','Rebill.js');
 			this.rebillController = new RebillController();
@@ -839,9 +744,6 @@ module.exports = class RebillHelper {
 	}
 
 	calculateDayInCycle(created_at){
-
-		du.debug('Calculate Day In Cycle');
-
 		if(_.isUndefined(created_at) || _.isNull(created_at)){
 
 			created_at = null;

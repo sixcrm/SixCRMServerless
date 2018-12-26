@@ -1,7 +1,4 @@
-
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const Response = global.SixCRM.routes.include('providers', 'Response.js');
 
@@ -48,17 +45,11 @@ module.exports = class MerchantProviderResponse extends Response{
 	}
 
 	getMerchantProviderName(){
-
-		du.debug('Get Merchant Provider Name');
-
 		return objectutilities.getClassName(this).replace('Response', '');
 
 	}
 
 	handleResponse(){
-
-		du.debug('Handle Response');
-
 		this.parameters.setParameters({argumentation: arguments[0], action: 'handleResponse'});
 
 		let error = this.parameters.get('error', {fatal: false});
@@ -76,9 +67,6 @@ module.exports = class MerchantProviderResponse extends Response{
 
 				let response = vendor_response.response;
 				let body = vendor_response.body;
-
-				du.debug('Attempting to determine response code and message.', vendor_response);
-				du.debug('Parameters are.', this.parameters.store);
 
 				this.parameters.set('response', response);
 				this.parameters.set('body', body);
@@ -109,25 +97,16 @@ module.exports = class MerchantProviderResponse extends Response{
 	}
 
 	getParsedResponse(){
-
-		du.debug('Get Parsed Response');
-
 		return this.parameters.get('parsedresponse', {fatal: false});
 
 	}
 
 	setResponse(response){
-
-		du.debug('Set Response');
-
 		this.parameters.set('response', response);
 
 	}
 
 	setAllProperties({code, message}){
-
-		du.debug('Set All Properties');
-
 		this.setCode(code);
 
 		this.setMessage(message);
@@ -137,8 +116,6 @@ module.exports = class MerchantProviderResponse extends Response{
 	}
 
 	determineResultCode({vendor_response}){
-
-		du.debug('Determine Result');
 		const {response} = vendor_response;
 
 		if(_.has(response, 'statusCode')){
@@ -156,43 +133,33 @@ module.exports = class MerchantProviderResponse extends Response{
 	}
 
 	determineResultMessage(result_code){
-
-		du.debug('Determine Result Message');
-
 		return this.result_messages[result_code];
 
 	}
 
 	determineMerchantCode(vendor_response) {
 
-		du.debug('Determine Merchant Code', vendor_response);
-
 		let result = vendor_response;
 
+		result = _(vendor_response).get('body.code', result);
+		result = _(vendor_response).get('response.body.code', result);
 		result = _(vendor_response).get('statusCode', result);
 		result = _(vendor_response).get('response.statusCode', result);
 
-		du.debug('Determined Merchant Code', result);
-
 		if (typeof result !== 'string') {
-			result = JSON.stringify(result)
+			result = '';
 		}
 
 		return result;
 	}
 
-	determineMerchantMessage(vendor_response) {
-
-		du.debug('Determine Merchant Message', vendor_response);
+	determineMerchantMessage() {
 
 		return 'Unexpected response for ' + this.getCode();
 
 	}
 
 	validateVendorResponse(){
-
-		du.debug('Validate Provider Response');
-
 		let merchant_provider_name = this.getMerchantProviderName();
 		let response = this.parameters.get('response');
 
@@ -203,9 +170,6 @@ module.exports = class MerchantProviderResponse extends Response{
 	}
 
 	handleError(error){
-
-		du.debug('Handle Error');
-
 		this.setCode('error');
 
 		if(_.has(error, 'message')){
@@ -217,9 +181,6 @@ module.exports = class MerchantProviderResponse extends Response{
 	}
 
 	getResult(){
-
-		du.debug('Get Result');
-
 		return {
 			code: this.getCode(),
 			response: this.getResponse(),
@@ -229,17 +190,11 @@ module.exports = class MerchantProviderResponse extends Response{
 	}
 
 	getResponse(){
-
-		du.debug('Get Response');
-
 		return this.parameters.get('response', {fatal: false});
 
 	}
 
 	setMessage(message){
-
-		du.debug('Set Message');
-
 		this.parameters.set('message', message);
 
 		return true;
@@ -247,41 +202,25 @@ module.exports = class MerchantProviderResponse extends Response{
 	}
 
 	getMessage(){
-
-		du.debug('Get Message');
-
 		return this.parameters.get('message')
 
 	}
 
 	getMerchantMessage(){
-
-		du.debug('Get Merchant Message');
-
 		const merchantMessage = this.parameters.get('merchant_message');
-
-		du.debug(merchantMessage);
 
 		return merchantMessage
 
 	}
 
 	getMerchantCode(){
-
-		du.debug('Get Merchant Code');
-
 		const merchantCode = this.parameters.get('merchant_code');
-
-		du.debug(merchantCode);
 
 		return merchantCode
 
 	}
 
 	setCode(code){
-
-		du.debug('Set Code');
-
 		this.parameters.set('code', code);
 
 		return true;
@@ -290,23 +229,16 @@ module.exports = class MerchantProviderResponse extends Response{
 
 	setMerchantMessage(message){
 
-		du.debug('Set Merchant Message', message);
-
 		this.parameters.set('merchant_message', message)
 
 	}
 
 	setMerchantCode(code){
 
-		du.debug('Set Merchant Code', code);
-
 		this.parameters.set('merchant_code', code);
 	}
 
 	getCode(){
-
-		du.debug('Get Code');
-
 		let code = this.parameters.get('code', {fatal: false});
 
 		if(_.isNull(code)){

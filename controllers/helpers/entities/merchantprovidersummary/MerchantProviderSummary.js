@@ -1,6 +1,4 @@
-
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const numberutilities = require('@6crm/sixcrmcore/util/number-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
@@ -47,9 +45,6 @@ module.exports = class MerchantProviderSummaryHelperController {
 	}
 
 	incrementMerchantProviderSummary(){
-
-		du.debug('Increment Merchant Provider Summary');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'incrementMerchantProviderSummary'}))
 			.then(() => this.validateDay())
@@ -59,9 +54,6 @@ module.exports = class MerchantProviderSummaryHelperController {
 	}
 
 	validateDay(){
-
-		du.debug('Validate Day');
-
 		let day = this.parameters.get('day');
 
 		if(!timestamp.isToday(day, 10)){
@@ -73,9 +65,6 @@ module.exports = class MerchantProviderSummaryHelperController {
 	}
 
 	getMerchantProviderSummary(){
-
-		du.debug('Get Merchant Provider Summary');
-
 		let day = this.parameters.get('day');
 		let type = this.parameters.get('type');
 		let merchant_provider = this.parameters.get('merchantproviderid');
@@ -107,9 +96,6 @@ module.exports = class MerchantProviderSummaryHelperController {
 	}
 
 	createPrototype({merchant_provider, day, type}){
-
-		du.debug('Create Prototype');
-
 		return {
 			merchant_provider: merchant_provider,
 			day: timestamp.startOfDay(day),
@@ -121,16 +107,13 @@ module.exports = class MerchantProviderSummaryHelperController {
 	}
 
 	incrementSummary(){
-
-		du.debug('Increment Summary');
-
 		let merchant_provider_summary = this.parameters.get('merchantprovidersummary');
 		let total = this.parameters.get('total');
 
 		merchant_provider_summary.total = numberutilities.formatFloat((numberutilities.formatFloat(merchant_provider_summary.total) + numberutilities.formatFloat(total, 2)), 2);
 		merchant_provider_summary.count = merchant_provider_summary.count + 1;
 
-		return this.merchantProviderSummaryController.update({entity: merchant_provider_summary}).then(result => {
+		return this.merchantProviderSummaryController.update({entity: merchant_provider_summary, ignore_updated_at: true}).then(result => {
 			this.parameters.set('merchantprovidersummary', result);
 			return true;
 		});
@@ -138,9 +121,6 @@ module.exports = class MerchantProviderSummaryHelperController {
 	}
 
 	getMerchantProviderSummaries(){
-
-		du.debug('Get Merchant Provider Summaries');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'getMerchantProviderSummaries'}))
 			.then(() => this.acquireMerchantProviderSummaries())
@@ -149,9 +129,6 @@ module.exports = class MerchantProviderSummaryHelperController {
 	}
 
 	acquireMerchantProviderSummaries(){
-
-		du.debug('Acquire Merchant Provider Summaries');
-
 		let merchant_providers = this.parameters.get('merchantproviders');
 		let start = timestamp.startOfMonth();
 
@@ -165,9 +142,6 @@ module.exports = class MerchantProviderSummaryHelperController {
 	}
 
 	formatResponse(){
-
-		du.debug('Format Response');
-
 		let merchant_providers = this.parameters.get('merchantproviders');
 		let merchant_provider_summaries = this.parameters.get('merchantprovidersummaries', {fatal: false});
 
@@ -197,33 +171,21 @@ module.exports = class MerchantProviderSummaryHelperController {
 	}
 
 	aggregateThisMonthsSummaries(merchant_provider_summaries){
-
-		du.debug('Aggregate This Months Summaries');
-
 		return this.aggregateAfter(merchant_provider_summaries, 'this_month');
 
 	}
 
 	aggregateThisWeeksSummaries(merchant_provider_summaries){
-
-		du.debug('Aggregate This Weeks Summaries');
-
 		return this.aggregateAfter(merchant_provider_summaries, 'this_week');
 
 	}
 
 	aggregateTodaysSummaries(merchant_provider_summaries){
-
-		du.debug('Aggregate Todays Summaries');
-
 		return this.aggregateAfter(merchant_provider_summaries, 'today');
 
 	}
 
 	aggregateAfter(merchant_provider_summaries, start_indicator){
-
-		du.debug('Aggregate After');
-
 		let starts = {
 			'today': timestamp.startOfDay(),
 			'this_week': timestamp.startOfWeek(),

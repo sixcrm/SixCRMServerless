@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
 const ChannelNotification = global.SixCRM.routes.include('providers', 'notification/components/ChannelNotification.js');
@@ -15,9 +14,6 @@ module.exports = class EmailNotificationProvider extends ChannelNotification {
 	}
 
 	validateNotificationProperties(notification_properties){
-
-		du.debug('Validate Notification Properties');
-
 		global.SixCRM.validate(notification_properties, global.SixCRM.routes.path('model','providers/notifications/channels/email/notificationproperties.json'));
 
 		return true;
@@ -25,9 +21,6 @@ module.exports = class EmailNotificationProvider extends ChannelNotification {
 	}
 
 	resolveNotification(notification_object, notification_properties) {
-
-		du.debug('Resolve Notification');
-
 		let recepient = this.getRecepient(notification_properties);
 
 		let email = {
@@ -45,9 +38,6 @@ module.exports = class EmailNotificationProvider extends ChannelNotification {
 	}
 
 	getRecepient(notification_properties){
-
-		du.debug('Get Recepient');
-
 		let recepient = {
 			email: null,
 			name: null

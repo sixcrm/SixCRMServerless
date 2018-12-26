@@ -1,7 +1,5 @@
 
 var _ =  require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 
@@ -75,9 +73,6 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 	}
 
 	acquireShippingReceipt(){
-
-		du.debug('Acquire Shipping Receipt');
-
 		let shipping_receipt = this.parameters.get('shippingreceipt');
 
 		return this.shippingReceiptController.get({id: shipping_receipt.id}).then(shipping_receipt => {
@@ -91,9 +86,6 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 	}
 
 	acquireFulfillmentProvider(){
-
-		du.debug('Acquire Shipping Receipt');
-
 		let fulfillment_provider_id = this.parameters.get('fulfillmentproviderid');
 
 		return this.fulfillmentProviderController.get({id: fulfillment_provider_id}).then(fulfillment_provider => {
@@ -107,9 +99,6 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 	}
 
 	acquireRebill(){
-
-		du.debug('Acquire Rebill');
-
 		let rebill = this.parameters.get('rebill');
 
 		return this.rebillController.get({id: rebill.id}).then(() => {
@@ -120,9 +109,6 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 	}
 
 	acquireTransactions(){
-
-		du.debug('Acquire Transactions');
-
 		let rebill = this.parameters.get('rebill');
 
 		return this.rebillController.listTransactions(rebill)
@@ -135,9 +121,6 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 	}
 
 	acquireProducts(){
-
-		du.debug('Acquire Products');
-
 		let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
 
 		let product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
@@ -156,9 +139,6 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 	}
 
 	setAugmentedTransactionProducts(){
-
-		du.debug('Set Transaction Products');
-
 		let transactions = this.parameters.get('transactions');
 
 		let augmented_transaction_products = arrayutilities.map(transactions, transaction => {
@@ -183,9 +163,6 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 	}
 
 	getShipableProductIDs(){
-
-		du.debug('Get Shipable Product IDs');
-
 		let products = this.parameters.get('products');
 
 		let shipable_products = arrayutilities.filter(products, (product) => {
@@ -205,9 +182,6 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 	}
 
 	createShipableTransactionProductGroup(reship = true){
-
-		du.debug('Create Shipable Transaction Product Group');
-
 		let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
 		let shipable_product_ids = this.parameters.get('shipableproductids');
 
@@ -232,9 +206,6 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 	}
 
 	groupShipableTransactionProductGroupByFulfillmentProvider(){
-
-		du.debug('Group Shipable Transaction Product Group By Fulfillment Provider');
-
 		let shipable_transaction_products = this.parameters.get('shipabletransactionproductgroup');
 
 		let products = this.parameters.get('products');
@@ -260,9 +231,6 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 	}
 
 	respond(){
-
-		du.debug('Respond');
-
 		let response_prototype = {
 			response_type: this.parameters.get('responsecode')
 		};

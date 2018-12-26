@@ -3,13 +3,12 @@ const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const parserutilities = require('@6crm/sixcrmcore/util/parser-utilities').default;
 const random = require('@6crm/sixcrmcore/util/random').default;
 const hashutilities = require('@6crm/sixcrmcore/util/hash-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 
 const StepFunctionProvider = global.SixCRM.routes.include('providers', 'stepfunction-provider.js');
-const StateController = global.SixCRM.routes.include('entities', 'State.js');
-const StateHelperController = global.SixCRM.routes.include('helpers','entities/state/State.js');
 
 module.exports = class StateMachineHelperController {
 
@@ -19,87 +18,14 @@ module.exports = class StateMachineHelperController {
 
 	}
 
-	async getRunningExecutions({id, state}){
-
-		du.debug('Get Running Executions');
-
-		let running_executions = await this.getExecutions({id: id, state: state, status: 'RUNNING'});
-
-		if(_.isArray(running_executions) && arrayutilities.nonEmpty(running_executions)){
-			return running_executions;
-		}
-
-		return null;
-
-	}
-
-	async getExecutions({id, state, status = null}){
-
-		du.debug('Get Executions');
-
-		let known_executions = await (new StateController()).listByEntityAndState({entity: id, state: state});
-
-		if(!_.has(known_executions, 'states') || !_.isArray(known_executions.states) || !arrayutilities.nonEmpty(known_executions.states)){
-			return null;
-		}
-
-		if(!_.isNull(status)){
-			return this.filterExecutionsByStatus({executions: known_executions.states, status: status});
-		}
-
-		return known_executions;
-
-	}
-
-	async filterExecutionsByStatus({executions, status}){
-
-		du.debug('Filter Executions By Status');
-
-		if(!_.includes(["RUNNING", "SUCCEEDED", "FAILED", "TIMED_OUT", "ABORTED"], status)){
-			throw eu.getError('server', 'Unknown execution status: '+status);
-		}
-
-		const stateHelperController = new StateHelperController();
-
-		//Note:  There may be AWS throttling here...
-		let status_promises = arrayutilities.map(executions, execution => {
-			let execution_arn = stateHelperController.buildExecutionArn(execution);
-			return this.stepfunctionprovider.describeExecution({
-				executionArn: execution_arn
-			});
-		});
-
-		let stati = await Promise.all(status_promises);
-
-		let status_relevant_executions = arrayutilities.filter(stati, stati_result => {
-			return (_.has(stati_result, 'status') && stati_result.status == status);
-		});
-
-		if(_.isArray(status_relevant_executions) && arrayutilities.nonEmpty(status_relevant_executions)){
-			return arrayutilities.map(status_relevant_executions, status_relevant_execution => {
-				return arrayutilities.find(executions, execution => {
-					return (execution.execution == status_relevant_execution.name);
-				});
-			});
-		}
-
-		return null;
-
-	}
-
 	async stopExecutions(executions = null){
-
-		du.debug('Stop Executions');
-
 		if(!_.isArray(executions) || !arrayutilities.nonEmpty(executions)){
 			throw eu.getError('server', 'stopExecutions() assumes executions parameters is a non-empty array.');
 		}
 
-		const stateHelperController = new StateHelperController();
-
 		let stop_promises = arrayutilities.map(executions, (execution_id) => {
 			return this.stepfunctionprovider.stopExecution({
-				executionArn: stateHelperController.buildExecutionArn(execution_id)
+				executionArn: this.buildExecutionArn(execution_id)
 			});
 		});
 
@@ -108,9 +34,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	async startExecution({parameters, fatal = true}) {
-
-		du.debug('Start Execution');
-
 		let identifier = this.getIdentifier();
 
 		this.addName(parameters, identifier);
@@ -121,38 +44,14 @@ module.exports = class StateMachineHelperController {
 
 		this.normalizeInput(parameters);
 
-		let result = await new StateHelperController().report({
-			account: parameters.account,
-			entity: JSON.parse(parameters.input).guid,
-			name: parameters.stateMachineName,
-			step: 'Start',
-			execution: parameters.name
-		});
-
-		if(!_.isObject(result) || !_.has(result, 'id')){
-			throw eu.getError('server', 'Unable to create state machine record "Start"');
-		}
-
 		try {
 
 			return await this.stepfunctionprovider.startExecution(parameters);
 
-		}catch(error){
+		}
+		catch(error) {
 
-			let result = await new StateHelperController().report({
-				account: parameters.account,
-				entity: JSON.parse(parameters.input).guid,
-				name: parameters.stateMachineName,
-				step: 'Start Failed',
-				execution: parameters.name,
-				message: error.message
-			});
-
-			if(!_.isObject(result) || !_.has(result, 'id')){
-				throw eu.getError('server', 'Unable to create state machine record: "Start Failed"');
-			}
-
-			if(fatal == true){
+			if(fatal == true) {
 				throw error;
 			}
 
@@ -164,10 +63,29 @@ module.exports = class StateMachineHelperController {
 
 	}
 
+	buildExecutionArn(execution) {
+		if(!_.has(execution, 'name')){
+			throw eu.getError('server', 'State requires "name" property in order to build a execution ARN');
+		}
+
+		if(!_.has(execution, 'execution')){
+			throw eu.getError('server', 'State requires "execution" property in order to build a execution ARN');
+		}
+
+		const template = 'arn:aws:states:{{aws_region}}:{{aws_account}}:execution:{{state_machine_name}}:{{execution}}';
+
+		const data = {
+			aws_region: global.SixCRM.configuration.site_config.aws.region,
+			aws_account: global.SixCRM.configuration.site_config.aws.account,
+			state_machine_name: execution.name,
+			execution: execution.execution
+		};
+
+		return parserutilities.parse(template, data);
+
+	}
+
 	async addAccount(parameters){
-
-		du.debug('Add Account');
-
 		let account = await this.getAccount(parameters);
 
 		if(!_.isNull(account)){
@@ -180,9 +98,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	async getAccount(parameters /*, fatal = true*/) {
-
-		du.debug('Get Account');
-
 		if (_.has(parameters, 'account')) {
 			return parameters.account;
 		}
@@ -226,9 +141,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	getGUID(parameters, fatal = true){
-
-		du.debug('Get GUID');
-
 		let guid = null;
 
 		if (_.has(parameters, 'input') && _.has(parameters.input, 'guid')) {
@@ -248,9 +160,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	getEntityType(parameters){
-
-		du.debug('Get Entity Type');
-
 		if(_.has(parameters, 'entity_type')){
 			return parameters.entity_type;
 		}
@@ -264,9 +173,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	getEntityInputTypeFromStateMachineName(state_machine_name){
-
-		du.debug('Get Entity Input Type From State Machine');
-
 		let translation = {
 			rebill: ['Billing', 'Recovery', 'Prefulfillment', 'Fulfillment', 'Postfulfillment'],
 			shipping_receipt:['Tracking'],
@@ -286,9 +192,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	async getShippingReceipt(id, fatal = true){
-
-		du.debug('Get Shipping Receipt');
-
 		if(!_.has(this, 'shippingReceiptController')){
 			const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
 			this.shippingReceiptController = new ShippingReceiptController();
@@ -310,9 +213,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	async getRebill(id, fatal = true){
-
-		du.debug('Get Rebill');
-
 		if(!_.has(this, 'rebillController')){
 			const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 			this.rebillController = new RebillController();
@@ -334,9 +234,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	async getSession(id, fatal = true){
-
-		du.debug('Get Session');
-
 		if(!_.has(this, 'sessionController')){
 			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 			this.sessionController = new SessionController();
@@ -358,25 +255,16 @@ module.exports = class StateMachineHelperController {
 	}
 
 	addName(parameters, identifier){
-
-		du.debug('Add Name');
-
 		parameters.name = identifier;
 
 	}
 
 	addStateMachineArn(parameters){
-
-		du.debug('Add State Machine Arn');
-
 		parameters.stateMachineArn = this.stepfunctionprovider.createStateMachineARN(parameters.stateMachineName);
 
 	}
 
 	addExecutionID(parameters, identifier){
-
-		du.debug('Add Execution ID');
-
 		if(_.has(parameters, 'input')){
 			parameters.input.executionid = identifier;
 		}else{
@@ -386,9 +274,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	rectifyStateMachineNames(parameters){
-
-		du.debug('Rectify State Machine Names');
-
 		if(_.has(parameters, 'input')){
 
 			if(_.has(parameters, 'stateMachineName') && _.has(parameters.input, 'stateMachineName')){
@@ -404,9 +289,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	normalizeInput(parameters){
-
-		du.debug('Normalize Input');
-
 		if(_.has(parameters, 'input')){
 
 			if(!_.isString(parameters.input)){
@@ -418,9 +300,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	getIdentifier() {
-
-		du.debug('Get Identifier');
-
 		return hashutilities.toSHA1(random.createRandomString(20)+timestamp.now());
 
 	}

@@ -1,10 +1,8 @@
 
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 class EntityPermissionsHelper {
 	static isShared(action, acl) {
-		du.debug('Is Shared');
 		const {allow, deny} = acl;
 		const account = global.account;
 
@@ -21,7 +19,6 @@ class EntityPermissionsHelper {
 	}
 
 	static match(permission_str, {account, user, action}) {
-		du.debug('Match');
 		const [
 			source_account = '*',
 			source_user = '*',

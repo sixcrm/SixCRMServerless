@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 //const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 
@@ -10,9 +9,6 @@ module.exports = class ShippingCarrierHelperController {
 	}
 
 	determineCarrierFromTrackingNumber(tracking_number) {
-
-		du.debug('Determine Carrier From Tracking Number');
-
 		if (!_.isString(tracking_number)) {
 			throw eu.getError('server', 'Expected tracking number to be a string.');
 		}
@@ -46,9 +42,6 @@ module.exports = class ShippingCarrierHelperController {
 	}
 
 	isUSPS(tracking_number) {
-
-		du.debug('Is USPS');
-
 		let matches = tracking_number.match(/^[98][234][0-9]{20}$/g);
 
 		if (_.isArray(matches) && matches.length > 0) {
@@ -66,9 +59,6 @@ module.exports = class ShippingCarrierHelperController {
 	}
 
 	isFedEx(tracking_number) {
-
-		du.debug('Is FedEx');
-
 		let matches = tracking_number.match(/^[0-9]{12,15}$/g);
 
 		if (_.isArray(matches) && matches.length > 0) {
@@ -80,9 +70,6 @@ module.exports = class ShippingCarrierHelperController {
 	}
 
 	isUPS(tracking_number) {
-
-		du.debug('Is UPS');
-
 		let matches = tracking_number.match(/^1Z[a-z0-9]{16}$/gi);
 
 		if (_.isArray(matches) && matches.length > 0) {
@@ -118,9 +105,6 @@ module.exports = class ShippingCarrierHelperController {
 	}
 
 	isDHL(tracking_number) {
-
-		du.debug('Is DHL');
-
 		let matches = tracking_number.match(/^[0-9]{10}$/gi);
 
 		if (_.isArray(matches) && matches.length > 0) {

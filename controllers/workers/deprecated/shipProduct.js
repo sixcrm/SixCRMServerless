@@ -42,9 +42,6 @@ module.exports = class shipProductController extends workerController {
 	}
 
 	ship() {
-
-		du.debug('Ship');
-
 		let rebill = this.parameters.get('rebill');
 
 		const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
@@ -72,9 +69,6 @@ module.exports = class shipProductController extends workerController {
 	}
 
 	respond() {
-
-		du.debug('Respond');
-
 		let terminal_response = this.parameters.get('terminalresponse');
 
 		return super.respond(terminal_response.getCode());

@@ -36,8 +36,6 @@ module.exports = class AccountImages extends ResourcesController {
 	}
 
 	upload() {
-
-		du.debug('Upload');
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'upload'}))
 			.then(() => this.uploadImageToS3())
@@ -53,17 +51,11 @@ module.exports = class AccountImages extends ResourcesController {
 	}
 
 	getAccountResourcesBucketName(){
-
-		du.debug('Get Account Uploads Bucket');
-
 		return arrayutilities.compress(['sixcrm', global.SixCRM.configuration.stage, global.SixCRM.configuration.site_config.s3.account_resources_bucket],'-','');
 
 	}
 
 	getAccountImageUploadPrefix(){
-
-		du.debug('Get Account Image Upload Prefix');
-
 		let prefix = [
 			global.account,
 			'user',
@@ -75,9 +67,6 @@ module.exports = class AccountImages extends ResourcesController {
 	}
 
 	createImageFilename(base64_image, image_data){
-
-		du.debug('Create Image Filename');
-
 		let sha1 = hashutilities.toSHA1(base64_image);
 
 		let extension = imageprovider.getImageExtension(image_data);
@@ -87,9 +76,6 @@ module.exports = class AccountImages extends ResourcesController {
 	}
 
 	convertImageDataToBinary(base64_image_data){
-
-		du.debug('Convert Image Data To Binary');
-
 		return Buffer.from(base64_image_data, 'base64')
 
 	}

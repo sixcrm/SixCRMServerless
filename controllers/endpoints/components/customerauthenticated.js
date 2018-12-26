@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const AuthenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/authenticated.js');
@@ -13,9 +12,6 @@ module.exports = class CustomerAuthenticatedController extends AuthenticatedCont
 	}
 
 	async acquireSubProperties(event){
-
-		du.debug('Acquire Sub Properties');
-
 		objectutilities.hasRecursive(event, 'requestContext.authorizer.customer', true);
 
 		if(!_.has(this, 'customerController')){
@@ -49,9 +45,6 @@ module.exports = class CustomerAuthenticatedController extends AuthenticatedCont
 	}
 
 	async appendCustomerACLs(customer){
-
-		du.debug('Append Customer ALCs');
-
 		let system_customer_role, account_customer_role;
 
 		[system_customer_role, account_customer_role] = await Promise.all([
@@ -116,9 +109,6 @@ module.exports = class CustomerAuthenticatedController extends AuthenticatedCont
 	}
 
 	async getSystemCustomerRole(){
-
-		du.debug('Get System Customer Role');
-
 		if(!_.has(this, 'roleController')){
 			const RoleController = global.SixCRM.routes.include('entities', 'Role.js');
 			this.roleController = new RoleController();
@@ -131,9 +121,6 @@ module.exports = class CustomerAuthenticatedController extends AuthenticatedCont
 	}
 
 	async getAccountCustomerRole(){
-
-		du.debug('Get Account Customer Role');
-
 		return null;
 
 	}

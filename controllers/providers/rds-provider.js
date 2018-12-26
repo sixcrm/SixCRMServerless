@@ -28,9 +28,6 @@ module.exports = class RDSProvider extends AWSProvider {
 	}
 
 	createDBSubnetGroup(parameters){
-
-		du.debug('Create DB Subnet Group');
-
 		let params = objectutilities.transcribe(
 			{
 				DBSubnetGroupDescription: 'DBSubnetGroupDescription',
@@ -43,38 +40,16 @@ module.exports = class RDSProvider extends AWSProvider {
 			true
 		);
 
-		return new Promise((resolve) => {
-
-			this.rds.createDBSubnetGroup(params, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.rds.createDBSubnetGroup(params).promise();
 
 	}
 
 	describeDBSubnetGroups(parameters){
-
-		du.debug('Describe DB Subnet Groups');
-
-		return new Promise((resolve) => {
-
-			this.rds.describeDBSubnetGroups(parameters, (error, data) => {
-
-				resolve(this.tolerantCallback(error, data, false));
-
-			});
-
-		});
+		return this.rds.describeDBSubnetGroups(parameters).promise();
 
 	}
 
 	createCluster(parameters){
-
-		du.debug('Create Cluster');
-
 		let params = objectutilities.transcribe(
 			{
 				DBClusterIdentifier: 'DBClusterIdentifier',
@@ -114,18 +89,11 @@ module.exports = class RDSProvider extends AWSProvider {
 			false
 		);
 
-		return new Promise((resolve) => {
-			this.rds.createDBCluster(params, (error, data) => {
-				resolve(this.AWSCallback(error, data))
-			});
-		});
+		return this.rds.createDBCluster(params).promise();
 
 	}
 
 	describeClusters(parameters){
-
-		du.debug('Describe Clusters');
-
 		let params = objectutilities.transcribe(
 			{
 				DBClusterIdentifier:'DBClusterIdentifier',
@@ -157,9 +125,6 @@ module.exports = class RDSProvider extends AWSProvider {
 	}
 
 	putCluster(parameters){
-
-		du.debug('Put Cluster');
-
 		return this.describeClusters(parameters).then(result => {
 
 			if(arrayutilities.nonEmpty(result.DBClusters)){
@@ -174,9 +139,6 @@ module.exports = class RDSProvider extends AWSProvider {
 	}
 
 	createDBInstance(parameters){
-
-		du.debug('Create DB Instance');
-
 		let params = objectutilities.transcribe(
 			{
 				DBInstanceClass: 'DBInstanceClass',
@@ -248,9 +210,6 @@ module.exports = class RDSProvider extends AWSProvider {
 	}
 
 	putDBInstance(parameters){
-
-		du.debug('Put DB Instance');
-
 		return this.describeDBInstances(parameters).then(result => {
 
 			if(_.isObject(result) && objectutilities.hasRecursive(result, 'DBInstances.0.DBInstanceArn')){
@@ -269,9 +228,6 @@ module.exports = class RDSProvider extends AWSProvider {
 	}
 
 	describeDBInstances(parameters){
-
-		du.debug('Describe DB Instances');
-
 		let params = objectutilities.transcribe(
 			{
 				DBInstanceIdentifier: "DBInstanceIdentifier",
@@ -305,18 +261,7 @@ module.exports = class RDSProvider extends AWSProvider {
 	}
 
 	waitFor(event_name, parameters){
-
-		du.debug('Wait For');
-
-		return new Promise((resolve) => {
-
-			this.rds.waitFor(event_name, parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.rds.waitFor(event_name, parameters).promise();
 
 	}
 

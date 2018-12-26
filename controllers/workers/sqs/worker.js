@@ -16,9 +16,7 @@ module.exports = class workerController {
 	}
 
 	setPermissions(){
-
 		//Technical Debt:  This is pretty gross, we should set the user to "system@sixcrm.com"
-		du.debug('Set Permissions');
 
 		this.permissionutilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
 		this.permissionutilities.setPermissions('*',['*/*'],[])
@@ -26,9 +24,6 @@ module.exports = class workerController {
 	}
 
 	initialize(){
-
-		du.debug('Initialize');
-
 		let parameter_validation = {
 			'message': global.SixCRM.routes.path('model', 'workers/sqsmessage.json'),
 			'messages':global.SixCRM.routes.path('model', 'workers/sqsmessages.json'),
@@ -50,9 +45,6 @@ module.exports = class workerController {
 	}
 
 	augmentParameters(){
-
-		du.debug('Augment Parameters');
-
 		this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
 		this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
 
@@ -61,9 +53,6 @@ module.exports = class workerController {
 	}
 
 	preamble(message){
-
-		du.debug('Preamble');
-
 		return this.setParameters({argumentation: {message: message}, action: 'execute'})
 			.then(() => this.parseMessageBody())
 			.then(() => this.acquireRebill());
@@ -71,9 +60,6 @@ module.exports = class workerController {
 	}
 
 	setParameters(parameters_object){
-
-		du.debug('Set Parameters');
-
 		this.parameters.setParameters(parameters_object);
 
 		return Promise.resolve(true);
@@ -82,9 +68,6 @@ module.exports = class workerController {
 
 	//Technical Debt: This is kind of gross...
 	parseMessageBody(message, response_field){
-
-		du.debug('Parse Message Body');
-
 		response_field = this.setResponseField(response_field);
 		message = this.setMessage();
 
@@ -106,9 +89,6 @@ module.exports = class workerController {
 	}
 
 	setMessage(message){
-
-		du.debug('Set Message');
-
 		if(!_.isUndefined(message) && !_.isNull(message) && objectutilities.isObject(message, false)){
 			return message;
 		}
@@ -118,9 +98,6 @@ module.exports = class workerController {
 	}
 
 	setResponseField(response_field){
-
-		du.debug('Set Response Field');
-
 		if(!_.isUndefined(response_field) && !_.isNull(response_field) && stringutilities.isString(response_field, false)){
 			return response_field;
 		}
@@ -134,9 +111,6 @@ module.exports = class workerController {
 	}
 
 	acquireRebill(){
-
-		du.debug('Acquire Rebill');
-
 		let parsed_message_body = this.parameters.get('parsedmessagebody');
 
 		if(!_.has(this, 'rebillController')){
@@ -155,9 +129,6 @@ module.exports = class workerController {
 	}
 
 	acquireSession(){
-
-		du.debug('Acquire Session');
-
 		let parsed_message_body = this.parameters.get('parsedmessagebody');
 
 		if(!_.has(this, 'sessionController')){
@@ -176,9 +147,6 @@ module.exports = class workerController {
 	}
 
 	respond(response, additional_information){
-
-		du.debug('Respond');
-
 		const WorkerResponse = global.SixCRM.routes.include('controllers','workers/components/WorkerResponse.js');
 
 		response = new WorkerResponse(response);
@@ -192,9 +160,6 @@ module.exports = class workerController {
 	}
 
 	pushEvent({event_type, context, message_attributes}){
-
-		du.debug('Push Event');
-
 		let EventPushHelperController = global.SixCRM.routes.include('helpers', 'events/EventPush.js');
 		return new EventPushHelperController().pushEvent({event_type: event_type, context: context, message_attributes: message_attributes});
 

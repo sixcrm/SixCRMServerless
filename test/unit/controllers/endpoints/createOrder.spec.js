@@ -93,6 +93,14 @@ function getValidSession(id){
 	return MockEntities.getValidSession(id);
 }
 
+function getSessionWithoutProductSchedules(){
+	let session = MockEntities.getValidSession();
+	session.product_schedules = [];
+	session.watermark.product_schedules = [];
+
+	return session;
+}
+
 function getValidCampaign(id){
 	return MockEntities.getValidCampaign(id)
 }
@@ -238,7 +246,7 @@ describe('createOrder', function () {
 
 		it('successfully runs execute method', () => {
 			let event = getValidEvent();
-			let session = getValidSession();
+			let session = getSessionWithoutProductSchedules();
 			let campaign = getValidCampaign();
 			let customer = getValidCustomer();
 			let stored_creditcard = getValidCreditCard();
@@ -253,6 +261,11 @@ describe('createOrder', function () {
 
 			session.completed = false;
 			event.body = JSON.stringify(getValidEventBody(null, true));
+
+			let body = JSON.parse(event.body);
+			body.product_schedules = [body.product_schedules[0]];
+			body.product_schedules[0].product_schedule.schedule = [body.product_schedules[0].product_schedule.schedule[0]];
+			event.body = JSON.stringify(body);
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
 				get() {
@@ -432,7 +445,7 @@ describe('createOrder', function () {
 		it('successfully runs execute method if required customer fields provided', () => {
 
 			let event = getValidEvent();
-			let session = getValidSession();
+			let session = getSessionWithoutProductSchedules();
 			let campaign = getValidCampaign();
 
 			session.completed = false;
@@ -450,6 +463,11 @@ describe('createOrder', function () {
 			let account_details = getValidAccountDetails();
 
 			let user = MockEntities.getValidUser();
+
+			let body = JSON.parse(event.body);
+			body.product_schedules = [body.product_schedules[0]];
+			body.product_schedules[0].product_schedule.schedule = [body.product_schedules[0].product_schedule.schedule[0]];
+			event.body = JSON.stringify(body);
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
 				get() {
@@ -639,7 +657,7 @@ describe('createOrder', function () {
 			event.transaction_subtype = 'upsell';
 			event.body = JSON.stringify(getValidEventBody(null, true));
 
-			let session = getValidSession();
+			let session = getSessionWithoutProductSchedules();
 			let campaign = getValidCampaign();
 
 			session.completed = false;
@@ -654,6 +672,11 @@ describe('createOrder', function () {
 			let account_details = getValidAccountDetails();
 
 			let user = MockEntities.getValidUser();
+
+			let body = JSON.parse(event.body);
+			body.product_schedules = [body.product_schedules[0]];
+			body.product_schedules[0].product_schedule.schedule = [body.product_schedules[0].product_schedule.schedule[0]];
+			event.body = JSON.stringify(body);
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
 				get() {
@@ -1591,7 +1614,7 @@ describe('createOrder', function () {
 			let event = getValidEventBody(null, true);
 			let product_schedule_ids = arrayutilities.map(event.product_schedules, product_schedule_group => product_schedule_group.product_schedule);
 			let product_schedules = getValidProductSchedules(product_schedule_ids, true);
-			let session = getValidSession();
+			let session = getSessionWithoutProductSchedules();
 			let campaign = getValidCampaign();
 			let customer = getValidCustomer();
 			let stored_creditcard = getValidCreditCard();

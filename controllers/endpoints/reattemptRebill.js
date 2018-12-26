@@ -1,17 +1,19 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const permissionutilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
 
 const AccountController = require('../entities/Account');
 const AccountHelperController = require('../helpers/entities/account/Account');
 const CreditCardController = require('../entities/CreditCard');
 const CustomerController = require('../entities/Customer');
 const EventPushHelperController = require('../helpers/events/EventPush');
+const MerchantProviderSummaryHelperController = require('../helpers/entities/merchantprovidersummary/MerchantProviderSummary');
 const OrderHelperController = require('../helpers/order/Order');
 const RebillController = require('../entities/Rebill');
 const RegisterController = require('../providers/register/Register');
 const SessionController = require('../entities/Session');
+const UserController = require('../entities/User');
 const transactionEndpointController = require('../endpoints/components/transaction');
 
 const accountController = new AccountController();
@@ -19,10 +21,12 @@ const accountHelperController = new AccountHelperController();
 const creditCardController = new CreditCardController();
 const customerController = new CustomerController();
 const eventPushHelperController = new EventPushHelperController();
+const merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 const orderHelperController = new OrderHelperController();
 const rebillController = new RebillController();
 const registerController = new RegisterController();
 const sessionController = new SessionController();
+const userController = new UserController();
 
 customerController.sanitize(false);
 creditCardController.sanitize(false);
@@ -69,18 +73,23 @@ module.exports = class ReattemptRebillController extends transactionEndpointCont
 		this.initialize();
 	}
 
+	async validateAccount(event) {
+		await accountHelperController.validateAccount();
+		return event;
+	}
+
 	async execute(event) {
 		await this.preamble(event)
 		const {rebill: rebill_id, creditcard: raw_creditcard} = this.parameters.get('event');
 
 		const account = await accountController.get({id: global.account});
+		await this.useAccountingContext();
 		const rebill = await rebillController.get({id: rebill_id});
 		const session = await sessionController.get({id: rebill.parentsession});
-		let creditcard;
 		if (raw_creditcard) {
-			creditcard = await this.persistCreditCard(raw_creditcard, session.customer);
+			await this.persistCreditCard(raw_creditcard, session.customer);
 		}
-		const register_response = await this.executeBilling(rebill, creditcard);
+		const register_response = await this.executeBilling(rebill, raw_creditcard);
 		const transactions = register_response.parameters.get('transactions');
 		await this.checkAccountStanding({account, session});
 		await this.incrementMerchantProviderSummary(transactions);
@@ -98,15 +107,25 @@ module.exports = class ReattemptRebillController extends transactionEndpointCont
 		};
 	}
 
+	async useAccountingContext() {
+		permissionutilities.setGlobalAccount('3f4abaf6-52ac-40c6-b155-d04caeb0391f');
+		const user = await userController.getUserStrict('accounting@sixcrm.com');
+		userController.setGlobalUser(user);
+	}
+
 	async persistCreditCard(creditcard_attrs, customer) {
-		const creditcard = await creditCardController.assureCreditCard(creditcard_attrs, {hydrate_token: true});
+		const creditcard = await creditCardController.assureCreditCard(Object.assign({}, creditcard_attrs), {hydrate_token: true});
 		await customerController.addCreditCard(customer, creditcard);
 		return creditcard;
 	}
 
 	async executeBilling(rebill, creditcard) {
 		try {
-			return registerController.processTransaction({rebill, creditcard});
+			const parameters = {rebill};
+			if (creditcard) {
+				parameters.creditcard = creditcard;
+			}
+			return registerController.processTransaction(parameters);
 		} catch(error) {
 			throw eu.getError('server', 'Register Controller returned a error.');
 		}
@@ -128,8 +147,6 @@ module.exports = class ReattemptRebillController extends transactionEndpointCont
 	}
 
 	async incrementMerchantProviderSummary(transactions) {
-		du.debug('Increment Merchant Provider Summary');
-
 		if (_.isNull(transactions) || !arrayutilities.nonEmpty(transactions)) {
 			return;
 		}
@@ -139,7 +156,7 @@ module.exports = class ReattemptRebillController extends transactionEndpointCont
 				return;
 			}
 
-			return this.merchantProviderSummaryHelperController.incrementMerchantProviderSummary({
+			return merchantProviderSummaryHelperController.incrementMerchantProviderSummary({
 				merchant_provider: transaction.merchant_provider,
 				day: transaction.created_at,
 				total: transaction.amount,
@@ -154,7 +171,7 @@ module.exports = class ReattemptRebillController extends transactionEndpointCont
 		const response_type = register_response.parameters.get('response_type');
 		const creditcard = register_response.getCreditCard();
 
-		await eventPushHelperController().pushEvent({
+		await eventPushHelperController.pushEvent({
 			event_type: response_type === 'success' ? 'allorders' : 'decline',
 			context: {
 				campaign,

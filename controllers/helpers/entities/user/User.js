@@ -1,7 +1,5 @@
 
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
@@ -17,9 +15,6 @@ module.exports = class UserHelperController{
 	}
 
 	appendAlias(user){
-
-		du.debug('Append Alias');
-
 		if(!_.has(user, 'alias')){
 			user.alias = mungeutilities.munge(user.id);
 		}
@@ -29,9 +24,6 @@ module.exports = class UserHelperController{
 	}
 
 	getFullName(user){
-
-		du.debug('Get Full Name');
-
 		let full_name = [];
 
 		if(_.has(user, 'first_name')){
@@ -53,9 +45,6 @@ module.exports = class UserHelperController{
 	}
 
 	getAddress(user){
-
-		du.debug('Get Address');
-
 		if(_.has(user, 'address')){
 
 			return user.address;
@@ -67,9 +56,6 @@ module.exports = class UserHelperController{
 	}
 
 	getPrototypeUser(email){
-
-		du.debug('Get Prototype User');
-
 		let prototype_user = {
 			id: email,
 			name: email,
@@ -83,9 +69,6 @@ module.exports = class UserHelperController{
 	}
 
 	async createProfile(email){
-
-		du.debug('Create Profile');
-
 		if(!stringutilities.isEmail(email)){
 			throw eu.getError('server', 'Email is not a email: "'+email+'".');
 		}
@@ -116,9 +99,6 @@ module.exports = class UserHelperController{
 	}
 
 	buildCreateProfilePrototypes(email){
-
-		du.debug('Build Create Profile Prototypes');
-
 		if(!_.has(this, 'userSettingHelperController')){
 			const UserSettingHelperController = global.SixCRM.routes.include('helpers', 'entities/usersetting/UserSetting.js');
 			this.userSettingHelperController = new UserSettingHelperController();
@@ -135,9 +115,6 @@ module.exports = class UserHelperController{
 	}
 
 	async saveCreateProfilePrototypes({prototype_user, prototype_user_setting}){
-
-		du.debug('Save Create Profile Prototypes');
-
 		if(!_.has(this, 'userSettingController')){
 			const UserSettingController = global.SixCRM.routes.include('entities', 'UserSetting.js');
 			this.userSettingController = new UserSettingController();
@@ -164,9 +141,6 @@ module.exports = class UserHelperController{
 	}
 
 	validateSaveCreateProfilePrototypes(argumentation){
-
-		du.debug('Validate Save Create Profile Prototypes');
-
 		global.SixCRM.validate(argumentation, global.SixCRM.routes.path('model','helpers/entities/user/createprofileelements.json'));
 
 		return argumentation;
@@ -174,9 +148,6 @@ module.exports = class UserHelperController{
 	}
 
 	async introspection(user, fatal = false){
-
-		du.debug('Introspection');
-
 		user = await this.setIntrospectionUser(user, fatal);
 		user = await this.rectifyUserTermsAndConditions(user);
 		user = await this.rectifyAuth0Id(user);
@@ -189,9 +160,6 @@ module.exports = class UserHelperController{
 	}
 
 	async rectifyAuth0Id(user){
-
-		du.debug('Rectify Auth0 ID');
-
 		if(!_.has(user, 'auth0_id') || !stringutilities.nonEmpty(user.auth0_id)){
 
 			let auth0_id = this.getAuth0IdFromRequest();
@@ -216,9 +184,6 @@ module.exports = class UserHelperController{
 	}
 
 	getAuth0IdFromRequest(){
-
-		du.debug('Get Auth0 ID From Request');
-
 		if(objectutilities.hasRecursive(global.SixCRM.configuration, 'event.Headers.Authorization') && stringutilities.nonEmpty(global.SixCRM.configuration.event.Headers.Authorization)){
 
 			let jwtprovider = new JWTProvider().setJWTType('site');
@@ -234,9 +199,6 @@ module.exports = class UserHelperController{
 
 
 	async setIntrospectionUser(user, fatal = true){
-
-		du.debug('Set Introspection User');
-
 		if(_.isUndefined(user) || _.isNull(user)){
 
 			if(fatal){
@@ -264,9 +226,6 @@ module.exports = class UserHelperController{
 	}
 
 	async rectifyUserTermsAndConditions(user){
-
-		du.debug('Rectify User Terms and Conditions');
-
 		let {user_tncs, owner_tncs} = await this.getMostRecentTermsAndConditionsDocuments();
 
 		if (user_tncs.version !== user.termsandconditions) {
@@ -291,9 +250,6 @@ module.exports = class UserHelperController{
 	}
 
 	getMostRecentTermsAndConditionsDocuments(){
-
-		du.debug('Get Most Recent Terms and Conditions Documents');
-
 		if(!_.has(this, 'termsAndConditionsController')){
 			const TermsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
 			this.termsAndConditionsController = new TermsAndConditionsController();
@@ -322,9 +278,6 @@ module.exports = class UserHelperController{
 	}
 
 	async applyUserSettings(user){
-
-		du.debug('Apply User Settings');
-
 		if(!_.has(this, 'userSettingController')){
 			const UserSettingController = global.SixCRM.routes.include('entities', 'UserSetting.js');
 			this.userSettingController = new UserSettingController();

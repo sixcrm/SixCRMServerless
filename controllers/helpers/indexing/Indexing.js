@@ -1,7 +1,5 @@
 
 const _ =  require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 
@@ -24,9 +22,6 @@ module.exports = class IndexingHelperController {
 
 	//Entrypoint
 	createIndexingDocument(index_elements){
-
-		du.debug('Creating Indexing Document');
-
 		this.validateIndexElements(index_elements);
 
 		let indexing_document_elements = arrayutilities.map(index_elements, (index_element) => {
@@ -39,9 +34,6 @@ module.exports = class IndexingHelperController {
 	}
 
 	setOptionalFields(){
-
-		du.debug('Set Optional Fields');
-
 		let optional_fields = global.SixCRM.routes.include('model','helpers/indexing/indexelement.json').properties;
 
 		objectutilities.map(optional_fields, optional_field => {
@@ -53,9 +45,6 @@ module.exports = class IndexingHelperController {
 	}
 
 	transcribeDocument(index_element){
-
-		du.debug('Transcribe Document');
-
 		let required = objectutilities.transcribe(this.document_transcription.required, index_element, {}, true);
 
 		let fields = objectutilities.transcribe(this.document_transcription.optional, index_element, {});
@@ -69,9 +58,6 @@ module.exports = class IndexingHelperController {
 	}
 
 	validateParsedDocument(parsed_document){
-
-		du.debug('Validate Parsed Document');
-
 		global.SixCRM.validate(parsed_document, global.SixCRM.routes.path('model','workers/indexEntities/rawdocument.json'));
 
 		return parsed_document;
@@ -79,9 +65,6 @@ module.exports = class IndexingHelperController {
 	}
 
 	createIndexDocument(index_element){
-
-		du.debug('Create Index Document');
-
 		return Promise.resolve(index_element)
 			.then((index_element) => this.validateIndexElement(index_element))
 			.then((index_element) => this.transcribeDocument(index_element))
@@ -91,17 +74,11 @@ module.exports = class IndexingHelperController {
 	}
 
 	packageDocument(processed_document){
-
-		du.debug('Package Document');
-
 		return JSON.stringify(processed_document);
 
 	}
 
 	validateIndexElement(index_element){
-
-		du.debug('Validate Index Element');
-
 		global.SixCRM.validate(index_element, global.SixCRM.routes.path('model', 'helpers/indexing/indexelement.json'));
 
 		return index_element;
@@ -109,9 +86,6 @@ module.exports = class IndexingHelperController {
 	}
 
 	validateIndexElements(index_elements){
-
-		du.debug('Validate Index Elements');
-
 		global.SixCRM.validate(index_elements, global.SixCRM.routes.path('model', 'helpers/indexing/indexelements.json'));
 
 		return index_elements;
@@ -120,9 +94,6 @@ module.exports = class IndexingHelperController {
 
 	//Technical Debt:  Refactor
 	assureSuggesterFields(processed_document){
-
-		du.debug('Assuring Suggester Fields', processed_document);
-
 		if(_.has(processed_document, 'fields')){
 
 			//Technical Debt:  In the case that a entity has more than one of these filelds, there will be overwriting...
@@ -169,19 +140,12 @@ module.exports = class IndexingHelperController {
 
 		}
 
-		//du.debug('Updated document:', processed_document);
-
 		return processed_document;
 
 	}
 
 	//Technical Debt:  Refactor
 	deserializeAddress(processed_document){
-
-		du.debug('Deserialize Address');
-
-		du.debug('Document to deserialize:', processed_document);
-
 		if(_.has(processed_document, 'fields') && _.has(processed_document.fields, 'address')){
 
 			let address_object = processed_document.fields.address;

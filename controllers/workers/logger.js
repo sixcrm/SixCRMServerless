@@ -14,9 +14,6 @@ module.exports = class LoggerController {
 	}
 
 	processLog(input) {
-
-		du.debug('Process Log');
-
 		return Promise.resolve()
 			.then(() => this.unpackData(input))
 			.then((unpacked_data) => this.transformData(unpacked_data))
@@ -34,9 +31,6 @@ module.exports = class LoggerController {
 	}
 
 	unpackData(input) {
-
-		du.debug('Unpack Data');
-
 		let zipped_data = new Buffer(input.awslogs.data, 'base64');
 
 		return compressionutilities.gunzip(zipped_data).then((unzipped_data) => JSON.parse(unzipped_data));
@@ -44,9 +38,6 @@ module.exports = class LoggerController {
 	}
 
 	transformData(data) {
-
-		du.debug('Transform Data');
-
 		if (data.messageType === 'CONTROL_MESSAGE') {
 			throw eu.getError('control', 'Control Message');
 		}
@@ -89,9 +80,6 @@ module.exports = class LoggerController {
 	}
 
 	postData(transformed_data) {
-
-		du.debug('Post Data');
-
 		let esClient = new elasticsearch.Client({
 			host: this.elasticsearch_endpoint,
 			connectionClass: require('http-aws-es')
@@ -104,9 +92,6 @@ module.exports = class LoggerController {
 	}
 
 	transformResponse(response) {
-
-		du.debug('Transform Response');
-
 		if (response.errors) {
 
 			const failedItems = _.filter(response.items, (item) => _.has(item, 'error'));

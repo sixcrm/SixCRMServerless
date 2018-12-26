@@ -21,9 +21,6 @@ module.exports = class DownloadController {
 	}
 
 	resolveDownload(parameters, data_acquisition_function){
-
-		du.debug('Resolve Download');
-
 		this.setDownloadParameters(parameters);
 
 		return data_acquisition_function().then((data) => {
@@ -39,9 +36,6 @@ module.exports = class DownloadController {
 	}
 
 	setDownloadHeaders(transformed_data){
-
-		du.debug('Set Download Headers');
-
 		let response_headers = {};
 
 		let content_length = this.calculateContentLength(transformed_data);
@@ -63,9 +57,6 @@ module.exports = class DownloadController {
 	}
 
 	createFileName(){
-
-		du.debug('Create File Name');
-
 		let name = randomutilities.createRandomString(10).toLowerCase();
 		let extension = this.getFileExtension();
 
@@ -74,9 +65,6 @@ module.exports = class DownloadController {
 	}
 
 	getFileExtension(){
-
-		du.debug('Get File Extension');
-
 		if(this.download_parameters.type == 'json'){
 			return '.json';
 		}else if(this.download_parameters.type == 'csv'){
@@ -90,17 +78,11 @@ module.exports = class DownloadController {
 	}
 
 	calculateContentLength(content){
-
-		du.debug('Calculate Content Length');
-
 		return Buffer.byteLength(content.toString(), 'utf8');
 
 	}
 
 	setDownloadParameters(parameters){
-
-		du.debug('Set Download Parameters');
-
 		if(!_.isObject(parameters)){
 
 			throw eu.getError('bad_request','Invalid download parameter type.');
@@ -124,9 +106,6 @@ module.exports = class DownloadController {
 	}
 
 	transformData(data){
-
-		du.debug('Transform Data');
-
 		if(this.download_parameters.type == 'json'){
 
 			return JSON.stringify(data);
@@ -146,9 +125,6 @@ module.exports = class DownloadController {
 	}
 
 	recurseForArray(data){
-
-		du.debug('Recurse For Data');
-
 		let discovered_data = objectutilities.recurseByDepth(data, function(key, value){
 
 			return _.isArray(value);
@@ -166,9 +142,6 @@ module.exports = class DownloadController {
 	}
 
 	JSONToCSV(data){
-
-		du.debug('JSON to CSV');
-
 		let data_array = this.recurseForArray(data);
 
 		if(_.isNull(data_array)){
@@ -182,9 +155,6 @@ module.exports = class DownloadController {
 	}
 
 	JSONToExcel(data){
-
-		du.debug('JSON To Excel');
-
 		let data_array = this.recurseForArray(data);
 
 		if(_.isNull(data_array)){

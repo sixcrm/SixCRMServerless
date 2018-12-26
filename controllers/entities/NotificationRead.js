@@ -1,6 +1,3 @@
-
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -14,9 +11,6 @@ module.exports = class NotificationReadController extends entityController {
      * Save the time the current user has seen the notifications for the current account.
      */
 	markNotificationsAsSeen() {
-
-		du.debug('Mark Notifications As Seen');
-
 		return this.getOrCreateNotificationRead().then(notification_read => {
 
 			return this.touch({entity: notification_read});
@@ -30,9 +24,6 @@ module.exports = class NotificationReadController extends entityController {
      * database - create one.
      */
 	getLastSeenTime() {
-
-		du.debug('Get Last Seen Time');
-
 		return this.getOrCreateNotificationRead().then(notification_read => {
 			return notification_read.updated_at;
 		});
@@ -40,9 +31,6 @@ module.exports = class NotificationReadController extends entityController {
 	}
 
 	getNotificationRead() {
-
-		du.debug('Get Notification Read');
-
 		//Technical Debt:  Use controller methods to acquire these...
 		let user_id = global.user.id;
 		let account_id = global.account;
@@ -72,9 +60,6 @@ module.exports = class NotificationReadController extends entityController {
 	}
 
 	buildNotificationReadObject(){
-
-		du.debug('Build Notification Read Object')
-
 		//Technical Debt:  Acquire these with controller methods
 		return {
 			user: global.user.id,
@@ -84,9 +69,6 @@ module.exports = class NotificationReadController extends entityController {
 	}
 
 	getOrCreateNotificationRead() {
-
-		du.debug('Get Or Create Notification Read');
-
 		return this.getNotificationRead().then(response => {
 
 			if (!response) {

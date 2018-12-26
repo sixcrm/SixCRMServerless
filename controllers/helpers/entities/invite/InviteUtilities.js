@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const parserutilities = require('@6crm/sixcrmcore/util/parser-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
@@ -17,9 +16,6 @@ module.exports = class InviteUtilities extends HelperController{
 	}
 
 	async executeSendInviteEmail(invite_object){
-
-		du.debug('Execute Send Invite Email');
-
 		const link = await this._createInviteLink(invite_object);
 		const sent = await this._sendEmailToInvitedUser(invite_object, link);
 
@@ -32,9 +28,6 @@ module.exports = class InviteUtilities extends HelperController{
 	}
 
 	async _createInviteLink(invite_object){
-
-		du.debug('Create Invite Link');
-
 		let inviteController = new InviteController();
 
 		const invite = await inviteController.create({entity: invite_object});
@@ -44,9 +37,6 @@ module.exports = class InviteUtilities extends HelperController{
 	}
 
 	_buildInviteLink(hash){
-
-		du.debug('Build Invite Link');
-
 		let link_tokens = {
 			api_domain: global.SixCRM.configuration.getSubdomainPath('admin'),
 			hash: hash
@@ -59,9 +49,6 @@ module.exports = class InviteUtilities extends HelperController{
 	}
 
 	async _sendEmailToInvitedUser(invite_object, link){
-
-		du.debug('Send Email to Invited User');
-
 		let email = {
 			recepient_emails: [invite_object.email],
 			recepient_name: 'Welcome to {{site.name}}',

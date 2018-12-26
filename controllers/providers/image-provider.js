@@ -13,9 +13,6 @@ module.exports = class ImageProvider {
 
 
 	getImageMetadata(image_data){
-
-		du.debug('Get Image Metadata');
-
 		let image_metadata;
 
 		try{
@@ -43,17 +40,11 @@ module.exports = class ImageProvider {
 	}
 
 	getImageMimeType(image_data){
-
-		du.debug('Get Image Mime Type');
-
 		return this.getImageMetadata(image_data).mime;
 
 	}
 
 	getImageExtension(image_data){
-
-		du.debug('Get Image Extension');
-
 		return this.getImageMetadata(image_data).ext;
 
 	}

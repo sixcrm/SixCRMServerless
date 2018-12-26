@@ -34,9 +34,6 @@ module.exports = class AccountHelperController {
 	}
 
 	getAccountPrototype({account}){
-
-		du.debug('getAccountPrototype');
-
 		const prototype = {
 			active: true
 		};
@@ -53,9 +50,6 @@ module.exports = class AccountHelperController {
 	}
 
 	async createNewAccount({account}){
-
-		du.debug('New Account');
-
 		if(!_.has(global, 'user')){
 			throw eu.getError('server', 'User not set.');
 		}
@@ -82,9 +76,6 @@ module.exports = class AccountHelperController {
 	}
 
 	isAccountLimited(account){
-
-		du.debug('Is Account Limited');
-
 		du.info(account);
 
 		if(!_.has(account, 'billing')){
@@ -104,9 +95,6 @@ module.exports = class AccountHelperController {
 	}
 
 	isAccountDisabled(account){
-
-		du.debug('Is Account Disabled');
-
 		du.info(account);
 
 		if(!_.has(account, 'billing')){
@@ -125,9 +113,6 @@ module.exports = class AccountHelperController {
 	}
 
 	getPrototypeAccount(email){
-
-		du.debug('Create Prototype Account');
-
 		let account_id = stringutilities.getUUID();
 
 		let proto_account = {
@@ -141,9 +126,6 @@ module.exports = class AccountHelperController {
 	}
 
 	async validateAccount(account = null, fatal = true){
-
-		du.debug('Validate Account');
-
 		if(_.isNull(account)){
 			if(!_.has(global, 'account')){
 				throw eu.getError('server', 'Global missing account variable.');
@@ -162,9 +144,6 @@ module.exports = class AccountHelperController {
 	}
 
 	async activateAccount({account, session}){
-
-		du.debug('Activate Account');
-
 		session = await this._getSession(session);
 		account = await this._getAccount(account, true);
 
@@ -193,9 +172,6 @@ module.exports = class AccountHelperController {
 	}
 
 	async deactivateAccount({account}){
-
-		du.debug('Deactivate Account');
-
 		account = await this._getAccount(account);
 
 		if(!_.has(account, 'billing')){
@@ -263,9 +239,6 @@ module.exports = class AccountHelperController {
 	}
 
 	async limitAccount({account}){
-
-		du.debug('Limit Account');
-
 		account = await this._getAccount(account);
 
 		if(!_.has(account, 'billing')){
@@ -303,8 +276,6 @@ module.exports = class AccountHelperController {
 	}
 
 	async scheduleDeactivation(account) {
-		du.debug('Schedule Deactivation');
-
 		account = await this._getAccount(account);
 
 		if(!_.has(account, 'billing')){
@@ -328,10 +299,7 @@ module.exports = class AccountHelperController {
 	}
 
 	async cancelDeactivation({account}){
-
-		du.debug('Deactivate Account');
-
-		account = await this._getAccount(account);
+		account = await this._getAccount(account, true);
 
 		if(!_.has(account, 'billing')){
 			throw eu.getError('server', 'Account does not have a billing property.');
@@ -365,9 +333,7 @@ module.exports = class AccountHelperController {
 
 	}
 
-	async restoreAccount({account}){
-		du.debug('Restore Account');
-
+	async restoreAccount(account, new_session){
 		account = await this._getAccount(account);
 
 		if(!_.has(account, 'billing')){
@@ -381,6 +347,7 @@ module.exports = class AccountHelperController {
 		delete account.billing.limited_at;
 		delete account.billing.deactivated_at;
 		delete account.billing.deactivation_id;
+		account.billing.session = new_session.id;
 
 		if(!_.has(this, 'accountController')){
 			this.accountController = new AccountController();
@@ -396,9 +363,6 @@ module.exports = class AccountHelperController {
 	}
 
 	async upgradeAccount({account, plan}){
-
-		du.debug('Upgrade Account');
-
 		account = await this._getAccount(account);
 
 		if(!_.has(account, 'billing')){
@@ -428,7 +392,7 @@ module.exports = class AccountHelperController {
 
 	}
 
-	async getAccountForCustomer(customer) {
+	async getAccountForCustomer(customer_id) {
 		if (!_.has(this, 'sessionController')) {
 			this.sessionController = new SessionController();
 		}
@@ -440,7 +404,7 @@ module.exports = class AccountHelperController {
 		const {session} = await this.sessionController.getBySecondaryIndex({
 			field: 'customer',
 			index_name: 'customer-index',
-			index_value: customer.id,
+			index_value: customer_id,
 			query_parameters: {
 				filter_expression: '#account = :billingaccount AND not_exists(#cancelled) AND not_exists(#concluded)',
 				expression_attribute_names: {
@@ -479,8 +443,6 @@ module.exports = class AccountHelperController {
 	}
 
 	async _billNewPlan({account, plan}){
-
-		du.debug('Bill New Plan');
 		du.info(account, plan);
 		//Technical Debt:  Complete me.
 		return null;
@@ -488,9 +450,6 @@ module.exports = class AccountHelperController {
 	}
 
 	_isUpgrade({plan, account}){
-
-		du.debug('Is Upgrade');
-
 		if(plan == 'basic'){
 			return false;
 		}
@@ -508,9 +467,6 @@ module.exports = class AccountHelperController {
 	}
 
 	async _getAccount(account_id, disable_acls = false){
-
-		du.debug('Get Account');
-
 		if(!_.has(this, 'accountController')){
 			this.accountController = new AccountController();
 		}
@@ -528,9 +484,6 @@ module.exports = class AccountHelperController {
 	}
 
 	async _getSession(session_id){
-
-		du.debug('Get Account');
-
 		if(!_.has(this, 'sessionController')){
 			this.sessionController = new SessionController();
 		}
@@ -574,9 +527,6 @@ module.exports = class AccountHelperController {
 
 	//Technical Debt:  This belongs in the Session Helper
 	_getSessionSubscriptionProducts({session}){
-
-		du.debug('Get Session Subscription Products');
-
 		let products = [];
 
 		if(objectutilities.hasRecursive(session, 'watermark.product_schedules') && arrayutilities.nonEmpty(session.watermark.product_schedules)){
@@ -606,9 +556,6 @@ module.exports = class AccountHelperController {
 	}
 
 	async _validateSessionForAccountActivation({session, account}){
-
-		du.debug('Validate Session For Account Activation');
-
 		if(session.account !== this._getSixCRMBillingAccountIdentifier()){
 			throw eu.getError('bad_request', 'Session is inappropriate for account activation');
 		}
@@ -622,9 +569,6 @@ module.exports = class AccountHelperController {
 	}
 
 	async _validateSessionPaymentHistory({session}){
-
-		du.debug('Validate Session Payment History');
-
 		if(!_.has(this, 'rebillController')){
 			this.rebillController = new RebillController();
 		}
@@ -681,9 +625,6 @@ module.exports = class AccountHelperController {
 	}
 
 	_sumRebillTransactions(transactions){
-
-		du.debug('Sum Rebill Transactions');
-
 		let sum = 0.00;
 		arrayutilities.map(transactions, transaction => {
 			if(transaction.result == 'success' && transaction.type == 'sale'){
@@ -696,17 +637,11 @@ module.exports = class AccountHelperController {
 	}
 
 	_getSixCRMBillingAccountIdentifier(){
-
-		du.debug('Get SixCRM Billing Account Identifier');
-
 		return '3f4abaf6-52ac-40c6-b155-d04caeb0391f';
 
 	}
 
 	async _validateSessionCustomerForAccountActivation({session, account}){
-
-		du.debug('Validate Session Customer For Account Activation');
-
 		if(!_.has(this, 'sessionController')){
 			this.sessionController = new SessionController();
 		}
@@ -728,9 +663,6 @@ module.exports = class AccountHelperController {
 	}
 
 	async getAccountOwner({account}){
-
-		du.debug('Get Account Owner');
-
 		if(!_.has(this, 'userACLController')){
 			this.userACLController = new UserACLController();
 		}
@@ -753,17 +685,11 @@ module.exports = class AccountHelperController {
 
 	//This should exist in the Role Helper
 	_getOwnerRoleId(){
-
-		du.debug('Get Owner Role ID');
-
 		return 'cae614de-ce8a-40b9-8137-3d3bdff78039';
 
 	}
 
 	async _validateSessionWatermarkForAccountActivation({session}){
-
-		du.debug('Validate Session Watermark For Account Activation');
-
 		let subscription_products = this._getSessionSubscriptionProducts({session});
 
 		if(!arrayutilities.nonEmpty(subscription_products)){

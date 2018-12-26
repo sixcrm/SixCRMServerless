@@ -8,9 +8,6 @@ const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').
 module.exports = class AuroraSchemaDeployment {
 
 	async deploy(options = {}) {
-
-		du.debug('AuroraSchemaDeployment.deploy()');
-
 		return auroraContext.withConnection(async (connection) => {
 
 			const migrations = await this._getVersionDirectories(connection, options);
@@ -23,9 +20,6 @@ module.exports = class AuroraSchemaDeployment {
 	}
 
 	async destroy() {
-
-		du.debug('AuroraSchemaDeployment.destroy()');
-
 		return auroraContext.withConnection(async (connection) => {
 
 			return this._executeQuery(connection, 'DROP SCHEMA IF EXISTS analytics CASCADE');
@@ -39,9 +33,6 @@ module.exports = class AuroraSchemaDeployment {
 		in the configuration, and then run them sequentially
 	*/
 	async _getVersionDirectories(connection, options) {
-
-		du.debug('AuroraSchemaDeployment._getVersionDirectories()');
-
 		const release = global.SixCRM.configuration.site_config.aurora.release;
 
 		const results = await fileutilities.getDirectories(global.SixCRM.routes.path('deployment', 'aurora/migrations'));

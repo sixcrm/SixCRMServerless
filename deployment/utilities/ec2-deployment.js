@@ -21,9 +21,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	deployEndpoints() {
-
-		du.debug('Deploy Endpoints');
-
 		const endpoints = this.getConfigurationJSON('endpoints');
 
 		let endpoint_promises = arrayutilities.map(endpoints, (endpoint_definition) => {
@@ -39,9 +36,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	deployEndpoint(endpoint_definition) {
-
-		du.debug('Deploy Endpoint');
-
 		return this.endpointExists(endpoint_definition).then(endpoint => {
 			if (_.isNull(endpoint)) {
 				du.info('Creating endpoint: ', endpoint_definition);
@@ -55,9 +49,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	endpointExists(endpoint_definition) {
-
-		du.debug('Endpoint Exists');
-
 		return this.setVPC(endpoint_definition.VpcName)
 			.then(() => {
 
@@ -98,9 +89,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	createEndpoint(endpoint_definition) {
-
-		du.debug('Create Endpoint');
-
 		return this.setVPC(endpoint_definition.VpcName)
 			.then(() => {
 				endpoint_definition.VpcId = this.vpc.VpcId;
@@ -171,9 +159,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	deployVPCs() {
-
-		du.debug('Deploy VPCs');
-
 		const vpcs = this.getConfigurationJSON('vpcs');
 
 		let vpc_promises = arrayutilities.map(vpcs, (vpc_definition) => {
@@ -189,9 +174,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	deployVPC(vpc_definition) {
-
-		du.debug('Deploy VPC');
-
 		//Technical Debt:  If default changes, need to account for that here...
 		//Note:  There are lots of things that get associated with VPCs that aren't accounted for here...
 		//NetworkACLs
@@ -212,9 +194,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	createVPC(vpc_definition) {
-
-		du.debug('Create VPC');
-
 		return Promise.resolve()
 			.then(() => {
 
@@ -236,9 +215,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	VPCExists(vpc_definition) {
-
-		du.debug('VPCExists');
-
 		const argumentation = {
 			Filters: [{
 				Name: 'tag:Name',
@@ -265,9 +241,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	deployInternetGateways() {
-
-		du.debug('Deploy Internet Gateways');
-
 		const internet_gateways = this.getConfigurationJSON('internet_gateways');
 
 		let ig_promises = arrayutilities.map(internet_gateways, (ig) => {
@@ -283,9 +256,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	deployInternetGateway(ig_definition) {
-
-		du.debug('Deploy Internet Gateway');
-
 		return this.gatewayExists(ig_definition).then(result => {
 
 			if (_.isNull(result)) {
@@ -313,9 +283,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	attachInternetGateway(internet_gateway) {
-
-		du.debug('Attach Internet Gateway');
-
 		let argumentation = {
 			InternetGatewayId: internet_gateway.InternetGatewayId,
 			VpcId: this.vpc.VpcId
@@ -326,9 +293,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	createInternetGateway(ig_definition) {
-
-		du.debug('Create Internet Gateway');
-
 		return this.ec2provider.createInternetGateway().then(result => {
 			return this.nameEC2Resource(result.InternetGateway.InternetGatewayId, ig_definition.Name).then(() => {
 				du.info('Internet Gateway Created: ' + ig_definition.Name);
@@ -339,9 +303,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	gatewayExists(ig_definition) {
-
-		du.debug('Gateway Exists');
-
 		const argumentation = {
 			Filters: [{
 				Name: 'tag:Name',
@@ -365,9 +326,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	deployRouteTables() {
-
-		du.debug('Deploy Route Tables');
-
 		const route_tables = this.getConfigurationJSON('route_tables');
 
 		return this.setVPC('sixcrm').then(() => {
@@ -387,9 +345,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	deployRouteTable(route_table_definition) {
-
-		du.debug('Deploy Route Table');
-
 		return this.routeTableExists(route_table_definition).then((result) => {
 
 			if (_.isNull(result)) {
@@ -463,9 +418,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	deployRoute(route_table, route_definition) {
-
-		du.debug('Deploy Route');
-
 		//Technical Debt:  Need to enable other named properties to be hydrated here...
 		let associated_id_promises = [];
 
@@ -520,9 +472,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	createRouteTable(route_table_definition) {
-
-		du.debug('Create Route Table');
-
 		let argumentation = {
 			VpcId: this.vpc.VpcId
 		};
@@ -542,9 +491,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	routeTableExists(route_table_definition) {
-
-		du.debug('Route Table Exists');
-
 		const argumentation = {
 			Filters: [{
 				Name: 'tag:Name',
@@ -577,9 +523,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	deployNATs() {
-
-		du.debug('Deploy NATs');
-
 		const nats = this.getConfigurationJSON('nats');
 
 		let nat_promises = arrayutilities.map(nats, (nat) => {
@@ -595,9 +538,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	deployNAT(nat_definition) {
-
-		du.debug('Deploy NAT');
-
 		return this.NATExists(nat_definition).then(result => {
 			if (_.isNull(result)) {
 				du.info('NAT does not exist: ' + nat_definition.Name);
@@ -612,9 +552,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	createNAT(nat_definition) {
-
-		du.debug('Create NAT');
-
 		let associated_properties_promises = [
 			this.EIPExists({
 				Name: nat_definition.AllocationName
@@ -665,9 +602,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	NATExists(nat_definition) {
-
-		du.debug('NAT Exists');
-
 		let argumentation = {
 			Filter: [{
 				Name: "tag:Name",
@@ -701,9 +635,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	deployEIPs() {
-
-		du.debug('Deploy EIPs');
-
 		const eips = this.getConfigurationJSON('eips');
 
 		let eip_promises = arrayutilities.map(eips, (eip) => {
@@ -719,9 +650,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	deployEIP(eip_definition) {
-
-		du.debug('Deploy EIP');
-
 		return this.EIPExists(eip_definition).then(result => {
 
 			if (_.isNull(result)) {
@@ -739,9 +667,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	createEIP(eip_definition) {
-
-		du.debug('Create EIP');
-
 		let parameters = objectutilities.transcribe({
 			"Domain": "Domain"
 		},
@@ -762,9 +687,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	EIPExists(eip_definition) {
-
-		du.debug('EIP Exists');
-
 		let argumentation = {
 			Filters: [{
 				Name: "domain",
@@ -802,9 +724,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	deploySubnets() {
-
-		du.debug('Deploy Subnets');
-
 		const subnets = this.getConfigurationJSON('subnets');
 
 		return this.setVPC('sixcrm').then(() => {
@@ -824,9 +743,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	setVPC(vpc_name = null) {
-
-		du.debug('Set VPC');
-
 		let argumentation = {
 			Filters: [{
 				Name: 'isDefault',
@@ -871,9 +787,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	deploySubnet(subnet_definition) {
-
-		du.debug('Deploy Subnet');
-
 		return this.subnetExists(subnet_definition).then(subnet => {
 
 			if (_.isNull(subnet)) {
@@ -890,9 +803,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	subnetExists(subnet_definition) {
-
-		du.debug('Subnet Exists');
-
 		let argumentation = {
 			Filters: [{
 				Name: 'tag:Name',
@@ -925,9 +835,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	createSubnet(subnet_definition) {
-
-		du.debug('Create Subnet');
-
 		let vpc_cidr_array = this.vpc.CidrBlock.split('.');
 		subnet_definition.CidrBlock = parserutilities.parse(subnet_definition.CidrBlock, {
 			'vpc.cidr.1': vpc_cidr_array[0],
@@ -949,9 +856,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	nameEC2Resource(resource_identifier, name, count = 0) {
-
-		du.debug('Name EC2 Resource');
-
 		let argumentation = {
 			Resources: [
 				resource_identifier
@@ -981,9 +885,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	updateSubnet(subnet, subnet_definition) {
-
-		du.debug('Update Subnet');
-
 		du.info('This feature is currently not supported.');
 
 		du.info(subnet, subnet_definition);
@@ -993,9 +894,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	deploySecurityGroups() {
-
-		du.debug('Deploy Security Groups');
-
 		let security_groups = this.getConfigurationJSON('security_groups');
 
 		return this.setVPC('sixcrm').then(() => {
@@ -1015,17 +913,11 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	securityGroupExists(parameters) {
-
-		du.debug('EC2Deployment.securityGroupExists()');
-
 		return this.ec2provider.securityGroupExists(parameters);
 
 	}
 
 	deploySecurityGroup(security_group_definition) {
-
-		du.debug('Deploy Security Group');
-
 		security_group_definition.VpcId = this.vpc.VpcId;
 
 		du.info(security_group_definition);
@@ -1086,9 +978,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	createIngressParameterGroup(security_group_definition) {
-
-		du.debug('Create Ingress Parameter Group');
-
 		if (_.has(security_group_definition, 'Ingress')) {
 
 			let ingress = security_group_definition.Ingress;
@@ -1111,9 +1000,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	createEgressParameterGroup(security_group_definition) {
-
-		du.debug('Create Egress Parameter Group');
-
 		if (_.has(security_group_definition, 'Egress')) {
 
 			let egress = security_group_definition.Egress;
@@ -1137,9 +1023,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	destroySecurityGroups() {
-
-		du.debug('Destroy Security Groups');
-
 		let security_groups = this.getConfigurationJSON('security_groups');
 
 		let security_group_promises = arrayutilities.map(security_groups, (security_group) => this.destroySecurityGroup(security_group));
@@ -1153,9 +1036,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	destroySecurityGroup(security_group_definition) {
-
-		du.debug('Destroy Security Group');
-
 		let parameters = this.createDestroyParameterGroup(security_group_definition);
 
 		return this.ec2provider.destroySecurityGroup(parameters);
@@ -1163,17 +1043,11 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 	}
 
 	createDestroyParameterGroup(security_group_definition) {
-
-		du.debug('Create Destroy Parameter Group');
-
 		return this.createParameterGroup('security_group', 'delete', security_group_definition);
 
 	}
 
 	getConfigurationJSON(filename) {
-
-		du.debug('Get Configuration JSON');
-
 		//Technical Debt:  This needs to be expanded to support multiple definitions...
 		return global.SixCRM.routes.include('deployment', 'ec2/configuration/' + filename + '.json');
 
@@ -1205,9 +1079,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 		return BBPromise.each(serverTemplates, async (serverTemplate) => {
 
 			if (await this.resolveInstance(serverTemplate.TagSpecifications[0].Tags[0].Value)) {
-
-				du.debug('EC2 Instance exists');
-
 				return;
 
 			}
@@ -1220,8 +1091,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 				return k.KeyName === keyPair.KeyName;
 
 			})) {
-
-				du.debug('EC2 Key Pair deploy');
 				await this.ec2provider.importKeyPair(keyPair);
 
 			}

@@ -1,6 +1,5 @@
 
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 
@@ -21,9 +20,6 @@ module.exports = class TerminalController extends TerminalUtilities  {
 	}
 
 	fulfill(){
-
-		du.debug('Fulfill');
-
 		return Promise.resolve(true)
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'fulfill'}))
 			.then(() => this.acquireRebill())
@@ -40,9 +36,6 @@ module.exports = class TerminalController extends TerminalUtilities  {
 	}
 
 	executeFulfill(){
-
-		du.debug('Execute Fulfill');
-
 		let grouped_shipable_transaction_products = this.parameters.get('groupedshipabletransactionproducts');
 
 		let compound_fulfillment_promises = objectutilities.map(grouped_shipable_transaction_products, fulfillment_provider => {
@@ -109,9 +102,6 @@ module.exports = class TerminalController extends TerminalUtilities  {
 	}
 
 	transformFulfillResponses(){
-
-		du.debug('Transform Compound Fulfill Responses');
-
 		let compound_fulfillment_responses = this.parameters.get('compoundfulfillmentresponses');
 
 		let response = 'fail';
@@ -143,9 +133,6 @@ module.exports = class TerminalController extends TerminalUtilities  {
 	}
 
 	info(){
-
-		du.debug('info');
-
 		return Promise.resolve(true)
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'info'}))
 			.then(() => this.acquireShippingReceipt())
@@ -156,9 +143,6 @@ module.exports = class TerminalController extends TerminalUtilities  {
 	}
 
 	executeInfo(){
-
-		du.debug('Execute Info');
-
 		let shipping_receipt = this.parameters.get('shippingreceipt');
 
 		let infoController = new InfoController();
@@ -171,9 +155,6 @@ module.exports = class TerminalController extends TerminalUtilities  {
 	}
 
 	transformInfoResponse(){
-
-		du.debug('Transform Info Response');
-
 		let vendor_response = this.parameters.get('vendorresponseclass');
 
 		let responsecode = 'fail';
@@ -191,9 +172,6 @@ module.exports = class TerminalController extends TerminalUtilities  {
 	}
 
 	test(){
-
-		du.debug('Test');
-
 		return Promise.resolve(true)
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'test'}))
 			.then(() => this.executeTest())
@@ -203,9 +181,6 @@ module.exports = class TerminalController extends TerminalUtilities  {
 	}
 
 	executeTest(){
-
-		du.debug('Execute Test');
-
 		let fulfillment_provider_id = this.parameters.get('fulfillmentproviderid');
 
 		let testController = new TestController();
@@ -221,9 +196,6 @@ module.exports = class TerminalController extends TerminalUtilities  {
 	}
 
 	transformTestResponse(){
-
-		du.debug('Transform Test Response');
-
 		let vendor_response = this.parameters.get('vendorresponseclass');
 
 		let responsecode = 'fail';

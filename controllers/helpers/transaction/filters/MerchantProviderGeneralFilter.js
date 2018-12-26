@@ -41,9 +41,6 @@ module.exports = class MerchantProviderGeneralFilter {
 	}
 
 	filter(){
-
-		du.debug('Filter Merchant Providers');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'filter'}))
 			.then(() => this.executeFilter());
@@ -51,9 +48,6 @@ module.exports = class MerchantProviderGeneralFilter {
 	}
 
 	executeFilter(){
-
-		du.debug('Execute Filter');
-
 		let merchant_providers = this.parameters.get('merchantproviders');
 
 		return this.filterInvalidMerchantProviders({merchant_providers: merchant_providers})
@@ -66,9 +60,6 @@ module.exports = class MerchantProviderGeneralFilter {
 	}
 
 	filterInvalidMerchantProviders({merchant_providers}){
-
-		du.debug('Filter Invalid Merchant Providers');
-
 		if(!arrayutilities.nonEmpty(merchant_providers)){
 			throw eu.getError('server', 'No merchant providers to select from.');
 		}
@@ -84,9 +75,6 @@ module.exports = class MerchantProviderGeneralFilter {
 	}
 
 	filterDisabledMerchantProviders({merchant_providers}){
-
-		du.debug('Filter Disabled Merchant Providers');
-
 		if(!arrayutilities.nonEmpty(merchant_providers)){
 			throw eu.getError('server', 'No merchant providers to select from.');
 		}
@@ -100,9 +88,6 @@ module.exports = class MerchantProviderGeneralFilter {
 	}
 
 	filterZeroDistributionMerchantProviders({merchant_providers}){
-
-		du.debug('Filter Zero Distribution Merchant Providers');
-
 		const merchantprovidergroup = this.parameters.get('merchantprovidergroup');
 
 		if(!arrayutilities.nonEmpty(merchant_providers)){
@@ -122,9 +107,6 @@ module.exports = class MerchantProviderGeneralFilter {
 	}
 
 	filterTypeMismatchedMerchantProviders({merchant_providers}){
-
-		du.debug('Filter Type Mismatched Merchant Providers');
-
 		let creditcard = this.parameters.get('creditcard');
 
 		if(!arrayutilities.nonEmpty(merchant_providers)){
@@ -154,9 +136,6 @@ module.exports = class MerchantProviderGeneralFilter {
 	}
 
 	filterCAPShortageMerchantProviders({merchant_providers}){
-
-		du.debug('Filter CAP Shortage Merchant Providers');
-
 		let amount = this.parameters.get('amount');
 
 		if(!arrayutilities.nonEmpty(merchant_providers)){
@@ -188,9 +167,6 @@ module.exports = class MerchantProviderGeneralFilter {
 	}
 
 	filterCountShortageMerchantProviders({merchant_providers}){
-
-		du.debug('Filter Count Shortage Merchant Providers');
-
 		if(!arrayutilities.nonEmpty(merchant_providers)){
 			throw eu.getError('server', 'No merchant providers to select from.');
 		}
@@ -201,7 +177,9 @@ module.exports = class MerchantProviderGeneralFilter {
 
 			if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.daily') && !_.isNull(merchant_provider.processing.transaction_counts.daily)){
 
-				if(parseInt(merchant_provider.summary.summary.today.count) >= parseInt(merchant_provider.processing.transaction_counts.daily)){
+				const dailyLimit = parseInt(merchant_provider.processing.transaction_counts.daily);
+				const dailyCount = parseInt(merchant_provider.summary.summary.today.count);
+				if(dailyLimit && dailyCount >= dailyLimit){
 					du.warning('Daily Count Shortage');
 					return_value = false;
 				}
@@ -210,7 +188,9 @@ module.exports = class MerchantProviderGeneralFilter {
 
 			if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.weekly') && !_.isNull(merchant_provider.processing.transaction_counts.weekly)){
 
-				if(parseInt(merchant_provider.summary.summary.thisweek.count) >= parseInt(merchant_provider.processing.transaction_counts.weekly)){
+				const weeklyLimit = parseInt(merchant_provider.processing.transaction_counts.weekly);
+				const weeklyCount = parseInt(merchant_provider.summary.summary.thisweek.count);
+				if(weeklyLimit && weeklyCount >= weeklyLimit){
 					du.warning('Weekly Count Shortage');
 					return_value = false;
 				}
@@ -219,7 +199,9 @@ module.exports = class MerchantProviderGeneralFilter {
 
 			if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.monthly') && !_.isNull(merchant_provider.processing.transaction_counts.monthly)){
 
-				if(parseInt(merchant_provider.summary.summary.thismonth.count) >= parseInt(merchant_provider.processing.transaction_counts.monthly)){
+				const monthlyLimit = parseInt(merchant_provider.processing.transaction_counts.monthly);
+				const monthlyCount = parseInt(merchant_provider.summary.summary.thismonth.count);
+				if(monthlyLimit && monthlyCount >= monthlyLimit){
 					du.warning('Monthly Count Shortage');
 					return_value = false;
 				}
@@ -239,9 +221,6 @@ module.exports = class MerchantProviderGeneralFilter {
 	}
 
 	makeGeneralBrandString(a_string){
-
-		du.debug('Make General Brand String');
-
 		stringutilities.isString(a_string, true);
 
 		let transformed_string = stringutilities.removeWhitespace(a_string).toLowerCase();

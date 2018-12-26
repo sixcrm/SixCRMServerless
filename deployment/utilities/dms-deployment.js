@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const fileutilities = require('@6crm/sixcrmcore/util/file-utilities').default;
@@ -44,8 +43,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	deploySubnets() {
-		du.debug('Deploy Subnets');
-
 		return this.ec2.describeRouteTables({
 			Filters: [{
 				Name: 'tag:Name',
@@ -72,8 +69,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	deployInstances() {
-		du.debug('Deploy Instances');
-
 		return this.ec2.describeVpcs({
 			Filters: [{
 				Name: 'tag:Name',
@@ -113,8 +108,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	deployEndpoints() {
-		du.debug('Deploy Endpoints');
-
 		return this.getDefinitions('endpoints')
 			.then(definitions => Promise.all(
 				arrayutilities.map(definitions, definition => {
@@ -131,8 +124,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	deployTasks() {
-		du.debug('Deploy Tasks');
-
 		const instance = this.dms.describeReplicationInstances({
 			Filters: [{
 				Name: "replication-instance-id",

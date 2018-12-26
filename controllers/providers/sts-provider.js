@@ -1,7 +1,5 @@
 
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 
 const random = require('@6crm/sixcrmcore/util/random').default;
@@ -23,9 +21,6 @@ module.exports = class STSProvider extends AWSProvider {
 	}
 
 	assumeRole(parameters){
-
-		du.debug('Assume Role');
-
 		let transcribe_parameters = {
 			required:{
 				RoleArn:'RoleArn'
@@ -48,11 +43,7 @@ module.exports = class STSProvider extends AWSProvider {
 
 		global.SixCRM.validate(new_parameters, global.SixCRM.routes.path('model', 'deployment/sts/assumerolerequest.json'))
 
-		return new Promise((resolve) => {
-
-			this.sts.assumeRole(new_parameters, (error, data) => resolve(this.AWSCallback(error, data)));
-
-		});
+		return this.sts.assumeRole(new_parameters).promise();
 
 	}
 

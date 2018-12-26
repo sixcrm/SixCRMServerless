@@ -2,6 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const mockery = require('mockery');
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const AWSTestUtils = require('./aws-test-utils');
 
 describe('controllers/providers/cloudsearch-provider', () => {
 
@@ -176,9 +177,7 @@ describe('controllers/providers/cloudsearch-provider', () => {
 			const cloudsearchprovider = new CloudsearchProvider();
 
 			cloudsearchprovider.cs = {
-				describeDomains: function(parameters, callback) {
-					callback(null, valid_domains)
-				}
+				describeDomains: AWSTestUtils.AWSPromise(valid_domains)
 			};
 
 			return cloudsearchprovider.describeDomains().then((result) => {
@@ -192,13 +191,11 @@ describe('controllers/providers/cloudsearch-provider', () => {
 			const cloudsearchprovider = new CloudsearchProvider();
 
 			cloudsearchprovider.cs = {
-				describeDomains: function(parameters, callback) {
-					callback('fail', null)
-				}
+				describeDomains: AWSTestUtils.AWSError('fail')
 			};
 
 			return cloudsearchprovider.describeDomains().catch((error) => {
-				expect(error.message).to.equal('[500] fail');
+				expect(error.message).to.equal('fail');
 			});
 		});
 	});

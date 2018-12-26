@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const MerchantProviderResponse = global.SixCRM.routes.include('vendors', 'merchantproviders/Response.js');
 
 module.exports = class AuthorizeNetResponse extends MerchantProviderResponse {
@@ -8,7 +7,6 @@ module.exports = class AuthorizeNetResponse extends MerchantProviderResponse {
 	}
 
 	determineResultCode({vendor_response}) {
-		du.debug('Determine Result Code');
 		const { body, error } = vendor_response;
 
 		if (error === null) {
@@ -24,8 +22,6 @@ module.exports = class AuthorizeNetResponse extends MerchantProviderResponse {
 
 	determineMerchantCode(vendor_response) {
 
-		du.debug('Determine Merchant Code (AuthorizeNet)', vendor_response);
-
 		let result = '';
 
 		result = _(vendor_response).get('body.transactionResponse.responseCode', result);
@@ -34,15 +30,11 @@ module.exports = class AuthorizeNetResponse extends MerchantProviderResponse {
 			result = super.determineMerchantMessage(vendor_response);
 		}
 
-		du.debug('Determined Merchant Code (AuthorizeNet)', result);
-
 		return result;
 
 	}
 
 	determineMerchantMessage(vendor_response) {
-
-		du.debug('Determine Merchant Message (AuthorizeNet)', vendor_response);
 
 		if (this.getCode() === 'success') {
 			return 'Success';
@@ -55,8 +47,6 @@ module.exports = class AuthorizeNetResponse extends MerchantProviderResponse {
 		if (result === '' || typeof result !== 'string') {
 			result = super.determineMerchantMessage(vendor_response);
 		}
-
-		du.debug('Determined Merchant Message (AuthorizeNet)', result);
 
 		return result;
 

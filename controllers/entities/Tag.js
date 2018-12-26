@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
@@ -43,9 +42,6 @@ module.exports = class TagController extends entityController {
 	}
 
 	listByEntityAndKey({id, key, pagination, fatal}) {
-
-		du.debug('List By Entity and Key');
-
 		//Technical Debt:  Convert this into a query
 		return this.queryBySecondaryIndex({field: 'entity', index_value: this.getID(id), index_name: 'entity-index', pagination: pagination, fatal: fatal}).then(results => {
 			if(_.has(results, 'tags') && arrayutilities.nonEmpty(results.tags)){

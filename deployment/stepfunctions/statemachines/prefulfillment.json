@@ -9,7 +9,7 @@
       "ResultPath": "$.status",
       "Retry" : [
           {
-            "ErrorEquals": [ "State.ALL" ],
+            "ErrorEquals": [ "States.ALL" ],
             "IntervalSeconds": 3,
             "MaxAttempts": 5,
             "BackoffRate": 5
@@ -34,7 +34,7 @@
       "ResultPath": "$.status",
       "Retry" : [
           {
-            "ErrorEquals": [ "State.ALL" ],
+            "ErrorEquals": [ "States.ALL" ],
             "IntervalSeconds": 3,
             "MaxAttempts": 5,
             "BackoffRate": 5

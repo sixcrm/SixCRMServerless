@@ -17,9 +17,6 @@ module.exports = class ContextHelperController {
 	}
 
 	discoverObjectsFromContext(search_objects, context, fatal){
-
-		du.debug('Discover Objects From Context');
-
 		fatal = (_.isUndefined(fatal) || _.isNull(fatal))?false:fatal;
 
 		let return_object = {};
@@ -56,9 +53,6 @@ module.exports = class ContextHelperController {
 	}
 
 	transcribeAffiliates(source_object, destination_object){
-
-		du.debug('Transcribe Affiliates');
-
 		if(_.has(source_object, 'affiliates')){
 			destination_object = this.affiliateHelperController.transcribeAffiliates(source_object.affiliates, destination_object);
 		}else if(_.has(source_object, 'session') && _.isObject(source_object.session)){
@@ -70,9 +64,6 @@ module.exports = class ContextHelperController {
 	}
 
 	transcribeAccount(source_object, destination_object){
-
-		du.debug('Transcribe Account');
-
 		if(!_.has(destination_object, 'account') && _.has(source_object, 'account') && stringutilities.isUUID(source_object.account)){
 			destination_object.account = source_object.account;
 		}
@@ -94,9 +85,6 @@ module.exports = class ContextHelperController {
 	}
 
 	transcribeCampaignFields(source_object, destination_object){
-
-		du.debug('Transcribe Campaign Fields');
-
 		if(_.has(source_object, 'campaign')){
 
 			if(_.isObject(source_object.campaign) && _.has(source_object.campaign, 'id') && stringutilities.isUUID(source_object.campaign.id)){
@@ -118,9 +106,6 @@ module.exports = class ContextHelperController {
 	}
 
 	transcribeDatetime(source_object, destination_object){
-
-		du.debug('Transcribe Datetime');
-
 		if(!_.has(destination_object, 'datetime') && _.has(source_object, 'datetime')){
 			destination_object.datetime = source_object.datetime;
 		}
@@ -138,9 +123,6 @@ module.exports = class ContextHelperController {
 	}
 
 	transcribeSessionFields(source_object, destination_object){
-
-		du.debug('Transcribe Session Fields');
-
 		if(_.has(source_object, 'session')){
 
 			if(_.isObject(source_object.session)){
@@ -169,9 +151,6 @@ module.exports = class ContextHelperController {
 
 	//Note: Takes an array of things and gets the IDs
 	discoverIDs(thing, name){
-
-		du.debug('Discover IDs');
-
 		let return_object;
 
 		if(_.isArray(thing) && arrayutilities.nonEmpty(thing)){
@@ -213,9 +192,6 @@ module.exports = class ContextHelperController {
 	}
 
 	getFromContext(context, field, type){
-
-		du.debug('Get From Context');
-
 		type = (_.isUndefined(type) || _.isNull(type))?'id':type;
 
 		let field_path = field.split('.');

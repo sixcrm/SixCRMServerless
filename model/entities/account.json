@@ -26,6 +26,9 @@
 						}
 					]
 				},
+				"disable": {
+					"$ref": "../definitions/iso8601.json"
+				},
 				"limited_at": {
 					"$ref": "../definitions/iso8601.json"
 				},

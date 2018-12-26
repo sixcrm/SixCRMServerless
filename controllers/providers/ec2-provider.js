@@ -25,91 +25,33 @@ module.exports = class EC2Provider extends AWSProvider {
 	}
 
 	describeVpcEndpoints(parameters){
-
-		du.debug('Describe VPC Endpoints');
-
-		return new Promise((resolve) => {
-
-			this.ec2.describeVpcEndpoints(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.describeVpcEndpoints(parameters).promise();
 
 	}
 
 	createVpcEndpoint(parameters){
-
-		du.debug('Create VPC Endpoint');
-
-		return new Promise((resolve) => {
-
-			this.ec2.createVpcEndpoint(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.createVpcEndpoint(parameters).promise();
 
 	}
 
 	waitFor(event_name, parameters){
-
-		du.debug('Wait For');
-
-		return new Promise((resolve) => {
-
-			this.ec2.waitFor(event_name, parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.waitFor(event_name, parameters).promise();
 
 	}
 
 	describeVpcs(parameters) {
-
-		du.debug('Describe VPCs');
-
-		return new Promise((resolve) => {
-
-			this.ec2.describeVpcs(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.describeVpcs(parameters).promise();
 
 	}
 
 	createDefaultVpc() {
-
-		du.debug('Create Default VPC');
-
 		const params = {};
 
-		return new Promise((resolve) => {
-
-			this.ec2.createDefaultVpc(params, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.createDefaultVpc(params).promise();
 
 	}
 
 	createVPC(parameters) {
-
-		du.debug('Create VPC');
-
 		let params = objectutilities.transcribe(
 			{
 				CidrBlock: 'CidrBlock',
@@ -130,38 +72,16 @@ module.exports = class EC2Provider extends AWSProvider {
 			false
 		);
 
-		return new Promise((resolve) => {
-
-			this.ec2.createVpc(params, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.createVpc(params).promise();
 
 	}
 
 	describeRoutes(parameters) {
-
-		du.debug('Describe Routes');
-
-		return new Promise((resolve) => {
-
-			this.ec2.describeRoutes(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.describeRoutes(parameters).promise();
 
 	}
 
 	replaceRoute(parameters) {
-
-		du.debug('Replace Route');
-
 		let params = objectutilities.transcribe(
 			{
 				RouteTableId: 'RouteTableId'
@@ -188,22 +108,11 @@ module.exports = class EC2Provider extends AWSProvider {
 			false
 		);
 
-		return new Promise((resolve) => {
-
-			this.ec2.replaceRoute(params, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.replaceRoute(params).promise();
 
 	}
 
 	createRoute(parameters) {
-
-		du.debug('Create Route');
-
 		let params = objectutilities.transcribe(
 			{
 				RouteTableId: 'RouteTableId'
@@ -230,204 +139,70 @@ module.exports = class EC2Provider extends AWSProvider {
 			false
 		);
 
-		return new Promise((resolve) => {
-
-			this.ec2.createRoute(params, (error, data) => {
-
-				resolve(this.tolerantCallback(error, data, false));
-
-			});
-
-		});
+		return this.ec2.createRoute(params).promise();
 
 	}
 
 	attachInternetGateway(parameters) {
-
-		du.debug('Attach Internet Gateway');
-
-		return new Promise((resolve) => {
-
-			this.ec2.attachInternetGateway(parameters, (error, data) => {
-
-				resolve(this.tolerantCallback(error, data, false));
-
-			});
-
-		});
+		return this.ec2.attachInternetGateway(parameters).promise();
 
 	}
 
 	createInternetGateway() {
-
-		du.debug('Create Internet Gateway');
-
-		return new Promise((resolve) => {
-
-			this.ec2.createInternetGateway({}, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.createInternetGateway({}).promise();
 
 	}
 
 	describeInternetGateways(parameters) {
-
-		du.debug('Describe Internet Gateways');
-
-		return new Promise((resolve) => {
-
-			this.ec2.describeInternetGateways(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.describeInternetGateways(parameters).promise();
 
 	}
 
 	associateRouteTable(parameters) {
-
-		du.debug('Associate Route Table');
-
-		du.debug(parameters);
-
-		return new Promise((resolve) => {
-
-			this.ec2.associateRouteTable(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.associateRouteTable(parameters).promise();
 
 	}
 
 	createRouteTable(parameters) {
-
-		du.debug('Create Route Table');
-
-		return new Promise((resolve) => {
-
-			this.ec2.createRouteTable(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.createRouteTable(parameters).promise();
 
 	}
 
 	describeRouteTables(parameters) {
-
-		du.debug('Describe Route Tables');
-
-		return new Promise((resolve) => {
-
-			this.ec2.describeRouteTables(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.describeRouteTables(parameters).promise();
 
 	}
 
 	createNatGateway(parameters) {
-
-		du.debug('Create NAT Gateway');
-
-		return new Promise((resolve) => {
-
-			this.ec2.createNatGateway(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.createNatGateway(parameters).promise();
 
 	}
 
 	describeNatGateways(parameters) {
-
-		du.debug('Describe NAT Gateways');
-
-		return new Promise((resolve) => {
-
-			this.ec2.describeNatGateways(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.describeNatGateways(parameters).promise();
 
 	}
 
 	allocateAddress() {
-
-		du.debug('Allocate Address');
-
 		const parameters = {
 			Domain: 'vpc'
 		};
 
-		return new Promise((resolve) => {
-
-			this.ec2.allocateAddress(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.allocateAddress(parameters);
 
 	}
 
 	describeAddresses(parameters) {
-
-		du.debug('Describe Addresses');
-
-		return new Promise((resolve) => {
-
-			this.ec2.describeAddresses(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.describeAddresses(parameters).promise();
 
 	}
 
 	createTags(parameters) {
-
-		du.debug('Create Tags');
-
-		return new Promise((resolve) => {
-
-			this.ec2.createTags(parameters, (error, data) => {
-
-				resolve(this.tolerantCallback(error, data, false))
-
-			});
-
-		});
+		return this.ec2.createTags(parameters).promise();
 
 	}
 
 	createSubnet(parameters) {
-
-		du.debug('Create Subnet');
-
 		let params = objectutilities.transcribe(
 			{
 				CidrBlock: 'CidrBlock',
@@ -449,54 +224,21 @@ module.exports = class EC2Provider extends AWSProvider {
 			false
 		);
 
-		return new Promise((resolve) => {
-
-			this.ec2.createSubnet(params, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.createSubnet(params).promise();
 
 	}
 
 	describeVPCs(parameters) {
-
-		du.debug('Describe VPCs');
-
-		return new Promise((resolve) => {
-
-			this.ec2.describeVpcs(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.describeVpcs(parameters).promise();
 
 	}
 
 	describeSubnets(parameters) {
-
-		du.debug('Describe Subnets');
-
-		return new Promise((resolve) => {
-
-			this.ec2.describeSubnets(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.describeSubnets(parameters).promise();
 
 	}
 
 	assureSecurityGroup(parameters) {
-
-		du.debug('Assure Security Group');
-
 		return this.securityGroupExists(parameters).then((result) => {
 
 			if (!_.isNull(result)) {
@@ -518,9 +260,6 @@ module.exports = class EC2Provider extends AWSProvider {
 	}
 
 	securityGroupExists(security_group_definition) {
-
-		du.debug('Security Group Exists');
-
 		let argumentation = {
 			Filters: [{
 				Name: "tag:Name",
@@ -555,25 +294,11 @@ module.exports = class EC2Provider extends AWSProvider {
 	}
 
 	describeSecurityGroups(parameters) {
-
-		du.debug('Describe Security Groups');
-
-		return new Promise((resolve) => {
-
-			this.ec2.describeSecurityGroups(parameters, (error, data) => {
-
-				resolve(this.tolerantCallback(error, data, false));
-
-			});
-
-		});
+		return this.ec2.describeSecurityGroups(parameters).promise();
 
 	}
 
 	createSecurityGroup(parameters) {
-
-		du.debug('Create Security Group');
-
 		let params = objectutilities.transcribe(
 			{
 				Description: 'Description',
@@ -593,119 +318,35 @@ module.exports = class EC2Provider extends AWSProvider {
 			false
 		);
 
-		return new Promise((resolve) => {
-
-			this.ec2.createSecurityGroup(params, (error, data) => {
-
-				resolve(this.tolerantCallback(error, data, false));
-
-			});
-
-		});
+		return this.ec2.createSecurityGroup(params).promise();
 
 	}
 
 	addSecurityGroupIngressRules(parameters) {
-
-		du.debug('Add Security Group Ingress Rules');
-
 		return this.removeExistingIngressRules(parameters)
 			.then(() => this.authorizeSecurityGroupIngress(parameters));
 
 	}
 
 	authorizeSecurityGroupIngress(parameters) {
-
-		du.debug('Authorize Security Group Ingress');
-
 		if (_.has(parameters, 'GroupId') && _.has(parameters, 'GroupName')) {
 			delete parameters.GroupName;
 		}
 
-		return new Promise((resolve) => {
-
-			this.ec2.authorizeSecurityGroupIngress(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.authorizeSecurityGroupIngress(parameters).promise();
 
 	}
-
-	/*
-	resolveIpPermissionsGroupNameReferences(parameters){
-
-		du.debug('Resolve IP Permissions Group Name References');
-
-		let ip_permission_promises = arrayutilities.map(parameters.IpPermissions, ip_permission => {
-
-			if(_.has(ip_permission, 'UserIdGroupPairs')){
-
-				let translation_promises = arrayutilities.map(ip_permission.UserIdGroupPairs, user_id_group_pair => {
-
-					if(!_.has(user_id_group_pair, 'GroupName')){
-						return Promise.resolve(user_id_group_pair);
-					}
-
-					return this.securityGroupExists(user_id_group_pair).then(result => {
-						if(_.isNull(result)){
-							eu.getError('Unable to identify security group: "'+user_id_group_pair.GroupName+'"');
-						}
-						user_id_group_pair.GroupId = result.GroupId;
-						delete user_id_group_pair.GroupName;
-						return user_id_group_pair;
-					});
-
-				});
-
-				du.debug(translation_promises);
-
-				return Promise.all(translation_promises).then(translation_promises => {
-					du.info(translation_promises);
-					return translation_promises;
-				});
-
-			}
-
-			return ip_permission;
-
-		});
-
-		return Promise.all(ip_permission_promises).then(ip_permsission_promises => {
-			du.info(ip_permission_promises);
-			parameters.IpPermissions = ip_permission_promises;
-			return parameters;
-		});
-
-	}
-	*/
 
 	authorizeSecurityGroupEgress(parameters) {
-
-		du.debug('Authorize Security Group Egress');
-
 		if (_.has(parameters, 'GroupName')) {
 			delete parameters.GroupName;
 		}
 
-		return new Promise((resolve) => {
-
-			this.ec2.authorizeSecurityGroupEgress(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.authorizeSecurityGroupEgress(parameters).promise();
 
 	}
 
 	addSecurityGroupEgressRules(parameters) {
-
-		du.debug('Add Security Group Egress Rules');
-
 		if (!_.has(parameters, 'GroupId')) {
 
 			if (!_.has(parameters, 'GroupName')) {
@@ -731,9 +372,6 @@ module.exports = class EC2Provider extends AWSProvider {
 	}
 
 	removeExistingIngressRules(parameters) {
-
-		du.debug('Remove Existing Ingress Rules');
-
 		return this.securityGroupExists(parameters)
 			.then((result) => {
 
@@ -766,9 +404,6 @@ module.exports = class EC2Provider extends AWSProvider {
 	}
 
 	filterRule(rule) {
-
-		du.debug('Filter Rule');
-
 		let clean_rule;
 
 		if (_.includes(['tcp', 'udp'], rule.IpProtocol)) {
@@ -793,9 +428,6 @@ module.exports = class EC2Provider extends AWSProvider {
 	}
 
 	removeExistingEgressRules(parameters) {
-
-		du.debug('Remove Existing Egress Rules');
-
 		return new Promise((resolve) => {
 
 			return this.securityGroupExists(parameters).then((result) => {
@@ -831,49 +463,24 @@ module.exports = class EC2Provider extends AWSProvider {
 	}
 
 	revokeSecurityGroupIngress(parameters) {
-
-		du.debug('Revoke Security Group Ingress');
-
 		if (_.has(parameters, 'GroupId') && _.has(parameters, 'GroupName')) {
 			delete parameters.GroupName;
 		}
 
-		return new Promise((resolve) => {
-
-			this.ec2.revokeSecurityGroupIngress(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.revokeSecurityGroupIngress(parameters).promise();
 
 	}
 
 	revokeSecurityGroupEgress(parameters) {
-
-		du.debug('Revoke Security Group Egress');
-
 		if (_.has(parameters, 'GroupId') && _.has(parameters, 'GroupName')) {
 			delete parameters.GroupName;
 		}
 
-		return new Promise((resolve) => {
-
-			this.ec2.revokeSecurityGroupEgress(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.revokeSecurityGroupEgress(parameters).promise();
 
 	}
 
 	destroySecurityGroup(parameters) {
-
-		du.debug('Create Security Group');
-
 		return new Promise((resolve, reject) => {
 
 			return this.securityGroupExists(parameters).then((results) => {
@@ -905,82 +512,27 @@ module.exports = class EC2Provider extends AWSProvider {
 	}
 
 	describeInstances(params) {
-
-		du.debug('Describe EC2 instances');
-
-		return new Promise((resolve) => {
-
-			this.ec2.describeInstances(params, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.describeInstances(params).promise();
 
 	}
 
 	runInstance(params) {
-
-		du.debug('Create EC2 Instance');
-
-		return new Promise((resolve) => {
-
-			this.ec2.runInstances(params, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.runInstances(params).promise();
 
 	}
 
 	associateAddress(parameters) {
-
-		du.debug('Associate EIP to EC2 Instance');
-
-		return new Promise((resolve) => {
-
-			this.ec2.associateAddress(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.associateAddress(parameters).promise();
 
 	}
 
 	importKeyPair(parameters) {
-
-		du.debug('Create keypair');
-
-		return new Promise((resolve) => {
-
-			this.ec2.importKeyPair(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.importKeyPair(parameters).promise();
 
 	}
 
 	describeKeyPairs(parameters) {
-
-		du.debug('Create keypair');
-
-		return new Promise((resolve) => {
-
-			this.ec2.describeKeyPairs(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.describeKeyPairs(parameters).promise();
 
 	}
 

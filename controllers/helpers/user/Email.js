@@ -24,9 +24,6 @@ module.exports = class userEmailHelperController {
 	}
 
 	getRecipient(data){
-
-		du.debug('Acquire Recipient');
-
 		let customer = objectutilities.recurse(data, function(key, value){
 			if(key == 'customer' && value !== 'customer'){
 				return true;
@@ -41,9 +38,6 @@ module.exports = class userEmailHelperController {
 	}
 
 	getCampaign(data){
-
-		du.debug('Get Campaign');
-
 		let campaign = objectutilities.recurse(data, function(key, value){
 			if(key == 'campaign' && value !== 'campaign'){
 				return true;
@@ -58,9 +52,6 @@ module.exports = class userEmailHelperController {
 	}
 
 	sendEmail(event_type, data){
-
-		du.debug('Send Email');
-
 		return this.getCampaign(data).then((campaign) => {
 
 			if(_.isNull(campaign)){ return Promise.reject(eu.getError('not_found','Unable to identify a campaign.')); }

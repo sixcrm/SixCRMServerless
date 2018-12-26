@@ -1,7 +1,5 @@
 
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const HttpProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
 const httpprovider = new HttpProvider();
@@ -61,9 +59,6 @@ module.exports = class TestController extends FulfillmentProviderController {
 	}
 
 	fulfill(){
-
-		du.debug('Fulfill');
-
 		let argumentation = arguments[0];
 
 		argumentation.action = 'fulfill';
@@ -85,9 +80,6 @@ module.exports = class TestController extends FulfillmentProviderController {
 	}
 
 	info(){
-
-		du.debug('info');
-
 		let argumentation = arguments[0];
 
 		argumentation.action = 'info';
@@ -103,8 +95,6 @@ module.exports = class TestController extends FulfillmentProviderController {
 	}
 
 	test(){
-
-		du.debug('Test');
 		let argumentation = {action: 'test'};
 
 		return Promise.resolve()
@@ -118,9 +108,6 @@ module.exports = class TestController extends FulfillmentProviderController {
 	}
 
 	setMethod(){
-
-		du.debug('Set Method');
-
 		let action = this.parameters.get('action');
 
 		if(objectutilities.hasRecursive(this, 'methods.'+action)){
@@ -134,9 +121,6 @@ module.exports = class TestController extends FulfillmentProviderController {
 	}
 
 	createParametersObject(){
-
-		du.debug('Create Parameters Object');
-
 		let parameters_object = objectutilities.merge({}, this.getVendorParameters());
 
 		parameters_object = objectutilities.merge(parameters_object, this.getFulfillmentProviderParameters());
@@ -151,9 +135,6 @@ module.exports = class TestController extends FulfillmentProviderController {
 	}
 
 	getVendorParameters(){
-
-		du.debug('Get Vendor Parameters');
-
 		let vendor_configuration = global.SixCRM.routes.include('config', global.SixCRM.configuration.stage+'/vendors/fulfillmentproviders/Test.yml');
 
 		this.parameters.set('endpoint', vendor_configuration.endpoint);
@@ -163,17 +144,11 @@ module.exports = class TestController extends FulfillmentProviderController {
 	}
 
 	getFulfillmentProviderParameters(){
-
-		du.debug('Get Fulfillment Provider Parameters');
-
 		return {};
 
 	}
 
 	getMethodParameters(){
-
-		du.debug('Get Method Parameters');
-
 		let method = this.parameters.get('method');
 
 		if(_.isFunction(this['get'+method+'MethodParameters'])){
@@ -185,9 +160,6 @@ module.exports = class TestController extends FulfillmentProviderController {
 	}
 
 	getRequestParameters(){
-
-		du.debug('Get Request Parameters');
-
 		let method = this.parameters.get('method');
 
 		if(_.isFunction(this['get'+method+'RequestParameters'])){
@@ -199,9 +171,6 @@ module.exports = class TestController extends FulfillmentProviderController {
 	}
 
 	getgetinfoRequestParameters(){
-
-		du.debug('Get Get Info Request Parameters');
-
 		return {
 			reference_number: this.parameters.get('referencenumber')
 		};
@@ -209,9 +178,6 @@ module.exports = class TestController extends FulfillmentProviderController {
 	}
 
 	getfulfillRequestParameters(){
-
-		du.debug('Get Get Info Request Parameters');
-
 		return {
 			customer: this.createCustomerObject(),
 			orders: this.createOrdersArray()
@@ -220,9 +186,6 @@ module.exports = class TestController extends FulfillmentProviderController {
 	}
 
 	createCustomerObject(){
-
-		du.debug('Create Customer Object');
-
 		let customer = this.parameters.get('customer');
 
 		let customer_object = objectutilities.transcribe(
@@ -250,9 +213,6 @@ module.exports = class TestController extends FulfillmentProviderController {
 	}
 
 	createOrdersArray(){
-
-		du.debug('Create Orders Array');
-
 		let products = this.parameters.get('products');
 
 		let productHelperController = new ProductHelperController();
@@ -268,9 +228,6 @@ module.exports = class TestController extends FulfillmentProviderController {
 	}
 
 	issueRequest(){
-
-		du.debug('Issue Request');
-
 		let parameters_object = this.parameters.get('parametersobject');
 		let uri = this.parameters.get('endpoint')+this.parameters.get('method');
 

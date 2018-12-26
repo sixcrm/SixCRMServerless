@@ -1021,9 +1021,6 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 	/*
 	_buildInviteLink(hash){
-
-		du.debug('Build Invite Link');
-
 		let link_tokens = {
 			api_domain: global.SixCRM.configuration.getSubdomainPath('admin'),
 			hash: hash

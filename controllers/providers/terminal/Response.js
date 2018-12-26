@@ -1,6 +1,5 @@
 
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 
 const Response = global.SixCRM.routes.include('providers', 'Response.js');
@@ -39,17 +38,11 @@ module.exports = class TerminalResponse extends Response {
 	}
 
 	setVendorResponse(vendor_response){
-
-		du.debug('Set Vendor Response');
-
 		this.parameters.set('vendorresponse', vendor_response);
 
 	}
 
 	getVendorResponse(){
-
-		du.debug('Get Vendor Response');
-
 		let vendor_response = this.parameters.get('vendorresponse', {fatal: false});
 
 		if(_.isNull(vendor_response) || _.isUndefined(vendor_response)){
@@ -59,17 +52,4 @@ module.exports = class TerminalResponse extends Response {
 		return vendor_response;
 
 	}
-	/*
-  setProviderResponse(provider_response){
-
-    this.parameters.set('providerresponse', provider_response);
-
-  }
-
-  getProviderResponse(){
-
-    return this.parameters.get('providerresponse', {fatal: false});
-
-  }
-  */
 }

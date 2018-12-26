@@ -1,7 +1,5 @@
 
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
@@ -48,9 +46,6 @@ module.exports = class ShipmentUtilities {
 	}
 
 	augmentParameters(){
-
-		du.debug('Augment Parameters');
-
 		this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
 		this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
 
@@ -59,9 +54,6 @@ module.exports = class ShipmentUtilities {
 	}
 
 	instantiateFulfillmentProviderClass(){
-
-		du.debug('Instantiate Fulfillment Provider Class');
-
 		let fulfillment_provider = this.parameters.get('fulfillmentprovider');
 
 		const FulfillmentController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/'+fulfillment_provider.provider.name+'/handler.js');
@@ -76,9 +68,6 @@ module.exports = class ShipmentUtilities {
 
 	//Technical Debt:  Serial Promise Execution necessary
 	markTransactionProductsWithShippingReceipt(){
-
-		du.debug('Mark Transaction Products With Shipping Receipt');
-
 		let shipping_receipt = this.parameters.get('shippingreceipt');
 		let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
 
@@ -106,9 +95,6 @@ module.exports = class ShipmentUtilities {
 
 	//Needs testing
 	issueReceipts(){
-
-		du.debug('Issue Receipts');
-
 		const FulfillmentReceiptController = global.SixCRM.routes.include('providers', 'terminal/Receipt.js');
 		let fulfillmentReceiptController = new FulfillmentReceiptController();
 
@@ -120,9 +106,6 @@ module.exports = class ShipmentUtilities {
 	}
 
 	hydrateFulfillmentProvider(){
-
-		du.debug('Hydrate Fulfillment Provider');
-
 		let fulfillment_provider_id = this.parameters.get('fulfillmentproviderid');
 
 		return this.fulfillmentProviderController.get({id: fulfillment_provider_id}).then(fulfillment_provider => {
@@ -136,9 +119,6 @@ module.exports = class ShipmentUtilities {
 	}
 
 	hydrateShippingReceiptProperties(){
-
-		du.debug('Hydrate Shipping Receipt Properties');
-
 		let shipping_receipt = this.parameters.get('shippingreceipt');
 
 		this.parameters.set('fulfillmentproviderid', shipping_receipt.fulfillment_provider);
@@ -148,9 +128,6 @@ module.exports = class ShipmentUtilities {
 	}
 
 	hydrateProducts(){
-
-		du.debug('Hydrate Products');
-
 		let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
 
 		let product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => augmented_transaction_product.product.id);
@@ -170,9 +147,6 @@ module.exports = class ShipmentUtilities {
 	}
 
 	acquireCustomer(){
-
-		du.debug('Acquire Customer');
-
 		return Promise.resolve()
 			.then(() => this.acquireRebillFromTransactions())
 			.then(() => this.acquireSessionFromRebill())
@@ -181,9 +155,6 @@ module.exports = class ShipmentUtilities {
 	}
 
 	acquireRebillFromTransactions(){
-
-		du.debug('Acquire Rebill From Transactions');
-
 		let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
 
 		let rebill_ids = arrayutilities.map(augmented_transaction_products, (augmented_transaction_product) => augmented_transaction_product.transaction.rebill);
@@ -205,9 +176,6 @@ module.exports = class ShipmentUtilities {
 	}
 
 	acquireRebill(){
-
-		du.debug('Acquire Rebill');
-
 		let rebill_id = this.parameters.get('rebillid');
 
 		return this.rebillController.get({id: rebill_id}).then((rebill) => {
@@ -221,9 +189,6 @@ module.exports = class ShipmentUtilities {
 	}
 
 	acquireSessionFromRebill(){
-
-		du.debug('Acquire Session From Rebill');
-
 		let rebill = this.parameters.get('rebill');
 
 		return this.sessionController.get({id: rebill.parentsession}).then(session => {
@@ -237,9 +202,6 @@ module.exports = class ShipmentUtilities {
 	}
 
 	acquireCustomerFromSession(){
-
-		du.debug('Acquire Session From Rebill');
-
 		let session = this.parameters.get('session');
 
 		return this.sessionController.getCustomer(session).then(customer => {
@@ -253,9 +215,6 @@ module.exports = class ShipmentUtilities {
 	}
 
 	marryProductsToAugmentedTransactionProducts(){
-
-		du.debug('Marry Products To Augmented Transaction Products');
-
 		let products = this.parameters.get('products');
 		let augmented_transaction_products =  this.parameters.get('augmentedtransactionproducts');
 
@@ -278,9 +237,6 @@ module.exports = class ShipmentUtilities {
 	}
 
 	validateResponse(){
-
-		du.debug('Validate Response');
-
 		if(_.has(this, 'response_validation')){
 
 			let vendor_response = this.parameters.get('vendorresponseclass');
@@ -298,9 +254,6 @@ module.exports = class ShipmentUtilities {
 	}
 
 	pruneResponse(){
-
-		du.debug('Prune Response');
-
 		let vendor_response_class = this.parameters.get('vendorresponseclass');
 
 		vendor_response_class.parameters.unset('vendorresponse');

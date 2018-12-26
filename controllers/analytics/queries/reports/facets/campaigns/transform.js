@@ -1,11 +1,7 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
 module.exports = async (results) => {
-
-	du.debug('Campaign facet transformation function');
-
 	const ids = results.map(r => r.campaign);
 
 	const controller = new CampaignController();

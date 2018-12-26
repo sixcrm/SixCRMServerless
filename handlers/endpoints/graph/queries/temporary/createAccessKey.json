@@ -1,5 +1,5 @@
 {
 	"requestContext":{"authorizer":{"user":"customerservice.user@test.com"}},
 	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"mutation {createaccesskey (accesskey: { id: \"22c9dc39-7aa4-4e62-b4cf-94191d7ce4b7\", access_key: \"test\", secret_key: \"testing\"}) {id, access_key,secret_key,created_at, updated_at}}"
+	"body":"mutation {createaccesskey (accesskey: { id: \"22c9dc39-7aa4-4e62-b4cf-94191d7ce4b7\", access_key: \"test\", secret_key: \"testing\"}) {id, access_key, secret_key,created_at, updated_at}}"
 }

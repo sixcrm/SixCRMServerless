@@ -23,9 +23,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	instantiateSQS() {
-
-		du.debug('Instantiate SQS');
-
 		let region = (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'sqs.region')) ? global.SixCRM.configuration.site_config.sqs.region : this.getRegion();
 
 		let parameters = {
@@ -43,9 +40,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	getQueueARN(queue_name) {
-
-		du.debug('Get Queue ARN');
-
 		if (_.isObject(queue_name)) {
 			if (_.has(queue_name, 'QueueName')) {
 				queue_name = queue_name.QueueName;
@@ -91,9 +85,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	getQueueParameters(queue_name) {
-
-		du.debug('Get Queue Parameters');
-
 		if (_.isNull(queue_name) || _.isUndefined(queue_name)) {
 			throw eu.getError('server', 'Unable to determine queue name.');
 		}
@@ -109,9 +100,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	receiveMessagesRecursive(parameters, options = {}) {
-
-		du.debug('Receive Messages Recursive');
-
 		const self = this;
 
 		return _receiveMessagesRecursive(parameters, 0);
@@ -167,9 +155,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	receiveMessages(parameters) {
-
-		du.debug('Receive Messages');
-
 		return new Promise((resolve, reject) => {
 
 			let params = {};
@@ -187,8 +172,6 @@ module.exports = class SQSProvider extends AWSProvider {
 			if (_.has(parameters, 'visibilityTimeout')) {
 				params['VisibilityTimeout'] = parameters['visibilityTimeout'];
 			}
-
-			du.debug('Message parameters', params);
 
 			this.assureSQS();
 
@@ -223,11 +206,8 @@ module.exports = class SQSProvider extends AWSProvider {
 
 			let entries = [];
 
-			du.debug('Messages to delete:', parameters);
-
 			if (_.has(parameters, 'messages')) {
 				parameters.messages.forEach((message) => {
-					du.debug('Message to delete:', message);
 					if (_.has(message, 'ReceiptHandle') && _.has(message, 'MessageId')) {
 						entries.push({
 							Id: message.MessageId,
@@ -247,8 +227,6 @@ module.exports = class SQSProvider extends AWSProvider {
 
 				params['QueueUrl'] = queue_url;
 
-				du.debug('Delete message parameters:', params);
-
 				this.assureSQS();
 
 				this.sqs.deleteMessageBatch(params, function (err, data) {
@@ -264,8 +242,6 @@ module.exports = class SQSProvider extends AWSProvider {
 						if (_.has(data, 'Failed') && _.isArray(data.Failed) && data.Failed.length > 0) {
 							du.warning('Failed to delete messages: ', data.Failed);
 						}
-
-						du.debug('Delete response: ', data);
 
 						return resolve(data);
 					}
@@ -285,191 +261,127 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	deleteMessage(parameters) {
+		let queue_url = this.getQueueURL(parameters);
 
-		du.debug('Delete Message');
+		var params = {
+			QueueUrl: queue_url,
+			ReceiptHandle: parameters.receipt_handle
+		};
 
-		return new Promise((resolve) => {
+		this.assureSQS();
 
-			let queue_url = this.getQueueURL(parameters);
-
-			var params = {
-				QueueUrl: queue_url,
-				ReceiptHandle: parameters.receipt_handle
-			};
-
-			this.assureSQS();
-
-			this.sqs.deleteMessage(params, (error, data) => {
-				return resolve(this.AWSCallback(error, data))
-			});
-
-		});
+		return this.sqs.deleteMessage(params).promise();
 
 	}
 
 	sendMessage(parameters) {
+		let queue_url = this.getQueueURL(parameters);
 
-		du.debug('Send Message');
+		var params = {
+			MessageBody: this.ensureString(parameters.message_body),
+			QueueUrl: queue_url
+		};
 
-		return new Promise((resolve) => {
+		if (!queue_url.includes('.fifo')) {
 
+			params.DelaySeconds = 30;
+
+		}
+
+		if (parameters.messageGroupId) {
+
+			params.MessageGroupId = parameters.messageGroupId;
+
+		}
+
+		this.assureSQS();
+
+		return this.sqs.sendMessage(params).promise();
+
+	}
+
+	async purgeQueue(parameters) {
+		let queue_name;
+
+		if (_.isString(parameters)) {
+
+			queue_name = parameters;
+
+		} else {
+
+			if (!_.has(parameters, 'QueueName')) {
+				throw eu.getError('server', 'Purge Queue parameters objects assumed to have QueueName property');
+			}
+
+			queue_name = parameters.QueueName;
+
+		}
+
+		if (await this.queueExists(queue_name)) {
 			let queue_url = this.getQueueURL(parameters);
 
-			var params = {
-				MessageBody: this.ensureString(parameters.message_body),
+			let params = {
 				QueueUrl: queue_url
 			};
 
-			if (!queue_url.includes('.fifo')) {
+			this.assureSQS();
 
-				params.DelaySeconds = 30;
+			return this.sqs.purgeQueue(params).promise();
+
+		} else {
+			return false;
+
+		}
+
+	}
+
+	async createQueue(params) {
+
+		du.info(params.QueueName);
+
+		// Locally SQS does not support FIFO
+		// This is really ugly, but at least its isolated to one place
+		if (global.SixCRM.configuration.isLocal() && _.has(params, 'Attributes') && params.Attributes.FifoQueue === 'true') {
+
+			delete params.Attributes.FifoQueue;
+			delete params.Attributes.ContentBasedDeduplication;
+			params.QueueName = params.QueueName.replace('.fifo', '');
+
+			if (params.Attributes.RedrivePolicy && params.Attributes.RedrivePolicy) {
+
+				params.Attributes.RedrivePolicy = params.Attributes.RedrivePolicy.replace('.fifo', '');
 
 			}
 
-			if (parameters.messageGroupId) {
+		}
 
-				params.MessageGroupId = parameters.messageGroupId;
+		if (await this.queueExists(params.QueueName)) {
 
-			}
+			du.info('Queue exists, skipping');
 
-			du.debug('Sending message', params);
+			return false;
+
+		} else {
+
+			du.info('Queue not found, creating', params);
 
 			this.assureSQS();
 
-			this.sqs.sendMessage(params, (error, data) => {
-				resolve(this.AWSCallback(error, data))
-			});
+			return this.sqs.createQueue(params).promise();
 
-		});
-
-	}
-
-	purgeQueue(parameters) {
-
-		du.debug('Purge Queue');
-
-		return new Promise((resolve) => {
-
-			let queue_name;
-
-			if (_.isString(parameters)) {
-
-				queue_name = parameters;
-
-			} else {
-
-				if (!_.has(parameters, 'QueueName')) {
-					throw eu.getError('server', 'Purge Queue parameters objects assumed to have QueueName property');
-				}
-
-				queue_name = parameters.QueueName;
-
-			}
-
-			return this.queueExists(queue_name).then(queue_exists => {
-
-				if (queue_exists) {
-
-					du.debug('Queue exists, purging');
-
-					let queue_url = this.getQueueURL(parameters);
-
-					let params = {
-						QueueUrl: queue_url
-					};
-
-					this.assureSQS();
-
-					return this.sqs.purgeQueue(params, (error, data) => {
-
-						du.info(queue_name + ' queue purged');
-
-						return resolve(this.AWSCallback(error, data))
-
-					});
-
-				} else {
-
-					du.debug('Queue not found, skipping');
-
-					return resolve(false);
-
-				}
-
-			});
-
-		});
-
-	}
-
-	createQueue(params) {
-
-		du.debug('Create Queue', params);
-
-		return new Promise((resolve) => {
-
-			du.info(params.QueueName);
-
-			// Locally SQS does not support FIFO
-			// This is really ugly, but at least its isolated to one place
-			if (global.SixCRM.configuration.isLocal() && _.has(params, 'Attributes') && params.Attributes.FifoQueue === 'true') {
-
-				delete params.Attributes.FifoQueue;
-				delete params.Attributes.ContentBasedDeduplication;
-				params.QueueName = params.QueueName.replace('.fifo', '');
-
-				if (params.Attributes.RedrivePolicy && params.Attributes.RedrivePolicy) {
-
-					params.Attributes.RedrivePolicy = params.Attributes.RedrivePolicy.replace('.fifo', '');
-
-				}
-
-			}
-
-			return this.queueExists(params.QueueName).then(queue_exists => {
-
-				if (queue_exists) {
-
-					du.info('Queue exists, skipping');
-
-					return resolve(false);
-
-				} else {
-
-					du.info('Queue not found, creating', params);
-
-					this.assureSQS();
-
-					return this.sqs.createQueue(params, (error, data) => {
-						return resolve(this.AWSCallback(error, data));
-					});
-
-				}
-
-			});
-
-		});
+		}
 
 	}
 
 	setQueueAttibutes(params) {
 
-		du.debug('Set Queue Attrbutes', params);
+		this.assureSQS();
 
-		return new Promise((resolve) => {
-
-			this.assureSQS();
-
-			this.sqs.setQueueAttributes(params, (error, data) => resolve(this.AWSCallback(error, data)));
-
-		});
+		return this.sqs.setQueueAttributes(params).promise();
 
 	}
 
 	queueExists(shortname, refresh) {
-
-		du.debug('Queue Exists');
-
 		if (_.isUndefined(refresh)) {
 			refresh = false;
 		}
@@ -511,9 +423,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	listQueues(params) {
-
-		du.debug('List Queues');
-
 		return new Promise((resolve, reject) => {
 
 			if (_.isUndefined(params) || !_.isObject(params)) {
@@ -537,9 +446,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	deleteQueue(shortname) {
-
-		du.debug('Delete Queue');
-
 		du.warning('Deleting queue: ' + shortname);
 
 		return this.queueExists(shortname, true).then(queue_exists => {
@@ -571,8 +477,6 @@ module.exports = class SQSProvider extends AWSProvider {
 							return reject(eu.getError('server', 'Failed to delete queue: ' + shortname));
 
 						} else {
-
-							du.debug(shortname + ' queue successfully deleted.');
 
 							return resolve(data);
 

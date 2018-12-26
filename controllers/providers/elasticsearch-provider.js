@@ -25,9 +25,6 @@ module.exports = class ElasticSearchProvider extends AWSProvider {
 	}
 
 	describeDomain(domain_definition) {
-
-		du.debug('Describe Domain');
-
 		let parameters = objectutilities.transcribe(
 			{
 				DomainName: 'DomainName'
@@ -37,62 +34,28 @@ module.exports = class ElasticSearchProvider extends AWSProvider {
 			true
 		);
 
-		return new Promise((resolve) => {
-
-			this.elasticsearch.describeElasticsearchDomain(parameters, (error, data) => {
-
-				resolve(this.tolerantCallback(error, data, false));
-
-			});
-
-		});
+		return this.elasticsearch.describeElasticsearchDomain(parameters).promise();
 
 	}
 
 	createDomain(domain_definition) {
-
-		du.debug('Create Domain');
-
 		let parameters = domain_definition;
 
-		return new Promise((resolve) => {
-
-			this.elasticsearch.createElasticsearchDomain(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.elasticsearch.createElasticsearchDomain(parameters).promise();
 
 	}
 
 	updateDomain(domain_definition) {
-
-		du.debug('Update Domain');
-
 		let parameters = domain_definition;
 
-		return new Promise((resolve) => {
-
-			this.elasticsearch.updateElasticsearchDomainConfig(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.elasticsearch.updateElasticsearchDomainConfig(parameters).promise();
 
 	}
 
 	waitFor(domain_definition, waitfor_status = 'ready', count = 0) {
-
-		du.debug('Wait For');
-
 		if (count > this.max_attempts) {
 
 			if (process.env.TEST_MODE === 'true') {
-				du.debug('Test Mode');
 				return Promise.resolve(true);
 			}
 
@@ -121,9 +84,6 @@ module.exports = class ElasticSearchProvider extends AWSProvider {
 	}
 
 	test() {
-
-		du.debug('Test');
-
 		let httpprovider = new HTTPProvider();
 
 		return httpprovider.getJSON({

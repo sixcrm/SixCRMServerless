@@ -7,9 +7,6 @@ const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 module.exports = class APNProvider {
 
 	constructor(){
-
-		du.debug('APN Providers Constructor');
-
 		this.necessary_configuration_parameters = [
 			'token_key',
 			'token_key_id',
@@ -23,9 +20,6 @@ module.exports = class APNProvider {
 	}
 
 	setConfiguationParameters(){
-
-		du.debug('Set Configuration Parameters');
-
 		this.necessary_configuration_parameters.forEach((parameter) => {
 
 			//Technical Debt:  Use configuration_object
@@ -42,9 +36,6 @@ module.exports = class APNProvider {
 	}
 
 	instantiateAPNClass(){
-
-		du.debug('Instantiate APN Class');
-
 		var options = {
 			token: {
 				key: this.token_key,
@@ -69,9 +60,6 @@ module.exports = class APNProvider {
 	}
 
 	createNote(){
-
-		du.debug('Create Note');
-
 		var note = new apn.Notification();
 
 		note.expiry = Math.floor(Date.now() / 1000) + 3600;
@@ -88,9 +76,6 @@ module.exports = class APNProvider {
 	//Note:  user must be a hydrated model containing (atleast) the device_token
 	//Technical Debt:  Must be able to set note contents in the arguments
 	sendNotifications(user){
-
-		du.debug('Send Notifications');
-
 		return this.validateUser(user)
 			.then(this.validateNote)
 			.then(this.createNote)
@@ -99,9 +84,6 @@ module.exports = class APNProvider {
 	}
 
 	validateUser(user){
-
-		du.debug('Validate User');
-
 		//Technical Debt: validate has device tokens
 		//Technical Debt: has configured iOS notifications ON
 
@@ -110,16 +92,11 @@ module.exports = class APNProvider {
 	}
 
 	sendNotification(device_token, note){
-
-		du.debug('Send Notification');
-
 		return this.apn.send(note, device_token);
 
 	}
 
 	handleResponse(response){
-
-		du.debug('Handle Response');
 		//Technical Debt: conditionally operate on responses
 
 		du.debug(response);
@@ -129,9 +106,6 @@ module.exports = class APNProvider {
 	}
 
 	sendAllNotifications(user, note){
-
-		du.debug('Send All Notification');
-
 		let promises = [];
 
 		user.device_tokens.forEach((device_token) => {

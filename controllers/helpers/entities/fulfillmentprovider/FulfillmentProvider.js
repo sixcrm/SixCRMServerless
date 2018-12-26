@@ -1,6 +1,3 @@
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 module.exports = class FulfillmentProviderHelperController {
 
 	constructor(){
@@ -26,9 +23,6 @@ module.exports = class FulfillmentProviderHelperController {
 	}
 
 	validate(){
-
-		du.debug('Validate');
-
 		return Promise.resolve(true)
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'validate'}))
 			.then(() => this.executeValidation())
@@ -40,9 +34,6 @@ module.exports = class FulfillmentProviderHelperController {
 	}
 
 	executeValidation(){
-
-		du.debug('Execute Validation');
-
 		let fulfillment_provider_id = this.parameters.get('fulfillmentproviderid');
 
 		const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
@@ -59,9 +50,6 @@ module.exports = class FulfillmentProviderHelperController {
 	}
 
 	transformValidationResponse(){
-
-		du.debug('Transform Validation Response');
-
 		let terminal_response_class = this.parameters.get('terminalresponseclass');
 
 		let response_prototype = {

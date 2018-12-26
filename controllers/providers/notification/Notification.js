@@ -30,9 +30,6 @@ module.exports = class NotificationProvider {
 	}
 
 	async createNotificationsForAccount({notification_prototype}) {
-
-		du.debug('Create Notifications For Account');
-
 		let receipt_users = await this.setReceiptUsers(notification_prototype);
 
 		return this.sendNotificationToUsers(receipt_users, notification_prototype);
@@ -40,9 +37,6 @@ module.exports = class NotificationProvider {
 	}
 
 	async createNotificationForAccountAndUser({notification_prototype}) {
-
-		du.debug('Create Notifications For Account and User');
-
 		this.validateNotificationPrototype(notification_prototype, true);
 
 		let receipt_users = await this.setReceiptUsers(notification_prototype, false);
@@ -52,9 +46,6 @@ module.exports = class NotificationProvider {
 	}
 
 	validateNotificationPrototype(notification_prototype, user_required = false) {
-
-		du.debug('Validate Notification Prototype');
-
 		global.SixCRM.validate(notification_prototype, global.SixCRM.routes.path('model', 'providers/notifications/notificationprototype.json'));
 
 		if (user_required && !_.has(notification_prototype, 'user')) {
@@ -66,9 +57,6 @@ module.exports = class NotificationProvider {
 	}
 
 	setReceiptUsers(notification_prototype, from_account = true){
-
-		du.debug('Set Receipt Users');
-
 		if(from_account){
 			return this.setReceiptUsersFromAccount(notification_prototype);
 		}
@@ -78,9 +66,6 @@ module.exports = class NotificationProvider {
 	}
 
 	setReceiptUsersFromNotificationPrototype(notification_prototype){
-
-		du.debug('Set Receipt Users From Notification Prototype');
-
 		if(!_.has(notification_prototype, 'user')){
 			throw eu.getError('server', 'Unable to identify receipt user in notification prototype');
 		}
@@ -90,9 +75,6 @@ module.exports = class NotificationProvider {
 	}
 
 	async setReceiptUsersFromAccount(notification_prototype){
-
-		du.debug('Set Receipt Users From Account');
-
 		if(!_.has(notification_prototype, 'account')){
 			throw eu.getError('server', 'Notification Prototype is missing the "account" property.');
 		}
@@ -116,9 +98,6 @@ module.exports = class NotificationProvider {
 	}
 
 	sendNotificationToUsers(receipt_users, notification_prototype){
-
-		du.debug('Send Notification To Users');
-
 		return arrayutilities.reduce(receipt_users, (current, receipt_user) => {
 			return this.saveAndSendNotification({notification_prototype: notification_prototype, account: notification_prototype.account, user: receipt_user})
 				.then(() => {
@@ -129,9 +108,6 @@ module.exports = class NotificationProvider {
 	}
 
 	saveAndSendNotification({notification_prototype, account, user}) {
-
-		du.debug('Save and Send Notification');
-
 		return this.getNotificationSettings({user: user})
 			.then((compound_notification_settings) => this.normalizeNotificationSettings(compound_notification_settings))
 			.then(({normalized_notification_settings, user_settings}) => {
@@ -164,9 +140,6 @@ module.exports = class NotificationProvider {
 	}
 
 	getNotificationSettings({user}){
-
-		du.debug('Get Notification Settings');
-
 		let notification_preference_promises = [
 			this.notificationSettingController.get({id: user}),
 			this.userSettingController.get({id: user}),
@@ -184,9 +157,6 @@ module.exports = class NotificationProvider {
 	}
 
 	normalizeNotificationSettings({notification_settings, default_notification_settings, user_settings}){
-
-		du.debug('Normalize Notification Settings');
-
 		let normalized_notification_settings = default_notification_settings;
 		let parsed_notification_settings = null;
 
@@ -222,9 +192,6 @@ module.exports = class NotificationProvider {
 	}
 
 	buildNotificationCategoriesAndTypes(notification_settings){
-
-		du.debug('Build Notification Categories and Types');
-
 		let notification_categories = this.immutable_categories;
 
 		//Technical Debt:  What's the purpose of this.  Can a user turn off notification types?
@@ -251,9 +218,6 @@ module.exports = class NotificationProvider {
 	}
 
 	createNotification({notification_prototype, user, account, user_settings, augmented_normalized_notification_settings}){
-
-		du.debug('Create Notification Prototype');
-
 		let transformed_notification_prototype = {
 			user: user,
 			account: account,
@@ -270,9 +234,6 @@ module.exports = class NotificationProvider {
 	}
 
 	setNotificationReadAt(notification_prototype, user_settings, augmented_normalized_notification_settings){
-
-		du.debug('Set Notification Read At');
-
 		let six_notification_opt_in = this.getReceiveSettingForChannel({
 			notification_channel: 'six',
 			user_settings: user_settings
@@ -301,9 +262,6 @@ module.exports = class NotificationProvider {
 	}
 
 	getNotificationActive(notification_prototype, augmented_normalized_notification_settings){
-
-		du.debug('Get Notification Active');
-
 		if(objectutilities.hasRecursive(augmented_normalized_notification_settings, 'notification_settings.notification_groups') && _.isArray(augmented_normalized_notification_settings.notification_settings.notification_groups)){
 
 			let notification_group = arrayutilities.find(augmented_normalized_notification_settings.notification_settings.notification_groups, notification_group => {
@@ -333,9 +291,6 @@ module.exports = class NotificationProvider {
 	}
 
 	getReceiveSettingForChannel({notification_channel, user_settings}){
-
-		du.debug('Get Receive Setting For Channel');
-
 		if(!_.has(user_settings, 'notifications') || !arrayutilities.nonEmpty(user_settings.notifications)){
 			return false;
 		}
@@ -349,17 +304,11 @@ module.exports = class NotificationProvider {
 	}
 
 	getNotificationCategoryOptIn(category, augmented_normalized_notification_settings){
-
-		du.debug('Get Notification Category Opt-In');
-
 		return _.includes(augmented_normalized_notification_settings.notification_categories, category);
 
 	}
 
 	isImmutable(notification_prototype){
-
-		du.debug('Is Immutable');
-
 		if(_.has(notification_prototype, 'type') && _.includes(this.immutable_types, notification_prototype.type)){
 			return true;
 		}
@@ -369,18 +318,12 @@ module.exports = class NotificationProvider {
 	}
 
 	getNotificationTypeOptIn(){
-
-		du.debug('Get Notification Type Opt-In');
-
 		//Technical Debt: This functionality isn't really well understood.
 		return true;
 
 	}
 
 	sendNotificationToChannels(){
-
-		du.debug('Send Notification To Channels');
-
 		let common_parameterization = arguments[0];
 
 		let notification_channel_promises = [
@@ -396,9 +339,6 @@ module.exports = class NotificationProvider {
 	}
 
 	getUserLanguagePreference(user_settings){
-
-		du.debug('Get User Language Preferences');
-
 		if(_.has(user_settings, 'language')){
 			return user_settings.language;
 		}
@@ -408,17 +348,11 @@ module.exports = class NotificationProvider {
 	}
 
 	parseFields(content, data){
-
-		du.debug('Parse Fields');
-
 		return parserutilities.parse(content, data);
 
 	}
 
 	getChannelConfiguration(notification_channel, user_settings) {
-
-		du.debug('Get Channel Configuration');
-
 		let channel_settings = arrayutilities.find(user_settings.notifications, (notification_setting) => {
 			return (notification_setting.name === notification_channel);
 		});
@@ -432,9 +366,6 @@ module.exports = class NotificationProvider {
 	}
 
 	getTranslationObject(language_preference, path, fatal){
-
-		du.debug('Get Translation Object');
-
 		fatal = (_.isUndefined(fatal) || _.isNull(fatal))?true:fatal;
 
 		if(!_.has(this, 'translationHelperController')){
@@ -463,9 +394,6 @@ module.exports = class NotificationProvider {
 	}
 
 	buildReadableNotificationObject(channel, notification_prototype, user_settings){
-
-		du.debug('Build Readable Notification Object');
-
 		let language_preference = this.getUserLanguagePreference(user_settings);
 
 		let notification_path = arrayutilities.compress([channel, notification_prototype.category, notification_prototype.name], '.','');
@@ -492,9 +420,6 @@ module.exports = class NotificationProvider {
 	}
 
 	isValidNotificationTranslationPrototype(translation_prototype){
-
-		du.debug('Is Valid Notification Translation Prototype');
-
 		if(!_.isNull(translation_prototype)){
 			if(_.has(translation_prototype, 'body') && _.has(translation_prototype, 'title')){
 				return true;
@@ -506,33 +431,21 @@ module.exports = class NotificationProvider {
 	}
 
 	sendEmail(){
-
-		du.debug('Send Email');
-
 		return this.sendChannelNotification('email', arguments[0]);
 
 	}
 
 	sendSMS(){
-
-		du.debug('Send SMS');
-
 		return this.sendChannelNotification('sms', arguments[0]);
 
 	}
 
 	sendSlackMessage(){
-
-		du.debug('Send Slack Message');
-
 		return this.sendChannelNotification('slack', arguments[0]);
 
 	}
 
 	sendChannelNotification(channel, {notification, user_settings, augmented_normalized_notification_settings}){
-
-		du.debug('Send Channel Notification');
-
 		if(this.getReceiveSettingForChannel({notification_channel: channel, user_settings: user_settings})){
 
 			if(this.receiveChannelOnNotification({channel: channel, notification: notification, augmented_normalized_notification_settings: augmented_normalized_notification_settings})){
@@ -562,9 +475,6 @@ module.exports = class NotificationProvider {
 	}
 
 	receiveChannelOnNotification({channel, notification, augmented_normalized_notification_settings}){
-
-		du.debug('Receive Channel On Notification');
-
 		let found_category = arrayutilities.find(augmented_normalized_notification_settings.settings.notification_groups, notification_group => {
 			return (notification_group.key == notification.category);
 		});

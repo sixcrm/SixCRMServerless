@@ -23,9 +23,6 @@ module.exports = class verifySignatureController {
 	}
 
 	parseEventSignature(event) {
-
-		du.debug('Parse Event Signature');
-
 		const tokens = event.authorizationToken.split(':');
 
 		if (!_.isArray(tokens) || !(tokens.length == 3)) {
@@ -41,9 +38,6 @@ module.exports = class verifySignatureController {
 	}
 
 	createTokenObject(tokens) {
-
-		du.debug('Create Token Object');
-
 		return new Promise((resolve, reject) => {
 
 			this.accessKeyController.disableACLs();
@@ -78,9 +72,6 @@ module.exports = class verifySignatureController {
 
 
 	verifyTimestamp(token_object) {
-
-		du.debug('Verify Timestamp');
-
 		let time_difference = timestamp.getTimeDifference(token_object.timestamp);
 
 		if (time_difference > (60 * 60 * 5)) {
@@ -98,9 +89,6 @@ module.exports = class verifySignatureController {
 	}
 
 	verifySignature(token_object) {
-
-		du.debug('Verify Signature');
-
 		if (!signature.validateSignature(token_object.access_key.secret_key, token_object.timestamp, token_object.signature)) {
 
 			du.warning('Signature failed:  Incorrect Signature');
@@ -118,9 +106,6 @@ module.exports = class verifySignatureController {
 	}
 
 	populateAuthorityUser() {
-
-		du.debug('Populate Authority User');
-
 		return {
 			id: 'system@sixcrm.com'
 		};

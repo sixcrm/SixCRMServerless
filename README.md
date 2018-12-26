@@ -183,11 +183,15 @@ The Six deployment has random data "spoofers" -  that is scripts which attempts 
 
 ## Watch
 
-Run `npm run ts-watch`
+Run `yarn run ts-watch`
 
 ## Build (i.e. for Circle)
 
-Run `npm run ts-build`
+Run `yarn run ts-build`
+
+## Tests
+
+Run `yarn run ts-test`
 
 ## Structure
 

@@ -1,6 +1,4 @@
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
@@ -61,9 +59,6 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	}
 
 	buildMerchantProviderGroups() {
-
-		du.debug('Build Merchant Provider Groups');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({
 				argumentation: arguments[0],
@@ -78,17 +73,12 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	}
 
 	acquireCreditCardProperties() {
-
-		du.debug('Acquire CreditCard Properties');
-
 		return this.acquireCreditCard()
 			.then(() => this.setCreditCardBINNumber());
 
 	}
 
 	async transformMerchantProviderGroupsToMerchantProviders() {
-		du.debug('Transform Merchant Provider Groups To Merchant Providers');
-
 		let creditcard = this.parameters.get('creditcard');
 		let sorted_married_product_groups = this.parameters.get('sortedmarriedproductgroups');
 
@@ -123,8 +113,6 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	}
 
 	async selectMerchantProviderFromMerchantProviderGroup() {
-		du.debug('Select Merchant Provider');
-
 		this.parameters.setParameters({
 			argumentation: arguments[0],
 			action: 'selectMerchantProviderFromMerchantProviderGroup'
@@ -143,8 +131,6 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	}
 
 	getMerchantProviderGroupSummary(merchantprovidergroup, merchant_providers) {
-		du.debug('Get Merchantprovidergroup Summary');
-
 		let monthly_summary = arrayutilities.serial(merchantprovidergroup.merchantproviders, (current, next) => {
 			let merchant_provider = arrayutilities.find(merchant_providers, merchant_provider => {
 				return (merchant_provider.id == next.id);
@@ -163,7 +149,6 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	}
 
 	async getMerchantProviderSummaries(merchant_providers) {
-		du.debug('Get Merchant Provider Summaries');
 		let merchant_provider_ids = arrayutilities.map(merchant_providers, merchant_provider => merchant_provider.id);
 
 		const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
@@ -177,8 +162,6 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	}
 
 	marryMerchantProviderSummaries(merchant_provider_summaries, merchant_providers) {
-		du.debug('Marry Merchant Provider Summaries');
-
 		arrayutilities.map(merchant_provider_summaries, (summary) => {
 			arrayutilities.filter(merchant_providers, (merchant_provider, index) => {
 				if (merchant_provider.id == summary.merchant_provider.id) {
@@ -191,8 +174,6 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	}
 
 	filterMerchantProviders(merchantprovidergroup, creditcard, amount, merchant_providers) {
-		du.debug('Filter Merchant Providers');
-
 		const MerchantProviderGeneralFilter = global.SixCRM.routes.include('helpers', 'transaction/filters/MerchantProviderGeneralFilter.js');
 		const merchantProviderGeneralFilter = new MerchantProviderGeneralFilter();
 		const MerchantProviderLSSFilter = global.SixCRM.routes.include('helpers', 'transaction/filters/MerchantProviderLSSFilter.js');
@@ -213,15 +194,9 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	}
 
 	pickMerchantProvider() {
-
-		du.debug('Pick Merchant Provider');
-
 	}
 
 	acquireCreditCard() {
-
-		du.debug('Acquire Credit Card');
-
 		let creditcard = this.parameters.get('creditcard');
 
 		return this.creditCardController.get({
@@ -237,9 +212,6 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	}
 
 	setCreditCardBINNumber() {
-
-		du.debug('Set CreditCard BIN Number');
-
 		let creditcard = this.parameters.get('creditcard');
 
 		let binnumber = this.creditCardHelperController.getBINNumber(creditcard);
@@ -259,9 +231,6 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	}
 
 	getCreditCardProperties() {
-
-		du.debug('Get Credit Card Properties');
-
 		let creditcard = this.parameters.get('creditcard');
 
 		return this.binController.getCreditCardProperties({
@@ -283,9 +252,6 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	}
 
 	calculateAmount(product_group_group) {
-
-		du.debug('Calculate Amount');
-
 		return arrayutilities.serial(
 			product_group_group,
 			(current, next) => {
@@ -297,9 +263,6 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	}
 
 	sortRebillProductsByMerchantProviderGroupAssociations() {
-
-		du.debug('sortRebillProductsByMerchantProviderGroupAssociations');
-
 		let rebill = this.parameters.get('rebill');
 		let campaign_id = this.parameters.get('session').campaign;
 		let associated_merchant_provider_groups = this.parameters.get('merchantprovidergroupassociations');
@@ -339,9 +302,6 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	}
 
 	acquireRebillProperties() {
-
-		du.debug('Acquire Rebill Properties');
-
 		let rebill = this.parameters.get('rebill');
 
 		var promises = [
@@ -359,9 +319,6 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	}
 
 	acquireMerchantProviderGroupAssociations() {
-
-		du.debug('Acquire Merchant Provider Group Associations');
-
 		let rebill = this.parameters.get('rebill');
 		let campaign_id = this.parameters.get('session').campaign;
 
@@ -397,9 +354,6 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 		entities,
 		campaign
 	}) {
-
-		du.debug('Get Merchantprovidergroups By Entity And Campaign');
-
 		return this.merchantProviderGroupAssociationController.listByEntitiesAndCampaign({
 			entities: entities,
 			campaign: campaign
@@ -411,9 +365,6 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	getMerchantProviderGroupsByCampaign({
 		campaign
 	}) {
-
-		du.debug('Get Merchantprovidergroups By Campaign');
-
 		return this.merchantProviderGroupAssociationController.listByCampaign({
 			campaign: campaign
 		})

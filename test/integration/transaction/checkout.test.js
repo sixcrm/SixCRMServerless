@@ -77,6 +77,34 @@ function checkout(token, post_body){
 
 }
 
+function checkoutShouldFail(token, post_body){
+
+	du.info('Checkout');
+	let account = config.account;
+
+	let argument_object = {
+		url: config.endpoint+'checkout/'+account,
+		body: post_body,
+		headers:{
+			Authorization: token
+		}
+	};
+
+	return httpprovider.postJSON(argument_object)
+		.then((result) => {
+			du.debug(result.body);
+			expect(result.response.statusCode).to.equal(400);
+			expect(result.response.statusMessage).to.not.equal('OK');
+			expect(result.body).to.have.property('success');
+			expect(result.body).to.have.property('code');
+			expect(result.body).to.have.property('response');
+			expect(result.body.success).to.equal(false);
+			expect(result.body.code).to.equal(400);
+			return result.body;
+		});
+
+}
+
 function acquireToken(campaign){
 
 	du.info('Acquire Token');
@@ -165,7 +193,7 @@ describe('Checkout', () => {
 
 			let sale_object = {
 				product_schedules:[{
-					product_schedule: "12529a17-ac32-4e46-b05b-83862843055d",
+					product_schedule: "0e3652bf-f1d3-4325-840e-c93806289d7e",
 					quantity:2
 				}]
 			};
@@ -183,6 +211,43 @@ describe('Checkout', () => {
 					expect(validated).to.equal(true);
 				})
 
+		});
+
+		it('fails when a products schedule has more than one product', () => {
+
+			let sale_object = {
+				product_schedules:[{
+					product_schedule: "12529a17-ac32-4e46-b05b-83862843055d",
+					quantity:2
+				}]
+			};
+
+			return acquireToken(campaign)
+				.then((token) => {
+					let checkout_body = createCheckoutBody(campaign, sale_object);
+
+					return checkoutShouldFail(token, checkout_body);
+				})
+		});
+
+		it('fails when a more than one product schedule is being purchased', () => {
+
+			let sale_object = {
+				product_schedules:[{
+					product_schedule: "12529a17-ac32-4e46-b05b-83862843055d",
+					quantity:2
+				},{
+					product_schedule: "0e3652bf-f1d3-4325-840e-c93806289d7e",
+					quantity:2
+				}]
+			};
+
+			return acquireToken(campaign)
+				.then((token) => {
+					let checkout_body = createCheckoutBody(campaign, sale_object);
+
+					return checkoutShouldFail(token, checkout_body);
+				})
 		});
 	});
 
@@ -244,7 +309,7 @@ describe('Checkout', () => {
 
 			let sale_object = {
 				product_schedules:[{
-					product_schedule: "12529a17-ac32-4e46-b05b-83862843055d",
+					product_schedule: "0e3652bf-f1d3-4325-840e-c93806289d7e",
 					quantity:2
 				}],
 				products:[{

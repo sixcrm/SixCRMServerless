@@ -18,6 +18,14 @@ module.exports.graphObj = new GraphQLObjectType({
 		disable: {
 			type: GraphQLString,
 			description: "Account billing disable date"
+		},
+		limited_at: {
+			type: GraphQLString,
+			description: "Account billing limit date"
+		},
+		deactivated_at: {
+			type: GraphQLString,
+			description: "Account billing deactivate date"
 		}
 	}),
 	interfaces: []

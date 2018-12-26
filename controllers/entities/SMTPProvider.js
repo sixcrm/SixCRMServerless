@@ -1,7 +1,5 @@
 
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 
@@ -23,9 +21,6 @@ module.exports = class SMTPProviderController extends entityController {
 	}
 
 	associatedEntitiesCheck({id}){
-
-		du.debug('Associated Entities Check');
-
 		let return_array = [];
 
 		let data_acquisition_promises = [
@@ -49,9 +44,6 @@ module.exports = class SMTPProviderController extends entityController {
 	}
 
 	validateSMTPProvider({email, smtpprovider}){
-
-		du.debug('Validate SMTP Provider');
-
 		this.sanitize(false);
 		return this.get({id: smtpprovider}).then(smtpprovider => {
 			this.sanitize(true);

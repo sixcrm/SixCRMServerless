@@ -14,9 +14,6 @@ module.exports = class SNSProvider extends AWSProvider{
 	}
 
 	instantiateSNS(){
-
-		du.debug('Instantiate SNS');
-
 		let sns_region = (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'sns.region'))?global.SixCRM.configuration.site_config.sns.region:this.getRegion();
 		let parameters = {
 			apiVersion: 'latest',
@@ -35,9 +32,6 @@ module.exports = class SNSProvider extends AWSProvider{
 	}
 
 	createTopic(parameters){
-
-		du.debug('Create Topic');
-
 		let params = objectutilities.transcribe(
 			{
 				Name:'Name'
@@ -60,9 +54,6 @@ module.exports = class SNSProvider extends AWSProvider{
 	}
 
 	addPermission(parameters){
-
-		du.debug('Add Permission');
-
 		let params = objectutilities.transcribe(
 			{
 				AWSAccountId:'aws_account_id',
@@ -88,9 +79,6 @@ module.exports = class SNSProvider extends AWSProvider{
 	}
 
 	subscribe(parameters){
-
-		du.debug('Subscribe');
-
 		let params = objectutilities.transcribe(
 			{
 				Protocol:'Protocol',
@@ -122,9 +110,6 @@ module.exports = class SNSProvider extends AWSProvider{
 	}
 
 	setSubscriptionAttributes(parameters){
-
-		du.debug('Set Subscription Attributes');
-
 		let params = objectutilities.transcribe(
 			{
 				AttributeName: 'AttributeName',
@@ -158,9 +143,6 @@ module.exports = class SNSProvider extends AWSProvider{
 	}
 
 	publish(parameters){
-
-		du.debug('Publish');
-
 		let params = objectutilities.transcribe(
 			{
 				Message:'Message'
@@ -196,8 +178,6 @@ module.exports = class SNSProvider extends AWSProvider{
 				PhoneNumber: phone_number,
 			};
 
-			du.debug('Sending SMS message with parameters', params);
-
 			this.sns.publish(params, (error, data) => {
 				if (error) {
 					du.debug('SNS Error!', error);
@@ -206,8 +186,6 @@ module.exports = class SNSProvider extends AWSProvider{
 				}
 
 				if (data) {
-					du.debug('SNS Success:', data);
-
 					return resolve(data);
 				}
 			});

@@ -32,9 +32,6 @@ module.exports = class RelayController {
 	}
 
 	invokeAdditionalLambdas() {
-
-		du.debug('Invoke Additional Lambdas');
-
 		let params = this.parameters.get('params');
 		let messages = this.parameters.get('messages');
 
@@ -56,9 +53,6 @@ module.exports = class RelayController {
 	}
 
 	validateMessages(){
-
-		du.debug('Validate Messages');
-
 		if(!this.parameters.isSet('messages')){
 			throw eu.getError('server', 'Messages are not set correctly.');
 		}
@@ -68,16 +62,11 @@ module.exports = class RelayController {
 	}
 
 	getMessages(){
-
-		du.debug('Get Messages');
-
 		if(!_.has(this, 'message_acquisition_function')){
 
 			let params = this.parameters.get('params');
 
 			return this.sqsprovider.receiveMessages({queue: params.origin_queue, limit: this.message_limit}).then((messages) => {
-
-				du.debug('Messages', messages);
 
 				this.parameters.set('messages', messages);
 
@@ -98,9 +87,6 @@ module.exports = class RelayController {
 	}
 
 	validateEnvironment(){
-
-		du.debug('Validate Parameters');
-
 		if(!this.parameters.isSet('params')){
 			throw eu.getError('server', 'Invalid Forward Message Configuration.');
 		}
@@ -110,9 +96,6 @@ module.exports = class RelayController {
 	}
 
 	deleteMessage({queue, receipt_handle}){
-
-		du.debug('Delete Message');
-
 		return this.sqsprovider.deleteMessage({
 			queue: queue,
 			receipt_handle: receipt_handle
@@ -121,25 +104,16 @@ module.exports = class RelayController {
 	}
 
 	respond(response){
-
-		du.debug('Respond');
-
 		return new RelayResponse(response);
 
 	}
 
 	pushMessagetoQueue({body, queue}){
-
-		du.debug('Push Message To Queue');
-
 		return this.sqsprovider.sendMessage({message_body: body, queue: queue});
 
 	}
 
 	getReceiptHandle(message){
-
-		du.debug('Get Receipt Handle');
-
 		if(_.has(message, 'ReceiptHandle')){
 			return message.ReceiptHandle;
 		}
@@ -150,9 +124,6 @@ module.exports = class RelayController {
 	}
 
 	createDiagnosticMessageBody(compound_worker_response_object){
-
-		du.debug('Append Diagnostic Information');
-
 		let params = this.parameters.get('params');
 
 		objectutilities.hasRecursive(compound_worker_response_object, 'message.Body', true);
@@ -178,9 +149,6 @@ module.exports = class RelayController {
 	}
 
 	setPermissions(){
-
-		du.debug('Set Permissions');
-
 		this.permissionutilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
 		this.permissionutilities.setPermissions('*',['*/*'],[])
 

@@ -1,11 +1,9 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 
 const StateMachineHelperController = global.SixCRM.routes.include('helpers','statemachine/StateMachine.js');
-
 const StepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
 module.exports = class TriggerController extends StepFunctionWorkerController {
@@ -16,10 +14,7 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 
 	}
 
-	async executeBulk(parameters, restart = false, fatal = false){
-
-		du.debug('Execute Bulk');
-
+	async executeBulk(parameters) {
 		if(!_.has(parameters, 'guids')){
 			throw eu.getError('server', 'parameters is assumed to have  property "guids": '+JSON.stringify(parameters));
 		}
@@ -35,7 +30,7 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 		let bulk_promises = arrayutilities.map(parameters.guids, (guid) => {
 			return () => {
 				try{
-					return this.execute({guid: guid, stateMachineName: parameters.stateMachineName}, restart, fatal);
+					return this.execute({guid: guid, stateMachineName: parameters.stateMachineName});
 				}catch(error){
 					return error;
 				}
@@ -46,10 +41,7 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 
 	}
 
-	async execute(parameters, restart = false, fatal = false){
-
-		du.debug('execute');
-
+	async execute(parameters) {
 		this.validateInput(parameters);
 
 		const to_state = this.getStateMachineName(parameters);
@@ -61,57 +53,11 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 		};
 
 		const stateMachineHelperController = new StateMachineHelperController();
-
-		const running_executions = await stateMachineHelperController.getRunningExecutions({id: parameters.guid, state: to_state});
-
-		if(_.isNull(running_executions)){
-
-			return stateMachineHelperController.startExecution({parameters: params});
-
-		}else{
-
-			if(!_.isArray(running_executions) || !arrayutilities.nonEmpty(running_executions)){
-				throw eu.getError('server', 'Unexpected response format: '+JSON.stringify(running_executions));
-			}
-
-			if(restart == true){
-
-				try{
-
-					await stateMachineHelperController.stopExecutions(running_executions);
-
-				}catch(error){
-
-					if(fatal == true){
-						throw error;
-					}
-
-					du.error(error);
-					du.warning(error.message);
-					return null;
-
-				}
-
-				return stateMachineHelperController.startExecution({parameters: params});
-
-			}
-
-		}
-
-		if(fatal == true){
-			throw eu.getError('bad_request', 'There is already another execution running for guid: "'+parameters.guid+'" and state "'+to_state+'".');
-		}
-
-		du.warning('There is already another execution running for guid: "'+parameters.guid+'" and state "'+to_state+'".  If you would like to trigger this execution anyhow, set the `restart` argument to true.');
-		return null;
-
+		return stateMachineHelperController.startExecution({parameters: params});
 
 	}
 
 	getStateMachineName(input){
-
-		du.debug('Get State Machine Name');
-
 		if(_.has(this, 'next_state')){
 			return this.next_state;
 		}
@@ -125,9 +71,6 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 	}
 
 	validateInput(input, fatal = true){
-
-		du.debug('Validate Input');
-
 		if(_.has(input, 'guid') && stringutilities.isUUID(input.guid)){
 			return true;
 		}

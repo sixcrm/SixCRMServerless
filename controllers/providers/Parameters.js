@@ -17,9 +17,6 @@ module.exports = class Parameters {
 	}
 
 	setParameterValidation({parameter_validation}){
-
-		du.debug('Set Parameter Validation');
-
 		parameter_validation = _.isUndefined(parameter_validation)?{}:parameter_validation;
 
 		if(!_.has(this, 'parameter_validation')){
@@ -33,9 +30,6 @@ module.exports = class Parameters {
 	}
 
 	setParameterDefinition({parameter_definition}){
-
-		du.debug('Set Parameter Definition');
-
 		parameter_definition = _.isUndefined(parameter_definition)?{}:parameter_definition;
 
 		if(!_.has(this, 'parameter_definition')){
@@ -49,8 +43,6 @@ module.exports = class Parameters {
 	}
 
 	push(key, value, valuekey){
-
-		du.debug('Push', key);
 
 		valuekey = (_.isNull(valuekey) || _.isUndefined(valuekey))?null:valuekey;
 
@@ -84,8 +76,6 @@ module.exports = class Parameters {
 
 	set(key, value){
 
-		du.debug('Set', key);
-
 		if(this.validate(key, value)){
 
 			this.store[key] = value;
@@ -98,8 +88,6 @@ module.exports = class Parameters {
 
 	unset(key){
 
-		du.debug('Unset', key);
-
 		if(_.has(this.store, key)){
 
 			delete this.store[key];
@@ -109,16 +97,11 @@ module.exports = class Parameters {
 	}
 
 	getAll(){
-
-		du.debug('Get All');
-
 		return this.store;
 
 	}
 
 	get(key, { fatal = true } = {}){
-
-		du.debug('Get', key);
 
 		let return_object = null;
 
@@ -138,8 +121,6 @@ module.exports = class Parameters {
 
 	validate(key, value, fatal){
 
-		du.debug('Validate', key);
-
 		fatal = (_.isUndefined(fatal))?true:fatal;
 
 		if(_.has(this.parameter_validation, key)){
@@ -157,9 +138,6 @@ module.exports = class Parameters {
 	}
 
 	setParameters({argumentation: argumentation, action: action}){
-
-		du.debug('Set Parameters');
-
 		let local_parameters = {};
 
 		if(objectutilities.hasRecursive(this, 'parameter_definition.'+action+'.required', true)){
@@ -185,8 +163,6 @@ module.exports = class Parameters {
 	}
 
 	isSet(key){
-
-		du.debug('Is Set', key);
 
 		return (_.has(this.store, key));
 

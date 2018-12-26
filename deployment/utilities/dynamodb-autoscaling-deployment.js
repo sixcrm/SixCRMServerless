@@ -49,9 +49,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	autoscaleTables(table = null){
-
-		du.debug('Autoscale Tables');
-
 		return this.getAutoscalingRole()
 			.then(() => this.getTableDefinitionFilenames())
 			.then(() => this.setAutoscalingForTables(table));
@@ -59,9 +56,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	getAutoscalingRole(){
-
-		du.debug('Get Autoscaling Role');
-
 		let role_definition = global.SixCRM.routes.include('deployment', 'dynamodb/configuration/autoscalingrole.json');
 
 		return this.iamprovider.roleExists(role_definition).then(result => {
@@ -79,9 +73,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	getTableDefinitionFilenames(){
-
-		du.debug('Get Table Definition Filenames');
-
 		let directory_path = global.SixCRM.routes.path('tabledefinitions');
 
 		return fileutilities.getDirectoryFiles(directory_path).then(directory_file_paths => {
@@ -105,9 +96,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	setAutoscalingForTables(table = null){
-
-		du.debug('Set Autoscaling For Tables');
-
 		let tablenames;
 
 		if(!_.isNull(table)){
@@ -129,9 +117,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	autoscaleTable({table_name}){
-
-		du.debug('Autoscale Table');
-
 		du.info('#####','','Setting Autoscaling for table: '+table_name,'','#####');
 
 		return Promise.resolve()
@@ -155,9 +140,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	setTableDescription(){
-
-		du.debug('Set Table Description');
-
 		let table_name = this.parameters.get('tablename');
 
 		let table_definition = global.SixCRM.routes.include('tabledefinitions', table_name+'.json');
@@ -182,9 +164,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	acquireAutoscalingConfigurations(){
-
-		du.debug('Acquire Table Autoscaling Configurations');
-
 		let table_name = this.parameters.get('tablename');
 
 		if(fileutilities.fileExists(global.SixCRM.routes.path('deployment', 'dynamodb/configuration/autoscaling/'+table_name+'.json'))){
@@ -204,9 +183,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	executeAutoscalingConfigurations(){
-
-		du.debug('Execute Autoscaling Configurations');
-
 		let autoscaling_configurations = this.parameters.get('autoscalingconfigurations');
 
 		let configuration_executions = arrayutilities.map(autoscaling_configurations, autoscaling_configuration => {
@@ -221,9 +197,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	executeAutoscalingConfiguration({autoscaling_configuration}){
-
-		du.debug('Execute Autoscaling Configuration');
-
 		this.parameters.set('autoscalingconfiguration', autoscaling_configuration);
 
 		return Promise.resolve()
@@ -239,9 +212,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	setTableScalableTargetConfigurations(){
-
-		du.debug('Set Table Scalable Targets');
-
 		let autoscaling_role = this.parameters.get('autoscalingrole');
 		let autoscaling_configuration = this.parameters.get('autoscalingconfiguration');
 
@@ -261,9 +231,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	setTableScalableTargets(){
-
-		du.debug('Set Table Scalable Targets');
-
 		let scalable_target_configurations = this.parameters.get('scalabletargetconfigurations');
 
 		let scalable_target_configuration_promises = arrayutilities.map(scalable_target_configurations, scalable_target_configuration => {
@@ -278,9 +245,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	setTableScalingPolicyConfigurations(){
-
-		du.debug('Set Table Scaling Policy Configurations');
-
 		let autoscaling_configuration = this.parameters.get('autoscalingconfiguration');
 
 		let scaling_policy_configurations = arrayutilities.map(autoscaling_configuration.scaling_policies, scaling_policy => {
@@ -301,9 +265,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	setTableScalingPolicies(){
-
-		du.debug('Set Table Scaling Policies');
-
 		let scaling_policy_configurations = this.parameters.get('scalingpolicyconfigurations');
 
 		let scaling_policy_configuration_promises = arrayutilities.map(scaling_policy_configurations, scaling_policy_configuration => {
@@ -318,9 +279,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	createScalingPolicyName(scaling_policy){
-
-		du.debug('Create Scaling Policy Name');
-
 		let autoscaling_configuration = this.parameters.get('autoscalingconfiguration');
 
 		let pre_hash = this.parseTableName(autoscaling_configuration.ResourceId)+'_'+scaling_policy.ScalableDimension;
@@ -330,9 +288,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	cleanup(){
-
-		du.debug('Cleanup');
-
 		this.parameters.unset('tablename');
 		this.parameters.unset('tabledescription');
 		this.parameters.unset('autoscalingconfiguration');
@@ -342,9 +297,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	describeTableAutoscaling(){
-
-		du.debug('Describe Table Autoscaling');
-
 		let table_name = this.parameters.get('tablename');
 		let autoscaling_configurations = this.parameters.get('autoscalingconfigurations');
 
@@ -392,9 +344,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	tableExists(table_name){
-
-		du.debug('Table Exists');
-
 		return this.dynamodbprovider.describeTable(table_name, false).then((results) => {
 
 			du.info('Table found: '+table_name);
@@ -410,9 +359,6 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 	}
 
 	parseTableName(some_string){
-
-		du.debug('Parse Table Name');
-
 		let table_name = this.parameters.get('tablename');
 
 		return some_string.replace('{tablename}', table_name);

@@ -1,6 +1,3 @@
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 module.exports = class ShippingStatusController {
 
 	constructor(){
@@ -32,9 +29,6 @@ module.exports = class ShippingStatusController {
 	}
 
 	isDelivered(){
-
-		du.debug('Is Delivered');
-
 		return this.getStatus(arguments[0])
 			.then(result => {
 				let vendor_response = result.getVendorResponse();
@@ -45,9 +39,6 @@ module.exports = class ShippingStatusController {
 	}
 
 	getStatus(){
-
-		du.debug('Get Status');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'getStatus'}))
 			.then(() => this.getCarrierStatus())
@@ -61,9 +52,6 @@ module.exports = class ShippingStatusController {
 	}
 
 	updateShippingReceiptHistory(){
-
-		du.debug('Update Shipping Receipt History');
-
 		let tracker_response = this.parameters.get('trackerresponse').getVendorResponse();
 		let shipping_receipt = this.parameters.get('shippingreceipt');
 
@@ -82,9 +70,6 @@ module.exports = class ShippingStatusController {
 	}
 
 	getCarrierStatus(){
-
-		du.debug('Get Carrier Status');
-
 		let shipping_receipt = this.parameters.get('shippingreceipt');
 
 		let TrackerController = global.SixCRM.routes.include('providers','tracker/Tracker.js');

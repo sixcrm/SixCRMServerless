@@ -2,7 +2,6 @@
 const _ = require('lodash');
 
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const hashutilities = require('@6crm/sixcrmcore/util/hash-utilities').default;
 const HttpProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
@@ -64,8 +63,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 	}
 
 	test(){
-
-		du.debug('Test');
 		let argumentation = {
 			action: 'test'
 		};
@@ -80,9 +77,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 	}
 
 	info(){
-
-		du.debug('info');
-
 		let argumentation = arguments[0];
 
 		argumentation.action = 'info';
@@ -98,9 +92,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 	}
 
 	fulfill(){
-
-		du.debug('Fulfill');
-
 		let argumentation = arguments[0];
 
 		argumentation.action = 'fulfill';
@@ -120,9 +111,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 	}
 
 	setMethod(){
-
-		du.debug('Set Method');
-
 		let action = this.parameters.get('action');
 		let method = this.methods[action];
 
@@ -133,9 +121,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 	}
 
 	createParametersObject(){
-
-		du.debug('Create Parameters Object');
-
 		let parameters_object = objectutilities.merge({}, this.getVendorParameters());
 
 		parameters_object = objectutilities.merge(parameters_object, this.getFulfillmentProviderParameters());
@@ -150,9 +135,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 	}
 
 	issueRequest(){
-
-		du.debug('Issue Request');
-
 		let method = this.parameters.get('method');
 
 		if(_.isFunction(this['issue'+method+'Request'])){
@@ -164,9 +146,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 	}
 
 	getVendorParameters(){
-
-		du.debug('Get Vendor Parameters');
-
 		let vendor_parameters = global.SixCRM.routes.include('config', global.SixCRM.configuration.stage+'/vendors/fulfillmentproviders/ShipStation.yml');
 
 		return objectutilities.transcribe(
@@ -180,17 +159,11 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 	}
 
 	getFulfillmentProviderParameters(){
-
-		du.debug('Get Fulfillment Provider Parameters');
-
 		return {};
 
 	}
 
 	getMethodParameters(){
-
-		du.debug('Get Method Parameters');
-
 		let method = this.parameters.get('method');
 
 		if(_.isFunction(this['get'+method+'MethodParameters'])){
@@ -202,9 +175,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 	}
 
 	getListOrdersMethodParameters(){
-
-		du.debug('Get List Orders Method Parameters');
-
 		return {
 			path: 'orders'
 		};
@@ -212,9 +182,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 	}
 
 	getCreateOrderMethodParameters(){
-
-		du.debug('Get List Fulfillments Method Parameters');
-
 		return {
 			path: 'orders/createorder'
 		};
@@ -222,9 +189,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 	}
 
 	getRequestParameters(){
-
-		du.debug('Get Request Parameters');
-
 		let method = this.parameters.get('method');
 
 		if(_.isFunction(this['get'+method+'RequestParameters'])){
@@ -236,9 +200,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 	}
 
 	getListOrdersRequestParameters(){
-
-		du.debug('Get List Orders Request Parameters');
-
 		let {store_id} = this.parameters.get('fulfillmentprovider').provider;
 		let reference_number = this.parameters.get('referencenumber', {fatal: false});
 
@@ -260,9 +221,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 	}
 
 	getCreateOrderRequestParameters(){
-
-		du.debug('Get CreateOrder Request Parameters');
-
 		let {store_id} = this.parameters.get('fulfillmentprovider').provider;
 		let customer = this.parameters.get('customer');
 		let products = this.parameters.get('products');
@@ -396,9 +354,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 	}
 
 	issueCreateOrderRequest(){
-
-		du.debug('Issue Create Order Request');
-
 		let parameters = this.parameters.get('parametersobject');
 
 		let url = parameters.endpoint+parameters.path;
@@ -426,9 +381,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 
 
 	issueListOrdersRequest(){
-
-		du.debug('Issue ListOrders Request');
-
 		let parameters = this.parameters.get('parametersobject');
 
 		let url = parameters.endpoint+parameters.path;
@@ -457,9 +409,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 	}
 
 	createAuthorizationString(){
-
-		du.debug('Create Authorization String');
-
 		let api_key = this.parameters.get('fulfillmentprovider').provider.api_key;
 		let api_secret = this.parameters.get('fulfillmentprovider').provider.api_secret;
 
