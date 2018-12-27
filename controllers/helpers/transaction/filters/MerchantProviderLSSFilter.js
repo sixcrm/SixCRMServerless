@@ -37,9 +37,6 @@ module.exports = class MerchantProviderLSSFilter {
 	}
 
 	filter(){
-
-		du.debug('Select Merchant Provider With Distribution Least Sum of Squares');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'filter'}))
 			.then(() => this.executeFilter());
@@ -47,9 +44,6 @@ module.exports = class MerchantProviderLSSFilter {
 	}
 
 	executeFilter(){
-
-		du.debug('Execute Filter');
-
 		let merchant_providers = this.parameters.get('merchantproviders');
 
 		if(merchant_providers.length == 1){ return merchant_providers[0]; }
@@ -65,9 +59,6 @@ module.exports = class MerchantProviderLSSFilter {
 	}
 
 	calculateDistributionTargetsArray(){
-
-		du.debug('Calculate Distribution Targets Array');
-
 		let merchant_providers = this.parameters.get('merchantproviders');
 
 		let distribution_targets_array = arrayutilities.map(merchant_providers, (merchant_provider) => {
@@ -85,9 +76,6 @@ module.exports = class MerchantProviderLSSFilter {
 	}
 
 	getMerchantProviderTargetDistribution({merchant_provider}){
-
-		du.debug('Get Merchant Provider Target Distribution');
-
 		let merchantprovidergroup = this.parameters.get('merchantprovidergroup');
 
 		//Technical Debt:  Upgrade the JSON Schemas
@@ -108,9 +96,6 @@ module.exports = class MerchantProviderLSSFilter {
 	}
 
 	calculateHypotheticalBaseDistributionArray(){
-
-		du.debug('Calculate Hypothetical Base Distribution Array');
-
 		let merchant_providers = this.parameters.get('merchantproviders');
 
 		let hypothetical_distribution_base_array = arrayutilities.map(merchant_providers, (merchant_provider) => {
@@ -129,9 +114,6 @@ module.exports = class MerchantProviderLSSFilter {
 	}
 
 	getMerchantProviderHypotheticalBaseDistribution({merchant_provider, additional_amount}){
-
-		du.debug('Get Merchant Provider Hypothetical Base Distribution');
-
 		additional_amount = (_.isUndefined(additional_amount) || _.isNull(additional_amount))?0:numberutilities.toNumber(additional_amount);
 
 		let amount = this.parameters.get('amount');
@@ -156,9 +138,6 @@ module.exports = class MerchantProviderLSSFilter {
 	}
 
 	selectMerchantProviderFromLSS(){
-
-		du.debug('Select Merchant Provider From LSS');
-
 		let hypothetical_distribution_base_array = this.parameters.get('hypotheticaldistributions');
 		let target_distribution_array = this.parameters.get('distributiontargets');
 		let merchant_providers = this.parameters.get('merchantproviders');

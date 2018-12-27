@@ -1,7 +1,3 @@
-
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 const ShippingCarrierVendorResponse = global.SixCRM.routes.include('vendors', 'shippingcarriers/components/Response.js');
 
 module.exports = class TestResponse extends ShippingCarrierVendorResponse {
@@ -23,9 +19,6 @@ module.exports = class TestResponse extends ShippingCarrierVendorResponse {
 	}
 
 	transformResponse(){
-
-		du.debug('Transform Response');
-
 		let action = this.parameters.get('action');
 
 		let transformers = {
@@ -37,9 +30,6 @@ module.exports = class TestResponse extends ShippingCarrierVendorResponse {
 	}
 
 	transformInfoResponse(){
-
-		du.debug('Transform Info Response');
-
 		let vendor_response = this.parameters.get('vendorresponse');
 
 		if(vendor_response.statusCode == 200){
@@ -54,9 +44,6 @@ module.exports = class TestResponse extends ShippingCarrierVendorResponse {
 	}
 
 	setTrackingNumber(){
-
-		du.debug('Set Tracking Number');
-
 		let vendor_response = this.parameters.get('vendorresponse');
 
 		this.parameters.set('trackingnumber', vendor_response.body.response.tracking_number);
@@ -64,9 +51,6 @@ module.exports = class TestResponse extends ShippingCarrierVendorResponse {
 	}
 
 	setStatus(){
-
-		du.debug('Set Status');
-
 		let vendor_response = this.parameters.get('vendorresponse');
 
 		this.parameters.set('status', vendor_response.body.response.status);
@@ -74,9 +58,6 @@ module.exports = class TestResponse extends ShippingCarrierVendorResponse {
 	}
 
 	setDetail(){
-
-		du.debug('Set Detail');
-
 		let vendor_response = this.parameters.get('vendorresponse');
 
 		this.parameters.set('detail', vendor_response.body.response.detail.detail);
@@ -84,9 +65,6 @@ module.exports = class TestResponse extends ShippingCarrierVendorResponse {
 	}
 
 	setMessage(message){
-
-		du.debug('Set Message');
-
 		this.parameters.set('message', message);
 
 		return true;
@@ -94,9 +72,6 @@ module.exports = class TestResponse extends ShippingCarrierVendorResponse {
 	}
 
 	getMessage(){
-
-		du.debug('Get Message');
-
 		return this.parameters.get('message')
 
 	}

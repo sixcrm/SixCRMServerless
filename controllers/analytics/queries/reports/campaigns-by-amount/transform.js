@@ -1,9 +1,4 @@
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 module.exports = async (results) => {
-
-	du.debug('Campaigns by amount report');
-
 	return {
 		meta: {
 			count: results.length

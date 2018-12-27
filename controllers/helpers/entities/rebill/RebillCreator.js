@@ -45,7 +45,6 @@ module.exports = class RebillCreatorHelper {
 	}
 
 	async createRebill(argumentation) {
-		du.debug('Create Rebill');
 		this.parameters.store = {};
 		this.parameters.setParameters({argumentation, action: 'createRebill'});
 		let {session, day, products, product_schedules} = argumentation;
@@ -90,8 +89,6 @@ module.exports = class RebillCreatorHelper {
 	}
 
 	createRebillPrototype({session, transaction_products = [], bill_at = timestamp.getISO8601(), cycle = 0, amount = 0.00, product_schedules = null, merchant_provider = null, merchant_provider_selections = null}){
-		du.debug('Create Rebill Prototype');
-
 		const rebill_prototype = {
 			account: session.account,
 			parentsession: session.id,
@@ -156,7 +153,6 @@ module.exports = class RebillCreatorHelper {
 
 	//Technical Debt:  Review...
 	validateArguments({normalized_products, normalized_product_schedules}) {
-		du.debug('Validate Arguments');
 		if (arrayutilities.nonEmpty(normalized_product_schedules)) {
 			arrayutilities.map(normalized_product_schedules, normalized_product_schedule => {
 				if (!objectutilities.hasRecursive(normalized_product_schedule, 'product_schedule.schedule')) {
@@ -182,8 +178,6 @@ module.exports = class RebillCreatorHelper {
 	}
 
 	shouldRebill({session, day, normalized_product_schedules}) {
-		du.debug('Should Rebill');
-
 		if (_.has(session, 'concluded') && session.concluded == true) {
 			du.warning('Session concluded, do not rebill');
 			throw eu.getError('control', 'CONCLUDED');
@@ -251,7 +245,6 @@ module.exports = class RebillCreatorHelper {
 	}
 
 	getNextProductScheduleBillDayNumber({day, normalized_product_schedules}) {
-		du.debug('Get Next Product Schedule Schedule Element Start Day Number');
 		if (normalized_product_schedules !== undefined) {
 			let start_day_numbers = arrayutilities.map(normalized_product_schedules, product_schedule_group => {
 				return productScheduleHelperController.getNextScheduleElementStartDayNumber({day: day, product_schedule: product_schedule_group.product_schedule});
@@ -303,7 +296,6 @@ module.exports = class RebillCreatorHelper {
 	}
 
 	getScheduleElementsOnBillDay({bill_day, normalized_product_schedules}) {
-		du.debug('Get Schedule Elements On Bill Day');
 		let schedule_elements = [];
 
 		if (normalized_product_schedules === undefined) {
@@ -332,7 +324,6 @@ module.exports = class RebillCreatorHelper {
 	}
 
 	addScheduleElementsToTransactionProducts(schedule_elements, transaction_products) {
-		du.debug('Add Schedule Elements To Transaction Products');
 		if (schedule_elements === undefined) {
 			return;
 		}
@@ -347,7 +338,6 @@ module.exports = class RebillCreatorHelper {
 	}
 
 	addProductsToTransactionProducts(normalized_products, transaction_products) {
-		du.debug('Add Products To Transaction Products');
 		if (normalized_products === undefined) {
 			return;
 		}
@@ -375,7 +365,6 @@ module.exports = class RebillCreatorHelper {
 	}
 
 	async buildRebillPrototype({session, day, normalized_products, normalized_product_schedules}) {
-		du.debug('Build Rebill');
 		const product_schedules = this.getGroupedProductSchedules(normalized_product_schedules);
 		const bill_day = this.getNextProductScheduleBillDayNumber({day, normalized_product_schedules});
 		const {merchant_provider, merchant_provider_selections} = await this.getMerchantProviderSelections(session, day);
@@ -424,23 +413,17 @@ module.exports = class RebillCreatorHelper {
 	}
 
 	async calculateCycle(session, bill_at) {
-		du.debug('Calculate Cycle');
 		const rebills = await sessionController.listRebills(session);
 		let cycle = 0;
 
 		if (rebills) {
-			du.debug('rebills', rebills);
 			cycle = rebills.filter(r => moment(r.bill_at).isBefore(bill_at)).length;
-		} else {
-			du.debug('no rebills');
 		}
 
-		du.debug(`Cycle for new rebill in session ${session.id} is ${cycle}.`);
 		return cycle;
 	}
 
 	calculateAmount(products) {
-		du.debug('Calculate Amount');
 		let amount = 0.0;
 
 		if (!_.isNull(products) && arrayutilities.nonEmpty(products)) {
@@ -453,7 +436,6 @@ module.exports = class RebillCreatorHelper {
 	}
 
 	calculateBillAt(session, bill_day) {
-		du.debug('Calculate Bill At');
 		let session_start = parseInt(timestamp.dateToTimestamp(session.created_at));
 		let additional_seconds = timestamp.getDayInSeconds() * bill_day;
 		let bill_date = timestamp.toISO8601(session_start + additional_seconds);

@@ -1,7 +1,5 @@
 const _ = require('lodash');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 const RebillController = global.SixCRM.routes.include('entities','Rebill.js');
 const SessionController = global.SixCRM.routes.include('entities','Session.js');
@@ -39,9 +37,6 @@ module.exports = class ReturnController extends entityController {
 	create({
 		entity
 	}) {
-
-		du.debug('Return.create()');
-
 		const ReturnHelperController = global.SixCRM.routes.include('helpers', 'entities/return/Return.js');
 		let returnHelperController = new ReturnHelperController();
 
@@ -54,9 +49,6 @@ module.exports = class ReturnController extends entityController {
 		})).then(async (ret) => {
 			let EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 			let eventHelperController = new EventsHelperController();
-
-			du.debug('Return.create()->mergeHistories->super.create', ret);
-
 			let transaction_id = _(ret).at('transactions[0].transaction').toString();
 			let transaction = await this.transactionController.get({id: transaction_id});
 			let rebill = await this.rebillController.get({id: transaction.rebill});
@@ -93,9 +85,6 @@ module.exports = class ReturnController extends entityController {
 		entity,
 		ignore_updated_at
 	}) {
-
-		du.debug('Return.update()');
-
 		const ReturnHelperController = global.SixCRM.routes.include('helpers', 'entities/return/Return.js');
 		let returnHelperController = new ReturnHelperController();
 

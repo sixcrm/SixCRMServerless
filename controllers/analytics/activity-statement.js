@@ -5,9 +5,6 @@ const EntityController = global.SixCRM.routes.include('controllers', 'entities/E
 module.exports = class ActivityStatement {
 
 	constructor() {
-
-		du.debug('Constructor');
-
 		this.statement_templates = {
 			actor_only: '{actor} {action}.', //Jesus wept.
 			actor_and_acted_upon: '{actor} {action} {acted_upon}.', //User randy.bandy@sixcrm.com created a new product: Happy Joyful Product.
@@ -17,9 +14,6 @@ module.exports = class ActivityStatement {
 	}
 
 	async buildActivityEnglishObject(record) {
-
-		du.debug('Build Activity Statement');
-
 		const resources = await this._acquireResources(record);
 		const template = this._englishTemplate(resources);
 		return this._buildObject(template, resources);
@@ -27,9 +21,6 @@ module.exports = class ActivityStatement {
 	}
 
 	async _acquireResources(record) {
-
-		du.debug('Acquire Resources');
-
 		return Promise.all([
 			this._get('actor', record),
 			this._get('acted_upon', record),
@@ -39,9 +30,6 @@ module.exports = class ActivityStatement {
 	}
 
 	_englishTemplate(resources) {
-
-		du.debug('Set English Template');
-
 		if (resources[2] && resources[1]) {
 
 			return this.statement_templates.actor_and_acted_upon_and_associated_with;
@@ -59,9 +47,6 @@ module.exports = class ActivityStatement {
 	}
 
 	_buildObject(template, resources) {
-
-		du.debug('Build Object');
-
 		return {
 			actor: resources[0],
 			acted_upon: resources[1],
@@ -72,9 +57,6 @@ module.exports = class ActivityStatement {
 	}
 
 	async _get(type, record) {
-
-		du.debug('Get');
-
 		if (!_.has(record, type) || record[type] === '' || record[type] === null) {
 
 			return null;
@@ -112,9 +94,6 @@ module.exports = class ActivityStatement {
 	}
 
 	_getEntity(parameters) {
-
-		du.debug('Get Entity');
-
 		return new EntityController(parameters.type).get({
 			id: parameters.id
 		});

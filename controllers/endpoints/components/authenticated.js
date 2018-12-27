@@ -20,9 +20,6 @@ module.exports = class AuthenticatedController extends endpointController {
 	}
 
 	preprocessing(event){
-
-		du.debug('Preprocessing');
-
 		return this.normalizeEvent(event)
 			.then((event) => this.acquireAccount(event))
 			.then((event) => this.validateAccount(event))
@@ -33,9 +30,6 @@ module.exports = class AuthenticatedController extends endpointController {
 	}
 
 	async validateAccount(event){
-
-		du.debug('Validate Account');
-
 		let accountHelperController = new AccountHelperController();
 		await accountHelperController.validateAccount();
 
@@ -44,9 +38,6 @@ module.exports = class AuthenticatedController extends endpointController {
 	}
 
 	acquireAccount(event){
-
-		du.debug('Acquire Account');
-
 		if(objectutilities.hasRecursive(event, 'pathParameters.account')){
 
 			let account = event.pathParameters.account;
@@ -62,9 +53,6 @@ module.exports = class AuthenticatedController extends endpointController {
 	}
 
 	acquireSubProperties(event){
-
-		du.debug('Acquire Sub Properties');
-
 		return Promise.all([
 			this.acquireUser(event)
 		]).then(() => {
@@ -75,14 +63,9 @@ module.exports = class AuthenticatedController extends endpointController {
 
 	//Technical Debt:  This is wrought with redundancies....
 	acquireUser(event){
-
-		du.debug('Acquire User');
-
 		objectutilities.hasRecursive(event, 'requestContext.authorizer.user', true);
 
 		let user_string = event.requestContext.authorizer.user;
-
-		du.debug('Event Request Context Authorizer User Alias:', user_string);
 
 		if(!_.isString(user_string)){
 
@@ -155,9 +138,6 @@ module.exports = class AuthenticatedController extends endpointController {
 	//Technical Debt:  THis function does not need to return a promise...
 	//Technical Debt:  Refactor, this is gross...
 	validateRequiredPermissions(event){
-
-		du.debug('Validate Required Permissions');
-
 		if(_.has(this, 'required_permissions')){
 
 			let validated_permissions = arrayutilities.map(this.required_permissions, required_permission => {
@@ -181,9 +161,6 @@ module.exports = class AuthenticatedController extends endpointController {
 	}
 
 	isUserIntrospection(event) {
-
-		du.debug('Is User Introspection');
-
 		if(_.has(event, 'body') && event.body.match(/^[\s\n\r]*(query)?[\s\n\r]*{[\s\n\r]*userintrospection[\s\n\r]*{/)) {
 			return true;
 		}
@@ -193,9 +170,6 @@ module.exports = class AuthenticatedController extends endpointController {
 	}
 
 	isCreateAccount(event) {
-
-		du.debug('Is Create Account');
-
 		if(_.has(event, 'body') && event.body.match(/^[\s\n\r]*(mutation)?[\s\n\r]*{[\s\n\r]*createnewaccount[\s\n\r]*{/)) {
 			return true;
 		}

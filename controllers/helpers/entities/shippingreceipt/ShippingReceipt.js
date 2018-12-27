@@ -51,9 +51,6 @@ module.exports = class ShippingReceiptHelperController {
 	}
 
 	getTrackingNumber(shipping_receipt, fatal){
-
-		du.debug('Get Tracking Number');
-
 		fatal = (_.isUndefined(fatal))?false:fatal;
 
 		if(_.has(shipping_receipt, 'tracking')){
@@ -69,9 +66,6 @@ module.exports = class ShippingReceiptHelperController {
 	}
 
 	updateShippingReceipt(){
-
-		du.debug('Update Shipping Receipt');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'updateShippingReceipt'}))
 			.then(() => this.acquireShippingReceipt())
@@ -84,9 +78,6 @@ module.exports = class ShippingReceiptHelperController {
 	}
 
 	acquireShippingReceipt(){
-
-		du.debug('Acquire Shipping Receipt');
-
 		let shipping_receipt = this.parameters.get('shippingreceipt');
 
 		if(!_.has(this, 'shippingReceiptController')){
@@ -105,9 +96,6 @@ module.exports = class ShippingReceiptHelperController {
 	}
 
 	pushUpdatedShippingReceipt(){
-
-		du.debug('Push Updated Shipping Receipt');
-
 		let updated_shipping_receipt = this.parameters.get('updatedshippingreceipt');
 
 		if(!_.has(this, 'shippingReceiptController')){
@@ -123,9 +111,6 @@ module.exports = class ShippingReceiptHelperController {
 	}
 
 	buildUpdatedShippingReceiptPrototype(){
-
-		du.debug('Build Updated Shipping Receipt Prototype');
-
 		let shipping_receipt = this.parameters.get('shippingreceipt');
 		let shipping_status = this.parameters.get('shippingstatus');
 		let shipping_detail = this.parameters.get('shippingdetail');
@@ -166,9 +151,6 @@ module.exports = class ShippingReceiptHelperController {
 	}
 
 	confirmStati(){
-
-		du.debug('Confirm Stati');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'confirmStati'}))
 			.then(() => this.acquireShippingReceipts())
@@ -177,9 +159,6 @@ module.exports = class ShippingReceiptHelperController {
 	}
 
 	acquireShippingReceipts(){
-
-		du.debug('Acquire Shipping Receipts');
-
 		let shipping_receipt_ids = this.parameters.get('shippingreceiptids');
 
 		if(!_.has(this, 'shippingReceiptController')){
@@ -198,9 +177,6 @@ module.exports = class ShippingReceiptHelperController {
 	}
 
 	confirmShippingReceiptStati(){
-
-		du.debug('Confirm Shipping Receipt Stati');
-
 		let shipping_receipts = this.parameters.get('shippingreceipts');
 		let shipping_status = this.parameters.get('shippingstatus');
 
@@ -253,9 +229,6 @@ module.exports = class ShippingReceiptHelperController {
 	}
 
 	async listByCustomer({customer, pagination}) {
-
-		du.debug('List By Customer');
-
 		du.info('Technical Debt: not referenced - '+JSON.stringify(pagination));
 
 		if (!_.has(this, 'sessionController')){

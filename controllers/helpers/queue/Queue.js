@@ -1,7 +1,5 @@
 
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
 const sqs = new SQSProvider();
@@ -9,9 +7,6 @@ const sqs = new SQSProvider();
 class Queue {
 
 	static listMessages(queueName) {
-
-		du.debug('Listing Messages');
-
 		return sqs.receiveMessages({queue: queueName, limit: 10, visibilityTimeout: 0})
 			.then((messages) => {
 

@@ -41,9 +41,6 @@ module.exports = class InfoController extends transactionEndpointController{
 	}
 
 	execute(event){
-
-		du.debug('Execute');
-
 		return this.preamble(event)
 			.then(() => this.acquireInfoRequestProperties())
 		//Note: filtering or validation here?
@@ -52,9 +49,6 @@ module.exports = class InfoController extends transactionEndpointController{
 	}
 
 	acquireInfoRequestProperties(){
-
-		du.debug('Acquire Request Properties');
-
 		let promises = [];
 
 		promises.push(this.acquireProducts());
@@ -67,9 +61,6 @@ module.exports = class InfoController extends transactionEndpointController{
 	}
 
 	acquireProducts(){
-
-		du.debug('Acquire Products');
-
 		let event = this.parameters.get('event');
 
 		if(!_.has(event, 'products') || !arrayutilities.nonEmpty(event.products)){ return null; }
@@ -81,9 +72,6 @@ module.exports = class InfoController extends transactionEndpointController{
 	}
 
 	acquireProductSchedules(){
-
-		du.debug('Acquire Product Schedules');
-
 		let event = this.parameters.get('event');
 
 		if(!_.has(event, 'productschedules') || !arrayutilities.nonEmpty(event.productschedules)){ return null; }
@@ -112,9 +100,6 @@ module.exports = class InfoController extends transactionEndpointController{
 	}
 
 	respond(){
-
-		du.debug('Respond');
-
 		let response_object = {};
 
 		let event = this.parameters.get('event');

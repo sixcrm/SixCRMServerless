@@ -22,9 +22,6 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
 	}
 
 	updateRebillState(compound_worker_response_object) {
-
-		du.debug('Update Rebill State');
-
 		let params = this.parameters.get('params');
 
 		const rebill_id = JSON.parse(compound_worker_response_object.message.Body);
@@ -38,9 +35,6 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
 		}
 
 		if (code === 'noaction') {
-
-			du.debug('No Action, leaving rebill unaltered.');
-
 			return Promise.resolve();
 		}
 

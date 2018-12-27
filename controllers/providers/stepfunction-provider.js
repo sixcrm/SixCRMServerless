@@ -1,7 +1,5 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-//const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js');
 const parserutilities = require('@6crm/sixcrmcore/util/parser-utilities').default;
 
@@ -22,9 +20,6 @@ module.exports = class StepFunctionProvider extends AWSProvider{
 	}
 
 	async stepFunctionExists(name){
-
-		du.debug('Step Function Exists');
-
 		const parameters = {
 		  stateMachineArn: this.createStateMachineARN(name)
 		}
@@ -45,9 +40,6 @@ module.exports = class StepFunctionProvider extends AWSProvider{
 	}
 
 	async createStateMachine(parameters){
-
-		du.debug('Create State Machine');
-
 		let params = objectutilities.transcribe(
 			{
 				name: 'name',
@@ -68,9 +60,6 @@ module.exports = class StepFunctionProvider extends AWSProvider{
 	}
 
 	async updateStateMachine(parameters){
-
-		du.debug('Update State Machine');
-
 		let params = objectutilities.transcribe(
 			{
 				roleArn: 'roleArn',
@@ -93,9 +82,6 @@ module.exports = class StepFunctionProvider extends AWSProvider{
 	}
 
 	async describeExecution(parameters){
-
-		du.debug('Describe Execution');
-
 		let params = objectutilities.transcribe(
 			{
 				executionArn: 'executionArn'
@@ -125,9 +111,6 @@ module.exports = class StepFunctionProvider extends AWSProvider{
 	}
 
 	async startExecution(parameters){
-
-		du.debug('Start Execution');
-
 		let params = objectutilities.transcribe(
 			{
 				stateMachineArn: 'stateMachineArn'
@@ -154,9 +137,6 @@ module.exports = class StepFunctionProvider extends AWSProvider{
 	}
 
 	async stopExecution(parameters){
-
-		du.debug('Stop Execution');
-
 		let params = objectutilities.transcribe(
 			{
 				executionArn: 'executionArn'
@@ -183,9 +163,6 @@ module.exports = class StepFunctionProvider extends AWSProvider{
 	}
 
 	createStateMachineARN(name){
-
-		du.debug('Create State Machine ARN');
-
 		const content = 'arn:aws:states:{{aws_region}}:{{aws_account_id}}:stateMachine:{{state_machine_name}}';
 
 		let data = {
@@ -199,9 +176,6 @@ module.exports = class StepFunctionProvider extends AWSProvider{
 	}
 
 	createExecutionARN(name, identifier){
-
-		du.debug('Create Execution ARN');
-
 		const content = 'arn:aws:states:{{aws_region}}:{{aws_account_id}}:execution:{{state_machine_name}}:{{identifier}}';
 
 		let data = {

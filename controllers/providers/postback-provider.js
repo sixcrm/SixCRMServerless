@@ -1,7 +1,4 @@
-
 const request = require('request');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const parserutilities = require('@6crm/sixcrmcore/util/parser-utilities').default;
 
 module.exports = class PostbackProvider {
@@ -11,9 +8,6 @@ module.exports = class PostbackProvider {
 	}
 
 	executePostback(url, data){
-
-		du.debug('Execute Postback');
-
 		let parsed_url = parserutilities.parse(url, data);
 
 		return this.executeRequest(parsed_url);
@@ -21,9 +15,6 @@ module.exports = class PostbackProvider {
 	}
 
 	executeRequest(parsed_url){
-
-		du.debug('Execute Request');
-
 		return new Promise((resolve, reject) => {
 
 			var request_options = {

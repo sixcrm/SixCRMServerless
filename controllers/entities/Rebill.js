@@ -4,7 +4,6 @@ const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 const currencyutilities = require('@6crm/sixcrmcore/util/currency-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
@@ -22,9 +21,6 @@ module.exports = class RebillController extends entityController {
 	}
 
 	create({entity}){
-
-		du.debug('Rebill.create()');
-
 		if(!_.has(entity, 'alias')){
 			entity.alias = this.rebillHelperController.createAlias();
 		}
@@ -38,9 +34,6 @@ module.exports = class RebillController extends entityController {
 	}
 
 	update({entity, ignore_updated_at}){
-
-		du.debug('Rebill.update()');
-
 		if(!_.has(entity, 'year_month')){
 			entity.year_month = this.rebillHelperController.getYearMonth(entity.bill_at);
 		}
@@ -55,7 +48,6 @@ module.exports = class RebillController extends entityController {
 	}
 
 	getByAlias({alias}) {
-		du.debug('Get Rebill By Alias');
 		return this.getBySecondaryIndex({
 			field: 'alias',
 			index_value: alias,
@@ -67,9 +59,6 @@ module.exports = class RebillController extends entityController {
 		session,
 		pagination
 	}) {
-
-		du.debug('List By Session');
-
 		return this.queryBySecondaryIndex({
 			field: 'parentsession',
 			index_value: this.getID(session),
@@ -80,9 +69,6 @@ module.exports = class RebillController extends entityController {
 	}
 
 	getMerchantProvider(rebill) {
-
-		du.debug('Get Merchant Provider');
-
 		if (_.has(rebill, 'merchant_provider')) {
 
 			return this.executeAssociatedEntityFunction('MerchantProviderController', 'get', {
@@ -98,9 +84,6 @@ module.exports = class RebillController extends entityController {
 	//Note: rebills don't get product associations, only product schedules
 	//Technical Debt:  Is this deprecated?
 	getProducts(rebill) {
-
-		du.debug('Get Products');
-
 		if (_.has(rebill, 'products') && arrayutilities.nonEmpty(rebill.products)) {
 
 			return this.executeAssociatedEntityFunction('ProductController', 'listBy', {
@@ -117,9 +100,6 @@ module.exports = class RebillController extends entityController {
 	}
 
 	listProductSchedules(rebill) {
-
-		du.debug('List Product Schedules');
-
 		if (_.has(rebill, 'product_schedules') && arrayutilities.nonEmpty(rebill.product_schedules)) {
 
 			let list_array = arrayutilities.filter(rebill.product_schedules, (list_item) => {
@@ -147,9 +127,6 @@ module.exports = class RebillController extends entityController {
 	}
 
 	listTransactions(rebill) {
-
-		du.debug('List Transactions');
-
 		return this.executeAssociatedEntityFunction('transactionController', 'listTransactionsByRebillID', {
 			id: this.getID(rebill)
 		});
@@ -259,11 +236,6 @@ module.exports = class RebillController extends entityController {
 		state_changed_before,
 		pagination
 	}) {
-
-		du.debug('List By State');
-
-		//du.debug(`List By State: state: '${state}', state_changed_after: '${state_changed_after}', state_changed_before: '${state_changed_before}'`);
-
 		let query_parameters = {};
 
 		if (state) {

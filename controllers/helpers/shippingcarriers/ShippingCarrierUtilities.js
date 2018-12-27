@@ -1,8 +1,4 @@
-
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 const Parameters  = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class ShippingCarrierUtilities {
@@ -21,9 +17,6 @@ module.exports = class ShippingCarrierUtilities {
 	}
 
 	augmentParameters(){
-
-		du.debug('Augment Parameters');
-
 		this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
 		this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
 
@@ -32,9 +25,6 @@ module.exports = class ShippingCarrierUtilities {
 	}
 
 	instantiateShippingCarrierProviderClass(){
-
-		du.debug('Instantiate Fulfillment Provider Class');
-
 		let shipping_receipt = this.parameters.get('shippingreceipt');
 
 		const ShippingCarrierController = global.SixCRM.routes.include('controllers', 'vendors/shippingcarriers/'+shipping_receipt.tracking.carrier+'/handler.js');
@@ -48,9 +38,6 @@ module.exports = class ShippingCarrierUtilities {
 	}
 
 	validateResponse(){
-
-		du.debug('Validate Response');
-
 		if(_.has(this, 'response_validation')){
 
 			let vendor_response = this.parameters.get('vendorresponseclass');
@@ -68,9 +55,6 @@ module.exports = class ShippingCarrierUtilities {
 	}
 
 	pruneResponse(){
-
-		du.debug('Prune Response');
-
 		let vendor_response_class = this.parameters.get('vendorresponseclass');
 
 		vendor_response_class.parameters.unset('vendorresponse');

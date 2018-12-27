@@ -21,9 +21,7 @@ module.exports = class ProductScheduleController extends entityController {
 	}
 
 	create({entity, parameters}) {
-		du.debug('Create product schedule', entity.name);
 		if (this.permissionutilities.areACLsDisabled() || !entity.schedule) {
-			du.debug('Master account or ACLs disabled.');
 			return super.create({entity, parameters});
 		}
 
@@ -36,8 +34,6 @@ module.exports = class ProductScheduleController extends entityController {
 	}
 
 	async update({entity, ignore_updated_at}) {
-		du.debug('Update product schedule', entity.id);
-
 		if (entity.schedule.length > 1) {
 
 			const already_existing_schedule_length = _(await this.get({id: entity.id, fatal: true})).get('schedule.length', 0);
@@ -56,9 +52,6 @@ module.exports = class ProductScheduleController extends entityController {
 
 	//Technical Debt: Deprecated
 	getCampaigns(args){
-
-		du.debug('Get Campaigns');
-
 		//Technical Debt:  This looks redundant.
 		let product_schedule_id = this.getID(args.productschedule);
 
@@ -73,9 +66,6 @@ module.exports = class ProductScheduleController extends entityController {
 	}
 
 	listByProduct({product, pagination}){
-
-		du.debug('List By Product');
-
 		let product_id = this.getID(product);
 
 		return this.listByAccount({pagination: pagination})
@@ -115,9 +105,6 @@ module.exports = class ProductScheduleController extends entityController {
 	}
 
 	getMerchantProviderGroup(product_schedule){
-
-		du.debug('Get Merchant Provider Group');
-
 		if(!_.has(product_schedule, 'merchantprovidergroup')){ return Promise.resolve(null); }
 
 		return this.executeAssociatedEntityFunction('MerchantProviderGroupController', 'get', {id: product_schedule.merchantprovidergroup});
@@ -125,9 +112,6 @@ module.exports = class ProductScheduleController extends entityController {
 	}
 
 	getProduct(scheduled_product){
-
-		du.debug('Get Product');
-
 		let product_id = _.has(scheduled_product, 'product') ? scheduled_product.product : scheduled_product.product_id;
 
 		//Technical Debt: Hack
@@ -138,9 +122,6 @@ module.exports = class ProductScheduleController extends entityController {
 	}
 
 	getProducts(product_schedule){
-
-		du.debug('Get Products');
-
 		if(_.has(product_schedule, 'schedule') && arrayutilities.nonEmpty(product_schedule.schedule)){
 
 			let product_ids = arrayutilities.map(product_schedule.schedule, (product_schedule) => {
@@ -162,7 +143,6 @@ module.exports = class ProductScheduleController extends entityController {
 
 				let query_parameters = this.createINQueryParameters({field: 'id', list_array: product_ids});
 
-				du.debug(query_parameters);
 				return this.executeAssociatedEntityFunction('ProductController', 'listByAccount', {query_parameters: query_parameters});
 
 			}
@@ -175,9 +155,6 @@ module.exports = class ProductScheduleController extends entityController {
 
 	//Technical Debt:  Can we make this work better?
 	getProductScheduleHydrated(id){
-
-		du.debug('Get Product Schedule Hydrated');
-
 		return this.get({id: id}).then((product_schedule) => {
 
 			if(_.has(product_schedule, 'schedule')){
@@ -199,9 +176,6 @@ module.exports = class ProductScheduleController extends entityController {
 	}
 
 	listProductSchedulesByList({product_schedules}){
-
-		du.debug('List Product Schedules By List');
-
 		let query_parameters = this.createINQueryParameters({field: 'id', list_array: product_schedules});
 
 		return this.listByAccount({query_parameters: query_parameters});
@@ -209,9 +183,6 @@ module.exports = class ProductScheduleController extends entityController {
 	}
 
 	listByMerchantProviderGroup({merchantprovidergroup, pagination}){
-
-		du.debug('List By Merchant Provider Group');
-
 		let query_parameters = {
 			filter_expression: '#f1 = :merchantprovidergroup_id',
 			expression_attribute_values: {

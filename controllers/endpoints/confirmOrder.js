@@ -1,4 +1,3 @@
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
@@ -61,17 +60,11 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 	}
 
 	execute(event) {
-
-		du.debug('Execute');
-
 		return this.preamble(event).then(() => this.confirmOrder(this.parameters.get('event')));
 
 	}
 
 	async confirmOrder(event) {
-
-		du.debug('Confirm Order');
-
 		let session = await this.hydrateSession(event);
 		this.validateSession(session);
 
@@ -87,16 +80,11 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 	hydrateSession(event) { // returns session
 
-		du.debug('Hydrate Session');
-
 		return this.sessionController.get({ id: event.session });
 
 	}
 
 	validateSession(session) {
-
-		du.debug('Validate Session');
-
 		if (this.sessionHelperController.isComplete({	session: session })) {
 			throw eu.getError('bad_request', 'The specified session is already complete.');
 		}
@@ -104,9 +92,6 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 	}
 
 	hydrateSessionProperties(session) {
-
-		du.debug('Hydrate Session Properties');
-
 		return Promise.all([
 			this.sessionController.getCustomer(session),
 			this.sessionController.getCampaign(session),
@@ -116,25 +101,16 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 	}
 
 	getTransactionProducts(transactions) {
-
-		du.debug('Get Transaction Products');
-
 		return this.transactionHelperController.getTransactionProducts(transactions);
 
 	}
 
 	closeSession(session) {
-
-		du.debug('Close Session');
-
 		return this.sessionController.closeSession(session);
 
 	}
 
 	async buildResponse(session, customer, rebills) {
-
-		du.debug('Build Response');
-
 		let customerHelper = new CustomerHelperController();
 		let sessionHelper = new SessionHelperController();
 		let orderHelper = new OrderHelperController();
@@ -154,9 +130,6 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 	}
 
 	postProcessing(session, campaign, customer) {
-
-		du.debug('Post Processing');
-
 		return Promise.all([
 			this.pushEvent({event_type: 'confirm', context:{
 				campaign: campaign,

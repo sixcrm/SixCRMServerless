@@ -1,8 +1,6 @@
 
 const _ = require('lodash');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 module.exports = class TrackerController extends entityController {
@@ -16,9 +14,6 @@ module.exports = class TrackerController extends entityController {
 	}
 
 	listByCampaignAndAffiliate({campaign, affiliate, type, pagination}){
-
-		du.debug('List By Campaign And Affiliate');
-
 		let query_parameters = {
 			filter_expression: 'contains(#f1, :campaign_id) AND contains(#f2, :affiliate_id)',
 			expression_attribute_values: {
@@ -43,25 +38,16 @@ module.exports = class TrackerController extends entityController {
 	}
 
 	listByCampaign({campaign, pagination}){
-
-		du.debug('List By Campaign');
-
 		return this.listByAssociations({id: this.getID(campaign), field: 'campaigns', pagination: pagination});
 
 	}
 
 	listByAffiliate({affiliate, pagination}){
-
-		du.debug('List By Affiliate');
-
 		return this.listByAssociations({id: this.getID(affiliate), field:'affiliates', pagination: pagination});
 
 	}
 
 	getAffiliates(tracker){
-
-		du.debug('Get Affiliates');
-
 		if(_.has(tracker, 'affiliates')){
 
 			return this.executeAssociatedEntityFunction('AffiliateController', 'listBy', {list_array: tracker.affiliates})
@@ -74,9 +60,6 @@ module.exports = class TrackerController extends entityController {
 	}
 
 	getCampaigns(tracker){
-
-		du.debug('Get Campaigns');
-
 		if(_.has(tracker, 'campaigns')){
 
 			return this.executeAssociatedEntityFunction('CampaignController', 'listBy', {list_array: tracker.campaigns})

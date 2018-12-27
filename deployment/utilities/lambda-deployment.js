@@ -24,9 +24,6 @@ module.exports = class LambdaDeployment extends AWSDeploymentUtilities {
 	}
 
 	async deployEventSourceMappings(){
-
-		du.debug('Deploy Event Source Mappings');
-
 		//Technical Debt:  Would need to be more robust if more functions required mappings
 		let event_source_mappings = global.SixCRM.routes.include('deployment','lambda/event_source_mappings/indexdynamorecords.json');
 		let function_name = 'indexdynamorecords';
@@ -42,9 +39,6 @@ module.exports = class LambdaDeployment extends AWSDeploymentUtilities {
 	}
 
 	async deployEventSourceMapping(function_name, event_source_mapping){
-
-		du.debug('Deploy Event Source Mapping');
-
 		let table_description = await this.dynamodbprovider.describeTable({"TableName": event_source_mapping.TableName});
 
 		if(!_.has(table_description, 'Table')){
@@ -91,9 +85,6 @@ module.exports = class LambdaDeployment extends AWSDeploymentUtilities {
 	}
 
 	createFullFunctionName(function_name){
-
-		du.debug('Create Full Function Name');
-
 		return parserutilities.parse('{{deployment_name}}-{{stage}}-{{function_name}}', {
 			deployment_name: 'sixcrm',
 			stage: global.SixCRM.configuration.stage,

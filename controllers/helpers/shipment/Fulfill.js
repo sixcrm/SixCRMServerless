@@ -1,6 +1,3 @@
-
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const ShipmentUtilities = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
 
@@ -31,9 +28,6 @@ module.exports = class FulfillController extends ShipmentUtilities {
 	}
 
 	execute(){
-
-		du.debug('Fulfill');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'execute'}))
 			.then(() => this.hydrateRequestProperties())
@@ -48,9 +42,6 @@ module.exports = class FulfillController extends ShipmentUtilities {
 	}
 
 	pruneResponse(){
-
-		du.debug('Prune Response');
-
 		let vendor_response_class = this.parameters.get('vendorresponseclass');
 
 		vendor_response_class.parameters.unset('vendorresponse');
@@ -63,9 +54,6 @@ module.exports = class FulfillController extends ShipmentUtilities {
 	}
 
 	hydrateRequestProperties(){
-
-		du.debug('Hydrate Request Properties');
-
 		let promises = [
 			this.hydrateFulfillmentProvider(),
 			this.hydrateAugmentedTransactionProducts(),
@@ -81,18 +69,12 @@ module.exports = class FulfillController extends ShipmentUtilities {
 	}
 
 	hydrateAugmentedTransactionProducts(){
-
-		du.debug('Hydrate Augmented Transaction Products');
-
 		return this.hydrateProducts()
 			.then(() => this.marryProductsToAugmentedTransactionProducts());
 
 	}
 
 	executeFulfillment(){
-
-		du.debug('Execute Fulfillment');
-
 		let instantiated_fulfillment_provider = this.parameters.get('instantiatedfulfillmentprovider');
 		let hydrated_augmented_transaction_products = this.parameters.get('hydratedaugmentedtransactionproducts');
 		let customer = this.parameters.get('customer');

@@ -20,9 +20,6 @@ module.exports = class SelectRebillsController extends workerController {
 	}
 
 	async execute(){
-
-		du.debug('Execute');
-
 		let results = null;
 
 		let rebills = await this.getAvailableRebillsOverPeriod();
@@ -53,9 +50,6 @@ module.exports = class SelectRebillsController extends workerController {
 	}
 
 	transformResponse(results, fatal = true){
-
-		du.debug('Transform Response');
-
 		if(!_.isArray(results)){
 			if(fatal == true){
 				throw eu.getError('server', 'Non-array results argument');
@@ -81,9 +75,6 @@ module.exports = class SelectRebillsController extends workerController {
 	}
 
 	async getAvailableRebillsOverPeriod(){
-
-		du.debug('Get Available Rebills Over Period');
-
 		let rebill_promises = await Promise.all([
 			this.getAvailableRebills(),
 			this.getAvailableRebills(timestamp.getPreviousMonthEnd())
@@ -96,17 +87,11 @@ module.exports = class SelectRebillsController extends workerController {
 	}
 
 	async getAvailableRebills(now = timestamp.getISO8601()){
-
-		du.debug('Get Available Rebills');
-
 		return (new RebillHelperController()).getAvailableRebills(now);
 
 	}
 
 	async pushRebillsIntoStateMachine(rebills){
-
-		du.debug('Push Rebills Into State Machine');
-
 		let results = arrayutilities.map(rebills, rebill => {
 
 			return this.pushRebillIntoStateMachine(rebill);
@@ -118,9 +103,6 @@ module.exports = class SelectRebillsController extends workerController {
 	}
 
 	async pushRebillIntoStateMachine(rebill, fatal = false){
-
-		du.debug('Push Rebill Into State Machine');
-
 		const trigger_result = await this.pushToBilling(rebill, fatal);
 
 		if(trigger_result != true){
@@ -154,9 +136,6 @@ module.exports = class SelectRebillsController extends workerController {
 	}
 
 	async pushToBilling(rebill, fatal = false){
-
-		du.debug('Push To Billing');
-
 		const parameters = {
 			guid: rebill,
 			stateMachineName: 'Billing'
@@ -195,9 +174,6 @@ module.exports = class SelectRebillsController extends workerController {
 	}
 
 	async markRebillAsProcessing(rebill, fatal = true){
-
-		du.debug('Mark Rebill As Processing');
-
 		let result = null;
 
 		rebill = await (new RebillController()).get({id: rebill});
@@ -233,9 +209,6 @@ module.exports = class SelectRebillsController extends workerController {
 	}
 
 	respond(result){
-
-		du.debug('Respond');
-
 		if(result == true){
 			return 'SUCCESS';
 		}

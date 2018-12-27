@@ -1,11 +1,6 @@
 const _ = require('lodash');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 module.exports = async (results) => {
-
-	du.debug('Event funnel timeseries report');
-
 	const byDate = _.groupBy(results, 'datetime');
 
 	return {

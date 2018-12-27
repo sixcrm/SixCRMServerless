@@ -1,10 +1,6 @@
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const math = require('@6crm/sixcrmcore/util/math-utilities').default;
 
 module.exports = async (results) => {
-
-	du.debug('Event funnel report');
-
 	const click = results[0].count_click;
 	const lead = results[0].count_lead;
 	const main = results[0].count_order;

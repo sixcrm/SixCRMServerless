@@ -21,9 +21,6 @@ class mockSQSProvider extends AWSProvider {
 	}
 
 	instantiateSQS() {
-
-		du.debug('Instantiate SQS');
-
 		let region = (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'sqs.region')) ? global.SixCRM.configuration.site_config.sqs.region : this.getRegion();
 
 		let parameters = {
@@ -40,9 +37,6 @@ class mockSQSProvider extends AWSProvider {
 
 
 	getQueueARN(queue_name) {
-
-		du.debug('Get Queue ARN');
-
 		if (_.isObject(queue_name)) {
 			if (_.has(queue_name, 'QueueName')) {
 				queue_name = queue_name.QueueName;
@@ -88,9 +82,6 @@ class mockSQSProvider extends AWSProvider {
 	}
 
 	getQueueParameters(queue_name) {
-
-		du.debug('Get Queue Parameters');
-
 		if (_.isNull(queue_name) || _.isUndefined(queue_name)) {
 			throw eu.getError('server', 'Unable to determine queue name.');
 		}
@@ -106,9 +97,6 @@ class mockSQSProvider extends AWSProvider {
 	}
 
 	receiveMessages(parameters) {
-
-		du.debug('Receive Messages');
-
 		return new Promise((resolve, reject) => {
 
 			let params = {};
@@ -124,8 +112,6 @@ class mockSQSProvider extends AWSProvider {
 			if (_.has(parameters, 'visibilityTimeout')) {
 				params['VisibilityTimeout'] = parameters['visibilityTimeout'];
 			}
-
-			du.debug('Message parameters', params);
 
 			this.sqs.receiveMessage(params, function (error, data) {
 
@@ -157,11 +143,8 @@ class mockSQSProvider extends AWSProvider {
 
 			let entries = [];
 
-			du.debug('Messages to delete:', parameters);
-
 			if (_.has(parameters, 'messages')) {
 				parameters.messages.forEach((message) => {
-					du.debug('Message to delete:', message);
 					if (_.has(message, 'ReceiptHandle') && _.has(message, 'MessageId')) {
 						entries.push({
 							Id: message.MessageId,
@@ -181,8 +164,6 @@ class mockSQSProvider extends AWSProvider {
 
 				params['QueueUrl'] = queue_url;
 
-				du.debug('Delete message parameters:', params);
-
 				this.sqs.deleteMessageBatch(params, function (err, data) {
 
 					if (err) {
@@ -196,8 +177,6 @@ class mockSQSProvider extends AWSProvider {
 						if (_.has(data, 'Failed') && _.isArray(data.Failed) && data.Failed.length > 0) {
 							du.warning('Failed to delete messages: ', data.Failed);
 						}
-
-						du.debug('Delete response: ', data);
 
 						return resolve(data);
 					}
@@ -217,9 +196,6 @@ class mockSQSProvider extends AWSProvider {
 	}
 
 	deleteMessage(parameters) {
-
-		du.debug('Delete Message');
-
 		let queue_url = this.getQueueURL(parameters);
 
 		var params = {
@@ -232,9 +208,6 @@ class mockSQSProvider extends AWSProvider {
 	}
 
 	sendMessage(parameters) {
-
-		du.debug('Send Message');
-
 		let queue_url = this.getQueueURL(parameters);
 
 		var params = {
@@ -248,16 +221,11 @@ class mockSQSProvider extends AWSProvider {
 
 		}
 
-		du.debug('Sending message', params);
-
 		return this.sqs.sendMessage(params).promise();
 
 	}
 
 	async purgeQueue(parameters) {
-
-		du.debug('Purge Queue');
-
 		let queue_name;
 
 		if (_.isString(parameters)) {
@@ -275,9 +243,6 @@ class mockSQSProvider extends AWSProvider {
 		}
 
 		if (await this.queueExists()) {
-
-			du.debug('Queue exists, purging');
-
 			let queue_url = this.getQueueURL(parameters);
 
 			let params = {
@@ -290,9 +255,6 @@ class mockSQSProvider extends AWSProvider {
 			return result;
 
 		} else {
-
-			du.debug('Queue not found, skipping');
-
 			return false;
 
 		}
@@ -300,8 +262,6 @@ class mockSQSProvider extends AWSProvider {
 	}
 
 	async createQueue(params) {
-
-		du.debug('Create Queue', params);
 
 		du.warning(params.QueueName);
 
@@ -323,16 +283,11 @@ class mockSQSProvider extends AWSProvider {
 
 	setQueueAttibutes(params) {
 
-		du.debug('Set Queue Attrbutes', params);
-
 		return this.sqs.setQueueAttributes(params).promise();
 
 	}
 
 	queueExists(shortname, refresh) {
-
-		du.debug('Queue Exists');
-
 		if (_.isUndefined(refresh)) {
 			refresh = false;
 		}
@@ -374,9 +329,6 @@ class mockSQSProvider extends AWSProvider {
 	}
 
 	listQueues(params) {
-
-		du.debug('List Queues');
-
 		return new Promise((resolve, reject) => {
 
 			if (_.isUndefined(params) || !_.isObject(params)) {
@@ -398,9 +350,6 @@ class mockSQSProvider extends AWSProvider {
 	}
 
 	deleteQueue(shortname) {
-
-		du.debug('Delete Queue');
-
 		du.warning('Deleting queue: ' + shortname);
 
 		return this.queueExists(shortname, true).then(queue_exists => {
@@ -430,8 +379,6 @@ class mockSQSProvider extends AWSProvider {
 							return reject(eu.getError('server', 'Failed to delete queue: ' + shortname));
 
 						} else {
-
-							du.debug(shortname + ' queue successfully deleted.');
 
 							return resolve(data);
 

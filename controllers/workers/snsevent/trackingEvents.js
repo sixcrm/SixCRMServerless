@@ -22,9 +22,6 @@ module.exports = class TrackingEventsController extends SNSEventController {
 	}
 
 	triggerTracking(){
-
-		du.debug('Trigger Tracking');
-
 		return Promise.resolve()
 			.then(() => this.isCompliantEventType())
 			.then(() => this.acquireSession())
@@ -37,9 +34,6 @@ module.exports = class TrackingEventsController extends SNSEventController {
 	}
 
 	acquireSession(){
-
-		du.debug('Acquire Session');
-
 		let context = this.parameters.get('message').context;
 
 		let context_objects = this.contextHelperController.discoverObjectsFromContext(['session'], context, true);
@@ -60,9 +54,6 @@ module.exports = class TrackingEventsController extends SNSEventController {
 	}
 
 	executeTracker(){
-
-		du.debug('Execute Tracker');
-
 		let session = this.parameters.get('session');
 		let context = this.parameters.get('message').context;
 

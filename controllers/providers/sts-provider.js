@@ -1,7 +1,5 @@
 
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 
 const random = require('@6crm/sixcrmcore/util/random').default;
@@ -23,9 +21,6 @@ module.exports = class STSProvider extends AWSProvider {
 	}
 
 	assumeRole(parameters){
-
-		du.debug('Assume Role');
-
 		let transcribe_parameters = {
 			required:{
 				RoleArn:'RoleArn'

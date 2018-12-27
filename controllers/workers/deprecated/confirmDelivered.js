@@ -33,9 +33,6 @@ module.exports = class confirmDeliveredController extends workerController {
 	}
 
 	execute(message) {
-
-		du.debug('Execute');
-
 		return this.preamble(message)
 			.then(() => this.acquireTransactions())
 			.then(() => this.acquireTransactionProducts())
@@ -51,9 +48,6 @@ module.exports = class confirmDeliveredController extends workerController {
 	}
 
 	acquireTransactions() {
-
-		du.debug('Acquire Transactions');
-
 		let rebill = this.parameters.get('rebill');
 
 		if (!_.has(this, 'rebillController')) {
@@ -74,9 +68,6 @@ module.exports = class confirmDeliveredController extends workerController {
 	}
 
 	acquireTransactionProducts() {
-
-		du.debug('Acquire Transaction Products');
-
 		let transactions = this.parameters.get('transactions');
 
 		if (!_.has(this, 'transactionHelperController')) {
@@ -94,9 +85,6 @@ module.exports = class confirmDeliveredController extends workerController {
 	}
 
 	acquireShippingReceipts() {
-
-		du.debug('Acquire Shipping Receipts');
-
 		let transaction_products = this.parameters.get('shippedtransactionproducts');
 
 		if (!_.has(this, 'shippingReceiptController')) {
@@ -121,9 +109,6 @@ module.exports = class confirmDeliveredController extends workerController {
 	}
 
 	acquireProductDeliveredStati() {
-
-		du.debug('Acquire Product Delivered Stati');
-
 		let shipping_receipts = this.parameters.get('shippingreceipts');
 
 		let delivered_stati = arrayutilities.map(shipping_receipts, (shipping_receipt) => {
@@ -147,9 +132,6 @@ module.exports = class confirmDeliveredController extends workerController {
 	}
 
 	setDeliveredStatus() {
-
-		du.debug('Confirm Delivered');
-
 		let delivered_stati = this.parameters.get('productdeliveredstati');
 
 		let delivered = arrayutilities.every(delivered_stati, (delivered_status) => {
@@ -163,9 +145,6 @@ module.exports = class confirmDeliveredController extends workerController {
 	}
 
 	respond() {
-
-		du.debug('Respond');
-
 		let delivered = this.parameters.get('rebilldeliveredstatus');
 
 		let promise = () => Promise.resolve();

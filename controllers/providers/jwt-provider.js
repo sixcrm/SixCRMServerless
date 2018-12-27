@@ -23,9 +23,6 @@ module.exports = class JWTProvider {
 	}
 
 	decodeJWT(jwt_string, jwt_signing_string) {
-
-		du.debug('Decode JWT', jwt_string, jwt_signing_string);
-
 		let decoded_jwt;
 
 		try {
@@ -36,12 +33,7 @@ module.exports = class JWTProvider {
 				decoded_jwt = jwt.decode(jwt_string);
 			}
 
-			du.debug('Decoded JWT', decoded_jwt);
-
-
 		} catch (error) {
-
-			du.error('Error Decoding JWT', error);
 
 			return false;
 
@@ -52,8 +44,6 @@ module.exports = class JWTProvider {
 	}
 
 	decodeAndValidateJWT(jwt_string, jwt_signing_string) {
-
-		du.debug('Decode and Validate JWT');
 		du.info('Decode and Validate JWT', jwt_string, jwt_signing_string);
 
 		let decoded_and_validated_jwt;
@@ -96,9 +86,6 @@ module.exports = class JWTProvider {
 	 * Entrypoint
 	 */
 	verifyJWT(submitted_jwt, jwt_type) {
-
-		du.debug('Verify JWT');
-
 		this.setJWTType(jwt_type);
 
 		let signing_key = this.getSigningKey();
@@ -108,9 +95,6 @@ module.exports = class JWTProvider {
 	}
 
 	setParameters() {
-
-		du.debug('Set Parameters');
-
 		let parameters = {
 			jwt_issuer: global.SixCRM.configuration.site_config.jwt.issuer,
 			transaction_jwt_expiration: global.SixCRM.configuration.site_config.jwt.transaction.expiration,
@@ -135,8 +119,6 @@ module.exports = class JWTProvider {
 	}
 
 	setJWTType(jwt_type) {
-		du.debug('Set JWT Type');
-
 		if (!_.isUndefined(jwt_type)) {
 
 			if (_.includes(this.jwt_types, jwt_type)) {
@@ -150,9 +132,6 @@ module.exports = class JWTProvider {
 	}
 
 	getJWTType() {
-
-		du.debug('Get JWT Type');
-
 		if (_.has(this, 'jwt_type')) {
 
 			return this.jwt_type;
@@ -164,9 +143,6 @@ module.exports = class JWTProvider {
 	}
 
 	getJWT(parameters, jwt_type) {
-
-		du.debug('Get JWT');
-
 		this.setJWTType(jwt_type);
 
 		let jwt_contents = this.createJWTContents(parameters);
@@ -176,9 +152,6 @@ module.exports = class JWTProvider {
 	}
 
 	createJWTContents(parameters) {
-
-		du.debug('Create JWT Contents');
-
 		let jwt_contents;
 
 		switch (this.getJWTType()) {
@@ -214,9 +187,6 @@ module.exports = class JWTProvider {
 	}
 
 	validateJWTContents(jwt_contents) {
-
-		du.debug('Validate JWT Contents');
-
 		let validation_function;
 
 		switch (this.getJWTType()) {
@@ -250,9 +220,6 @@ module.exports = class JWTProvider {
 	}
 
 	validateInput(object, validation_function) {
-
-		du.debug('Validate Input');
-
 		if (!_.isFunction(validation_function)) {
 			throw eu.getError('server', 'Validation function is not a function.');
 		}
@@ -283,9 +250,6 @@ module.exports = class JWTProvider {
 	}
 
 	getUserAlias(user) {
-
-		du.debug('Get User Alias');
-
 		if (_.has(user, 'user_alias')) {
 			return user.user_alias;
 		} else if (_.has(user, 'id')) {
@@ -299,9 +263,6 @@ module.exports = class JWTProvider {
 	}
 
 	signJWT(jwt_body, signing_key) {
-
-		du.debug('Sign JWT');
-
 		if (_.isUndefined(signing_key)) {
 
 			signing_key = this.getSigningKey();
@@ -313,9 +274,6 @@ module.exports = class JWTProvider {
 	}
 
 	getSigningKey() {
-
-		du.debug('Get Signing Key');
-
 		switch (this.getJWTType()) {
 
 			case 'transaction':
@@ -323,8 +281,6 @@ module.exports = class JWTProvider {
 				if (!_.has(this.jwt_parameters, 'transaction_jwt_secret_key')) {
 					throw eu.getError('validation', 'Transaction JWT secret key is not defined.');
 				}
-
-				du.debug(this.jwt_parameters.transaction_jwt_secret_key);
 
 				return this.jwt_parameters.transaction_jwt_secret_key;
 
@@ -355,17 +311,11 @@ module.exports = class JWTProvider {
 	}
 
 	unrecognzedJWTType() {
-
-		du.debug('Unrecognzed JWT Type');
-
 		throw eu.getError('validation', 'Unrecognized JWT Type.');
 
 	}
 
 	createTransactionJWTContents(parameters) {
-
-		du.debug('Create Transaction JWT Contents');
-
 		let user_alias = this.getUserAlias(parameters.user);
 
 		let now = timestamp.createTimestampSeconds();
@@ -419,7 +369,6 @@ module.exports = class JWTProvider {
 
 	//Technical Debt:  Seems deprecated...
 	getUserEmail(parameters) {
-		du.debug('Get User Email');
 		if(_.has(parameters, 'user') && _.has(parameters.user, 'email')) {
 			return parameters.user.email;
 		}

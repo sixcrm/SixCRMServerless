@@ -17,9 +17,6 @@ module.exports = class AuroraClusterDeployment {
 	}
 
 	async deploy() {
-
-		du.debug('Deploy Cluster');
-
 		const describeClustersResponse = await this._rdsprovider.describeClusters({
 			DBClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
 		});
@@ -76,9 +73,6 @@ module.exports = class AuroraClusterDeployment {
 	}
 
 	_getParameterConfigurationFromFile() {
-
-		du.debug('Get Parameter Configuration From File.');
-
 		return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', 'aurora/config/')).then(directory_files => {
 
 			let dpcf = arrayutilities.find(directory_files, (directory_file) => {
@@ -96,9 +90,6 @@ module.exports = class AuroraClusterDeployment {
 	}
 
 	_parseParameters(parameters) {
-
-		du.debug('Parse Parameters');
-
 		const parserData = {
 			region: this._rdsprovider.getRegion(),
 			stage: global.SixCRM.configuration.stage,
@@ -136,9 +127,6 @@ module.exports = class AuroraClusterDeployment {
 	}
 
 	async _deployClusterInstances(parameters) {
-
-		du.debug('Deploy Cluster Instances');
-
 		const instances = parameters.Instances;
 
 		const instanceDeploymentPromises = arrayutilities.map(instances, instance => {

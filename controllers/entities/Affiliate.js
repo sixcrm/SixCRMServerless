@@ -1,7 +1,3 @@
-
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 module.exports = class AffiliateController extends entityController {
@@ -15,9 +11,6 @@ module.exports = class AffiliateController extends entityController {
 	}
 
 	getByAffiliateID(affiliate_id){
-
-		du.debug('Get By Affiliate ID');
-
 		return this.getBySecondaryIndex({field: 'affiliate_id', index_value: affiliate_id, index_name:'affiliate_id-index'});
 
 	}
@@ -29,17 +22,11 @@ module.exports = class AffiliateController extends entityController {
 	}
 
 	getCampaigns({affiliate, pagination}){
-
-		du.debug('Get Campaigns');
-
 		return this.executeAssociatedEntityFunction('SessionController', 'listByAffiliate', {affiliate: affiliate, pagination: pagination});
 
 	}
 
 	getTrackers({affiliate, pagination}){
-
-		du.debug('Get Trackers');
-
 		return this.executeAssociatedEntityFunction('TrackerController', 'listByAffiliate', {affiliate: affiliate, pagination: pagination});
 
 	}

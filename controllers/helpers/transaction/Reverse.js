@@ -1,7 +1,4 @@
-
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const TransactionUtilities = global.SixCRM.routes.include('helpers', 'transaction/TransactionUtilities.js');
 const TransactionController = global.SixCRM.routes.include('entities','Transaction.js');
 
@@ -34,9 +31,6 @@ module.exports = class Reverse extends TransactionUtilities{
 	}
 
 	reverse(parameters){
-
-		du.debug('Reverse');
-
 		return this.setParameters(parameters)
 			.then(() => this.hydrateParameters())
 			.then(() => this.reverseTransaction());
@@ -45,9 +39,6 @@ module.exports = class Reverse extends TransactionUtilities{
 
 	//Technical Debt: Untested...
 	reverseTransaction(){
-
-		du.debug('Reverse Transaction');
-
 		return this.instantiateGateway()
 			.then(() => this.createProcessingParameters())
 			.then(() => {
@@ -62,9 +53,6 @@ module.exports = class Reverse extends TransactionUtilities{
 	}
 
 	createProcessingParameters(){
-
-		du.debug('Create Processing Parameters');
-
 		let transaction = this.parameters.get('transaction');
 
 		if(_.has(transaction, 'processor_response')){
@@ -87,9 +75,6 @@ module.exports = class Reverse extends TransactionUtilities{
 	}
 
 	hydrateParameters(){
-
-		du.debug('Hydrate Parameters');
-
 		let transaction = this.parameters.get('transaction');
 
 		return this.transactionController.get({id: transaction})

@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const uuidV4 = require('uuid/v4');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js');
 
@@ -14,9 +13,6 @@ module.exports = class ActivityHelper {
 
 	//Technical Debt:  Use Local Cache Object
 	acquireGlobalUser() {
-
-		du.debug('Acquire Global User');
-
 		if (_.has(global, 'user')) {
 
 			return global.user;
@@ -29,9 +25,6 @@ module.exports = class ActivityHelper {
 
 	//Technical Debt:  Use Local Cache Object
 	acquireGlobalAccount() {
-
-		du.debug('Acquire Global Account');
-
 		if (_.has(global, 'account')) {
 
 			return global.account;
@@ -43,9 +36,6 @@ module.exports = class ActivityHelper {
 	}
 
 	createActivity(actor, action, acted_upon, associated_with) {
-
-		du.debug('Create Activity');
-
 		actor = this.getActor(actor);
 		acted_upon = this.getActedUpon(acted_upon);
 		associated_with = this.getAssociatedWith(associated_with, acted_upon);
@@ -87,9 +77,6 @@ module.exports = class ActivityHelper {
 	}
 
 	getActivityAccount(object) {
-
-		du.debug('Get Activity By Account');
-
 		let return_object = null;
 
 		if (_.isObject(object)) {
@@ -113,9 +100,6 @@ module.exports = class ActivityHelper {
 	}
 
 	getActedUpon(object) {
-
-		du.debug('Get Acted Upon');
-
 		let return_object = this.getActivityEntity(object);
 
 		return Promise.resolve(return_object);
@@ -123,9 +107,6 @@ module.exports = class ActivityHelper {
 	}
 
 	getAssociatedWith(object, secondary_object) {
-
-		du.debug('Get Associated With');
-
 		let return_object = this.getActivityEntity(object);
 
 		if (_.isNull(return_object) && !_.isNull(secondary_object)) {
@@ -141,9 +122,6 @@ module.exports = class ActivityHelper {
 	}
 
 	getActivityEntity(object) {
-
-		du.debug('Get Activity Entity');
-
 		let return_object = null;
 
 		if (_.isObject(object)) {
@@ -177,9 +155,6 @@ module.exports = class ActivityHelper {
 	}
 
 	getActor(object) {
-
-		du.debug('Get Actor');
-
 		let return_object = null;
 
 		//Note: If it's explicity give (case: customer/what-have-you)

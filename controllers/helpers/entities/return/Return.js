@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const random = require('@6crm/sixcrmcore/util/random').default;
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
@@ -12,9 +11,6 @@ module.exports = class ReturnHelper {
 	}
 
 	mergeHistories(entity, stored_entity = null) {
-
-		du.debug('Merge Histories');
-
 		this.assureUniqueProductGroupAliases(entity);
 
 		return Promise.resolve()
@@ -63,9 +59,6 @@ module.exports = class ReturnHelper {
 	}
 
 	assurePresenceOfStoredEntityRecords(entity, stored_entity) {
-
-		du.debug('Assure Presence of Stored Entity Records');
-
 		if (_.has(stored_entity, 'transactions') && _.isArray(stored_entity.transactions) && arrayutilities.nonEmpty(stored_entity.transactions)) {
 			arrayutilities.map(stored_entity.transactions, (transaction) => {
 				if (_.has(transaction, 'products') && _.isArray(transaction.products) && arrayutilities.nonEmpty(transaction.products)) {
@@ -84,9 +77,6 @@ module.exports = class ReturnHelper {
 	}
 
 	assureUniqueProductGroupAliases(entity) {
-
-		du.debug('Assure Unique Product Group Aliases');
-
 		let aliases = [];
 
 		if (_.has(entity, 'transactions') && _.isArray(entity.transactions) && arrayutilities.nonEmpty(entity.transactions)) {
@@ -109,9 +99,6 @@ module.exports = class ReturnHelper {
 	}
 
 	getMatchingProductGroup(entity, product_group) {
-
-		du.debug('Get Matching Stored Entity Product Group');
-
 		let stored_entity_product_group = null;
 
 		if (_.has(entity, 'transactions') && _.isArray(entity.transactions) && arrayutilities.nonEmpty(entity.transactions)) {
@@ -136,9 +123,6 @@ module.exports = class ReturnHelper {
 	}
 
 	assureStoredEntity(entity, stored_entity) {
-
-		du.debug('Assure Stored Entity');
-
 		if (!_.isNull(stored_entity)) {
 			return Promise.resolve(stored_entity);
 		}
@@ -159,9 +143,6 @@ module.exports = class ReturnHelper {
 	}
 
 	assureHistory(entity, stored_entity = null) {
-
-		du.debug('Assure History');
-
 		let new_history = [];
 		let last_observed_event = null;
 		let new_event = null;

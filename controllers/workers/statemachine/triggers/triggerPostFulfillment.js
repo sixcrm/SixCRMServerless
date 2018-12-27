@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
@@ -17,9 +16,6 @@ module.exports = class TriggerPostFulfillmentController extends StepFunctionTrig
 	}
 
 	async execute(event) {
-
-		du.debug('Execute');
-
 		this.validateEvent(event);
 
 		let rebill = await this.getRebill(event.guid, true);
@@ -43,9 +39,6 @@ module.exports = class TriggerPostFulfillmentController extends StepFunctionTrig
 	}
 
 	async getShippingReceipts(rebill){
-
-		du.debug('Get Shipping Receipts');
-
 		if(!_.has(this, 'rebillHelperController')){
 			const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 			this.rebillHelperController = new RebillHelperController();
@@ -57,9 +50,7 @@ module.exports = class TriggerPostFulfillmentController extends StepFunctionTrig
 
 	}
 
-	async triggerPostFulfillment(shipping_receipt, rebill) {
-
-		du.debug('Trigger Post Fulfillment', shipping_receipt, rebill);
+	async triggerPostFulfillment(shipping_receipt) {
 
 		if(!_.has(shipping_receipt, 'id')){
 			throw eu.getError('server', 'Expected Shipping Receipt to have property "id".');

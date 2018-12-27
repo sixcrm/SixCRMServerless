@@ -16,13 +16,7 @@ module.exports = class UpdateRebillRecords extends WriteRecords {
 	}
 
 	async write(records) {
-
-		du.debug('UpdateRebillRecords.write()');
-
 		if (records.length === 0) {
-
-			du.debug('UpdateRebillRecords.write(): no records');
-
 			return;
 
 		}

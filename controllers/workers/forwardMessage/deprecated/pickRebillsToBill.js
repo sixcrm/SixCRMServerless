@@ -35,8 +35,6 @@ module.exports = class PickRebillsToBillController extends forwardRebillMessageC
 	}
 
 	invokeAdditionalLambdas(){
-
-		du.debug('Invoke Additional Lambdas');
 		du.warning('This method is overwritten.');
 		du.info('No additional lambda required');
 

@@ -19,9 +19,6 @@ module.exports = class IntegrationTest {
 	}
 
 	executeQuery(query, code = 200){
-
-		du.debug('Execute Query');
-
 		let required_properties = ['endpoint', 'account', 'test_jwt'];
 
 		arrayutilities.map(required_properties, (required_property) => {

@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 module.exports = class TagHelper {
 
@@ -12,9 +11,6 @@ module.exports = class TagHelper {
 		key,
 		value
 	}) {
-
-		du.debug('Get Tag Prototype');
-
 		return {
 			entity: entity,
 			key: key,
@@ -28,9 +24,6 @@ module.exports = class TagHelper {
 		key,
 		value
 	}) {
-
-		du.debug('Put Tag');
-
 		if (!_.has(this, 'tagController')) {
 			const TagController = global.SixCRM.routes.include('entities', 'Tag.js');
 			this.tagController = new TagController();

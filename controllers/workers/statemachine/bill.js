@@ -29,9 +29,6 @@ module.exports = class BillController extends stepFunctionWorkerController {
 	}
 
 	async execute(event) {
-
-		du.debug('Execute');
-
 		this.validateEvent(event);
 
 		let rebill = await this.getRebill(event.guid);
@@ -64,9 +61,6 @@ module.exports = class BillController extends stepFunctionWorkerController {
 	}
 
 	async executeBilling(rebill){
-
-		du.debug('Execute Billing');
-
 		let result;
 
 		try{
@@ -87,9 +81,6 @@ module.exports = class BillController extends stepFunctionWorkerController {
 	}
 
 	async incrementMerchantProviderSummary(register_result){
-
-		du.debug('Increment Merchant Provider Summary');
-
 		const transactions = register_result.parameters.get('transactions', {fatal: false});
 
 		if (_.isNull(transactions) || !arrayutilities.nonEmpty(transactions)) {
@@ -149,7 +140,6 @@ module.exports = class BillController extends stepFunctionWorkerController {
 			}
 		};
 
-		du.debug(`bill.js.pushEvent`, event);
 		let EventPushHelperController = global.SixCRM.routes.include('helpers', 'events/EventPush.js');
 		return new EventPushHelperController().pushEvent(event);
 	}
@@ -159,18 +149,13 @@ module.exports = class BillController extends stepFunctionWorkerController {
 		let event_type = 'allorders';
 
 		if (result !== 'success') {
-			du.debug('bill.js rebill result is not success:', result);
 			event_type = 'decline';
 		}
 
-		du.debug('bill.js getEventType', event_type, result);
 		return event_type;
 	}
 
 	respond(result, rebill){
-
-		du.debug('Respond');
-
 		let result_code = result.getCode();
 
 		if(_.toLower(result_code) == 'success'){

@@ -1,7 +1,3 @@
-
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 module.exports = class MerchantProviderGroupAssociationController extends entityController {
@@ -13,9 +9,6 @@ module.exports = class MerchantProviderGroupAssociationController extends entity
 	}
 
 	getMerchantProviderGroup(merchantprovidergroupassociation){
-
-		du.debug('Get MerchantProviderGroup');
-
 		return this.executeAssociatedEntityFunction(
 			'MerchantProviderGroupController',
 			'get',
@@ -25,9 +18,6 @@ module.exports = class MerchantProviderGroupAssociationController extends entity
 	}
 
 	getCampaign(merchantprovidergroupassociation){
-
-		du.debug('Get Campaign');
-
 		return this.executeAssociatedEntityFunction(
 			'CampaignController',
 			'get',
@@ -38,9 +28,6 @@ module.exports = class MerchantProviderGroupAssociationController extends entity
 
 	//Technical Debt:  This seems hacky
 	listByEntitiesAndCampaign({entities, campaign}){
-
-		du.debug('List Merchant Provider Groups By Entity and Campaign');
-
 		let query_parameters = this.createINQueryParameters({field:'entity', list_array: entities});
 
 		query_parameters.filter_expression += ' AND #campaign = :campaignv';
@@ -52,9 +39,6 @@ module.exports = class MerchantProviderGroupAssociationController extends entity
 	}
 
 	listByEntity({entity, pagination, fatal, search}){
-
-		du.debug('List Merchant Provider Groups By Entity');
-
 		let query_parameters = {
 			filter_expression:'#entity = :entityv',
 			expression_attribute_names: {'#entity': 'entity'},
@@ -66,9 +50,6 @@ module.exports = class MerchantProviderGroupAssociationController extends entity
 	}
 
 	listByCampaign({campaign}){
-
-		du.debug('List Merchant Provider Groups By Campaign');
-
 		let query_parameters = {
 			filter_expression:'#campaign = :campaignv',
 			expression_attribute_names: {'#campaign': 'campaign'},

@@ -1,8 +1,4 @@
-
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 const MerchantProviderResponse = global.SixCRM.routes.include('vendors', 'merchantproviders/Response.js');
 
 const SOFT_DECLINES = [
@@ -24,8 +20,6 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 	}
 
 	determineResultCode({vendor_response, action}){
-
-		du.debug('Determine Result Code');
 		const {
 			response,
 			body,
@@ -39,8 +33,6 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 			}
 
 			if (!_.isNull(error) && error.rawType === 'card_error') {
-
-				du.debug('Detecting Soft Decline Stripe', error.code, error, SOFT_DECLINES);
 
 				if (SOFT_DECLINES.includes(error.code)) {
 					return 'decline';
@@ -83,8 +75,6 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 
 	determineMerchantMessage(vendor_response) {
 
-		du.debug('Determine Merchant Message (Stripe)', vendor_response);
-
 		if (this.getCode() === 'success') {
 			return 'Success';
 		}
@@ -109,8 +99,6 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 		if (result === '' || typeof result !== 'string') {
 			result = super.determineMerchantMessage(vendor_response);
 		}
-
-		du.debug('Determined Merchant Message (Stripe)', result);
 
 		return result;
 

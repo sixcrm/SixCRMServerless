@@ -28,9 +28,6 @@ module.exports = class RDSProvider extends AWSProvider {
 	}
 
 	createDBSubnetGroup(parameters){
-
-		du.debug('Create DB Subnet Group');
-
 		let params = objectutilities.transcribe(
 			{
 				DBSubnetGroupDescription: 'DBSubnetGroupDescription',
@@ -48,17 +45,11 @@ module.exports = class RDSProvider extends AWSProvider {
 	}
 
 	describeDBSubnetGroups(parameters){
-
-		du.debug('Describe DB Subnet Groups');
-
 		return this.rds.describeDBSubnetGroups(parameters).promise();
 
 	}
 
 	createCluster(parameters){
-
-		du.debug('Create Cluster');
-
 		let params = objectutilities.transcribe(
 			{
 				DBClusterIdentifier: 'DBClusterIdentifier',
@@ -103,9 +94,6 @@ module.exports = class RDSProvider extends AWSProvider {
 	}
 
 	describeClusters(parameters){
-
-		du.debug('Describe Clusters');
-
 		let params = objectutilities.transcribe(
 			{
 				DBClusterIdentifier:'DBClusterIdentifier',
@@ -137,9 +125,6 @@ module.exports = class RDSProvider extends AWSProvider {
 	}
 
 	putCluster(parameters){
-
-		du.debug('Put Cluster');
-
 		return this.describeClusters(parameters).then(result => {
 
 			if(arrayutilities.nonEmpty(result.DBClusters)){
@@ -154,9 +139,6 @@ module.exports = class RDSProvider extends AWSProvider {
 	}
 
 	createDBInstance(parameters){
-
-		du.debug('Create DB Instance');
-
 		let params = objectutilities.transcribe(
 			{
 				DBInstanceClass: 'DBInstanceClass',
@@ -228,9 +210,6 @@ module.exports = class RDSProvider extends AWSProvider {
 	}
 
 	putDBInstance(parameters){
-
-		du.debug('Put DB Instance');
-
 		return this.describeDBInstances(parameters).then(result => {
 
 			if(_.isObject(result) && objectutilities.hasRecursive(result, 'DBInstances.0.DBInstanceArn')){
@@ -249,9 +228,6 @@ module.exports = class RDSProvider extends AWSProvider {
 	}
 
 	describeDBInstances(parameters){
-
-		du.debug('Describe DB Instances');
-
 		let params = objectutilities.transcribe(
 			{
 				DBInstanceIdentifier: "DBInstanceIdentifier",
@@ -285,9 +261,6 @@ module.exports = class RDSProvider extends AWSProvider {
 	}
 
 	waitFor(event_name, parameters){
-
-		du.debug('Wait For');
-
 		return this.rds.waitFor(event_name, parameters).promise();
 
 	}

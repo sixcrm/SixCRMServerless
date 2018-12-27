@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 module.exports = class FeatureFlagHelperController {
 
@@ -11,9 +10,6 @@ module.exports = class FeatureFlagHelperController {
 		environment = 'default',
 		account = 'default'
 	}) {
-
-		du.debug('Get Feature Flags');
-
 		if (_.has(global, 'account')) {
 			account = global.account;
 		}
@@ -29,9 +25,6 @@ module.exports = class FeatureFlagHelperController {
 		environment = 'default',
 		account = 'default'
 	}) {
-
-		du.debug('Get By Environment');
-
 		if (!_.has(this, 'featureFlagController')) {
 			const FeatureFlagController = global.SixCRM.routes.include('entities', 'FeatureFlag.js');
 			this.featureFlagController = new FeatureFlagController();

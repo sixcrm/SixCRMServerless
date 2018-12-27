@@ -19,13 +19,7 @@ module.exports = class WriteRebillRecords extends WriteRecords {
 	}
 
 	write(records) {
-
-		du.debug('WriteRebillRecords.write()');
-
 		if (records.length === 0) {
-
-			du.debug('WriteRebillRecords.write(): no records');
-
 			return;
 
 		}
