@@ -64,7 +64,7 @@ module.exports = class ProductScheduleHelper {
 		return arrayutilities.filter(product_schedule.schedule, schedule_element => {
 			const { start, end, period, samedayofmonth = false } = schedule_element;
 			const product_is_active = day >= start && (!end || day < end);
-			const day_is_start_of_new_period = samedayofmonth && day > 0
+			const day_is_start_of_new_period = samedayofmonth
 				? this.isStartOfNextMonth(day)
 				: Number.isInteger(day / period);
 			return product_is_active && day_is_start_of_new_period;
@@ -72,6 +72,10 @@ module.exports = class ProductScheduleHelper {
 	}
 
 	isStartOfNextMonth(day) {
+		if (day === 0) {
+			return true;
+		}
+
 		const lastMonth = moment.utc().add(day, 'd').subtract(1, 'months');
 		return timestamp.daysDifference(lastMonth) === 0;
 	}
