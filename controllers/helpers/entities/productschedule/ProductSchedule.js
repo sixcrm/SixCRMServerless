@@ -64,18 +64,16 @@ module.exports = class ProductScheduleHelper {
 		return arrayutilities.filter(product_schedule.schedule, schedule_element => {
 			const { start, end, period, samedayofmonth = false } = schedule_element;
 			const product_is_active = day >= start && (!end || day < end);
-			const day_is_start_of_new_period = samedayofmonth
-				? this.calculateStartOfNewMonth({ schedule_element, day })
+			const day_is_start_of_new_period = samedayofmonth && day > 0
+				? this.isStartOfNextMonth(day)
 				: Number.isInteger(day / period);
 			return product_is_active && day_is_start_of_new_period;
 		});
 	}
 
-	calculateStartOfNewMonth({ schedule_element, day }) {
+	isStartOfNextMonth(day) {
 		const lastMonth = moment.utc().add(day, 'd').subtract(1, 'months');
-		const lastMonthDay = timestamp.daysDifference(lastMonth);
-		const period = this.calculateNextMonthlyBillingInSchedule({ schedule_element, day: lastMonthDay });
-		return Number.isInteger(day / period);
+		return timestamp.daysDifference(lastMonth) === 0;
 	}
 
 	//Tested
