@@ -383,6 +383,59 @@ describe('controllers/helpers/entities/productschedule/ProductSchedule.js', () =
 
 		});
 
+		//skip same day of the month tests -- no way to configure specific dates for testing
+		//if enabling tests, set your computer's date to a 31 day month
+		xdescribe('same day of the month schedule', () => {
+			const product_schedule = {
+				id:uuidV4(),
+				name:"Product Schedule 1",
+				account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+				merchantprovidergroup:uuidV4(),
+				schedule: [
+					{
+						product:uuidV4(),
+						price:4.99,
+						start:0,
+						period:30,
+						samedayofmonth: true
+					}
+				],
+				created_at:timestamp.getISO8601(),
+				updated_at:timestamp.getISO8601()
+			};
+
+			it('successfully returns schedule elements on day 0', () => {
+				const productScheduleHelper = new ProductScheduleHelperController();
+				const scheduledProduct = productScheduleHelper.getScheduleElementsOnDayInSchedule({
+					product_schedule,
+					day: 0
+				});
+
+				expect(scheduledProduct).to.deep.equal(product_schedule.schedule);
+			});
+
+			it('successfully returns no schedule elements on day 1', () => {
+				const productScheduleHelper = new ProductScheduleHelperController();
+				const scheduledProduct = productScheduleHelper.getScheduleElementsOnDayInSchedule({
+					product_schedule,
+					day: 1
+				});
+
+				expect(scheduledProduct).to.deep.equal([]);
+			});
+
+			it('successfully returns schedule elements after a month', () => {
+				const daysInMonth = 31; //must match the number of days in the current calendar month
+				const productScheduleHelper = new ProductScheduleHelperController();
+				const scheduledProduct = productScheduleHelper.getScheduleElementsOnDayInSchedule({
+					product_schedule,
+					day: daysInMonth
+				});
+
+				expect(scheduledProduct).to.deep.equal(product_schedule.schedule);
+			});
+		});
+
 	});
 
 	describe('getNextScheduleElement', () => {
