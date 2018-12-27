@@ -238,9 +238,12 @@ module.exports = class RebillCreatorHelper {
 	}
 
 	getTransactionProducts({bill_day, normalized_product_schedules, normalized_products}) {
+		du.debug(`getTransactionProducts: ${JSON.stringify({bill_day, normalized_product_schedules, normalized_products})}`);
 		const transaction_products = [];
 		const schedule_elements = this.getScheduleElementsOnBillDay({bill_day, normalized_product_schedules});
+		du.debug(`schedule_elements: ${JSON.stringify(schedule_elements)}`);
 		this.addScheduleElementsToTransactionProducts(schedule_elements, transaction_products);
+		du.debug(`transaction_products: ${JSON.stringify(transaction_products)}`);
 		this.addProductsToTransactionProducts(normalized_products, transaction_products);
 		return transaction_products;
 	}
@@ -371,7 +374,6 @@ module.exports = class RebillCreatorHelper {
 		const {merchant_provider, merchant_provider_selections} = await this.getMerchantProviderSelections(session, day);
 		const transaction_products = this.getTransactionProducts({bill_day, normalized_product_schedules, normalized_products});
 		const amount = this.calculateAmount(transaction_products);
-		du.debug(`Rebill for session ${session.id}, amount ${amount}`);
 		const bill_at = this.calculateBillAt(session, bill_day);
 		const cycle = await this.calculateCycle(session, bill_at);
 
@@ -426,7 +428,7 @@ module.exports = class RebillCreatorHelper {
 	}
 
 	calculateAmount(products) {
-		du.debug('calculateAmount', products);
+		du.debug(`calculateAmount on products: ${JSON.stringify(products)}`);
 		let amount = 0.0;
 
 		if (!_.isNull(products) && arrayutilities.nonEmpty(products)) {
