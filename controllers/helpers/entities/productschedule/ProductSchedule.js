@@ -1,4 +1,4 @@
-
+const moment = require('moment');
 const _ = require('lodash');
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
@@ -61,11 +61,19 @@ module.exports = class ProductScheduleHelper {
 
 	//Tested
 	getScheduleElementsOnDayInSchedule({product_schedule, day}){
-		return arrayutilities.filter(product_schedule.schedule, ({start, end, period}) => {
+		return arrayutilities.filter(product_schedule.schedule, schedule_element => {
+			const { start, end, period, samedayofmonth = false } = schedule_element;
 			const product_is_active = day >= start && (!end || day < end);
-			const day_is_start_of_new_period = Number.isInteger(day / period);
+			const day_is_start_of_new_period = samedayofmonth && day > 0
+				? this.isStartOfNextMonth(day)
+				: Number.isInteger(day / period);
 			return product_is_active && day_is_start_of_new_period;
 		});
+	}
+
+	isStartOfNextMonth(day) {
+		const lastMonth = moment.utc().add(day, 'd').subtract(1, 'months');
+		return timestamp.daysDifference(lastMonth) === 0;
 	}
 
 	//Tested
