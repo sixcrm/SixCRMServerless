@@ -1,4 +1,4 @@
-
+require('module-alias/register');
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
@@ -21,7 +21,7 @@ const productScheduleController = new ProductScheduleController();
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 const campaignController = new CampaignController();
 
-const previewHelper = global.SixCRM.routes.include('helpers', 'emailtemplates/EmailTemplateSender.js');
+const previewHelper = require('@lib/controllers/helpers/emailtemplates/EmailTemplateSender.js').default;
 
 
 module.exports.graphObj = new GraphQLObjectType({

@@ -29,9 +29,9 @@
       ],
       "Default": "Wait 2 Hours"
     },
-    "Wait 2 Hours": {
+    "Wait 2 Minutes": {
       "Type": "Wait",
-      "Seconds": 7200,
+      "Seconds": 120,
       "Next": "Close Session"
     },
     "Close Session": {

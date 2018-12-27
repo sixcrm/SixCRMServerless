@@ -38,8 +38,11 @@ jobs:
       - restore_cache:
           key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
-          name: 'Unit Tests'
+          name: 'Unit Tests (JavaScript)'
           command: stage=circle yarn run test-unit-circle
+      - run:
+          name: 'Unit Tests (TypeScript)'
+          command: stage=circle yarn run ts-test
   query_tests:
     machine: true
     steps:
@@ -117,6 +120,9 @@ jobs:
           key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - attach_workspace:
           at: .
+      - run:
+          name: Build TypeScript
+          command: npm run ts-build
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
