@@ -1,6 +1,3 @@
-
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const ShipmentUtilities = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
 
 module.exports = class InfoController extends ShipmentUtilities {
@@ -30,9 +27,6 @@ module.exports = class InfoController extends ShipmentUtilities {
 	}
 
 	execute(){
-
-		du.debug('Execute');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'execute'}))
 			.then(() => this.hydrateShippingReceiptProperties())
@@ -47,9 +41,6 @@ module.exports = class InfoController extends ShipmentUtilities {
 	}
 
 	executeInfo(){
-
-		du.debug('Execute Info');
-
 		let instantiated_fulfillment_provider = this.parameters.get('instantiatedfulfillmentprovider');
 		let shipping_receipt = this.parameters.get('shippingreceipt');
 

@@ -19,11 +19,9 @@ module.exports = class CampaignController extends entityController {
 	}
 
 	async create(argumentation) {
-		du.debug('Create campaign', argumentation.entity.name);
 		this.affiliateCheck(argumentation.entity);
 
 		if (global.account === '*' || this.permissionutilities.areACLsDisabled()) {
-			du.debug('Master account or ACLs disabled.');
 			return super.create(argumentation);
 		}
 
@@ -31,7 +29,6 @@ module.exports = class CampaignController extends entityController {
 		const plan = _(account).get('billing.plan', null);
 
 		if (!plan || plan !== 'basic') {
-			du.debug('Non-basic plan');
 			return super.create(argumentation);
 		}
 
@@ -41,7 +38,6 @@ module.exports = class CampaignController extends entityController {
 		if (campaignCount > 0) {
 			throw eu.getError('forbidden', 'Your subscription level does not allow creating more campaigns.');
 		}
-		du.debug('Creating campaign for basic plan.');
 		return super.create(argumentation);
 
 	}
@@ -67,9 +63,6 @@ module.exports = class CampaignController extends entityController {
 	}
 
 	associatedEntitiesCheck({id}){
-
-		du.debug('Associated Entities Check');
-
 		let return_array = [];
 
 		let data_acquisition_promises = [
@@ -109,9 +102,6 @@ module.exports = class CampaignController extends entityController {
 	}
 
 	getAffiliateAllowDenyList(list){
-
-		du.debug('Get Affiliate Allow Deny List');
-
 		if(!arrayutilities.nonEmpty(list)){
 			return Promise.resolve(null);
 		}
@@ -150,9 +140,6 @@ module.exports = class CampaignController extends entityController {
 	}
 
 	listAffiliatesByCampaign({affiliate, pagination}){
-
-		du.debug('List Affiliates By Campaign');
-
 		let affiliate_id = this.getID(affiliate);
 
 		let query_parameters = {
@@ -175,17 +162,11 @@ module.exports = class CampaignController extends entityController {
 	}
 
 	listCampaignsByProductSchedule({productschedule, pagination}){
-
-		du.debug('List Campaigns By Product Schedule');
-
 		return this.listByAssociations({field: 'productschedules', id: this.getID(productschedule), pagination: pagination});
 
 	}
 
 	getEmailTemplates(campaign){
-
-		du.debug('Get Email Templates');
-
 		if(_.has(campaign, "emailtemplates") && arrayutilities.nonEmpty(campaign.emailtemplates)){
 
 			return this.executeAssociatedEntityFunction('EmailTemplateController', 'listBy', {list_array: campaign.emailtemplates})
@@ -200,9 +181,6 @@ module.exports = class CampaignController extends entityController {
 	}
 
 	getProducts(campaign){
-
-		du.debug('Get Products');
-
 		if(_.has(campaign, "products") && arrayutilities.nonEmpty(campaign.products)){
 
 			return this.executeAssociatedEntityFunction('ProductController', 'listBy', {list_array: campaign.products})
@@ -217,9 +195,6 @@ module.exports = class CampaignController extends entityController {
 	}
 
 	getProductSchedules(campaign){
-
-		du.debug('Get Product Schedules');
-
 		if(_.has(campaign, "productschedules") && arrayutilities.nonEmpty(campaign.productschedules)){
 
 			return this.executeAssociatedEntityFunction('ProductScheduleController', 'listBy', {list_array: campaign.productschedules})
@@ -234,17 +209,11 @@ module.exports = class CampaignController extends entityController {
 	}
 
 	listByAffiliateAllow({affiliate, pagination}){
-
-		du.debug('List by Affiliate Allow');
-
 		return this.listByAssociations({id: this.getID(affiliate), field: 'affiliate_allow', pagination: pagination});
 
 	}
 
 	listByAffiliateDeny({affiliate, pagination}){
-
-		du.debug('List by Affiliate Deny');
-
 		return this.listByAssociations({id: this.getID(affiliate), field: 'affiliate_deny', pagination: pagination});
 
 	}
@@ -256,9 +225,6 @@ module.exports = class CampaignController extends entityController {
 	}
 
 	getAffiliate(campaign){
-
-		du.debug('Get Affiliate');
-
 		return this.executeAssociatedEntityFunction('AffiliateController', 'get', {id: campaign.affiliate});
 
 	}
@@ -271,9 +237,6 @@ module.exports = class CampaignController extends entityController {
 	//Technical Debt:  Replace with listBy()
 	//Technical Debt:  Use a better query method instead of iterating over "listCampaignsByProductSchedule()"
 	listCampaignsByProduct({product, pagination}){
-
-		du.debug('Get Campaigns By Product');
-
 		return this.executeAssociatedEntityFunction('ProductScheduleController', 'listByProduct', {product: this.getID(product)})
 			.then((productschedules) => this.getResult(productschedules, 'productschedules'))
 			.then((productschedules) => {
@@ -332,9 +295,6 @@ module.exports = class CampaignController extends entityController {
 
 	//Technical Debt:  Need compound condition here...
 	getEmailTemplatesByEventType(campaign, event_type){
-
-		du.debug('Get Email Templates By Event Type');
-
 		//Technical Debt:  Update this query to be a compound condition
 		return this.getEmailTemplates(campaign).then((email_templates) => {
 
@@ -359,9 +319,6 @@ module.exports = class CampaignController extends entityController {
 	//Technical Debt: Gross
 	//Technical Debt:  Replace with listBy()
 	getProductSchedulesHydrated(campaign){
-
-		du.debug('Get Product Schedule Hydrated');
-
 		if(_.has(campaign, "productschedules") && arrayutilities.nonEmpty(campaign.productschedules)){
 
 			return Promise.all(arrayutilities.map(campaign.productschedules, (id) => {

@@ -37,9 +37,6 @@ module.exports = class forwardMessageController extends RelayController {
 	}
 
 	forwardMessagesToWorkers(){
-
-		du.debug('Forward Messages To Workers');
-
 		let params = this.parameters.get('params');
 		let messages = this.parameters.get('messages');
 
@@ -72,9 +69,6 @@ module.exports = class forwardMessageController extends RelayController {
 	}
 
 	invokeWorker(message){
-
-		du.debug('invokeWorker');
-
 		let params = this.parameters.get('params');
 
 		let WorkerController = global.SixCRM.routes.include('workers', params.workerfunction);
@@ -92,9 +86,6 @@ module.exports = class forwardMessageController extends RelayController {
 	}
 
 	handleWorkerResponseObjects(){
-
-		du.debug('Handle Worker Response Objects');
-
 		let worker_response_objects = this.parameters.get('workerresponses');
 
 		let handle_worker_response_object_promises = arrayutilities.map(worker_response_objects, worker_response_object => {
@@ -109,9 +100,6 @@ module.exports = class forwardMessageController extends RelayController {
 	}
 
 	handleWorkerResponseObject(worker_response_object){
-
-		du.debug('Handle Worker Response Object');
-
 		return this.validateWorkerResponseObject(worker_response_object)
 			.then((worker_response_object) => this.handleError(worker_response_object))
 			.then((worker_response_object) => this.handleFailure(worker_response_object))
@@ -122,9 +110,6 @@ module.exports = class forwardMessageController extends RelayController {
 	}
 
 	validateWorkerResponseObject(compound_worker_response_object){
-
-		du.debug('Validate Worker Response Object');
-
 		global.SixCRM.validate(compound_worker_response_object, global.SixCRM.routes.path('model', 'workers/forwardmessage/compoundworkerresponseobject.json'));
 
 		if(objectutilities.getClassName(compound_worker_response_object.worker_response_object) !== 'WorkerResponse'){
@@ -137,9 +122,6 @@ module.exports = class forwardMessageController extends RelayController {
 	}
 
 	handleNoAction(compound_worker_response_object){
-
-		du.debug('Handle No Action');
-
 		if(compound_worker_response_object.worker_response_object.getCode() !== 'noaction'){
 			return Promise.resolve(compound_worker_response_object);
 		}
@@ -153,9 +135,6 @@ module.exports = class forwardMessageController extends RelayController {
 	}
 
 	handleFailure(compound_worker_response_object){
-
-		du.debug('Handle Failure');
-
 		let params = this.parameters.get('params');
 
 		if(compound_worker_response_object.worker_response_object.getCode() !== 'decline'){
@@ -182,9 +161,6 @@ module.exports = class forwardMessageController extends RelayController {
 	}
 
 	handleError(compound_worker_response_object){
-
-		du.debug('Handle Error');
-
 		let params = this.parameters.get('params');
 
 		if(compound_worker_response_object.worker_response_object.getCode() !== 'error'){
@@ -211,9 +187,6 @@ module.exports = class forwardMessageController extends RelayController {
 	}
 
 	handleSuccess(compound_worker_response_object){
-
-		du.debug('Handle Success');
-
 		let params = this.parameters.get('params');
 
 		if(compound_worker_response_object.worker_response_object.getCode() !== 'success'){
@@ -236,9 +209,6 @@ module.exports = class forwardMessageController extends RelayController {
 	}
 
 	handleDelete(compound_worker_response_object){
-
-		du.debug('Handle Delete');
-
 		if(_.includes(['success', 'decline', 'error'], compound_worker_response_object.worker_response_object.getCode())){
 
 			let messages = this.getCompoundWorkerResponseMessages(compound_worker_response_object);
@@ -259,9 +229,6 @@ module.exports = class forwardMessageController extends RelayController {
 	}
 
 	deleteMessages(messages){
-
-		du.debug('Delete Messages');
-
 		let params = this.parameters.get('params');
 
 		if(!params.origin_queue) {

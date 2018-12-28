@@ -30,9 +30,6 @@ module.exports = class USPSResponse extends ShippingCarrierVendorResponse {
 	}
 
 	transformResponse(){
-
-		du.debug('Transform Response');
-
 		let action = this.parameters.get('action');
 
 		let transformers = {
@@ -44,9 +41,6 @@ module.exports = class USPSResponse extends ShippingCarrierVendorResponse {
 	}
 
 	transformInfoResponse(){
-
-		du.debug('Transform Info Response');
-
 		let vendor_response = this.parameters.get('vendorresponse');
 
 		du.warning(vendor_response);
@@ -69,9 +63,6 @@ module.exports = class USPSResponse extends ShippingCarrierVendorResponse {
 	}
 
 	parseResponseXML(){
-
-		du.debug('Parse Response XML');
-
 		let vendor_response = this.parameters.get('vendorresponse');
 		let response_xml = vendor_response.body;
 		let parsed_response = xmlutilities.parse(response_xml, true);
@@ -83,9 +74,6 @@ module.exports = class USPSResponse extends ShippingCarrierVendorResponse {
 	}
 
 	setTrackingNumber(){
-
-		du.debug('Set Tracking Number');
-
 		let parsed_vendor_response = this.parameters.get('parsedvendorresponse');
 
 		if(objectutilities.hasRecursive(parsed_vendor_response, 'TrackResponse.TrackInfo.0.$.ID')){
@@ -98,9 +86,6 @@ module.exports = class USPSResponse extends ShippingCarrierVendorResponse {
 	}
 
 	setStatus(){
-
-		du.debug('Set Status');
-
 		let parsed_vendor_response = this.parameters.get('parsedvendorresponse');
 
 		if(objectutilities.hasRecursive(parsed_vendor_response, 'TrackResponse.TrackInfo.0.TrackSummary.0')){
@@ -122,9 +107,6 @@ module.exports = class USPSResponse extends ShippingCarrierVendorResponse {
 	}
 
 	determineStatus(detail){
-
-		du.debug('Determine Status');
-
 		let detail_string = null;
 
 		if(_.isObject(detail) && _.has(detail, 'DeliveryAttributeCode')){
@@ -154,9 +136,6 @@ module.exports = class USPSResponse extends ShippingCarrierVendorResponse {
 	}
 
 	normalizeStatus(status_string){
-
-		du.debug('Normalize Status');
-
 		if(_.isString(status_string)){
 
 			if(stringutilities.isMatch(status_string, /^.*delivered.*$/)){
@@ -185,9 +164,6 @@ module.exports = class USPSResponse extends ShippingCarrierVendorResponse {
 
 	//Technical Debt: Refine
 	setDetail(){
-
-		du.debug('Set Detail');
-
 		let parsed_vendor_response = this.parameters.get('parsedvendorresponse');
 
 		let detail = null;
@@ -234,9 +210,6 @@ module.exports = class USPSResponse extends ShippingCarrierVendorResponse {
 
 	//Technical Debt:  Refine
 	determineDetail(detail){
-
-		du.debug('Determine Detail');
-
 		let detail_string = null;
 
 		if(_.isObject(detail) && _.has(detail, 'Event')){
@@ -250,9 +223,6 @@ module.exports = class USPSResponse extends ShippingCarrierVendorResponse {
 	}
 
 	setMessage(message){
-
-		du.debug('Set Message');
-
 		this.parameters.set('message', message);
 
 		return true;
@@ -260,9 +230,6 @@ module.exports = class USPSResponse extends ShippingCarrierVendorResponse {
 	}
 
 	getMessage(){
-
-		du.debug('Get Message');
-
 		return this.parameters.get('message')
 
 	}

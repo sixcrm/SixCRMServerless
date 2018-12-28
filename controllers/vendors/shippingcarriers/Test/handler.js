@@ -1,4 +1,3 @@
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const HttpProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
 const httpprovider = new HttpProvider();
 
@@ -32,9 +31,6 @@ module.exports = class TestController extends ShippingCarrierController {
 	}
 
 	info(){
-
-		du.debug('info');
-
 		this.parameters.set('action', 'info');
 
 		return Promise.resolve()
@@ -45,9 +41,6 @@ module.exports = class TestController extends ShippingCarrierController {
 	}
 
 	acquireAPIResult(){
-
-		du.debug('Acquire API Result');
-
 		return Promise.resolve()
 			.then(() => this.buildRequestJSON())
 			.then(() => this.buildRequestURI())
@@ -56,9 +49,6 @@ module.exports = class TestController extends ShippingCarrierController {
 	}
 
 	buildRequestURI(){
-
-		du.debug('Build Request URI');
-
 		let vendor_configuration = global.SixCRM.routes.include('config', global.SixCRM.configuration.stage+'/vendors/shippingcarriers/Test.yml');
 
 		this.parameters.set('requesturi', vendor_configuration.endpoint+'getinfo');
@@ -68,9 +58,6 @@ module.exports = class TestController extends ShippingCarrierController {
 	}
 
 	buildRequestJSON(){
-
-		du.debug('Build Request JSON');
-
 		let tracking_number = this.parameters.get('trackingnumber');
 
 		this.parameters.set('requestjson', {tracking_number: tracking_number});
@@ -80,9 +67,6 @@ module.exports = class TestController extends ShippingCarrierController {
 	}
 
 	executeAPIRequest(){
-
-		du.debug('Execute API Request');
-
 		let request_uri = this.parameters.get('requesturi');
 		let request_json = this.parameters.get('requestjson');
 

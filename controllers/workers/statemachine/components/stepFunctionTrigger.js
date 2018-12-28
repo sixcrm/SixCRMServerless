@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
@@ -16,9 +15,6 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 	}
 
 	async executeBulk(parameters) {
-
-		du.debug('Execute Bulk');
-
 		if(!_.has(parameters, 'guids')){
 			throw eu.getError('server', 'parameters is assumed to have  property "guids": '+JSON.stringify(parameters));
 		}
@@ -46,9 +42,6 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 	}
 
 	async execute(parameters) {
-
-		du.debug('execute');
-
 		this.validateInput(parameters);
 
 		const to_state = this.getStateMachineName(parameters);
@@ -65,9 +58,6 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 	}
 
 	getStateMachineName(input){
-
-		du.debug('Get State Machine Name');
-
 		if(_.has(this, 'next_state')){
 			return this.next_state;
 		}
@@ -81,9 +71,6 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 	}
 
 	validateInput(input, fatal = true){
-
-		du.debug('Validate Input');
-
 		if(_.has(input, 'guid') && stringutilities.isUUID(input.guid)){
 			return true;
 		}

@@ -1,7 +1,5 @@
 
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
@@ -21,9 +19,6 @@ module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse
 	}
 
 	translateResponse(response){
-
-		du.debug('Translate Response');
-
 		let action = this.parameters.get('action');
 
 		let translation_methods = {
@@ -37,9 +32,6 @@ module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse
 	}
 
 	translateInfo(response){
-
-		du.debug('Translate Info');
-
 		if(!stringutilities.nonEmpty(response.body)){ return null; }
 
 		let parsed_response = xmlutilities.parse(response.body);
@@ -53,9 +45,6 @@ module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse
 	}
 
 	translateTest(response){
-
-		du.debug('Translate Test');
-
 		if(!stringutilities.nonEmpty(response.body)){
 			//Technical Debt:  Throw Error?
 			return null;
@@ -85,9 +74,6 @@ module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse
 	}
 
 	translateFulfill(response){
-
-		du.debug('Translate Fulfill');
-
 		if(!stringutilities.nonEmpty(response.body)){ return null; }
 
 		let reference_number = this.acquireReferenceNumber();
@@ -118,9 +104,6 @@ module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse
 	}
 
 	acquireReferenceNumber(fatal){
-
-		du.debug('Acquire Reference Number');
-
 		fatal = _.isUndefined(fatal)?true:fatal;
 
 		let additional_parameters = this.parameters.get('additionalparameters', {fatal: false});
@@ -148,9 +131,6 @@ module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse
 	}
 
 	parseFindOrdersResponse(parsed_response){
-
-		du.debug('Parse Find Orders Response');
-
 		let order_count = parsed_response['soap:Envelope']['soap:Body'][0].totalOrders[0]['_'];
 		let orders = [];
 
@@ -167,9 +147,6 @@ module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse
 	}
 
 	getOrdersFromFindOrdersResponse(parsed_response){
-
-		du.debug('Get Orders From Find Orders Response');
-
 		parsed_response = xmlutilities.parse(parsed_response['soap:Envelope']['soap:Body'][0].FindOrders[0]['_']);
 
 		return arrayutilities.map(parsed_response.orders.order, order => {
@@ -186,9 +163,6 @@ module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse
 	}
 
 	createCustomer(order){
-
-		du.debug('Create Customer');
-
 		let customer = {
 			name:order.CustomerName[0],
 			email:(stringutilities.nonEmpty(order.CustomerEmail[0]))?order.CustomerEmail[0]:null,
@@ -204,9 +178,6 @@ module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse
 	}
 
 	createShippingInformation(order){
-
-		du.debug('Create Shipping Information');
-
 		let address = {
 			name: order.ShipToName[0],
 			line1:order.ShipToAddress1[0],
@@ -230,17 +201,11 @@ module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse
 	}
 
 	createReferenceNumber(order){
-
-		du.debug('Create Reference Number');
-
 		return order.ReferenceNum[0];
 
 	}
 
 	createCreatedAt(order){
-
-		du.debug('Create Created At');
-
 		return timestamp.convertToISO8601(order.CreationDate[0]);
 
 	}

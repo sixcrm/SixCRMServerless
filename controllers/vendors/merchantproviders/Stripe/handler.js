@@ -80,9 +80,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	async process({customer, creditcard, amount}){
-
-		du.debug('Process');
-
 		this.setMethod(this.methods['process']);
 		this.parameters.set('action','process');
 
@@ -117,9 +114,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	_isError(object){
-
-		du.debug('Is Error');
-
 		if(_.has(object, 'error')){
 			return true;
 		}
@@ -129,9 +123,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	async refund(){
-
-		du.debug('Refund');
-
 		let argumentation = arguments[0];
 
 		argumentation.action = 'refund';
@@ -146,9 +137,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	async reverse(){
-
-		du.debug('Reverse');
-
 		let argumentation = arguments[0];
 
 		argumentation.action = 'reverse';
@@ -163,8 +151,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	async test(){
-
-		du.debug('Test');
 		let argumentation = {
 			action: 'test'
 		};
@@ -178,12 +164,7 @@ class StripeController extends MerchantProvider {
 
 	}
 
-	_validateCreditCardProperties({creditcard, stripe_source}){
-
-		du.debug('Assure CreditCard Properties');
-
-		du.debug(creditcard);
-
+	_validateCreditCardProperties({stripe_source}){
 		if(_.has(stripe_source, 'status') && stripe_source.status == 'consumed'){
 			return false;
 		}
@@ -199,12 +180,7 @@ class StripeController extends MerchantProvider {
 
 	}
 
-	_assureCustomerProperties({customer, stripe_source, stripe_customer}){
-
-		du.debug('Assure Customer CreditCard Parity');
-
-		du.debug(customer, stripe_source);
-
+	_assureCustomerProperties({stripe_customer}){
 		if(_.has(stripe_customer, 'error')){
 			this.parameters.set('vendorresponse', stripe_customer);
 			return false;
@@ -223,9 +199,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	async _retrieveCustomer(stripe_token){
-
-		du.debug('Retrieve Token');
-
 		let stripe_customer_record = await this.stripe.getCustomer(stripe_token);
 
 		if(_.has(stripe_customer_record, 'id')){
@@ -243,9 +216,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	async _createCustomer({customer, stripe_source}){
-
-		du.debug('Create Customer');
-
 		let customer_parameters_object = this._createCustomerParameters({customer: customer, stripe_source: stripe_source});
 		let stripe_customer = await this.stripe.createCustomer(customer_parameters_object);
 
@@ -258,9 +228,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	_createCustomerParameters({customer, stripe_source}){
-
-		du.debug('Create Customer Parameters');
-
 		let customer_parameters = {
 			source: stripe_source.id,
 			//default_source: stripe_source.id, (Note: throws a API error when present in test mode...)
@@ -278,9 +245,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	_createCustomerShippingObject(customer){
-
-		du.debug('Create Customer Shipping Object');
-
 		let customerHelperController = new CustomerHelperController();
 		let customer_name = customerHelperController.getFullName(customer);
 
@@ -336,9 +300,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	async _storeStripeTokenInTags({entity, key, value}){
-
-		du.debug('Store Stripe Token In Tags');
-
 		let tagHelperController = new TagHelperController();
 
 		return tagHelperController.putTag({entity: entity, key: key, value: value});
@@ -346,9 +307,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	async _getCustomer({customer, stripe_source}){
-
-		du.debug('getStripeCustomerRecord');
-
 		let customerHelperController = new CustomerHelperController();
 		let customer_stripe_token = await customerHelperController.getTag(customer, 'stripe_token');
 
@@ -381,9 +339,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	async _getCardToken({creditcard, customer}){
-
-		du.debug('Get Card Token');
-
 		let creditCardHelperController = new CreditCardHelperController();
 		let cc_tag_key = parserutilities.parse('customer_{{id}}_stripe_source_token', customer);
 		let stripe_token = await creditCardHelperController.getTag(creditcard, cc_tag_key);
@@ -412,9 +367,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	async _retrieveCreditCard(stripe_token){
-
-		du.debug('Retrieve Credit Card');
-
 		let stripe_source_record = await this.stripe.getSource(stripe_token);
 
 		if(_.has(stripe_source_record, 'id')){
@@ -432,9 +384,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	async _createCardToken(creditcard){
-
-		du.debug('Create Card Token');
-
 		let parameters_object = this._createCreditCardTokenParameters(creditcard);
 
 		let result = await this.stripe.createSource(parameters_object);
@@ -444,9 +393,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	_createCreditCardTokenParameters(creditcard){
-
-		du.debug('Create Credit Card Token Parameters');
-
 		let card_object = objectutilities.transcribe(
 			{
 				number: 'number'
@@ -484,9 +430,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	_addOwnerFieldsToSource({creditcard}, source_parameters){
-
-		du.debug('Add Owner Fields To Source');
-
 		let owner = {};
 
 		if(_.has(creditcard,  'address')){
@@ -522,9 +465,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	getRefundsCreateRequestParameters(){
-
-		du.debug('Get Refunds Create Request Parameters');
-
 		let transaction = this.parameters.get('transaction');
 		let amount = this.parameters.get('amount', {fatal: false});
 		let action = this.parameters.get('action');
@@ -550,9 +490,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	getCreateChargeRequestParameters(){
-
-		du.debug('Get Create Charge Request Parameters');
-
 		let amount = this.parameters.get('amount');
 		let source_token = this.parameters.get('sourcetoken');
 		let customer_token = this.parameters.get('customertoken', {fatal: false});
@@ -588,9 +525,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	async issueRefundsCreateRequest(){
-
-		du.debug('Issue Refunds Create Request');
-
 		let parameters_object = this.parameters.get('parametersobject');
 
 		let response = await this.stripe.createRefund(parameters_object);
@@ -602,9 +536,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	async issueCreateChargeRequest(){
-
-		du.debug('Issue Create Charge Request');
-
 		let parameters_object = this.parameters.get('parametersobject');
 
 		let response = await this.stripe.createCharge(parameters_object);
@@ -616,9 +547,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	async issueListChargesRequest(){
-
-		du.debug('Issue List Charges Request');
-
 		let parameters_object = this.parameters.get('parametersobject');
 
 		let response = await this.stripe.listCharges(parameters_object);
@@ -630,9 +558,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	getListChargesRequestParameters(){
-
-		du.debug('Get List Charges Request Parameters');
-
 		if(this.parameters.get('action') == 'test'){
 			return {limit: 1};
 		}
@@ -640,9 +565,6 @@ class StripeController extends MerchantProvider {
 	}
 
 	_createChargeDescription(){
-
-		du.debug('Create Charge Description');
-
 		let charge_description = 'SixCRM.com';
 
 		this.parameters.set('chargedescription', charge_description);

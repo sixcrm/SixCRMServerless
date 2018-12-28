@@ -1,6 +1,5 @@
 
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
@@ -26,9 +25,6 @@ module.exports = class ShippingReceiptController extends entityController {
 	}
 
 	getFulfillmentProvider(shipping_receipt){
-
-		du.debug('Get Fulfillment Provider');
-
 		if(_.has(shipping_receipt, "fulfillment_provider")){
 
 			return this.executeAssociatedEntityFunction('FulfillmentProviderController', 'get', {id: shipping_receipt.fulfillment_provider});

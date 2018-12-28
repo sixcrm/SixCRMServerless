@@ -1,11 +1,7 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
 module.exports = async (results) => {
-
-	du.debug('Product schedule facet transformation function');
-
 	const ids = results.map(r => r.product_schedule);
 
 	const controller = new ProductScheduleController();

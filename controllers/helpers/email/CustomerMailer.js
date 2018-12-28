@@ -1,6 +1,3 @@
-
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 
 const SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/smtp-provider.js');
@@ -39,9 +36,6 @@ module.exports = class CustomerMailerHelper {
 	}
 
 	instantiate(){
-
-		du.debug('Instantiate');
-
 		let instantiation_options = this.createInstantiationOptions();
 
 		this.smtpprovider = new SMTPProvider(instantiation_options);
@@ -51,9 +45,6 @@ module.exports = class CustomerMailerHelper {
 	}
 
 	createInstantiationOptions(){
-
-		du.debug('Create Instantiation Options');
-
 		let smtp_provider = this.parameters.get('smtpprovider');
 
 		let options = objectutilities.transcribe(
@@ -81,9 +72,6 @@ module.exports = class CustomerMailerHelper {
 	}
 
 	sendEmail(){
-
-		du.debug('Send Email');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'sendEmail'}))
 			.then(() => this.createSendOptions())
@@ -92,9 +80,6 @@ module.exports = class CustomerMailerHelper {
 	}
 
 	createSendOptions(){
-
-		du.debug('Create Send Options');
-
 		let send_email_options = this.parameters.get('sendoptions');
 
 		let options = objectutilities.transcribe(
@@ -126,9 +111,6 @@ module.exports = class CustomerMailerHelper {
 	}
 
 	executeSend(){
-
-		du.debug('Execute Send');
-
 		let processed_send_options = this.parameters.get('processedsendoptions');
 
 		return this.smtpprovider.send(processed_send_options);

@@ -15,9 +15,6 @@ module.exports = class AnalyticsEventHandler {
 	}
 
 	execute() {
-
-		du.debug('AnalyticsEventHandler.execute()');
-
 		if (!this._eventTypeHandlerMap) {
 
 			this._eventTypeHandlerMap = require('./analytics-event-router');
@@ -29,9 +26,6 @@ module.exports = class AnalyticsEventHandler {
 	}
 
 	_getRecordsFromSQS() {
-
-		du.debug('AnalyticsEventHandler._getRecordsFromSQS()');
-
 		return sqsprovider.receiveMessagesRecursive({
 			queue: this._queueName
 		}, {
@@ -41,9 +35,6 @@ module.exports = class AnalyticsEventHandler {
 	}
 
 	async _executeHandlers(records) {
-
-		du.debug('AnalyticsEventHandler._executeHandlers()');
-
 		if (!arrayUtilities.nonEmpty(records)) {
 
 			return Promise.resolve(records);
@@ -53,8 +44,6 @@ module.exports = class AnalyticsEventHandler {
 		const promises = records.map(async (r) => {
 
 			const message = JSON.parse(r.Body);
-
-			du.debug('Message recieved', message);
 
 			if (!message.event_type) {
 
@@ -103,9 +92,6 @@ module.exports = class AnalyticsEventHandler {
 	}
 
 	_removeRecordFromSQS(record) {
-
-		du.debug('AnalyticsEventHandler._removeRecordsFromSQS()');
-
 		return sqsprovider.deleteMessage({
 			queue: this._queueName,
 			receipt_handle: record.ReceiptHandle

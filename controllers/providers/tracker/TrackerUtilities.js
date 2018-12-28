@@ -1,7 +1,5 @@
 
 var _ =  require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const TrackerResponse = global.SixCRM.routes.include('providers', 'tracker/Response.js');
@@ -33,9 +31,6 @@ module.exports = class TrackerUtilitiesController extends PermissionedController
 	}
 
 	acquireShippingReceipt(){
-
-		du.debug('Acquire Shipping Receipt');
-
 		let shipping_receipt = this.parameters.get('shippingreceipt');
 
 		return this.shippingReceiptController.get({id: shipping_receipt.id}).then(shipping_receipt => {
@@ -49,9 +44,6 @@ module.exports = class TrackerUtilitiesController extends PermissionedController
 	}
 
 	respond(){
-
-		du.debug('Respond');
-
 		let response_prototype = {
 			response_type: this.parameters.get('responsecode')
 		};

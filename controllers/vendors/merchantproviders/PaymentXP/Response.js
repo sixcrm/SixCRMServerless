@@ -1,5 +1,4 @@
 const querystring = require('querystring');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const MerchantProviderResponse = global.SixCRM.routes.include('vendors', 'merchantproviders/Response.js');
 
 // Taken from https://www.paymentxp.com/Api/GatewayApi.aspx#menu_appendix_a
@@ -29,7 +28,6 @@ module.exports = class PaymentXPResponse extends MerchantProviderResponse {
 	}
 
 	determineResultCode({vendor_response}) {
-		du.debug('Determine Result Code');
 		const body = querystring.parse(vendor_response.body);
 
 		if (body.StatusID === '0') {
@@ -45,8 +43,6 @@ module.exports = class PaymentXPResponse extends MerchantProviderResponse {
 
 	determineMerchantCode(vendor_response) {
 
-		du.debug('Determine Merchant Code (PaymentXP)', vendor_response);
-
 		let result = vendor_response;
 
 		const parsed_body = querystring.parse(vendor_response.body);
@@ -57,14 +53,10 @@ module.exports = class PaymentXPResponse extends MerchantProviderResponse {
 			result = super.determineMerchantCode(vendor_response);
 		}
 
-		du.debug('Determined Merchant Code (PaymentXP)', result);
-
 		return result;
 	}
 
 	determineMerchantMessage(vendor_response) {
-
-		du.debug('Determine Merchant Message (PaymentXP)', vendor_response);
 
 		if (this.getCode() === 'success') {
 			return 'Success';
@@ -85,8 +77,6 @@ module.exports = class PaymentXPResponse extends MerchantProviderResponse {
 		if (!result) {
 			result = super.determineMerchantMessage(vendor_response);
 		}
-
-		du.debug('Determined Merchant Message (PaymentXP)', result);
 
 		return result;
 

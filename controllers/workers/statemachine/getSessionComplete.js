@@ -1,7 +1,5 @@
 const _ = require('lodash')
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
 module.exports = class GetSessionCompleteController extends stepFunctionWorkerController {
@@ -13,9 +11,6 @@ module.exports = class GetSessionCompleteController extends stepFunctionWorkerCo
 	}
 
 	async execute(event) {
-
-		du.debug('Execute');
-
 		this.validateEvent(event);
 
 		let session = await this.getSession(event.guid);
@@ -27,9 +22,6 @@ module.exports = class GetSessionCompleteController extends stepFunctionWorkerCo
 	}
 
 	isClosed(session){
-
-		du.debug('Is Closed');
-
 		if(_.has(session, 'complete') && session.complete == true){
 			return true;
 		}
@@ -39,9 +31,6 @@ module.exports = class GetSessionCompleteController extends stepFunctionWorkerCo
 	}
 
 	respond(complete){
-
-		du.debug('Respond');
-
 		if(complete == true){
 			return 'COMPLETED';
 		}

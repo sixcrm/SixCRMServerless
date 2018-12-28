@@ -1,7 +1,5 @@
-
 var _ = require('lodash');
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const NotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/Notification.js');
 const notificationProvider =  new NotificationProvider();
@@ -23,9 +21,6 @@ module.exports = class sendNotificationsController extends workerController {
 	}
 
 	execute(event){
-
-		du.debug('Executing Send Notifications');
-
 		return this.getMessage(event)
 			.then((message) => this.validateMessage(message))
 			.then((message) => this.sendNotification(message))
@@ -37,17 +32,11 @@ module.exports = class sendNotificationsController extends workerController {
 	}
 
 	getMessage(event){
-
-		du.debug('Get Messages');
-
 		return this.parseInputEvent(event, false);
 
 	}
 
 	validateMessage(message){
-
-		du.debug('Filter Invalid Messages');
-
 		global.SixCRM.validate(message, global.SixCRM.routes.path('model', 'workers/sendnotification/notificationmessage.json'));
 
 		if(message.scope.user == true && !_.has(message, 'user')){
@@ -59,9 +48,6 @@ module.exports = class sendNotificationsController extends workerController {
 	}
 
 	sendNotification(message){
-
-		du.debug('Send Notification');
-
 		let cloned_message = objectutilities.clone(message);
 
 		delete cloned_message.scope;
@@ -84,9 +70,6 @@ module.exports = class sendNotificationsController extends workerController {
 	}
 
 	respond(){
-
-		du.debug('Respond');
-
 		return this.messages.success;
 
 	}

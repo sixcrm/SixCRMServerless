@@ -20,9 +20,6 @@ class AccountController extends entityController {
 	}
 
 	async create({entity, disable_permissions = false}){
-
-		du.debug('Account.create()');
-
 		this.supplyLowercaseName({entity: entity});
 
 		await this.verifyAccountName({entity: entity});
@@ -47,9 +44,6 @@ class AccountController extends entityController {
 		ignore_updated_at,
 		allow_billing_overwrite = false
 	}) {
-
-		du.debug('Account.update()');
-
 		return this.exists({
 			entity: entity,
 			return_entity: true
@@ -89,9 +83,6 @@ class AccountController extends entityController {
 
 	//Technical Debt:  Shouldn't this be configured?
 	getMasterAccount() {
-
-		du.debug('Get Master Account');
-
 		return Promise.resolve({
 			"id": "*",
 			"name": "Master Account",
@@ -102,9 +93,6 @@ class AccountController extends entityController {
 
 	//Technical Debt:  Name seems ubiquitous
 	getACL(account) {
-
-		du.debug('Get ACL');
-
 		return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', {
 			account: account
 		});
@@ -117,8 +105,6 @@ class AccountController extends entityController {
 		pagination,
 		fatal
 	}) {
-
-		du.debug("List");
 
 		if (global.account !== '*') {
 
@@ -139,28 +125,18 @@ class AccountController extends entityController {
 	supplyLowercaseName({
 		entity
 	}) {
-
-		du.debug('Supply Lowercase Name');
-
 		entity.name_lowercase = entity.name.toLowerCase();
 	}
 
 	async verifyAccountName({entity}){
-
-		du.debug('Verify Account Name');
-
 		let query_parameters = this.createINQueryParameters({
 			field: 'name_lowercase',
 			list_array: [entity.name_lowercase]
 		});
 
-		du.debug('Query parameters', query_parameters);
-
 		this.disableACLs();
 		let response = await super.list({query_parameters: query_parameters});
 		this.enableACLs();
-
-		du.debug('Accounts with name ' + entity.name, response ? response.accounts : []);
 
 		if(
 			objectutilities.hasRecursive(response, 'accounts') &&

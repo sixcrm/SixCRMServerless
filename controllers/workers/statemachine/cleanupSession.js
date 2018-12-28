@@ -16,9 +16,6 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 	}
 
 	async execute(event) {
-
-		du.debug('Execute');
-
 		this.validateEvent(event);
 
 		let session = await this.getSession(event.guid);
@@ -36,9 +33,6 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 	}
 
 	async cleanupSession(session){
-
-		du.debug('Cleanup Session');
-
 		let rebills = await this.getSessionRebills(session);
 
 		if(_.isNull(rebills)){
@@ -50,9 +44,6 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 	}
 
 	async getSessionRebills(session, fatal = true){
-
-		du.debug('Get Session Rebills');
-
 		if(!_.has(this, 'rebillController')){
 			const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 			this.rebillController = new RebillController();
@@ -77,9 +68,6 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 	}
 
 	async consolidateRebills({session, rebills}){
-
-		du.debug('Consolidate Rebills');
-
 		if(rebills.length == 1){
 			return rebills[0];
 		}
@@ -146,9 +134,6 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 	}
 
 	async consolidateTransactions({consolidated_rebill, rebills}){
-
-		du.debug('Consolidate Transactions');
-
 		let consolidation_promises = arrayutilities.map(rebills, (rebill) => {
 			return this.consolidateRebillTransactions({consolidated_rebill: consolidated_rebill, rebill: rebill});
 		});
@@ -160,9 +145,6 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 	}
 
 	async deleteUnusedRebills(rebills){
-
-		du.debug('Delete Unused Rebills');
-
 		if(!_.has(this, 'rebillController')){
 			const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 			this.rebillController = new RebillController();
@@ -179,9 +161,6 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 	}
 
 	async consolidateRebillTransactions({consolidated_rebill, rebill, fatal = true}){
-
-		du.debug('Consolidate Rebill Transactions');
-
 		if(!_.has(rebill, 'id')){
 			du.error(rebill);
 			throw eu.getError('server', 'Rebill is assumed to have property "id"');
@@ -232,9 +211,6 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 	}
 
 	respond(rebill = null){
-
-		du.debug('Respond');
-
 		if(_.isNull(rebill) || !_.has(rebill, 'id')){
 			return 'NOREBILL';
 		}

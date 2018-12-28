@@ -17,9 +17,6 @@ module.exports = class NotificationEventsController {
 	}
 
 	async execute(input) {
-
-		du.debug('Execute');
-
 		let records = this.getRecords(input);
 
 		await this.handleEventRecords(records);
@@ -27,17 +24,11 @@ module.exports = class NotificationEventsController {
 	}
 
 	setPermissions(){
-
-		du.debug('Set Permissions');
-
 		permissionutilities.setPermissions('*',['*/*'],[])
 
 	}
 
 	getRecords(input){
-
-		du.debug('Get Records');
-
 		du.info(input);
 
 		if(!_.has(input, 'Records')){
@@ -53,9 +44,6 @@ module.exports = class NotificationEventsController {
 	}
 
 	handleEventRecords(records) {
-
-		du.debug('Handle Events');
-
 		let records_promises = records.map((record) => {
 			try{
 				return this.handleEventRecord(record);
@@ -70,9 +58,6 @@ module.exports = class NotificationEventsController {
 	}
 
 	handleEventRecord(record) {
-
-		du.debug('Handle Event Record');
-
 		//this.isCompliantEventType();
 
 		global.SixCRM.validate(record, global.SixCRM.routes.path('model','workers/snsEvents/snsrecord.json'), true);
@@ -85,9 +70,6 @@ module.exports = class NotificationEventsController {
 
 	//Move to SNS Controller
 	getMessage(record) {
-
-		du.debug('Get Message');
-
 		let message = null;
 
 		if(!_.has(record, 'Sns')){
@@ -113,9 +95,6 @@ module.exports = class NotificationEventsController {
 	}
 
 	async triggerNotification(message){
-
-		du.debug('Trigger Notifications');
-
 		let context = await this.getContext(message);
 		let event_type = this.getEventType(message);
 
@@ -127,9 +106,6 @@ module.exports = class NotificationEventsController {
 	}
 
 	async getContext(message, fatal = false){
-
-		du.debug('Handle Context');
-
 		let return_object = null;
 
 		if(!_.isObject(message) || !_.has(message, 'context')){
@@ -193,9 +169,6 @@ module.exports = class NotificationEventsController {
 	}
 
 	getEventType(message, fatal = true){
-
-		du.debug('Get Event Type');
-
 		if(!_.has(message, 'event_type')){
 
 			if(fatal){

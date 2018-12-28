@@ -5,7 +5,6 @@ const checksum = require('checksum');
 const creditcardgenerator = require('creditcard-generator');
 const creditCardType = require('credit-card-type');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const randomutilities = require('@6crm/sixcrmcore/util/random').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const hashutilities = require('@6crm/sixcrmcore/util/hash-utilities').default;
@@ -1075,9 +1074,6 @@ class MockEntities {
 	}
 
 	static getValidCreditCardNumber(type) {
-
-		du.debug('Get Valid CreditCard Numbers');
-
 		let creditcard_types = ['VISA', 'Amex', 'Mastercard'];
 
 		type = (!_.isUndefined(type) && !_.isNull(type) && _.includes(creditcard_types, type)) ? type : randomutilities.selectRandomFromArray(creditcard_types);
@@ -1087,9 +1083,6 @@ class MockEntities {
 	}
 
 	static getValidCreditCardExpiration() {
-
-		du.debug('Get Valid CreditCard Expiration');
-
 		let expiration_month = randomutilities.randomInt(1, 12).toString();
 
 		if (expiration_month.length == 1) {
@@ -1105,9 +1098,6 @@ class MockEntities {
 	}
 
 	static getValidCreditCardCVV(type) {
-
-		du.debug('Get Valid CreditCard CVV');
-
 		let creditcard_types = ['VISA', 'Amex', 'Mastercard'];
 
 		type = (!_.isUndefined(type) && !_.isNull(type) && _.includes(creditcard_types, type)) ? type : randomutilities.selectRandomFromArray(creditcard_types);

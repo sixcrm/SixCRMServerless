@@ -38,18 +38,12 @@ module.exports = class SNSEventController {
 	}
 
 	setPermissions() {
-
-		du.debug('Set Permissions');
-
 		this.permissionutilities = PermissionUtilities;
 		this.permissionutilities.setPermissions('*', ['*/*'], [])
 
 	}
 
 	augmentParameters() {
-
-		du.debug('Augment Parameters');
-
 		this.parameters.setParameterValidation({
 			parameter_validation: this.parameter_validation
 		});
@@ -61,9 +55,6 @@ module.exports = class SNSEventController {
 	}
 
 	execute(argumentation) {
-
-		du.debug('Execute');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({
 				argumentation,
@@ -74,17 +65,11 @@ module.exports = class SNSEventController {
 	}
 
 	handleEvents() {
-
-		du.debug('Handle Events');
-
 		return Promise.all(this.parameters.get('records').map(this.handleEventRecord.bind(this)));
 
 	}
 
 	handleEventRecord(record) {
-
-		du.debug('Handle Event Record');
-
 		return Promise.resolve()
 			.then(() => this.parameters.set('record', record))
 			.then(() => this.getMessage())
@@ -112,9 +97,6 @@ module.exports = class SNSEventController {
 	}
 
 	getMessage() {
-
-		du.debug('Get Message');
-
 		try {
 
 			const record = this.parameters.get('record');
@@ -132,9 +114,6 @@ module.exports = class SNSEventController {
 	}
 
 	isCompliantEventType() {
-
-		du.debug('Is Complaint Tracking Event Type');
-
 		if (_.has(this, 'compliant_event_types') && arrayutilities.nonEmpty(this.compliant_event_types)) {
 
 			const event_type = this.parameters.get('message').event_type;
@@ -147,7 +126,7 @@ module.exports = class SNSEventController {
 
 			if (!_.isString(matching_event)) {
 
-				du.debug('server', 'Not a complaint event type: ' + event_type);
+				throw eu.getError('server', 'Not a complaint event type: ' + event_type);
 
 			}
 
@@ -156,9 +135,6 @@ module.exports = class SNSEventController {
 	}
 
 	getEventType(message, fatal = true){
-
-		du.debug('Get Event Type');
-
 		if(!_.has(message, 'event_type')){
 
 			if(fatal){
@@ -174,9 +150,6 @@ module.exports = class SNSEventController {
 	}
 
 	async handleContext(message, fatal = false){
-
-		du.debug('Handle Context');
-
 		let return_object = null;
 
 		if(_.has(message, 'context')){
@@ -219,9 +192,6 @@ module.exports = class SNSEventController {
 	}
 
 	cleanUp() {
-
-		du.debug('Clean Up');
-
 		objectutilities.map(this.parameters.store, key => {
 			if (key !== 'records') {
 				this.parameters.unset(key);

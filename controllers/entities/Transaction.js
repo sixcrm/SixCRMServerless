@@ -20,43 +20,25 @@ class TransactionController extends entityController {
 	//Technical Debt:  Finish
 	associatedEntitiesCheck(){
 		return Promise.resolve([]);
-		/*
-      if(id == '3e0fda0a-a64b-4752-bed8-152a98285be7'){
-        return Promise.resolve([]);
-      }
-      throw eu.getError('403', 'Transactions are not available for deletion via the SixCRM API.');
-      */
 	}
 
 	getReturn(entity){
-
-		du.debug('List Returns');
-
 		return this.executeAssociatedEntityFunction('ReturnController', 'get', {id: this.getID(entity)});
 
 	}
 
 	listByMerchantProviderID({id, pagination}){
-
-		du.debug('List By Merchant Provider ID');
-
 		return this.queryBySecondaryIndex({index_name: 'merchant_provider-index', field: 'merchant_provider', index_value: id, pagination});
 
 	}
 
 	getMerchantProvider(transaction){
-
-		du.debug('Get Merchant Provider');
-
 		return this.executeAssociatedEntityFunction('MerchantProviderController', 'get', {id: this.getID(transaction.merchant_provider)});
 
 	}
 
 	//Technical Debt:  This is pretty complicated.
 	listByProductID(){
-
-		du.debug('List By Product ID');
-
 		//this should return a array of transactions that reference a given product_id
 		return null;
 
@@ -64,9 +46,6 @@ class TransactionController extends entityController {
 
 	//Technical Debt:  Why is this missing rebills
 	getParentRebill(transaction){
-
-		du.debug('Get Parent Rebill');
-
 		if(_.has(transaction, 'rebill')){
 
 			return this.executeAssociatedEntityFunction('RebillController', 'get', {id: this.getID(transaction.rebill)});
@@ -78,17 +57,11 @@ class TransactionController extends entityController {
 	}
 
 	getProduct(product){
-
-		du.debug('Get Product');
-
 		return this.executeAssociatedEntityFunction('ProductController', 'get', {id: this.getID(product)});
 
 	}
 
 	listByState({state, state_changed_after, pagination}){
-
-		du.debug(`List By State: state: '${state}', state_changed_after: '${state_changed_after}'`);
-
 		let query_parameters = {};
 
 		if (state) {
@@ -110,9 +83,6 @@ class TransactionController extends entityController {
 	//Technical Debt:  Refactor name
 	//Technical Debt:  This is in the helper...
 	getTransactionProducts(transaction){
-
-		du.debug('Get Transaction Products');
-
 		let return_array = [];
 
 		arrayutilities.map(transaction.products, (transactionproduct) => {
@@ -144,9 +114,6 @@ class TransactionController extends entityController {
 
 	//Technical Debt: Refactor.
 	getTransactionProduct(transaction_product){
-
-		du.debug('Get Transaction Product');
-
 		var promises = [];
 
 		if(_.has(transaction_product, "product")){
@@ -182,23 +149,14 @@ class TransactionController extends entityController {
 
 	//Technical Debt:  Refactor
 	getProducts(transaction){
-
-		du.debug('Get Products');
-
 		du.info(transaction);
 		if(!_.has(transaction, "products")){ return null; }
-
-
-		du.debug('Transaction Products', transaction.products);
 
 		return Promise.all(transaction.products.map(transaction_product => this.getTransactionProduct(transaction_product)));
 
 	}
 
 	listByAssociatedTransaction({id, rebill, types, results}){
-
-		du.debug('List By Parent Transaction');
-
 		id = this.getID(id);
 		rebill = this.getID(rebill);
 
@@ -245,9 +203,6 @@ class TransactionController extends entityController {
 	}
 
 	listTransactionsByRebillID({id}){
-
-		du.debug('List Transactions By Rebill ID');
-
 		//Technical Debt: this is silly but necessary ATM
 		id = this.getID(id);
 
@@ -256,9 +211,6 @@ class TransactionController extends entityController {
 	}
 
 	putTransaction(params, processor_response){
-
-		du.debug('Put Transaction');
-
 		return this.executeAssociatedEntityFunction('RebillController', 'get', {id: params.rebill}).then((rebill) => {
 
 			params.rebill = rebill;
@@ -273,9 +225,6 @@ class TransactionController extends entityController {
 
 	//Technical Debt:  This seems deprecated.
 	getMerchantProviderID(parameters, processor_response){
-
-		du.debug('Get Merchant Provider');
-
 		if(_.has(parameters, 'merchant_provider') && this.isUUID(parameters.merchant_provider)){
 			return parameters.merchant_provider;
 		}
@@ -311,9 +260,6 @@ class TransactionController extends entityController {
 
 	//Technical Debt:  This belongs in a helper like Process.js
 	refundTransaction(args){
-
-		du.debug('Refund Transaction');
-
 		let transaction = args.transaction;
 		let refund = args.refund;
 
@@ -376,9 +322,6 @@ class TransactionController extends entityController {
 	// we retrieve data in 3 steps (sessions first, then rebills for each session, then transaction for each session).
 	//Technical Debt:  Please refactor.
 	listByCustomer({customer, pagination}){
-
-		du.debug('List Transactions By Customer');
-
 		return this.executeAssociatedEntityFunction('CustomerController', 'getCustomerSessions', customer)
 			.then(sessions => {
 

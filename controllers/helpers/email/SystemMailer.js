@@ -1,7 +1,5 @@
 
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/smtp-provider.js');
@@ -18,9 +16,6 @@ module.exports = class SystemMailer{
 	}
 
 	sendEmail(parameters){
-
-		du.debug('Send Email');
-
 		parameters = this.assureOptionalParameters(parameters);
 
 		this.validateParameters(parameters);
@@ -35,17 +30,11 @@ module.exports = class SystemMailer{
 	}
 
 	validateParameters(parameters){
-
-		du.debug('Validate Parameters');
-
 		return global.SixCRM.validate(parameters, global.SixCRM.routes.path('model', 'general/smtp_send_object.json'));
 
 	}
 
 	assureOptionalParameters(parameters){
-
-		du.debug('Assure Optional Parameters');
-
 		arrayutilities.map(['sender_email', 'sender_name'], (optional_parameter) => {
 			if(!_.has(parameters, optional_parameter)){
 				if(objectutilities.hasRecursive(global, 'SixCRM.configuration.site_config.ses.default_'+optional_parameter)){
@@ -59,9 +48,6 @@ module.exports = class SystemMailer{
 	}
 
 	send(parameters){
-
-		du.debug('Send');
-
 		this.instantiateSMTPProvider();
 
 		return this.smtpprovider.send(parameters);
@@ -69,9 +55,6 @@ module.exports = class SystemMailer{
 	}
 
 	instantiateSMTPProvider(){
-
-		du.debug('Instantiate SMTP Utilities');
-
 		if(!_.has(this, 'smtpprovider')){
 
 			let smtp_options = this.createSMTPOptions();
@@ -83,9 +66,6 @@ module.exports = class SystemMailer{
 	}
 
 	createSMTPOptions(){
-
-		du.debug('Create SMTP Options');
-
 		return {
 			hostname: global.SixCRM.configuration.site_config.ses.hostname,
 			username: global.SixCRM.configuration.site_config.ses.smtp_username,

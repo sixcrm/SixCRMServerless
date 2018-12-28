@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const uuid = require('uuid');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 
 const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
@@ -13,9 +12,6 @@ module.exports = class EventPushHelperController {
 	constructor() {}
 
 	pushEvent({event_type = null, context = null, message_attributes = null} = {}) {
-
-		du.debug('EventPushHelperController.pushEvent()', event_type, context);
-
 		if (event_type === undefined || event_type === null) {
 			if ((context !== undefined) && (context !== null) && _.has(context, 'event_type') && _.isString(context.event_type)) {
 				event_type = context.event_type;

@@ -1,6 +1,4 @@
-
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const workerController = global.SixCRM.routes.include('controllers', 'workers/sqs/worker.js');
 
 module.exports = class createRebillsController extends workerController {
@@ -33,9 +31,6 @@ module.exports = class createRebillsController extends workerController {
 	}
 
 	execute(message){
-
-		du.debug('Execute');
-
 		return this.setParameters({argumentation: {message: message}, action: 'execute'})
 			.then(() => this.acquireSession())
 			.then(() => this.createRebills())
@@ -47,9 +42,6 @@ module.exports = class createRebillsController extends workerController {
 	}
 
 	acquireSession(){
-
-		du.debug('Acquire Session');
-
 		return Promise.resolve()
 			.then(() => this.parseMessageBody())
 			.then(() => {
@@ -59,9 +51,6 @@ module.exports = class createRebillsController extends workerController {
 	}
 
 	createRebills(){
-
-		du.debug('Create Rebills');
-
 		let session = this.parameters.get('session');
 
 		return this.rebillHelperController.createRebill({session: session}).then(rebill => {
@@ -75,9 +64,6 @@ module.exports = class createRebillsController extends workerController {
 	}
 
 	respond(){
-
-		du.debug('Respond');
-
 		let rebill = this.parameters.get('rebill', {fatal: false});
 
 		let response_code = 'fail';

@@ -1,5 +1,3 @@
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 const StepFunctionTriggerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionTrigger.js');
 
 const EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
@@ -33,8 +31,6 @@ module.exports = class TriggerTrackingController extends StepFunctionTriggerCont
 
 	async execute(event) {
 
-		du.debug('TriggerTrackingController Execute', event);
-
 		let shipping_receipt = await this.shippingReceiptController.get({id: event.guid});
 		let rebill = await this.rebillController.get({id: shipping_receipt.rebill});
 		let session = await this.sessionController.get({id: rebill.parentsession});
@@ -50,8 +46,6 @@ module.exports = class TriggerTrackingController extends StepFunctionTriggerCont
 		let context = {
 			shipping_receipt, rebill, session, customer, campaign, creditcard
 		};
-
-		du.debug('TriggerTrackingController context', context);
 
 		if (!rebill.cycle) {
 			await this.eventHelperController.pushEvent({event_type: 'initialfulfillment', context: context});

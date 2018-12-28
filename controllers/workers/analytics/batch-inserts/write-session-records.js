@@ -19,13 +19,7 @@ module.exports = class WriteEventRecords extends WriteRecords {
 	}
 
 	write(records) {
-
-		du.debug('WriteSessionRecords.write()');
-
 		if (records.length === 0) {
-
-			du.debug('WriteSessionRecords.write(): no records');
-
 			return;
 
 		}

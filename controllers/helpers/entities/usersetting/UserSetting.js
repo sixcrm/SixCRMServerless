@@ -1,5 +1,3 @@
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 module.exports = class UserSettingHelperController {
 
 	constructor(){
@@ -7,9 +5,6 @@ module.exports = class UserSettingHelperController {
 	}
 
 	getPrototypeUserSetting(email){
-
-		du.debug('Get Prototype User Setting');
-
 		let proto_user_setting = {
 			id: email,
 			timezone: 'America/Los_Angeles',

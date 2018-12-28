@@ -1,6 +1,5 @@
 
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 
@@ -18,9 +17,6 @@ module.exports = class SMTPProvider {
 	}
 
 	setOptions(smtp_provider){
-
-		du.debug('Set Options');
-
 		this.required_options.forEach((required_option) => {
 
 			if(!_.has(smtp_provider, required_option)){
@@ -48,9 +44,6 @@ module.exports = class SMTPProvider {
 	}
 
 	getOptions(){
-
-		du.debug('Get Options');
-
 		let options = arrayutilities.merge(this.required_options, this.optional_options);
 
 		let options_object = {};
@@ -70,17 +63,11 @@ module.exports = class SMTPProvider {
 	}
 
 	validateOptions(options_object){
-
-		du.debug('Validate Options');
-
 		global.SixCRM.validate(options_object, global.SixCRM.routes.path('model', 'general/smtp_options.json'));
 
 	}
 
 	setConnection(){
-
-		du.debug('Set Connection');
-
 		let options = this.getOptions();
 
 		const SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/smtp-provider.js');
@@ -89,9 +76,6 @@ module.exports = class SMTPProvider {
 	}
 
 	send(send_object){
-
-		du.debug('Send');
-
 		return this.connection.send(send_object);
 
 	}

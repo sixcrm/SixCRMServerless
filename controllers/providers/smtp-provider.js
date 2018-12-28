@@ -1,8 +1,6 @@
 
 const _ = require('lodash');
 const nodemailer = require('nodemailer');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
@@ -26,9 +24,6 @@ module.exports = class SMTPProvider {
 	}
 
 	createConnectionObjectFromSiteConfig(){
-
-		du.debug('Create Connection Object From Site Config');
-
 		return {
 			hostname: global.SixCRM.configuration.site_config.ses.hostname,
 			password: global.SixCRM.configuration.site_config.ses.smtp_password,
@@ -38,9 +33,6 @@ module.exports = class SMTPProvider {
 	}
 
 	connect(options){
-
-		du.debug('Connect');
-
 		this.validateConnectionOptions(options, true);
 
 		let connection_object = {
@@ -63,9 +55,6 @@ module.exports = class SMTPProvider {
 	}
 
 	addDefaults(connection_object){
-
-		du.debug('Add Defaults');
-
 		if(!_.has(connection_object, 'tls')){
 
 			connection_object['tls'] = { rejectUnauthorized: false };
@@ -81,17 +70,11 @@ module.exports = class SMTPProvider {
 	}
 
 	validateConnectionOptions(options){
-
-		du.debug('Validate Connection Options');
-
 		global.SixCRM.validate(options, global.SixCRM.routes.path('model','general/smtp_connection_options.json'));
 
 	}
 
 	createFromString(name, email){
-
-		du.debug('Create From String');
-
 		let escaped_name = stringutilities.escapeCharacter(name, '"');
 
 		return '"'+escaped_name+'" <'+email+'>';
@@ -99,34 +82,22 @@ module.exports = class SMTPProvider {
 	}
 
 	createToString(to_array){
-
-		du.debug('Create To String');
-
 		return arrayutilities.compress(arrayutilities.unique(to_array), ', ','');
 
 	}
 
 	validateSendObject(send_object){
-
-		du.debug('Validate Send Object');
-
 		global.SixCRM.validate(send_object, global.SixCRM.routes.path('model','general/smtp_send_object.json'));
 
 	}
 
 	//Technical Debt: Complete...
 	sanitizeSubject(subject_string){
-
-		du.debug('Sanitize Subject');
-
 		return subject_string;
 
 	}
 
 	setMailOptions(send_object){
-
-		du.debug('Set Mail Options');
-
 		let from_string = this.createFromString(send_object.sender_name, send_object.sender_email);
 		let to_string = this.createToString(send_object.recepient_emails);
 		let text = stringutilities.stripHTML(send_object.body);
@@ -146,9 +117,6 @@ module.exports = class SMTPProvider {
 	}
 
 	send(send_object){
-
-		du.debug('Send');
-
 		return new Promise((resolve, reject) => {
 
 			if(!_.has(this, 'connection')){ return reject(eu.getError('validation','SMTP library missing connection.')); }
@@ -160,8 +128,6 @@ module.exports = class SMTPProvider {
 			return this.connection.sendMail(mail_options, (error, info) => {
 
 				if (error) { return reject(error); }
-
-				du.debug('Message '+info.messageId+' sent: '+info.response);
 
 				return resolve(info);
 

@@ -1,11 +1,7 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 
 module.exports = async (results) => {
-
-	du.debug('Mid facet transformation function');
-
 	const ids = results.map(r => r.mid);
 
 	const controller = new MerchantProviderController();

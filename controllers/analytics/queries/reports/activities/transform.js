@@ -1,11 +1,7 @@
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const ActivityStatement = require('../../../activity-statement');
 const BBPromise = require('bluebird');
 
 module.exports = async (results) => {
-
-	du.debug('Activities report');
-
 	const activityStatement = new ActivityStatement();
 
 	await BBPromise.map(results, (async (r) => {

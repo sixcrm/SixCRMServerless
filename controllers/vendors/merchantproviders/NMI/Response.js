@@ -19,8 +19,6 @@ module.exports = class NMIResponse extends Response {
 	}
 
 	determineResultCode({vendor_response, action}){
-
-		du.debug('Determine Result Code');
 		let {response, body} = vendor_response;
 
 		body = this.parseBody(body);
@@ -32,8 +30,6 @@ module.exports = class NMIResponse extends Response {
 			}
 
 			if(_.has(body, 'response') && body.response === '2') {
-				du.debug('Detecting Soft Decline NMI', response.statusCode, response, SOFT_DECLINES);
-
 				if (SOFT_DECLINES.includes(response.statusCode)) {
 					return 'decline';
 				}
@@ -64,9 +60,6 @@ module.exports = class NMIResponse extends Response {
 	}
 
 	parseBody(body){
-
-		du.debug('Parse Body');
-
 		let parsed_body = null;
 
 		try{
@@ -87,9 +80,6 @@ module.exports = class NMIResponse extends Response {
 
 
 	getTransactionID(transaction){
-
-		du.debug('Get Transaction ID');
-
 		let processor_response = null;
 
 		if(_.has(transaction, 'processor_response')){
@@ -115,8 +105,6 @@ module.exports = class NMIResponse extends Response {
 
 	determineMerchantCode(vendor_response) {
 
-		du.debug('Determine Merchant Code (NMI)', vendor_response);
-
 		let result = vendor_response;
 
 		const parsed_body = querystring.parse(vendor_response.body);
@@ -127,14 +115,10 @@ module.exports = class NMIResponse extends Response {
 			result = super.determineMerchantCode(vendor_response);
 		}
 
-		du.debug('Determined Merchant Code (NMI)', result);
-
 		return result;
 	}
 
 	determineMerchantMessage(vendor_response) {
-
-		du.debug('Determine Merchant Message (NMI)', vendor_response);
 
 		if (this.getCode() === 'success') {
 			return 'Success';
@@ -149,8 +133,6 @@ module.exports = class NMIResponse extends Response {
 		} else {
 			result = super.determineMerchantMessage(vendor_response);
 		}
-
-		du.debug('Determined Merchant Message (NMI)', result);
 
 		return result;
 

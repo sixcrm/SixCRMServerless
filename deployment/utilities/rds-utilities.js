@@ -19,9 +19,6 @@ module.exports = class RDSDeployment extends AWSDeploymentUtilities {
 	}
 
 	deploySubnetGroups(){
-
-		du.debug('Deploy Subnet Groups');
-
 		let subnet_group_definitions = this.getConfigurationJSON('subnetgroups');
 
 		let subnet_group_promises = arrayutilities.map(subnet_group_definitions, (subnet_group_definition) => {
@@ -35,9 +32,6 @@ module.exports = class RDSDeployment extends AWSDeploymentUtilities {
 	}
 
 	deploySubnetGroup(cluster_definition){
-
-		du.debug('Deploy Subnet Group');
-
 		return this.subnetGroupExists(cluster_definition).then(result => {
 
 			if(_.isNull(result)){
@@ -53,9 +47,6 @@ module.exports = class RDSDeployment extends AWSDeploymentUtilities {
 	}
 
 	createDBSubnetGroup(cluster_definition){
-
-		du.debug('Create DB Subnet Group');
-
 		if(_.has(cluster_definition, 'SubnetNames') && arrayutilities.nonEmpty(cluster_definition.SubnetNames)){
 
 			let argumentation = {
@@ -93,9 +84,6 @@ module.exports = class RDSDeployment extends AWSDeploymentUtilities {
 	}
 
 	subnetGroupExists(cluster_definition){
-
-		du.debug('Subnet Group Exists');
-
 		let parameters = {
 			DBSubnetGroupName: cluster_definition.DBSubnetGroupName
 		};
@@ -126,9 +114,6 @@ module.exports = class RDSDeployment extends AWSDeploymentUtilities {
 	}
 
 	clusterExists(cluster_definition){
-
-		du.debug('Cluster Exists');
-
 		let argumentation = {
 			DBClusterIdentifier: cluster_definition.DBClusterIdentifier
 		};
@@ -155,9 +140,6 @@ module.exports = class RDSDeployment extends AWSDeploymentUtilities {
 	}
 
 	getConfigurationJSON(filename){
-
-		du.debug('Get Configuration JSON');
-
 		//Technical Debt:  This needs to be expanded to support multiple definitions...
 		return global.SixCRM.routes.include('deployment', 'aurora/config/'+filename+'.json');
 

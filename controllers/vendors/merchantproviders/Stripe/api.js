@@ -10,17 +10,11 @@ module.exports = class Stripe {
 	}
 
 	instantiateStripe(api_key) {
-
-		du.debug('Instantiate Stripe');
-
 		this.stripe = stripe(api_key);
 
 	}
 
 	getCustomer(stripe_token) {
-
-		du.debug('Get Customer');
-
 		return new Promise((resolve, reject) => {
 
 			this.stripe.customers.retrieve(
@@ -54,9 +48,6 @@ module.exports = class Stripe {
 	}
 
 	createCustomer(parameters) {
-
-		du.debug('Create Customer');
-
 		return new Promise((resolve, reject) => {
 
 			this.stripe.customers.create(
@@ -92,9 +83,6 @@ module.exports = class Stripe {
 		customer_token,
 		parameters
 	}) {
-
-		du.debug('Update Customer');
-
 		return new Promise((resolve, reject) => {
 
 			this.stripe.customers.update(
@@ -128,9 +116,6 @@ module.exports = class Stripe {
 	}
 
 	getCreditCard(stripe_token) {
-
-		du.debug('Get Credit Card');
-
 		return new Promise((resolve, reject) => {
 
 			this.stripe.tokens.retrieve(
@@ -162,9 +147,6 @@ module.exports = class Stripe {
 	}
 
 	createCreditCard(parameters) {
-
-		du.debug('Create Credit Card');
-
 		return new Promise((resolve, reject) => {
 
 			this.stripe.tokens.create(
@@ -198,9 +180,6 @@ module.exports = class Stripe {
 	}
 
 	getSource(stripe_token) {
-
-		du.debug('Get Source');
-
 		return new Promise((resolve, reject) => {
 
 			this.stripe.sources.retrieve(
@@ -232,9 +211,6 @@ module.exports = class Stripe {
 	}
 
 	createSource(parameters) {
-
-		du.debug('Create Source');
-
 		return new Promise((resolve, reject) => {
 
 			this.stripe.sources.create(
@@ -268,9 +244,6 @@ module.exports = class Stripe {
 	}
 
 	createRefund(parameters) {
-
-		du.debug('Create Refund');
-
 		return new Promise((resolve, reject) => {
 
 			this.stripe.refunds.create(
@@ -316,9 +289,6 @@ module.exports = class Stripe {
 	}
 
 	createCharge(parameters) {
-
-		du.debug('Create Charge');
-
 		return new Promise((resolve, reject) => {
 
 			this.stripe.charges.create(
@@ -360,9 +330,6 @@ module.exports = class Stripe {
 	}
 
 	listCharges(parameters) {
-
-		du.debug('List Charges');
-
 		return new Promise((resolve, reject) => {
 
 			this.stripe.charges.list(

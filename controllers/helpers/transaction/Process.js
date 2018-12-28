@@ -1,7 +1,3 @@
-
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 const TransactionUtilities = global.SixCRM.routes.include('helpers', 'transaction/TransactionUtilities.js');
 const MerchantProviderController = global.SixCRM.routes.include('entities', 'MerchantProvider.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
@@ -41,9 +37,6 @@ module.exports = class Process extends TransactionUtilities{
 	}
 
 	process(){
-
-		du.debug('Process');
-
 		return Promise.resolve(this.parameters.setParameters({argumentation: arguments[0], action:'process'}))
 			.then(() => this.hydrateMerchantProvider())
 			.then(() => this.processTransaction());
@@ -51,9 +44,6 @@ module.exports = class Process extends TransactionUtilities{
 	}
 
 	hydrateMerchantProvider(){
-
-		du.debug('Hydrate Merchant Provider');
-
 		let merchant_provider_id = this.parameters.get('merchantproviderid');
 
 		return this.merchantProviderController.get({id:merchant_provider_id}).then(merchant_provider => {
@@ -65,9 +55,6 @@ module.exports = class Process extends TransactionUtilities{
 
 	//Technical Debt:  Untested
 	processTransaction(){
-
-		du.debug('Process Transaction');
-
 		return this.instantiateGateway()
 			.then(() => this.createProcessingParameters())
 			.then(() => {
@@ -92,9 +79,6 @@ module.exports = class Process extends TransactionUtilities{
 	}
 
 	instantiateGateway(){
-
-		du.debug('Instantiate Gateway');
-
 		let merchant_provider = this.parameters.get('merchantprovider');
 
 		const GatewayController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/'+merchant_provider.gateway.name+'/handler.js');
@@ -107,9 +91,6 @@ module.exports = class Process extends TransactionUtilities{
 	}
 
 	createProcessingParameters(){
-
-		du.debug('Create Processing Parameters');
-
 		let customer = this.parameters.get('customer');
 		let creditcard = this.parameters.get('creditcard');
 		let amount = this.parameters.get('amount');
