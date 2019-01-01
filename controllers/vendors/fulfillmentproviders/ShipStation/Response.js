@@ -30,6 +30,7 @@ module.exports = class ShipStationResponse extends FulfillmentProviderVendorResp
 	}
 
 	translateInfo(response){
+		du.debug(response);
 		if(objectutilities.hasRecursive(response.body, 'fulfillments', false)){
 
 			let orders = arrayutilities.map(response.body.fulfillments, fulfillment => {
@@ -82,9 +83,7 @@ module.exports = class ShipStationResponse extends FulfillmentProviderVendorResp
 
 		}
 
-		du.debug(response);
 		throw eu.getError('server', 'Unrecognized response from ShipStation');
-
 	}
 
 	translateAddress(shipto){
