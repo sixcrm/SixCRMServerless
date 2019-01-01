@@ -78,7 +78,7 @@ module.exports = class ShipStationResponse extends FulfillmentProviderVendorResp
 				return (!_.isNull(order) && !_.isUndefined(order));
 			})
 
-			return {order: orders};
+			return {orders};
 
 		}
 
