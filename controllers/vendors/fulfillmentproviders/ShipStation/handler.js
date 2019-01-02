@@ -388,14 +388,12 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 		delete parameters.endpoint;
 		delete parameters.path;
 
-		let querystring = httpprovider.createQueryString(parameters);
-
 		let options = {
 			url: url,
 			headers: {
 				'Authorization': this.createAuthorizationString(),
 			},
-			querystring: querystring
+			querystring: parameters
 		};
 
 		return httpprovider.getJSON(options).then(result => {
