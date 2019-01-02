@@ -10,4 +10,4 @@ npm-debug.log
 /extract
 test.txt
 yarn-error.log
-lib/*
+/packages/*/lib
