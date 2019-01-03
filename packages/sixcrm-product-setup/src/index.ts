@@ -1,2 +1,1 @@
-export default class ProductSetupService {
-}
+export default class ProductSetupService {}
