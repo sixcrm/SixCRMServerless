@@ -7,6 +7,13 @@
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-bill",
       "Next": "Is Success?",
       "ResultPath": "$.status",
+      "Retry" : [
+          {
+            "ErrorEquals": [ "States.ALL" ],
+            "IntervalSeconds": 120,
+            "MaxAttempts": 2
+          }
+			],
 			"Catch": [
 				{
 					"ErrorEquals": ["States.ALL"],
