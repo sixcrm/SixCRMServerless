@@ -191,8 +191,8 @@ describe('/helpers/entities/return/Return.js', () => {
 
 			let stored_entity = {
 				history:[
-					{created_at: timestamp.getLastHourInISO8601(), state: 'notified'},
-					{created_at: timestamp.getPreviousMonthEnd(), state: 'created'}
+					{created_at: timestamp.subtractDays(1), state: 'notified'},
+					{created_at: timestamp.subtractDays(2), state: 'created'}
 				]
 			};
 
@@ -219,15 +219,15 @@ describe('/helpers/entities/return/Return.js', () => {
 			let new_entity = {
 				history:[
 					{created_at: timestamp.getISO8601(), state: 'shipped'},
-					{created_at: timestamp.getLastHourInISO8601(), state: 'notified'},
-					{created_at: timestamp.getPreviousMonthEnd(), state: 'created'}
+					{created_at: timestamp.subtractDays(1), state: 'notified'},
+					{created_at: timestamp.subtractDays(2), state: 'created'}
 				]
 			};
 
 			let stored_entity = {
 				history:[
-					{created_at: timestamp.getLastHourInISO8601(), state: 'notified'},
-					{created_at: timestamp.getPreviousMonthEnd(), state: 'created'}
+					{created_at: timestamp.subtractDays(1), state: 'notified'},
+					{created_at: timestamp.subtractDays(2), state: 'created'}
 				]
 			};
 

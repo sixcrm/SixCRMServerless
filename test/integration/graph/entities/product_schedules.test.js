@@ -9,10 +9,7 @@ chai.use(require('chai-json-schema'));
 let endpoint = global.integration_test_config.endpoint;
 
 var entity = 'Product Schedules';
-var tests = [{
-	name: "index",
-	query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getProductSchedules.json')
-},
+var tests = [
 {
 	name: "view",
 	query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getProductSchedule.json')
