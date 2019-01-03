@@ -1,0 +1,23 @@
+{
+    "extends": "tslint:recommended",
+    "rules": {
+		"indent": [true, "tabs"],
+		"quotemark": false,
+		"ordered-imports": false,
+		"member-access": false,
+		"variable-name": false,
+		"max-line-length": false,
+		"object-literal-sort-keys": false,
+		"trailing-comma": false,
+		"one-line": [true, "check-open-brace", "check-whitespace"],
+		"max-classes-per-file": false,
+		"forin": false,
+		"one-variable-per-declaration": false,
+		"no-boolean-literal-compare": true,
+		"no-conditional-assignment": false,
+		"prefer-const": true,
+		"radix": false,
+		"arrow-parens": false,
+		"array-type": false
+	}
+}

@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"target": "es2017",
+		"module": "commonjs",
+		"lib": [ "es2017" ],
+		"outDir": "lib",
+		"sourceMap": true,
+		"inlineSources": true,
+		"moduleResolution": "node",
+		"strictNullChecks": true,
+		"noImplicitReturns": true,
+		"alwaysStrict": true,
+		"noImplicitAny": false,
+		"typeRoots": [ "./types" ]
+	},
+	"exclude": [
+		"**/*.spec.ts"
+	]
+}
