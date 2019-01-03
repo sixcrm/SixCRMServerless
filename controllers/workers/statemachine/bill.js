@@ -36,9 +36,8 @@ module.exports = class BillController extends stepFunctionWorkerController {
 		let register_result = await this.executeBilling(rebill);
 
 		const transactions = register_result.getTransactions();
-		if (transactions[0]) {
-			rebill.merchant_provider = transactions[0].merchant_provider;
-			await rebillController.update({entity: rebill});
+		if (transactions[0] && rebill.merchant_provider !== transactions[0].merchant_provider) {
+			await this.saveMerchantProvider(event.guid, transactions[0].merchant_provider);
 		}
 
 		await AnalyticsEvent.push('create_order', {
@@ -78,6 +77,19 @@ module.exports = class BillController extends stepFunctionWorkerController {
 
 		return result;
 
+	}
+
+	async saveMerchantProvider(rebillId, merchantProvider) {
+		try {
+			//Retrieve latest copy of the rebill to avoid mismatched update_at timestamps
+			// if the rebill was updated by the selectRebills lambda after this lambda started
+			const rebill = await this.getRebill(rebillId);
+
+			rebill.merchant_provider = merchantProvider;
+			await rebillController.update({ entity: rebill });
+		} catch (err) {
+			du.error(`Error updating merchant provider for ID ${rebillId}`, err);
+		}
 	}
 
 	async incrementMerchantProviderSummary(register_result){
