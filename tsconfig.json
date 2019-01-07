@@ -11,7 +11,8 @@
 		"noImplicitReturns": true,
 		"alwaysStrict": true,
 		"noImplicitAny": false,
-		"typeRoots": [ "./types" ]
+		"typeRoots": [ "./types" ],
+		"types" : ["node", "mocha" ]
 	},
 	"exclude": [
 		"**/*.spec.ts"

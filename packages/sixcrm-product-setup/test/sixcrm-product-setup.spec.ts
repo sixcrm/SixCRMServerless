@@ -1,7 +1,7 @@
 'use strict';
 
-const sixcrmProductSetup = require('..');
+import { getProduct } from '../src';
 
 describe('@6crm/sixcrm-product-setup', () => {
-    it('needs tests');
+	it('needs tests');
 });

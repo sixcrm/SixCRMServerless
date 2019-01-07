@@ -1,1 +1,3 @@
-export default class ProductSetupService {}
+export const getProduct = id => {
+	// TODO return product
+};
