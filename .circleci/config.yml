@@ -59,20 +59,20 @@ jobs:
           name: Start Docker Cluster
           command: |
             set -x
-            docker-compose --file tools/docker/docker-compose.yml up -d
+            docker-compose --file packages/sixcrm/tools/docker/docker-compose.yml up -d
       - run: echo "Pausing to allow docker to catch up..." && sleep 15
       - run:
           name: Execute Functional Connectivity Test
-          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-connectivity
+          command: docker-compose --file packages/sixcrm/tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-connectivity
       - run:
           name: Deploy Local Dynamo
-          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node node deployment/dynamodb/deploy_tables.js
+          command: docker-compose --file packages/sixcrm/tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node node packages/sixcrm/deployment/dynamodb/deploy_tables.js
       - run:
           name: Execute Functional Analytics Query Tests in Docker
-          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-analytics-queries
+          command: docker-compose --file packages/sixcrm/tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-analytics-queries
       - run:
           name: Execute Functional Analytics Event Tests in Docker
-          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-analytics-events
+          command: docker-compose --file packages/sixcrm/tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-analytics-events
   pre_deploy:
     <<: *job-defaults
     steps:
@@ -87,7 +87,7 @@ jobs:
           command: mkdir -p deployment_credentials/
       - run:
           name: Create Credentials
-          command: SIX_VERBOSE=2 && node ./deployment/sts/create_role_commands.js --branch=$CIRCLE_BRANCH --output=deployment_credentials/stscredentials
+          command: SIX_VERBOSE=2 && node ./packages/sixcrm/deployment/sts/create_role_commands.js --branch=$CIRCLE_BRANCH --output=deployment_credentials/stscredentials
       - persist_to_workspace:
           root: .
           paths:
@@ -111,7 +111,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Backup DynamoDB
-          command: export SIX_VERBOSE=2 && printenv && node ./deployment/dynamodb/backup_tables.js --branch=$CIRCLE_BRANCH --version=$CIRCLE_SHA1
+          command: export SIX_VERBOSE=2 && printenv && node ./packages/sixcrm/deployment/dynamodb/backup_tables.js --branch=$CIRCLE_BRANCH --version=$CIRCLE_SHA1
   deploy_serverless:
     <<: *job-defaults
     steps:
@@ -131,10 +131,10 @@ jobs:
           command: SLS_DEBUG=* node ./node_modules/serverless/bin/serverless deploy --stage $CIRCLE_BRANCH
       - run:
           name: Deploy Step Function State Machines
-          command: export SIX_VERBOSE=2 && node ./deployment/stepfunctions/deploy_state_machines.js
+          command: export SIX_VERBOSE=2 && node ./packages/sixcrm/deployment/stepfunctions/deploy_state_machines.js
       - run:
           name: Cloudwatch Log Subscriptions
-          command: export SIX_VERBOSE=2 && node ./deployment/cloudwatch/deploy_subscription_filters.js
+          command: export SIX_VERBOSE=2 && node ./packages/sixcrm/deployment/cloudwatch/deploy_subscription_filters.js
   deploy_aurora:
     <<: *job-defaults
     steps:
@@ -148,14 +148,14 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy Subnet Groups
-          command: SIX_VERBOSE=2 node ./deployment/aurora/deploy-subnetgroups.js
+          command: SIX_VERBOSE=2 node ./packages/sixcrm/deployment/aurora/deploy-subnetgroups.js
       - run:
           name: Aurora Create Cluster
-          command: SIX_VERBOSE=2 node ./deployment/aurora/deploy-cluster.js
+          command: SIX_VERBOSE=2 node ./packages/sixcrm/deployment/aurora/deploy-cluster.js
       - run:
           name: Set Proxy
           command: |
-            SIX_VERBOSE=2 node ./deployment/aurora/resolve-cluster.js
+            SIX_VERBOSE=2 node ./packages/sixcrm/deployment/aurora/resolve-cluster.js
       - run:
           name: Setup SSH Tunnel
           command: |
@@ -166,7 +166,7 @@ jobs:
             ssh -i ./config/$CIRCLE_BRANCH/ssh-keys/six-crm/sixcrm.pem -o StrictHostKeyChecking=no -f -N -L5440:$AURORA_HOST:5440 ec2-user@$PROXY_HOST
       - run:
           name: Aurora Create Tables
-          command: SIX_VERBOSE=2 AURORA_PROXY=true  node ./deployment/aurora/deploy-schema.js
+          command: SIX_VERBOSE=2 AURORA_PROXY=true  node ./packages/sixcrm/deployment/aurora/deploy-schema.js
   #Eh... not very useful currently
   environment_test:
     <<: *job-defaults
@@ -190,10 +190,10 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Entity Seed
-          command: SIX_VERBOSE=2 node ./deployment/dynamodb/deploy_seeds.js
+          command: SIX_VERBOSE=2 node ./packages/sixcrm/deployment/dynamodb/deploy_seeds.js
       - run:
           name: Entity Live Seed
-          command: SIX_VERBOSE=2 node ./deployment/dynamodb/deploy_live_seeds.js
+          command: SIX_VERBOSE=2 node ./packages/sixcrm/deployment/dynamodb/deploy_live_seeds.js
   deleteblock_integration_tests:
     <<: *job-defaults
     steps:
