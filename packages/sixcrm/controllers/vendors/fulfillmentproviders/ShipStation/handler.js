@@ -31,7 +31,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 			'customer':global.SixCRM.routes.path('model','entities/customer.json'),
 			'products':global.SixCRM.routes.path('model', 'entities/components/products.json'),
 			'shippingreceipt':global.SixCRM.routes.path('model','entities/shippingreceipt.json'),
-			'referencenumber':global.SixCRM.routes.path('model', 'definitions/uuidv4.json')
 		};
 
 		this.parameter_definition = {
