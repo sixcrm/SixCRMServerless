@@ -1,6 +1,6 @@
 {
 	"messages": [{
-			"event_type": "transaction_success",
+			"event_type": "transaction",
 			"context": {
 				"transactionSubType": "main",
 				"transactionType": "sale",
@@ -918,7 +918,7 @@
 			}
 		},
 		{
-			"event_type": "transaction_fail",
+			"event_type": "transaction",
 			"context": {
 				"transactionSubType": "main",
 				"transactionType": "sale",
@@ -1841,7 +1841,7 @@
 			}
 		},
 		{
-			"event_type": "transaction_success",
+			"event_type": "transaction",
 			"context": {
 				"id": "37f4a46f-c1b7-4634-8aee-6776a4b69c37",
 				"datetime": "2018-05-02T04:13:52.699Z",
