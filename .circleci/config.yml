@@ -14,20 +14,22 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Install
           command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && yarn install --frozen-lockfile
       - save_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
+            - packages/sixcrm/node_modules
+            - packages/sixcrm-product-setup/node_modules
   lint:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: 'Lint'
           command: yarn run lint
@@ -36,7 +38,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: 'Unit Tests (JavaScript)'
           command: stage=circle yarn run test-unit-circle
@@ -48,7 +50,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Install Docker Compose
           command: |
@@ -78,7 +80,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: debugging
           command: printenv
@@ -103,7 +105,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - attach_workspace:
           at: .
       - run:
@@ -117,7 +119,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - attach_workspace:
           at: .
       - run:
@@ -140,7 +142,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - attach_workspace:
           at: .
       - run:
@@ -174,7 +176,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Entity Integration Tests
           command: SIX_VERBOSE=2 yarn run test-environment
@@ -183,7 +185,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - attach_workspace:
           at: .
       - run:
@@ -200,7 +202,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Deleteblock Integration Tests
           command: yarn run test-deleteblocks
@@ -209,7 +211,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Entity Integration Tests
           command: yarn run test-entities
@@ -218,7 +220,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Analytics Integration Tests
           command: SIX_VERBOSE=2 yarn run test-integration-analytics
@@ -227,7 +229,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Transactional Integration Tests
           command: SIX_VERBOSE=6 yarn run test-transactions
