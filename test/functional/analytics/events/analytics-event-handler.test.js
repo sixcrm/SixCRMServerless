@@ -6,8 +6,7 @@ const path = require('path');
 const _ = require('lodash');
 const BBPromise = require('bluebird');
 const SQSTestUtils = require('../../sqs-test-utils');
-const AnalyticsEventHandler = require('../../../../controllers/workers/analytics/analytics-event-handler');
-
+const AnalyticsEventHandler = require('@6crm/sixcrmanalytics/lib/workers/analytics-event-handler').default;
 const fileutilities = require('@6crm/sixcrmcore/util/file-utilities').default;
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
 const sqsDeployment = new SQSDeployment();

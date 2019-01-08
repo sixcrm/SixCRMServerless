@@ -8,6 +8,8 @@ package:
     - deployment/**
     - test/**
     - tools/**
+    - '**/*.ts'
+    - '**/*.js.map'
   include:
     - serverless.yml
 

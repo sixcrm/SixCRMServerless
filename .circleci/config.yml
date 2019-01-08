@@ -3,7 +3,7 @@
 
 defaults: &job-defaults
   docker:
-    - image: circleci/node:8.12
+    - image: circleci/node:8.10
       environment:
         - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
 
@@ -14,14 +14,12 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys:
-            - v1-dependency-cache-{{ checksum "package-lock.json" }}
-            - v1-dependency-cache-
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
-          name: Install npm
-          command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && npm ci
+          name: Install
+          command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && yarn install --frozen-lockfile
       - save_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
   lint:
@@ -29,25 +27,28 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: 'Lint'
-          command: npm run lint
+          command: yarn run lint
   unit_tests:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
-          name: 'Unit Tests'
-          command: stage=circle  npm run test-unit-circle
+          name: 'Unit Tests (JavaScript)'
+          command: stage=circle yarn run test-unit-circle
+      - run:
+          name: 'Unit Tests (TypeScript)'
+          command: stage=circle yarn run ts-test
   query_tests:
     machine: true
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Install Docker Compose
           command: |
@@ -62,22 +63,22 @@ jobs:
       - run: echo "Pausing to allow docker to catch up..." && sleep 15
       - run:
           name: Execute Functional Connectivity Test
-          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node npm run test-functional-connectivity
+          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-connectivity
       - run:
           name: Deploy Local Dynamo
           command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node node deployment/dynamodb/deploy_tables.js
       - run:
           name: Execute Functional Analytics Query Tests in Docker
-          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node npm run test-functional-analytics-queries
+          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-analytics-queries
       - run:
           name: Execute Functional Analytics Event Tests in Docker
-          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node npm run test-functional-analytics-events
+          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-analytics-events
   pre_deploy:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: debugging
           command: printenv
@@ -102,7 +103,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - attach_workspace:
           at: .
       - run:
@@ -116,9 +117,12 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - attach_workspace:
           at: .
+      - run:
+          name: Build TypeScript
+          command: npm run ts-build
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -136,7 +140,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - attach_workspace:
           at: .
       - run:
@@ -169,16 +173,16 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Entity Integration Tests
-          command: SIX_VERBOSE=2 npm run test-environment
+          command: SIX_VERBOSE=2 yarn run test-environment
   seed:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - attach_workspace:
           at: .
       - run:
@@ -195,37 +199,37 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Deleteblock Integration Tests
-          command: npm run test-deleteblocks
+          command: yarn run test-deleteblocks
   entity_integration_tests:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Entity Integration Tests
-          command: npm run test-entities
+          command: yarn run test-entities
   analytics_integration_tests:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Analytics Integration Tests
-          command: SIX_VERBOSE=2 npm run test-integration-analytics
+          command: SIX_VERBOSE=2 yarn run test-integration-analytics
   transactional_integration_tests:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Transactional Integration Tests
-          command: SIX_VERBOSE=6 npm run test-transactions
+          command: SIX_VERBOSE=6 yarn run test-transactions
 
 workflows:
   version: 2

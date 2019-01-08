@@ -4,7 +4,7 @@
 	"title": "ShipStation Method",
 	"type": "string",
 	"enum": [
-		"ListOrders",
+		"ListFulfillments",
 		"CreateOrder"
 	]
 }

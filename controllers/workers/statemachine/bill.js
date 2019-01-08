@@ -9,9 +9,6 @@ const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('he
 
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
-const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-const rebillController = new RebillController();
-
 const SessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 const sessionController = new SessionController();
 
@@ -35,12 +32,6 @@ module.exports = class BillController extends stepFunctionWorkerController {
 
 		let register_result = await this.executeBilling(rebill);
 
-		const transactions = register_result.getTransactions();
-		if (transactions[0]) {
-			rebill.merchant_provider = transactions[0].merchant_provider;
-			await rebillController.update({entity: rebill});
-		}
-
 		await AnalyticsEvent.push('create_order', {
 			rebill,
 			type: 'recurring'
@@ -48,6 +39,7 @@ module.exports = class BillController extends stepFunctionWorkerController {
 
 		let result = register_result.parameters.get('response_type');
 
+		const transactions = register_result.getTransactions();
 		await this.fetchContextParameters(rebill, result, transactions[0]).then((parameters) => this.pushEvent(parameters));
 
 		try {

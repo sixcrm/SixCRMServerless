@@ -19,8 +19,8 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 
 		this.methods = {
 			fulfill: 'CreateOrder',
-			test: 'ListOrders',
-			info: 'ListOrders'
+			test: 'ListFulfillments',
+			info: 'ListFulfillments'
 		};
 
 		this.parameter_validation = {
@@ -174,9 +174,9 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 
 	}
 
-	getListOrdersMethodParameters(){
+	getListFulfillmentsMethodParameters(){
 		return {
-			path: 'orders'
+			path: 'fulfillments'
 		};
 
 	}
@@ -199,7 +199,7 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 
 	}
 
-	getListOrdersRequestParameters(){
+	getListFulfillmentsRequestParameters(){
 		let {store_id} = this.parameters.get('fulfillmentprovider').provider;
 		let reference_number = this.parameters.get('referencenumber', {fatal: false});
 
@@ -380,7 +380,7 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 	}
 
 
-	issueListOrdersRequest(){
+	issueListFulfillmentsRequest(){
 		let parameters = this.parameters.get('parametersobject');
 
 		let url = parameters.endpoint+parameters.path;
@@ -388,14 +388,12 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 		delete parameters.endpoint;
 		delete parameters.path;
 
-		let querystring = httpprovider.createQueryString(parameters);
-
 		let options = {
 			url: url,
 			headers: {
 				'Authorization': this.createAuthorizationString(),
 			},
-			querystring: querystring
+			querystring: parameters
 		};
 
 		return httpprovider.getJSON(options).then(result => {
