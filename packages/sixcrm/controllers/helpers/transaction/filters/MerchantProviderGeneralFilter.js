@@ -55,7 +55,6 @@ module.exports = class MerchantProviderGeneralFilter {
 			.then((result) => this.filterZeroDistributionMerchantProviders({merchant_providers: result}))
 			.then((result) => this.filterTypeMismatchedMerchantProviders({merchant_providers: result}))
 			.then((result) => this.filterCAPShortageMerchantProviders({merchant_providers: result}))
-			.then((result) => this.filterCountShortageMerchantProviders({merchant_providers: result}));
 
 	}
 
@@ -163,60 +162,6 @@ module.exports = class MerchantProviderGeneralFilter {
 
 
 		return Promise.resolve(merchant_providers);
-
-	}
-
-	filterCountShortageMerchantProviders({merchant_providers}){
-		if(!arrayutilities.nonEmpty(merchant_providers)){
-			throw eu.getError('server', 'No merchant providers to select from.');
-		}
-
-		let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
-
-			let return_value = true;
-
-			if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.daily') && !_.isNull(merchant_provider.processing.transaction_counts.daily)){
-
-				const dailyLimit = parseInt(merchant_provider.processing.transaction_counts.daily);
-				const dailyCount = parseInt(merchant_provider.summary.summary.today.count);
-				if(dailyLimit && dailyCount >= dailyLimit){
-					du.warning('Daily Count Shortage');
-					return_value = false;
-				}
-
-			}
-
-			if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.weekly') && !_.isNull(merchant_provider.processing.transaction_counts.weekly)){
-
-				const weeklyLimit = parseInt(merchant_provider.processing.transaction_counts.weekly);
-				const weeklyCount = parseInt(merchant_provider.summary.summary.thisweek.count);
-				if(weeklyLimit && weeklyCount >= weeklyLimit){
-					du.warning('Weekly Count Shortage');
-					return_value = false;
-				}
-
-			}
-
-			if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.monthly') && !_.isNull(merchant_provider.processing.transaction_counts.monthly)){
-
-				const monthlyLimit = parseInt(merchant_provider.processing.transaction_counts.monthly);
-				const monthlyCount = parseInt(merchant_provider.summary.summary.thismonth.count);
-				if(monthlyLimit && monthlyCount >= monthlyLimit){
-					du.warning('Monthly Count Shortage');
-					return_value = false;
-				}
-
-			}
-
-			if(return_value == false){
-				du.info(merchant_provider);
-			}
-
-			return return_value;
-
-		});
-
-		return Promise.resolve(return_array);
 
 	}
 
