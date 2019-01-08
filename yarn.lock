@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@6crm/sixcrmanalytics@0.0.19":
-  version "0.0.19"
-  resolved "https://registry.yarnpkg.com/@6crm/sixcrmanalytics/-/sixcrmanalytics-0.0.19.tgz#2997fbe4cb1a0f3d64b1b6bf6447c7aafef82142"
-  integrity sha512-qGu3vQftopjtB0Bz6tHT53+ms10vbdj6JCFlhzvlAVBKrmNfeWpy7qefsiHle7d8R6yqbSfJ19WRLgB4R7Au2w==
+"@6crm/sixcrmanalytics@0.0.20":
+  version "0.0.20"
+  resolved "https://registry.yarnpkg.com/@6crm/sixcrmanalytics/-/sixcrmanalytics-0.0.20.tgz#2762b77f7435c1faa6a7df922c539179ab099849"
+  integrity sha512-X3/bOuYt8Jm3RupRCSctreES59lVCh35fmwZUJGbHyrw7GF/QksyN09Taped8C1aKAb4ouD20ll7Z8E8+TFqFg==
   dependencies:
     "@6crm/sixcrmcore" "0.0.46"
     aws-sdk "^2.338.0"
