@@ -63,16 +63,16 @@ jobs:
       - run: echo "Pausing to allow docker to catch up..." && sleep 15
       - run:
           name: Execute Functional Connectivity Test
-          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-connectivity
+          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project/packages/sixcrm:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-connectivity
       - run:
           name: Deploy Local Dynamo
-          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node node deployment/dynamodb/deploy_tables.js
+          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project/packages/sixcrm:/sixcrmserverless -w /sixcrmserverless node node deployment/dynamodb/deploy_tables.js
       - run:
           name: Execute Functional Analytics Query Tests in Docker
-          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-analytics-queries
+          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project/packages/sixcrm:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-analytics-queries
       - run:
           name: Execute Functional Analytics Event Tests in Docker
-          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-analytics-events
+          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project/packages/sixcrm:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-analytics-events
   pre_deploy:
     <<: *job-defaults
     steps:
