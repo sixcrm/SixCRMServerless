@@ -12,7 +12,7 @@ function getValidShippingReceipt() {
 }
 
 function getValidFulfillmentProviderReference() {
-	return 'a858a0dd-3c12-4fcd-9f56-53fe939546ca';
+	return 'a858a0dd';
 }
 
 function getValidFulfillmentProvider(id) {

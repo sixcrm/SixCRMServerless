@@ -45,7 +45,7 @@ describe('vendors/fulfillmentproviders/FulfillmentProvider.js', () =>{
 
 			let reference_number = fulfillmentProviderController.createReferenceNumber();
 
-			expect(stringutilities.isUUID(reference_number)).to.be.true;
+			expect(reference_number).to.have.lengthOf(8);
 		})
 	});
 
@@ -88,7 +88,7 @@ describe('vendors/fulfillmentproviders/FulfillmentProvider.js', () =>{
 
 			let reference_number = fulfillmentProviderController.parameters.store['referencenumber'];
 
-			expect(stringutilities.isUUID(reference_number)).to.be.true;
+			expect(reference_number).to.have.lengthOf(8);
 		})
 	});
 });

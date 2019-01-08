@@ -1,5 +1,6 @@
-node_modules/*
+node_modules/
 .serverless/*
+/packages/*/.serverless/*
 test/**/*.processed.*
 coverage/*
 bin/*
@@ -10,4 +11,4 @@ npm-debug.log
 /extract
 test.txt
 yarn-error.log
-lib/*
+/packages/*/lib

@@ -100,15 +100,11 @@ module.exports = class ShipStationResponse extends FulfillmentProviderVendorResp
 			{}
 		);
 
-		return objectutilities.transcribe(
-			{
-				line2: 'street2'
-			},
-			shipto,
-			native_address,
-			false
-		);
+		if (shipto.street2) {
+			native_address.line2 = shipto.street2;
+		}
 
+		return native_address;
 	}
 
 	translateTest(response){
