@@ -79,7 +79,7 @@ module.exports = class fulfillmentProviderController {
 	}
 
 	createReferenceNumber(){
-		return uuidV4();
+		return uuidV4().slice(0, 8);
 
 	}
 
