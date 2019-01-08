@@ -24,9 +24,9 @@
   "scripts": {
     "lint": "tslint \"src/**/*.ts\"",
     "lint-fix": "tslint --fix \"src/**/*.ts\"",
-    "compile": "tsc",
+    "compile": "tsc --pretty",
     "prettier": "prettier --write \"src/**/*.{ts,json}\"",
-    "test": "mocha --require ts-node/register test/**/*.spec.ts",
+    "test": "mocha --colors --require ts-node/register test/**/*.spec.ts",
     "precommit": "pretty-quick --staged"
   },
   "bugs": {
