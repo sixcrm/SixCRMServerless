@@ -22,6 +22,8 @@ jobs:
           key: v1-dependency-cache-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
+            - packages/sixcrm/node_modules
+            - packages/sixcrm-product-setup/node_modules
   lint:
     <<: *job-defaults
     steps:
