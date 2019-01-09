@@ -22,7 +22,6 @@
 	    "maximum_chargeback_ratio": 0,
 	    "monthly_cap": null,
 	    "reserve_rate": 0,
-	    "transaction_counts": {},
 	    "transaction_fee": 0
 	  },
 	  "processor": {
