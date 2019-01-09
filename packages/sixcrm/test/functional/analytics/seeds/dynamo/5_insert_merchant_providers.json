@@ -12,12 +12,7 @@
 				"discount_rate": 0.9,
 				"transaction_fee": 0.06,
 				"reserve_rate": 0.5,
-				"maximum_chargeback_ratio": 0.17,
-				"transaction_counts": {
-					"daily": 200000,
-					"monthly": 200000,
-					"weekly": 200000
-				}
+				"maximum_chargeback_ratio": 0.17
 			},
 			"enabled": true,
 			"gateway": {
@@ -48,12 +43,7 @@
 				"discount_rate": 0.9,
 				"transaction_fee": 0.06,
 				"reserve_rate": 0.5,
-				"maximum_chargeback_ratio": 0.17,
-				"transaction_counts": {
-					"daily": 120000,
-					"monthly": 120000,
-					"weekly": 120000
-				}
+				"maximum_chargeback_ratio": 0.17
 			},
 			"enabled": true,
 			"gateway": {
@@ -84,12 +74,7 @@
 				"discount_rate": 0.9,
 				"transaction_fee": 0.06,
 				"reserve_rate": 0.5,
-				"maximum_chargeback_ratio": 0.17,
-				"transaction_counts": {
-					"daily": 12000,
-					"monthly": 12000,
-					"weekly": 12000
-				}
+				"maximum_chargeback_ratio": 0.17
 			},
 			"enabled": true,
 			"gateway": {
