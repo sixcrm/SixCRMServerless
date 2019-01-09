@@ -2,8 +2,6 @@
 const GraphQLFloat = require('graphql').GraphQLFloat;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 
-const merchantProviderProcessingTransactionCountInputType = require('./processingTransactionCountInputType');
-
 module.exports.graphObj = new GraphQLInputObjectType({
 	name: 'MerchantProviderProcessingInput',
 	fields: () => ({

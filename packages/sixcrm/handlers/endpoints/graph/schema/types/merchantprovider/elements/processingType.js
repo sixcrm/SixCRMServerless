@@ -2,8 +2,6 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLFloat = require('graphql').GraphQLFloat;
 
-let processingTransactionCountType = require('./processingTransactionCountType');
-
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'merchantproviderprocessingconfiguration',
 	description: 'A merchant provider processing configuration.',
