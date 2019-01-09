@@ -27,10 +27,6 @@ module.exports.graphObj = new GraphQLObjectType({
 		maximum_chargeback_ratio:{
 			type: GraphQLFloat,
 			description: 'The merchant provider instance maximum chargeback ratio.'
-		},
-		transaction_counts:{
-			type: processingTransactionCountType.graphObj,
-			description: 'The merchant provider instance transaction count limit object'
 		}
 	}),
 	interfaces: []
