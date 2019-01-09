@@ -605,12 +605,7 @@ class MockEntities {
 				discount_rate: 0.9,
 				transaction_fee: 0.06,
 				reserve_rate: 0.5,
-				maximum_chargeback_ratio: 0.17,
-				transaction_counts: {
-					daily: 30,
-					monthly: 30,
-					weekly: 30
-				}
+				maximum_chargeback_ratio: 0.17
 			},
 			enabled: true,
 			gateway: this.getValidMerchantProviderGateway(processor),
