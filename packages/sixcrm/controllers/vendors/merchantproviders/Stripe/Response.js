@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const MerchantProviderResponse = global.SixCRM.routes.include('vendors', 'merchantproviders/Response.js');
 
 const SOFT_DECLINES = [
@@ -32,7 +33,10 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 				return 'success';
 			}
 
+
 			if (!_.isNull(error) && error.rawType === 'card_error') {
+
+				du.warning('Parsing Stripe error', error);
 
 				if (SOFT_DECLINES.includes(error.code)) {
 					return 'decline';
