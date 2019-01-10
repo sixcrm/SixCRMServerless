@@ -42,6 +42,10 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 					return 'decline';
 				}
 
+				if (error.raw && SOFT_DECLINES.includes(error.raw.decline_code)) {
+					return 'decline';
+				}
+
 
 				return 'harddecline';
 			}
