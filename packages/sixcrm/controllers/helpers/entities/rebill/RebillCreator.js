@@ -237,10 +237,10 @@ module.exports = class RebillCreatorHelper {
 		return valid;
 	}
 
-	getTransactionProducts({bill_day, normalized_product_schedules, normalized_products}) {
+	getTransactionProducts({session, bill_day, normalized_product_schedules, normalized_products}) {
 		du.debug(`getTransactionProducts: ${JSON.stringify({bill_day, normalized_product_schedules, normalized_products})}`);
 		const transaction_products = [];
-		const schedule_elements = this.getScheduleElementsOnBillDay({bill_day, normalized_product_schedules});
+		const schedule_elements = this.getScheduleElementsOnBillDay({session, bill_day, normalized_product_schedules});
 		du.debug(`schedule_elements: ${JSON.stringify(schedule_elements)}`);
 		this.addScheduleElementsToTransactionProducts(schedule_elements, transaction_products);
 		du.debug(`transaction_products: ${JSON.stringify(transaction_products)}`);
@@ -299,7 +299,7 @@ module.exports = class RebillCreatorHelper {
 		return {merchant_provider, merchant_provider_selections};
 	}
 
-	getScheduleElementsOnBillDay({bill_day, normalized_product_schedules}) {
+	getScheduleElementsOnBillDay({session, bill_day, normalized_product_schedules}) {
 		let schedule_elements = [];
 
 		if (normalized_product_schedules === undefined) {
@@ -307,7 +307,7 @@ module.exports = class RebillCreatorHelper {
 		}
 
 		arrayutilities.map(normalized_product_schedules, normalized_product_schedule => {
-			let sub_elements = productScheduleHelperController.getScheduleElementsOnDayInSchedule({day: bill_day, product_schedule: normalized_product_schedule.product_schedule})
+			let sub_elements = productScheduleHelperController.getScheduleElementsOnDayInSchedule({start_date: session.created_at, day: bill_day, product_schedule: normalized_product_schedule.product_schedule})
 			if (!_.isNull(sub_elements) && arrayutilities.nonEmpty(sub_elements)) {
 				arrayutilities.map(sub_elements, sub_element => {
 					schedule_elements.push({
@@ -372,7 +372,7 @@ module.exports = class RebillCreatorHelper {
 		const product_schedules = this.getGroupedProductSchedules(normalized_product_schedules);
 		const bill_day = this.getNextProductScheduleBillDayNumber({day, normalized_product_schedules});
 		const {merchant_provider, merchant_provider_selections} = await this.getMerchantProviderSelections(session, day);
-		const transaction_products = this.getTransactionProducts({bill_day, normalized_product_schedules, normalized_products});
+		const transaction_products = this.getTransactionProducts({session, bill_day, normalized_product_schedules, normalized_products});
 		const amount = this.calculateAmount(transaction_products);
 		const bill_at = this.calculateBillAt(session, bill_day);
 		const cycle = await this.calculateCycle(session, bill_at);

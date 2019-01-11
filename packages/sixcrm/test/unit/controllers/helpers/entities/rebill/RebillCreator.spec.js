@@ -27,7 +27,7 @@ describe('RebillCreator', () => {
 
 	describe('createRebill', () => {
 		context('straight sale session', () => {
-			let rebill_prototype, rebill, session;
+			let rebill_prototype, rebill, session, product_groups;
 			beforeEach(() => {
 				session = {
 					id: 'c6e9661d-9fb3-4b77-bb8e-78bbf447a599',
@@ -192,7 +192,7 @@ describe('RebillCreator', () => {
 				td.when(ProductScheduleHelperController.prototype.marryProductsToSchedule({product_schedule: td.matchers.anything(), products: []})).thenDo(({product_schedule}) => product_schedule);
 				td.when(ProductScheduleHelperController.prototype.getNextScheduleElementStartDayNumber({day: -1, product_schedule})).thenReturn(0);
 				td.when(ProductScheduleHelperController.prototype.getNextScheduleElementStartDayNumber({day: 0, product_schedule})).thenReturn(30);
-				td.when(ProductScheduleHelperController.prototype.getScheduleElementsOnDayInSchedule({day: td.matchers.isA(Number), product_schedule})).thenReturn(product_schedule.schedule);
+				td.when(ProductScheduleHelperController.prototype.getScheduleElementsOnDayInSchedule({start_date: '2018-01-01T00:00:01.000Z', day: td.matchers.isA(Number), product_schedule})).thenReturn(product_schedule.schedule);
 			});
 
 			it('throws an error if dynamic price is invalid', async () => {
@@ -252,6 +252,7 @@ describe('RebillCreator', () => {
 			});
 
 			context('recurring cycles', () => {
+				let previous_rebill;
 				beforeEach(() => {
 					Object.assign(rebill_prototype, {
 						cycle: 1,

@@ -60,24 +60,28 @@ module.exports = class ProductScheduleHelper {
 	}
 
 	//Tested
-	getScheduleElementsOnDayInSchedule({product_schedule, day}){
+	getScheduleElementsOnDayInSchedule({start_date, product_schedule, day}){
 		return arrayutilities.filter(product_schedule.schedule, schedule_element => {
 			const { start, end, period, samedayofmonth = false } = schedule_element;
 			const product_is_active = day >= start && (!end || day < end);
 			const day_is_start_of_new_period = samedayofmonth
-				? this.isStartOfNextMonth(day)
+				? this.isSameDayOfMonth(day, start_date)
 				: Number.isInteger(day / period);
 			return product_is_active && day_is_start_of_new_period;
 		});
 	}
 
-	isStartOfNextMonth(day) {
-		if (day === 0) {
+	isSameDayOfMonth(day, start_date) {
+		if (day < 0) {
 			return true;
 		}
 
-		const lastMonth = moment.utc().add(day, 'd').subtract(1, 'months');
-		return timestamp.daysDifference(lastMonth) === 0;
+		const first_cycle_day_number = moment.utc(start_date).date();
+		const current_date = moment.utc(start_date).add(day, 'days');
+		const threshold = Math.min(current_date.daysInMonth(), first_cycle_day_number);
+		const current_day_number = current_date.date();
+
+		return current_day_number >= threshold;
 	}
 
 	//Tested
