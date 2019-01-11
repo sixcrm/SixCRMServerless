@@ -445,7 +445,6 @@ function getValidUserSetting(){
 			{ name: 'slack', receive: false },
 			{ name: 'ios', receive: false }
 		],
-		'timezone:': 'America/Los_Angeles',
 		id: 'timothy.dalbey@sixcrm.com',
 		language: 'English'
 	};

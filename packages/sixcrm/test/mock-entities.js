@@ -254,7 +254,6 @@ class MockEntities {
 
 		return {
 			id: id,
-			timezone: 'America/Los_Angeles',
 			created_at: a_iso8601,
 			updated_at: a_iso8601,
 			notifications: [{
