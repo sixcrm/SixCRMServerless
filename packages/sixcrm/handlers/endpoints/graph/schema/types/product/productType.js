@@ -43,6 +43,11 @@ module.exports.graphObj = new GraphQLObjectType({
 		ship: {
 			type: GraphQLBoolean,
 			description: 'The product ship, no-ship status.',
+			resolve: product => product.is_shippable
+		},
+		shipping_price: {
+			type: GraphQLFloat,
+			description: 'A default shipping price for product.',
 		},
 		shipping_delay: {
 			type: GraphQLInt,
@@ -51,6 +56,7 @@ module.exports.graphObj = new GraphQLObjectType({
 		default_price: {
 			type: GraphQLFloat,
 			description: 'A default price for product.',
+			resolve: product => product.price
 		},
 		dynamic_pricing: {
 			type: dynamicPricingType.graphObj,

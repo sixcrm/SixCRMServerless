@@ -1,5 +1,6 @@
 require('module-alias/register');
 const _ = require('lodash');
+const createProductSetupService = require('@6crm/sixcrm-product-setup').default;
 
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
@@ -882,13 +883,9 @@ const fields = Object.assign({}, {
 				type: GraphQLString
 			}
 		},
-		resolve: function(root, product) {
-			const productController = new ProductController();
-
-			return productController.get({
-				id: product.id,
-				fatal: get_fatal
-			});
+		resolve: async (root, { id }) => {
+			const productSetupService = await createProductSetupService();
+			return productSetupService.getProduct(id);
 		}
 	},
 	emailtemplate: {
