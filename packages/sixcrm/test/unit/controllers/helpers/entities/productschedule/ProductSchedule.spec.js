@@ -383,9 +383,7 @@ describe('controllers/helpers/entities/productschedule/ProductSchedule.js', () =
 
 		});
 
-		//skip same day of the month tests -- no way to configure specific dates for testing
-		//if enabling tests, set your computer's date to a 31 day month
-		xdescribe('same day of the month schedule', () => {
+		describe('same day of the month schedule', () => {
 			const product_schedule = {
 				id:uuidV4(),
 				name:"Product Schedule 1",
@@ -396,46 +394,117 @@ describe('controllers/helpers/entities/productschedule/ProductSchedule.js', () =
 						product:uuidV4(),
 						price:4.99,
 						start:0,
-						period:30,
 						samedayofmonth: true
 					}
 				],
-				created_at:timestamp.getISO8601(),
-				updated_at:timestamp.getISO8601()
+				created_at:"2018-01-31T00:00:01.000Z",
+				updated_at:"2018-01-31T00:00:01.000Z"
 			};
+			const start_date = "2018-01-31T00:00:01.000Z";
 
-			it('successfully returns schedule elements on day 0', () => {
+			it('returns schedule elements on day 0', () => {
 				const productScheduleHelper = new ProductScheduleHelperController();
 				const scheduledProduct = productScheduleHelper.getScheduleElementsOnDayInSchedule({
 					product_schedule,
-					day: 0
+					day: 0,
+					start_date
 				});
 
 				expect(scheduledProduct).to.deep.equal(product_schedule.schedule);
 			});
 
-			it('successfully returns no schedule elements on day 1', () => {
+			it('returns no schedule elements on February 1st', () => {
 				const productScheduleHelper = new ProductScheduleHelperController();
 				const scheduledProduct = productScheduleHelper.getScheduleElementsOnDayInSchedule({
 					product_schedule,
-					day: 1
+					day: 1,
+					start_date
 				});
 
 				expect(scheduledProduct).to.deep.equal([]);
 			});
 
-			it('successfully returns schedule elements after a month', () => {
-				const daysInMonth = 31; //must match the number of days in the current calendar month
+			it('returns schedule elements February 28th', () => {
 				const productScheduleHelper = new ProductScheduleHelperController();
 				const scheduledProduct = productScheduleHelper.getScheduleElementsOnDayInSchedule({
 					product_schedule,
-					day: daysInMonth
+					day: 28,
+					start_date
 				});
 
 				expect(scheduledProduct).to.deep.equal(product_schedule.schedule);
 			});
-		});
 
+			it('returns schedule elements on February 29th (leap year)', () => {
+				const productScheduleHelper = new ProductScheduleHelperController();
+				Object.assign(product_schedule, {
+					created_at: "2020-01-31T00:00:01.000Z",
+					updated_at: "2020-01-31T00:00:01.000Z"
+				});
+				const scheduledProduct = productScheduleHelper.getScheduleElementsOnDayInSchedule({
+					product_schedule,
+					day: 29,
+					start_date: "2020-01-31T00:00:01.000Z"
+				});
+
+				expect(scheduledProduct).to.deep.equal(product_schedule.schedule);
+			});
+
+			it('returns no schedule elements on March 1st', () => {
+				const productScheduleHelper = new ProductScheduleHelperController();
+				const scheduledProduct = productScheduleHelper.getScheduleElementsOnDayInSchedule({
+					product_schedule,
+					day: 29,
+					start_date
+				});
+
+				expect(scheduledProduct).to.deep.equal([]);
+			});
+
+			it('returns schedule elements on March 31st', () => {
+				const productScheduleHelper = new ProductScheduleHelperController();
+				const scheduledProduct = productScheduleHelper.getScheduleElementsOnDayInSchedule({
+					product_schedule,
+					day: 59,
+					start_date
+				});
+
+				expect(scheduledProduct).to.deep.equal(product_schedule.schedule);
+			});
+
+			it('returns no schedule elements on April 1st', () => {
+				const productScheduleHelper = new ProductScheduleHelperController();
+				const scheduledProduct = productScheduleHelper.getScheduleElementsOnDayInSchedule({
+					product_schedule,
+					day: 60,
+					start_date
+				});
+
+				expect(scheduledProduct).to.deep.equal([]);
+			});
+
+			it('returns schedule elements on April 30th', () => {
+				const productScheduleHelper = new ProductScheduleHelperController();
+				const scheduledProduct = productScheduleHelper.getScheduleElementsOnDayInSchedule({
+					product_schedule,
+					day: 89,
+					start_date
+				});
+
+				expect(scheduledProduct).to.deep.equal(product_schedule.schedule);
+			});
+
+			it('returns no elements on May 1st', () => {
+				const productScheduleHelper = new ProductScheduleHelperController();
+				const scheduledProduct = productScheduleHelper.getScheduleElementsOnDayInSchedule({
+					product_schedule,
+					day: 90,
+					start_date
+				});
+
+				expect(scheduledProduct).to.deep.equal([]);
+			});
+		});
 	});
 
 	describe('getNextScheduleElement', () => {

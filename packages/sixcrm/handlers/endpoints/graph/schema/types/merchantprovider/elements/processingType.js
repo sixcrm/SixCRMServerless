@@ -2,8 +2,6 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLFloat = require('graphql').GraphQLFloat;
 
-let processingTransactionCountType = require('./processingTransactionCountType');
-
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'merchantproviderprocessingconfiguration',
 	description: 'A merchant provider processing configuration.',
@@ -27,10 +25,6 @@ module.exports.graphObj = new GraphQLObjectType({
 		maximum_chargeback_ratio:{
 			type: GraphQLFloat,
 			description: 'The merchant provider instance maximum chargeback ratio.'
-		},
-		transaction_counts:{
-			type: processingTransactionCountType.graphObj,
-			description: 'The merchant provider instance transaction count limit object'
 		}
 	}),
 	interfaces: []

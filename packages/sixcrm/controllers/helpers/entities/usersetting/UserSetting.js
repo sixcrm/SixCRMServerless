@@ -7,7 +7,6 @@ module.exports = class UserSettingHelperController {
 	getPrototypeUserSetting(email){
 		let proto_user_setting = {
 			id: email,
-			timezone: 'America/Los_Angeles',
 			notifications: [{
 				name: "six",
 				receive: true

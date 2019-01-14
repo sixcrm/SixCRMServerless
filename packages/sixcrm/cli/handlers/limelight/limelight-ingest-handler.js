@@ -167,12 +167,7 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 					discount_rate: Number(llGateway.limitsAndFees.visa) / 100, // this really needs to be by card..., but visa is the most likely to have a value
 					transaction_fee: llGateway.limitsAndFees.transactionFee,
 					reserve_rate: Number(llGateway.limitsAndFees.reservePercent) / 100,
-					maximum_chargeback_ratio: 1, // this is not even used, but to avoid potential complications set it to 100%
-					transaction_counts: {
-						daily: null,
-						weekly: null,
-						monthly: null
-					}
+					maximum_chargeback_ratio: 1 // this is not even used, but to avoid potential complications set it to 100%
 				}
 			};
 

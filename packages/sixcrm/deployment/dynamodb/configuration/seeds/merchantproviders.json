@@ -11,12 +11,7 @@
 			"discount_rate":0.9,
 			"transaction_fee":0.06,
 			"reserve_rate": 0.5,
-			"maximum_chargeback_ratio":0.17,
-			"transaction_counts":{
-				"daily":null,
-				"monthly":null,
-				"weekly":null
-			}
+			"maximum_chargeback_ratio":0.17
 		},
 		"enabled":true,
 		"gateway": {
@@ -47,12 +42,7 @@
 			"discount_rate":0.9,
 			"transaction_fee":0.06,
 			"reserve_rate": 0.5,
-			"maximum_chargeback_ratio":0.17,
-			"transaction_counts":{
-				"daily":1000000,
-				"monthly":1000000,
-				"weekly":1000000
-			}
+			"maximum_chargeback_ratio":0.17
 		},
 		"enabled":true,
 		"gateway": {
@@ -83,12 +73,7 @@
 			"discount_rate":0.9,
 			"transaction_fee":0.06,
 			"reserve_rate": 0.5,
-			"maximum_chargeback_ratio":0.17,
-			"transaction_counts":{
-				"daily":1000000,
-				"monthly":1000000,
-				"weekly":1000000
-			}
+			"maximum_chargeback_ratio":0.17
 		},
 		"enabled":true,
 		"gateway": {
@@ -122,12 +107,7 @@
 			"discount_rate":0.9,
 			"transaction_fee":0.06,
 			"reserve_rate": 0.5,
-			"maximum_chargeback_ratio":0.17,
-			"transaction_counts":{
-				"daily":1000000,
-				"monthly":1000000,
-				"weekly":1000000
-			}
+			"maximum_chargeback_ratio":0.17
 		},
 		"enabled":true,
 		"gateway": {
@@ -158,12 +138,7 @@
 			"discount_rate":0.9,
 			"transaction_fee":0.06,
 			"reserve_rate": 0.5,
-			"maximum_chargeback_ratio":0.17,
-			"transaction_counts":{
-				"daily":1000000,
-				"monthly":1000000,
-				"weekly":1000000
-			}
+			"maximum_chargeback_ratio":0.17
 		},
 		"enabled":true,
 		"gateway": {
@@ -196,12 +171,7 @@
 			"discount_rate":0.9,
 			"transaction_fee":0.06,
 			"reserve_rate": 0.5,
-			"maximum_chargeback_ratio":0.17,
-			"transaction_counts":{
-				"daily":1000000,
-				"monthly":1000000,
-				"weekly":1000000
-			}
+			"maximum_chargeback_ratio":0.17
 		},
 		"enabled":true,
 		"gateway": {
@@ -232,12 +202,7 @@
 			"discount_rate":0.9,
 			"transaction_fee":0.06,
 			"reserve_rate": 0.5,
-			"maximum_chargeback_ratio":0.17,
-			"transaction_counts":{
-				"daily":1000000,
-				"monthly":1000000,
-				"weekly":1000000
-			}
+			"maximum_chargeback_ratio":0.17
 		},
 		"enabled":true,
 		"gateway": {
@@ -267,12 +232,7 @@
 			"discount_rate":0.9,
 			"transaction_fee":0.06,
 			"reserve_rate": 0.5,
-			"maximum_chargeback_ratio":0.17,
-			"transaction_counts":{
-				"daily":null,
-				"monthly":null,
-				"weekly":null
-			}
+			"maximum_chargeback_ratio":0.17
 		},
 		"enabled":true,
 		"gateway": {
@@ -303,12 +263,7 @@
 			"discount_rate":0.9,
 			"transaction_fee":0.06,
 			"reserve_rate": 0.5,
-			"maximum_chargeback_ratio":0.17,
-			"transaction_counts":{
-				"daily":null,
-				"monthly":null,
-				"weekly":null
-			}
+			"maximum_chargeback_ratio":0.17
 		},
 		"enabled":true,
 		"gateway": {
@@ -349,7 +304,6 @@
 	    "maximum_chargeback_ratio": 0,
 	    "monthly_cap": null,
 	    "reserve_rate": 0,
-	    "transaction_counts": {},
 	    "transaction_fee": 0
 	  },
 	  "processor": {
@@ -380,7 +334,6 @@
 	    "maximum_chargeback_ratio": 0,
 	    "monthly_cap": null,
 	    "reserve_rate": 0,
-	    "transaction_counts": {},
 	    "transaction_fee": 0
 	  },
 	  "processor": {

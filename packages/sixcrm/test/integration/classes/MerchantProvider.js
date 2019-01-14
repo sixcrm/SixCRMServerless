@@ -58,7 +58,7 @@ module.exports = class MerchantProviderTest extends IntegrationTest {
 
 		du.info('Create Merchant Provider');
 
-		let merchantprovider_create_query = `mutation { createmerchantprovider ( merchantprovider:{ id:"`+merchantprovider_id+`", name:"test", enabled:true, allow_prepaid:true, accepted_payment_methods:["Visa","Mastercard"], processing:{ monthly_cap: 55000, discount_rate: 0.1, transaction_fee: 0.06, reserve_rate: 0.5, maximum_chargeback_ratio: 0.33, transaction_counts: { daily:15, weekly:45, monthly:180 } }, processor:{ name:"NMA" }, gateway:{ name:"NMI", type:"NMI", username:"test", password:"test", processor_id:"123" }, customer_service:{ email:"customerservice@dot.com", url:"http://dot.com/whatever", description:"Dot com", phone:"0000000000", } } ) { id } }`;
+		let merchantprovider_create_query = `mutation { createmerchantprovider ( merchantprovider:{ id:"`+merchantprovider_id+`", name:"test", enabled:true, allow_prepaid:true, accepted_payment_methods:["Visa","Mastercard"], processing:{ monthly_cap: 55000, discount_rate: 0.1, transaction_fee: 0.06, reserve_rate: 0.5, maximum_chargeback_ratio: 0.33 }, processor:{ name:"NMA" }, gateway:{ name:"NMI", type:"NMI", username:"test", password:"test", processor_id:"123" }, customer_service:{ email:"customerservice@dot.com", url:"http://dot.com/whatever", description:"Dot com", phone:"0000000000", } } ) { id } }`;
 
 		return this.executeQuery(merchantprovider_create_query);
 

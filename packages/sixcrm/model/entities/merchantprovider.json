@@ -65,41 +65,6 @@
 				},
 				"maximum_chargeback_ratio": {
 					"$ref": "../definitions/percentage.json"
-				},
-				"transaction_counts": {
-					"type": "object",
-					"properties": {
-						"daily": {
-							"anyOf": [
-								{
-									"$ref": "../definitions/nonnegativeinteger.json"
-								},
-								{
-									"type": "null"
-								}
-							]
-						},
-						"weekly": {
-							"anyOf": [
-								{
-									"$ref": "../definitions/nonnegativeinteger.json"
-								},
-								{
-									"type": "null"
-								}
-							]
-						},
-						"monthly": {
-							"anyOf": [
-								{
-									"$ref": "../definitions/nonnegativeinteger.json"
-								},
-								{
-									"type": "null"
-								}
-							]
-						}
-					}
 				}
 			},
 			"required": [
@@ -107,8 +72,7 @@
 				"discount_rate",
 				"transaction_fee",
 				"reserve_rate",
-				"maximum_chargeback_ratio",
-				"transaction_counts"
+				"maximum_chargeback_ratio"
 			]
 		},
 		"gateway": {
