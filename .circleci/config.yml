@@ -45,36 +45,6 @@ jobs:
       - run:
           name: 'Unit Tests (TypeScript)'
           command: stage=circle yarn run ts-test
-  query_tests:
-    machine: true
-    steps:
-      - checkout
-      - restore_cache:
-          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
-      - run:
-          name: Install Docker Compose
-          command: |
-            curl -L https://github.com/docker/compose/releases/download/1.15.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
-            chmod +x ~/docker-compose
-            sudo mv ~/docker-compose /usr/local/bin/docker-compose
-      - run:
-          name: Start Docker Cluster
-          command: |
-            set -x
-            cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml up -d
-      - run: echo "Pausing to allow docker to catch up..." && sleep 15
-      - run:
-          name: Execute Functional Connectivity Test
-          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project/packages/sixcrm:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-connectivity
-      - run:
-          name: Deploy Local Dynamo
-          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project/packages/sixcrm:/sixcrmserverless -w /sixcrmserverless node node deployment/dynamodb/deploy_tables.js
-      - run:
-          name: Execute Functional Analytics Query Tests in Docker
-          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project/packages/sixcrm:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-analytics-queries
-      - run:
-          name: Execute Functional Analytics Event Tests in Docker
-          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project/packages/sixcrm:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-analytics-events
   pre_deploy:
     <<: *job-defaults
     steps:
@@ -257,15 +227,6 @@ workflows:
                 - staging
                 - production
                 - priority
-      - query_tests:
-          requires:
-            - build
-            - unit_tests
-            - lint
-          filters:
-            branches:
-              only:
-                - development
       - pre_deploy:
           requires:
             - build
