@@ -13,8 +13,11 @@ let dynamicPricingType = require('./components/dynamicPricingType');
 let fulfillmentProviderType = require('../fulfillmentprovider/fulfillmentProviderType');
 let emailTemplateType = require('../emailtemplate/emailTemplateType');
 
-const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
-const productController = new ProductController();
+const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
+const fulfillmentProviderController = new FulfillmentProviderController();
+
+const MerchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
+const merchantProviderGroupController = new MerchantProviderGroupController();
 
 const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 const emailTemplateController = new EmailTemplateController();
@@ -64,12 +67,12 @@ module.exports.graphObj = new GraphQLObjectType({
 		fulfillment_provider: {
 			type: fulfillmentProviderType.graphObj,
 			description: 'The session associated with the transaction.',
-			resolve: product => productController.getFulfillmentProvider(product),
+			resolve: ({ fulfillment_provider_id }) => fulfillment_provider_id && fulfillmentProviderController.get(fulfillment_provider_id)
 		},
 		merchantprovidergroup:{
 			type: merchantProviderGroupType.graphObj,
 			description: 'The merchant provider group associated with the product.',
-			resolve: product => productController.getMerchantProviderGroup(product)
+			resolve: ({ merchant_provider_group_id }) => merchant_provider_group_id && merchantProviderGroupController.get(merchant_provider_group_id)
 		},
 		image_urls: {
 			type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
