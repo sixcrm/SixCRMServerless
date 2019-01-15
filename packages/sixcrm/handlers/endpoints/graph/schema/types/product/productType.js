@@ -11,7 +11,6 @@ const GraphQLList = require('graphql').GraphQLList;
 let merchantProviderGroupType = require('../merchantprovidergroup/merchantProviderGroupType');
 let dynamicPricingType = require('./components/dynamicPricingType');
 let fulfillmentProviderType = require('../fulfillmentprovider/fulfillmentProviderType');
-let productAttributesType = require('./components/attributesType');
 let emailTemplateType = require('../emailtemplate/emailTemplateType');
 
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
@@ -72,9 +71,9 @@ module.exports.graphObj = new GraphQLObjectType({
 			description: 'The merchant provider group associated with the product.',
 			resolve: product => productController.getMerchantProviderGroup(product)
 		},
-		attributes:{
-			type: productAttributesType.graphObj,
-			description: 'The attributes associated with the product.'
+		image_urls: {
+			type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
+			description: 'The product images',
 		},
 		emailtemplates: {
 			type: new GraphQLList(emailTemplateType.graphObj),
