@@ -1,17 +1,16 @@
+const {
+	GraphQLObjectType,
+	GraphQLNonNull,
+	GraphQLFloat,
+	GraphQLBoolean,
+	GraphQLInt,
+	GraphQLString,
+	GraphQLList
+} = require('graphql');
 
-const GraphQLObjectType = require('graphql').GraphQLObjectType;
-const GraphQLNonNull = require('graphql').GraphQLNonNull;
-const GraphQLFloat = require('graphql').GraphQLFloat;
-const GraphQLBoolean = require('graphql').GraphQLBoolean;
-const GraphQLInt = require('graphql').GraphQLInt;
-const GraphQLString = require('graphql').GraphQLString;
-const GraphQLList = require('graphql').GraphQLList;
-
-
-let merchantProviderGroupType = require('../merchantprovidergroup/merchantProviderGroupType');
-let dynamicPricingType = require('./components/dynamicPricingType');
-let fulfillmentProviderType = require('../fulfillmentprovider/fulfillmentProviderType');
-let emailTemplateType = require('../emailtemplate/emailTemplateType');
+const merchantProviderGroupType = require('../merchantprovidergroup/merchantProviderGroupType');
+const fulfillmentProviderType = require('../fulfillmentprovider/fulfillmentProviderType');
+const emailTemplateType = require('../emailtemplate/emailTemplateType');
 
 const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
 const fulfillmentProviderController = new FulfillmentProviderController();
@@ -55,14 +54,9 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: GraphQLInt,
 			description: 'The number of seconds to delay shipping after a transaction.',
 		},
-		default_price: {
+		price: {
 			type: GraphQLFloat,
 			description: 'A default price for product.',
-			resolve: product => product.price
-		},
-		dynamic_pricing: {
-			type: dynamicPricingType.graphObj,
-			description: 'The dynamic pricing range for product.',
 		},
 		fulfillment_provider: {
 			type: fulfillmentProviderType.graphObj,

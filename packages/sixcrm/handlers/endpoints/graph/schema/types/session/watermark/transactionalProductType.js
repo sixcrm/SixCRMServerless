@@ -1,12 +1,12 @@
+const {
+	GraphQLObjectType,
+	GraphQLNonNull,
+	GraphQLFloat,
+	GraphQLString
+} = require('graphql');
 
-const GraphQLObjectType = require('graphql').GraphQLObjectType;
-const GraphQLNonNull = require('graphql').GraphQLNonNull;
-const GraphQLFloat = require('graphql').GraphQLFloat;
-const GraphQLString = require('graphql').GraphQLString;
-
-let merchantProviderGroupType = require('../../merchantprovidergroup/merchantProviderGroupType');
-let fulfillmentProviderType = require('../../fulfillmentprovider/fulfillmentProviderType');
-let productAttributesType = require('../../product/components/attributesType');
+const merchantProviderGroupType = require('../../merchantprovidergroup/merchantProviderGroupType');
+const fulfillmentProviderType = require('../../fulfillmentprovider/fulfillmentProviderType');
 
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const productController = new ProductController();
@@ -52,17 +52,6 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: fulfillmentProviderType.graphObj,
 			description: 'The session associated with the transaction.',
 			resolve: product => productController.getFulfillmentProvider(product)
-		},
-		attributes:{
-			type: productAttributesType.graphObj,
-			description: 'The attributes associated with the product.',
-			resolve: product => productController.get({id: product.id}).then(p => {
-				if (p) {
-					return p.attributes;
-				}
-
-				return product.attributes;
-			})
 		},
 		created_at: {
 			type: GraphQLString,
