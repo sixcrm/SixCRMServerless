@@ -1,13 +1,35 @@
 import { randomBytes } from 'crypto';
 import 'reflect-metadata';
-import { createConnection, getConnection } from 'typeorm';
+import { createConnection, getConnection, getConnectionOptions, ConnectionOptions } from 'typeorm';
 import Product from './entities/Product';
 
 const connectionName = randomBytes(5).toString('hex');
 let connection;
 
-// TODO replace hardcoded config with package config
-const connect  = () => {
+export interface IDatabaseConfig {
+	host: string;
+	port?: number;
+	username: string;
+	password: string;
+	database?: string;
+	schema?: string;
+}
+
+const toConnectionOptions = (config: IDatabaseConfig) => {
+	return {
+		name: connectionName,
+		type: 'postgres',
+		port: 5440,
+		database: 'postgres',
+		schema: 'product_setup',
+		entities: [ Product ],
+		synchronize: true,
+		logging: true,
+		...config
+	} as ConnectionOptions;
+};
+
+export const connect = async (config: IDatabaseConfig) => {
 	if (connection) {
 		try {
 			return getConnection(connectionName);
@@ -17,23 +39,6 @@ const connect  = () => {
 		}
 	}
 
-	console.error('Create and return connection');
-	connection = createConnection({
-		name: connectionName,
-		type: 'postgres',
-		host: '127.0.0.1',
-		port: 5440,
-		username: 'root',
-		password: 'Jagodica9',
-		database: 'postgres',
-		schema: 'evan_product_setup',
-		entities: [
-			Product
-		],
-		synchronize: true,
-		logging: true
-	});
+	connection = createConnection(toConnectionOptions(config));
 	return connection;
 }
-
-export default connect;

@@ -884,7 +884,12 @@ const fields = Object.assign({}, {
 			}
 		},
 		resolve: async (root, { id }) => {
-			const productSetupService = await createProductSetupService();
+			const { host, user: username, password } = global.SixCRM.configuration.site_config.aurora;
+			const productSetupService = await createProductSetupService({
+				host,
+				username,
+				password
+			});
 			return productSetupService.getProduct(id);
 		}
 	},

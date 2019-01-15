@@ -1,12 +1,11 @@
 import { Connection, Repository } from 'typeorm';
-import getConnection from './connect';
+import { connect, IDatabaseConfig } from './connect';
 import Product from './entities/Product';
 
-
-const createProductSetupService = async () => {
+const createProductSetupService = async (databaseConfig: IDatabaseConfig) => {
 
 	try {
-		const connection = await getConnection();
+		const connection = await connect(databaseConfig);
 		return new ProductSetupService(connection);
 	} catch(err) {
 		console.error('Error connecting to Aurora', err);
