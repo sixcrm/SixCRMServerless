@@ -41,10 +41,9 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: GraphQLString,
 			description: 'The product SKU',
 		},
-		ship: {
+		is_shippable: {
 			type: GraphQLBoolean,
 			description: 'The product ship, no-ship status.',
-			resolve: product => product.is_shippable
 		},
 		shipping_price: {
 			type: GraphQLFloat,
