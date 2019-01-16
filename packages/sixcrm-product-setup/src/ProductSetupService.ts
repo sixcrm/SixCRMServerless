@@ -6,7 +6,7 @@ const MASTER_ACCOUNT_ID = '*';
 export default class ProductSetupService {
 	private readonly productRepository: Repository<Product>;
 	private readonly accountId: string;
-	private readonly baseFindOptions: { account_id?: string };
+	private readonly baseFindConditions: { account_id?: string };
 
 	constructor({
 		accountId,
@@ -17,19 +17,23 @@ export default class ProductSetupService {
 	}) {
 		this.productRepository = connection.getRepository(Product);
 		this.accountId = accountId;
-		this.baseFindOptions =
+		this.baseFindConditions =
 			accountId === MASTER_ACCOUNT_ID ? {} : { account_id: accountId };
 	}
 
-	getProduct(id): Promise<Product> {
+	getProduct(id: string): Promise<Product> {
 		return this.productRepository.findOneOrFail({
-			...this.baseFindOptions,
+			...this.baseFindConditions,
 			id
 		});
 	}
 
 	getAllProducts(): Promise<Product[]> {
-		return this.productRepository.find({ ...this.baseFindOptions });
+		return this.productRepository.find(this.baseFindConditions);
+	}
+
+	getProductsByIds(ids: string[]): Promise<Product[]> {
+		return this.productRepository.findByIds(ids, this.baseFindConditions);
 	}
 
 	save(product: Product): Promise<Product> {

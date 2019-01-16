@@ -4,12 +4,14 @@ const {
 	GraphQLFloat,
 	GraphQLString
 } = require('graphql');
-
 const merchantProviderGroupType = require('../../merchantprovidergroup/merchantProviderGroupType');
 const fulfillmentProviderType = require('../../fulfillmentprovider/fulfillmentProviderType');
 
-const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
-const productController = new ProductController();
+const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
+const fulfillmentProviderController = new FulfillmentProviderController();
+
+const MerchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
+const merchantProviderGroupController = new MerchantProviderGroupController();
 
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'TransactionalProduct',
@@ -45,13 +47,13 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		merchantprovidergroup:{
 			type: merchantProviderGroupType.graphObj,
-			description: 'The merchant provider group associated with the product schedule.',
-			resolve: (product) => productController.getMerchantProviderGroup(product)
+			description: 'The merchant provider group associated with the product.',
+			resolve: ({ merchant_provider_group_id }) => merchant_provider_group_id && merchantProviderGroupController.get(merchant_provider_group_id)
 		},
 		fulfillment_provider: {
 			type: fulfillmentProviderType.graphObj,
 			description: 'The session associated with the transaction.',
-			resolve: product => productController.getFulfillmentProvider(product)
+			resolve: ({ fulfillment_provider_id }) => fulfillment_provider_id && fulfillmentProviderController.get(fulfillment_provider_id)
 		},
 		created_at: {
 			type: GraphQLString,
