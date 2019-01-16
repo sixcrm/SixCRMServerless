@@ -4,6 +4,7 @@ import {
 	PrimaryGeneratedColumn,
 	CreateDateColumn,
 	UpdateDateColumn,
+	Index,
 	Check
 } from 'typeorm';
 
@@ -14,6 +15,7 @@ export default class Product {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
+	@Index()
 	@Column('uuid')
 	account_id: string;
 
