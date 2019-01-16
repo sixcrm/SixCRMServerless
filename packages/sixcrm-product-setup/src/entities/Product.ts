@@ -5,13 +5,12 @@ import {
 	CreateDateColumn,
 	UpdateDateColumn,
 	Check
-} from "typeorm";
+} from 'typeorm';
 
 @Entity()
 @Check(`"price" >= 0`)
 @Check(`"shipping_price" >= 0`)
 export default class Product {
-
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
@@ -34,7 +33,7 @@ export default class Product {
 		precision: 19,
 		scale: 2
 	})
-	price: number
+	price: number;
 
 	@Column()
 	is_shippable: boolean;
@@ -45,13 +44,13 @@ export default class Product {
 		precision: 19,
 		scale: 2
 	})
-	shipping_price: number
+	shipping_price: number;
 
 	@Column({
 		type: 'interval',
 		nullable: true
 	})
-	shipping_delay: number
+	shipping_delay: number;
 
 	@Column({
 		type: 'uuid',
@@ -63,7 +62,7 @@ export default class Product {
 		type: 'text',
 		nullable: true
 	})
-	description: string
+	description: string;
 
 	@Column({
 		length: 36,
@@ -73,7 +72,7 @@ export default class Product {
 
 	@Column({
 		type: 'text',
-		array: true,
+		array: true
 	})
 	image_urls: string[];
 
@@ -82,4 +81,24 @@ export default class Product {
 		nullable: true
 	})
 	merchant_provider_group_id: string;
+
+	// Mandatory values only.
+	// I'd really like to have a builder as well.
+	constructor(
+		id: string,
+		account_id: string,
+		name: string,
+		price: number,
+		is_shippable: boolean,
+		image_urls: string[]
+	) {
+		this.id = id;
+		this.account_id = account_id;
+		this.name = name;
+		this.created_at = new Date();
+		this.updated_at = new Date();
+		this.price = price;
+		this.is_shippable = is_shippable;
+		this.image_urls = image_urls;
+	}
 }
