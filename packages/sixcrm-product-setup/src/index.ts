@@ -1,6 +1,6 @@
 import ProductSetupService from './ProductSetupService';
 import { connect, IDatabaseConfig } from './connect';
-import Product from './entities/Product';
+import Product from './models/Product';
 
 let productSetupService;
 

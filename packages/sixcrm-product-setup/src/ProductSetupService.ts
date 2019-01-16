@@ -1,5 +1,5 @@
 import { Connection, Repository } from 'typeorm';
-import Product from './entities/Product';
+import Product from './models/Product';
 
 const MASTER_ACCOUNT_ID = '*';
 

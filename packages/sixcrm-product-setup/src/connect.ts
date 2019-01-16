@@ -1,7 +1,7 @@
 import { randomBytes } from 'crypto';
 import 'reflect-metadata';
 import { createConnection, getConnection, getConnectionOptions, ConnectionOptions } from 'typeorm';
-import Product from './entities/Product';
+import Product from './models/Product';
 
 const connectionName = randomBytes(5).toString('hex');
 let connection;

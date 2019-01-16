@@ -5,7 +5,7 @@ import { expect } from 'chai';
 
 import { createProductSetupService } from '../src';
 import ProductSetupService from '../src/ProductSetupService';
-import Product from '../src/entities/Product';
+import Product from '../src/models/Product';
 
 let getValidProduct = function(accountId) {
 	return new Product(v4(), accountId, 'A product', 100, false, []);
