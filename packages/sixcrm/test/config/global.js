@@ -28,10 +28,6 @@ let test_users = [
 
 let test_accounts = [
 	{
-		name: 'Master Account',
-		id: '*'
-	},
-	{
 		name: 'Test Account 1',
 		id: 'd3fa3bf3-7824-49f4-8261-87674482bf1c'
 	}
