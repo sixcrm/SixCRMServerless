@@ -1060,14 +1060,18 @@ const fields = Object.assign({}, {
 				type: entitySearchInputType.graphObj
 			}
 		},
-		resolve: function(root, products) {
-			const productController = new ProductController();
-
-			return productController.listByAccount({
-				pagination: products.pagination,
-				fatal: list_fatal,
-				search: products.search
+		resolve: async (root, products) => {
+			const { host, user: username, password } = global.SixCRM.configuration.site_config.aurora;
+			const productSetupService = await createProductSetupService({
+				accountId: global.account,
+				host,
+				username,
+				password
 			});
+
+			return {
+				products: await productSetupService.getAllProducts()
+			};
 		}
 	},
 	useracllist: {

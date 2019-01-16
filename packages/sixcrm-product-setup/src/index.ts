@@ -39,4 +39,8 @@ class ProductSetupService {
 		return this.productRepository.findOneOrFail({ ...this.baseFindOptions, id });
 	}
 
+	getAllProducts(): Promise<Product[]> {
+		return this.productRepository.find({ ...this.baseFindOptions });
+	}
+
 }
