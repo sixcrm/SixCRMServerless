@@ -1,6 +1,6 @@
 require('module-alias/register');
 const _ = require('lodash');
-const createProductSetupService = require('@6crm/sixcrm-product-setup').default;
+const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
 
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
@@ -166,7 +166,6 @@ const UserACLController = global.SixCRM.routes.include('controllers', 'entities/
 const UserDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 const UserSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
-const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const ReturnController = global.SixCRM.routes.include('controllers', 'entities/Return.js');
@@ -883,16 +882,7 @@ const fields = Object.assign({}, {
 				type: GraphQLString
 			}
 		},
-		resolve: async (root, { id }) => {
-			const { host, user: username, password } = global.SixCRM.configuration.site_config.aurora;
-			const productSetupService = await createProductSetupService({
-				accountId: global.account,
-				host,
-				username,
-				password
-			});
-			return productSetupService.getProduct(id);
-		}
+		resolve: (root, { id }) => getProductSetupService().getProduct(id)
 	},
 	emailtemplate: {
 		type: emailTemplateType.graphObj,
@@ -1061,13 +1051,7 @@ const fields = Object.assign({}, {
 			}
 		},
 		resolve: async (root, products) => {
-			const { host, user: username, password } = global.SixCRM.configuration.site_config.aurora;
-			const productSetupService = await createProductSetupService({
-				accountId: global.account,
-				host,
-				username,
-				password
-			});
+			const productSetupService = getProductSetupService();
 
 			return {
 				products: await productSetupService.getAllProducts()

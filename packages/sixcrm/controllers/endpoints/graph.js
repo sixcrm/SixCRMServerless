@@ -3,6 +3,7 @@ const _ = require('lodash');
 const graphql = require('graphql').graphql;
 
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const { createProductSetupService } = require('@6crm/sixcrm-product-setup');
 
 const userAuthenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/userauthenticated.js');
 const resolveController = global.SixCRM.routes.include('providers', 'Resolve.js');
@@ -20,11 +21,22 @@ module.exports = class graphController extends userAuthenticatedController {
 
 	}
 
-	preamble() {
+	preamble({ pathParameters: { account }}) {
+		// Workaround for race condition where global.account has not been defined
+		const { account: accountId = account } = global;
 		global.SixCRM.setResource('auroraContext', auroraContext);
 
-		return auroraContext.init();
-
+		const { host, user: username, password } = global.SixCRM.configuration.site_config.aurora;
+		const productSetupServiceOptions = {
+			accountId,
+			host,
+			username,
+			password
+		};
+		return Promise.all([
+			createProductSetupService(productSetupServiceOptions),
+			auroraContext.init()
+		]);
 	}
 
 	body(event) {

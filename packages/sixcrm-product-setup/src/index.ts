@@ -1,14 +1,14 @@
-import { Connection, Repository } from 'typeorm';
+import ProductSetupService from './ProductSetupService';
 import { connect, IDatabaseConfig } from './connect';
 import Product from './entities/Product';
 
-const MASTER_ACCOUNT_ID = '*';
+let productSetupService;
 
 interface IConfig extends IDatabaseConfig {
 	accountId: string;
 }
 
-const createProductSetupService = async ({
+export const createProductSetupService = async ({
 	accountId,
 	...databaseConfig
 }: IConfig) => {
@@ -18,45 +18,12 @@ const createProductSetupService = async ({
 
 	try {
 		const connection = await connect(databaseConfig);
-		return new ProductSetupService({ accountId, connection });
+		productSetupService = new ProductSetupService({ accountId, connection })
+		return productSetupService;
 	} catch (err) {
 		console.error('Error connecting to Aurora', err);
 		throw err;
 	}
 };
 
-export default createProductSetupService;
-
-export class ProductSetupService {
-	private readonly productRepository: Repository<Product>;
-	private readonly accountId: string;
-	private readonly baseFindOptions: { account_id?: string };
-
-	constructor({
-		accountId,
-		connection
-	}: {
-		accountId: string;
-		connection: Connection;
-	}) {
-		this.productRepository = connection.getRepository(Product);
-		this.accountId = accountId;
-		this.baseFindOptions =
-			accountId === MASTER_ACCOUNT_ID ? {} : { account_id: accountId };
-	}
-
-	getProduct(id): Promise<Product> {
-		return this.productRepository.findOneOrFail({
-			...this.baseFindOptions,
-			id
-		});
-	}
-
-	getAllProducts(): Promise<Product[]> {
-		return this.productRepository.find({ ...this.baseFindOptions });
-	}
-
-	save(product: Product): Promise<Product> {
-		return this.productRepository.save(product);
-	}
-}
+export const getProductSetupService = () => productSetupService;

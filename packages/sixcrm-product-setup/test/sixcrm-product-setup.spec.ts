@@ -3,7 +3,8 @@
 import { v4 } from 'uuid';
 import { expect } from 'chai';
 
-import createProductSetupService, { ProductSetupService } from '../src';
+import { createProductSetupService } from '../src';
+import ProductSetupService from '../src/ProductSetupService';
 import Product from '../src/entities/Product';
 
 let getValidProduct = function(accountId) {
