@@ -1,0 +1,176 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/merchantprovider.json",
+	"title": "Merchant Provider",
+	"type": "object",
+	"description": "A merchant provider",
+	"properties": {
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
+		},
+		"name": {
+			"type": "string",
+			"minLength": 2
+		},
+		"processor": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string",
+					"enum": [
+						"NMA",
+						"Humbolt",
+						"GMA",
+						"Group ISO",
+						"Test",
+						"Stripe",
+						"AuthorizeNet",
+						"PaymentXP",
+						"NMI",
+						"Innovio"
+					]
+				},
+				"id": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"name"
+			]
+		},
+		"processing": {
+			"type": "object",
+			"properties": {
+				"monthly_cap": {
+					"anyOf": [
+						{
+							"$ref": "../definitions/currency.json"
+						},
+						{
+							"type": "null"
+						}
+					]
+				},
+				"discount_rate": {
+					"$ref": "../definitions/percentage.json"
+				},
+				"transaction_fee": {
+					"$ref": "../definitions/currency.json"
+				},
+				"reserve_rate": {
+					"$ref": "../definitions/percentage.json"
+				},
+				"maximum_chargeback_ratio": {
+					"$ref": "../definitions/percentage.json"
+				}
+			},
+			"required": [
+				"monthly_cap",
+				"discount_rate",
+				"transaction_fee",
+				"reserve_rate",
+				"maximum_chargeback_ratio"
+			]
+		},
+		"gateway": {
+			"allOf": [
+				{
+					"anyOf": [
+						{
+							"$ref": "./components/merchantprovider/stripe.json"
+						},
+						{
+							"$ref": "./components/merchantprovider/innovio.json"
+						},
+						{
+							"$ref": "./components/merchantprovider/nmi.json"
+						},
+						{
+							"$ref": "./components/merchantprovider/authorizenet.json"
+						},
+						{
+							"$ref": "./components/merchantprovider/paymentxp.json"
+						},
+						{
+							"$ref": "./components/merchantprovider/test.json"
+						}
+					]
+				},
+				{
+					"type": "object",
+					"required": [
+						"name",
+						"type"
+					],
+					"properties": {
+						"name": {
+							"type": "string"
+						},
+						"type": {
+							"type": "string"
+						}
+					}
+				}
+			]
+		},
+		"enabled": {
+			"type": "boolean"
+		},
+		"allow_prepaid": {
+			"type": "boolean"
+		},
+		"accepted_payment_methods": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"enum": [
+					"Visa",
+					"Mastercard",
+					"American Express",
+					"Discover",
+					"LOCAL CARD"
+				]
+			},
+			"minItems": 1,
+			"uniqueItems": true
+		},
+		"customer_service": {
+			"type": "object",
+			"properties": {
+				"email": {
+					"type": "string",
+					"format": "email"
+				},
+				"url": {
+					"type": "string",
+					"format": "uri"
+				},
+				"description": {
+					"type": "string"
+				}
+			}
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
+	},
+	"required": [
+		"id",
+		"account",
+		"name",
+		"processor",
+		"processing",
+		"gateway",
+		"enabled",
+		"allow_prepaid",
+		"accepted_payment_methods",
+		"created_at",
+		"updated_at"
+	]
+}

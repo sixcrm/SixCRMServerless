@@ -14,20 +14,22 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Install
           command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && yarn install --frozen-lockfile
       - save_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
+            - packages/sixcrm/node_modules
+            - packages/sixcrm-product-setup/node_modules
   lint:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: 'Lint'
           command: yarn run lint
@@ -36,7 +38,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: 'Unit Tests (JavaScript)'
           command: stage=circle yarn run test-unit-circle
@@ -48,7 +50,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Install Docker Compose
           command: |
@@ -59,26 +61,26 @@ jobs:
           name: Start Docker Cluster
           command: |
             set -x
-            docker-compose --file tools/docker/docker-compose.yml up -d
+            cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml up -d
       - run: echo "Pausing to allow docker to catch up..." && sleep 15
       - run:
           name: Execute Functional Connectivity Test
-          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-connectivity
+          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project/packages/sixcrm:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-connectivity
       - run:
           name: Deploy Local Dynamo
-          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node node deployment/dynamodb/deploy_tables.js
+          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project/packages/sixcrm:/sixcrmserverless -w /sixcrmserverless node node deployment/dynamodb/deploy_tables.js
       - run:
           name: Execute Functional Analytics Query Tests in Docker
-          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-analytics-queries
+          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project/packages/sixcrm:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-analytics-queries
       - run:
           name: Execute Functional Analytics Event Tests in Docker
-          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-analytics-events
+          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project/packages/sixcrm:/sixcrmserverless -w /sixcrmserverless node yarn run test-functional-analytics-events
   pre_deploy:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: debugging
           command: printenv
@@ -87,7 +89,7 @@ jobs:
           command: mkdir -p deployment_credentials/
       - run:
           name: Create Credentials
-          command: SIX_VERBOSE=2 && node ./deployment/sts/create_role_commands.js --branch=$CIRCLE_BRANCH --output=deployment_credentials/stscredentials
+          command: cd packages/sixcrm && SIX_VERBOSE=2 && node ./deployment/sts/create_role_commands.js --branch=$CIRCLE_BRANCH --output=../../deployment_credentials/stscredentials
       - persist_to_workspace:
           root: .
           paths:
@@ -103,7 +105,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - attach_workspace:
           at: .
       - run:
@@ -111,36 +113,36 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Backup DynamoDB
-          command: export SIX_VERBOSE=2 && printenv && node ./deployment/dynamodb/backup_tables.js --branch=$CIRCLE_BRANCH --version=$CIRCLE_SHA1
+          command: cd packages/sixcrm && export SIX_VERBOSE=2 && printenv && node ./deployment/dynamodb/backup_tables.js --branch=$CIRCLE_BRANCH --version=$CIRCLE_SHA1
   deploy_serverless:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - attach_workspace:
           at: .
       - run:
-          name: Build TypeScript
-          command: npm run ts-build
+          name: Compile
+          command: yarn run compile
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Serveless Deploy
-          command: SLS_DEBUG=* node ./node_modules/serverless/bin/serverless deploy --stage $CIRCLE_BRANCH
+          command: cd packages/sixcrm && SLS_DEBUG=* node ./node_modules/serverless/bin/serverless deploy --stage $CIRCLE_BRANCH
       - run:
           name: Deploy Step Function State Machines
-          command: export SIX_VERBOSE=2 && node ./deployment/stepfunctions/deploy_state_machines.js
+          command: cd packages/sixcrm && export SIX_VERBOSE=2 && node ./deployment/stepfunctions/deploy_state_machines.js
       - run:
           name: Cloudwatch Log Subscriptions
-          command: export SIX_VERBOSE=2 && node ./deployment/cloudwatch/deploy_subscription_filters.js
+          command: cd packages/sixcrm && export SIX_VERBOSE=2 && node ./deployment/cloudwatch/deploy_subscription_filters.js
   deploy_aurora:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - attach_workspace:
           at: .
       - run:
@@ -148,17 +150,18 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy Subnet Groups
-          command: SIX_VERBOSE=2 node ./deployment/aurora/deploy-subnetgroups.js
+          command: cd packages/sixcrm && SIX_VERBOSE=2 node ./deployment/aurora/deploy-subnetgroups.js
       - run:
           name: Aurora Create Cluster
-          command: SIX_VERBOSE=2 node ./deployment/aurora/deploy-cluster.js
+          command: cd packages/sixcrm && SIX_VERBOSE=2 node ./deployment/aurora/deploy-cluster.js
       - run:
           name: Set Proxy
           command: |
-            SIX_VERBOSE=2 node ./deployment/aurora/resolve-cluster.js
+            cd packages/sixcrm && SIX_VERBOSE=2 node ./deployment/aurora/resolve-cluster.js
       - run:
           name: Setup SSH Tunnel
           command: |
+            cd packages/sixcrm
             source ./aurora-env
             echo "Host *" >> ~/.ssh/config
             echo "   AddressFamily inet" >> ~/.ssh/config
@@ -166,14 +169,14 @@ jobs:
             ssh -i ./config/$CIRCLE_BRANCH/ssh-keys/six-crm/sixcrm.pem -o StrictHostKeyChecking=no -f -N -L5440:$AURORA_HOST:5440 ec2-user@$PROXY_HOST
       - run:
           name: Aurora Create Tables
-          command: SIX_VERBOSE=2 AURORA_PROXY=true  node ./deployment/aurora/deploy-schema.js
+          command: cd packages/sixcrm && SIX_VERBOSE=2 AURORA_PROXY=true  node ./deployment/aurora/deploy-schema.js
   #Eh... not very useful currently
   environment_test:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Entity Integration Tests
           command: SIX_VERBOSE=2 yarn run test-environment
@@ -182,7 +185,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - attach_workspace:
           at: .
       - run:
@@ -190,16 +193,16 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Entity Seed
-          command: SIX_VERBOSE=2 node ./deployment/dynamodb/deploy_seeds.js
+          command: cd packages/sixcrm && SIX_VERBOSE=2 node ./deployment/dynamodb/deploy_seeds.js
       - run:
           name: Entity Live Seed
-          command: SIX_VERBOSE=2 node ./deployment/dynamodb/deploy_live_seeds.js
+          command: cd packages/sixcrm && SIX_VERBOSE=2 node ./deployment/dynamodb/deploy_live_seeds.js
   deleteblock_integration_tests:
     <<: *job-defaults
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Deleteblock Integration Tests
           command: yarn run test-deleteblocks
@@ -208,7 +211,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Entity Integration Tests
           command: yarn run test-entities
@@ -217,7 +220,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Analytics Integration Tests
           command: SIX_VERBOSE=2 yarn run test-integration-analytics
@@ -226,7 +229,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Transactional Integration Tests
           command: SIX_VERBOSE=6 yarn run test-transactions

@@ -1,0 +1,344 @@
+[
+	{
+		"id":"6c40761d-8919-4ad6-884d-6a46a776cfb9",
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"name":"NMI Account 1",
+		"processor":{
+			"name":"NMA"
+		},
+		"processing":{
+			"monthly_cap": null,
+			"discount_rate":0.9,
+			"transaction_fee":0.06,
+			"reserve_rate": 0.5,
+			"maximum_chargeback_ratio":0.17
+		},
+		"enabled":true,
+		"gateway": {
+			"type":"NMI",
+			"name":"NMI",
+			"username":"demo",
+			"password":"password"
+		},
+		"allow_prepaid":true,
+		"accepted_payment_methods":["Visa", "Mastercard", "American Express","LOCAL CARD"],
+		"customer_service":{
+			"email":"customer.service@mid.com",
+			"url":"http://mid.com",
+			"description":"Some string here..."
+		},
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	},
+	{
+		"id":"79189a4a-ed89-4742-aa96-afcd7f6c08fb",
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"name":"NMI Account 2",
+		"processor":{
+			"name":"NMA"
+		},
+		"processing":{
+			"monthly_cap": 1000000000.00,
+			"discount_rate":0.9,
+			"transaction_fee":0.06,
+			"reserve_rate": 0.5,
+			"maximum_chargeback_ratio":0.17
+		},
+		"enabled":true,
+		"gateway": {
+			"type":"NMI",
+			"name":"NMI",
+			"username":"demo",
+			"password":"password"
+		},
+		"allow_prepaid":true,
+		"accepted_payment_methods":["Visa", "Mastercard", "American Express","LOCAL CARD"],
+		"customer_service":{
+			"email":"customer.service@mid.com",
+			"url":"http://mid.com",
+			"description":"Some string here..."
+		},
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	},
+	{
+		"id":"cfb93d1e-ba76-4e91-98cc-59f6c2a4cfa5",
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"name":"Innovio Account",
+		"processor":{
+			"name":"Humbolt"
+		},
+		"processing":{
+			"monthly_cap": 1000000000.00,
+			"discount_rate":0.9,
+			"transaction_fee":0.06,
+			"reserve_rate": 0.5,
+			"maximum_chargeback_ratio":0.17
+		},
+		"enabled":true,
+		"gateway": {
+			"type":"Innovio",
+			"name":"Innovio",
+			"username":"timothy.dalbey@sixrm.com",
+			"password":"vIngelB92SWGNBDHTTQK",
+			"product_id":"64219",
+			"site_id":"45481",
+			"merchant_account_id":"47769"
+		},
+		"allow_prepaid":true,
+		"accepted_payment_methods":["Visa", "Mastercard", "American Express","LOCAL CARD"],
+		"customer_service":{
+			"email":"customer.service@mid.com",
+			"url":"http://mid.com",
+			"description":"Some string here..."
+		},
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	},
+	{
+		"id":"c42cbd57-a0f2-4eb7-9a06-3766017c8216",
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"name":"AuthorizeNet Account",
+		"processor":{
+			"name":"AuthorizeNet"
+		},
+		"processing":{
+			"monthly_cap": 1000000000.00,
+			"discount_rate":0.9,
+			"transaction_fee":0.06,
+			"reserve_rate": 0.5,
+			"maximum_chargeback_ratio":0.17
+		},
+		"enabled":true,
+		"gateway": {
+			"type":"AuthorizeNet",
+			"name":"AuthorizeNet",
+			"api_key": "7zPJg88Hg2LX",
+			"transaction_key": "2J6hsH3b45R8Ps8w"
+		},
+		"allow_prepaid":true,
+		"accepted_payment_methods":["Visa", "Mastercard", "American Express","LOCAL CARD"],
+		"customer_service":{
+			"email":"customer.service@mid.com",
+			"url":"http://mid.com",
+			"description":"Some string here..."
+		},
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	},
+	{
+		"id":"2e475a80-bd79-4fac-a5d4-4ccfa427f340",
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"name":"PaymentXP Test Account",
+		"processor":{
+			"name":"PaymentXP"
+		},
+		"processing":{
+			"monthly_cap": 1000000000.00,
+			"discount_rate":0.9,
+			"transaction_fee":0.06,
+			"reserve_rate": 0.5,
+			"maximum_chargeback_ratio":0.17
+		},
+		"enabled":true,
+		"gateway": {
+			"type":"PaymentXP",
+			"name":"PaymentXP",
+			"username": "10012",
+			"password": "Password@3",
+			"merchant_id": "10012",
+			"merchant_key": "c22a63ee-2e7a-4ace-96ac-0958dc8d953f"
+		},
+		"allow_prepaid":true,
+		"accepted_payment_methods":["Visa", "Mastercard", "American Express","LOCAL CARD"],
+		"customer_service":{
+			"email":"customer.service@mid.com",
+			"url":"http://mid.com",
+			"description":"Some string here..."
+		},
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	},
+	{
+		"id":"a32a3f71-1234-4d9e-a9a1-98ecedb88f24",
+		"account":"eefdeca6-41bc-4af9-a561-159acb449b5e",
+		"name":"Test MID 1",
+		"processor":{
+			"name":"Test"
+		},
+		"processing":{
+			"monthly_cap": 1000000000.00,
+			"discount_rate":0.9,
+			"transaction_fee":0.06,
+			"reserve_rate": 0.5,
+			"maximum_chargeback_ratio":0.17
+		},
+		"enabled":true,
+		"gateway": {
+			"type":"Test",
+			"name":"Test",
+			"username":"demo",
+			"password":"password"
+		},
+		"allow_prepaid":true,
+		"accepted_payment_methods":["Visa", "Mastercard", "American Express","LOCAL CARD"],
+		"customer_service":{
+			"email":"customer.service@mid.com",
+			"url":"http://mid.com",
+			"description":"Some string here..."
+		},
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	},
+	{
+		"id":"e9f4898a-97e0-41cc-8549-3a49fdba95fd",
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"name":"Stripe MID 1",
+		"processor":{
+			"name":"Stripe"
+		},
+		"processing":{
+			"monthly_cap": 1000000000.00,
+			"discount_rate":0.9,
+			"transaction_fee":0.06,
+			"reserve_rate": 0.5,
+			"maximum_chargeback_ratio":0.17
+		},
+		"enabled":true,
+		"gateway": {
+			"type":"Stripe",
+			"name":"Stripe",
+			"api_key":"sk_test_BQokikJOvBiI2HlWgH4olfQ2"
+		},
+		"allow_prepaid":true,
+		"accepted_payment_methods":["Visa", "Mastercard", "American Express","LOCAL CARD"],
+		"customer_service":{
+			"email":"customer.service@mid.com",
+			"url":"http://mid.com",
+			"description":"Some string here..."
+		},
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	},
+	{
+		"id":"1b4771b0-1d4d-4ae8-8c12-2bbcfdff308f",
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"name":"NMI Live Account",
+		"processor":{
+			"name":"NMA"
+		},
+		"processing":{
+			"monthly_cap": null,
+			"discount_rate":0.9,
+			"transaction_fee":0.06,
+			"reserve_rate": 0.5,
+			"maximum_chargeback_ratio":0.17
+		},
+		"enabled":true,
+		"gateway": {
+			"type":"NMI",
+			"name":"NMI",
+			"username":"Flashlight456",
+			"password":"Hyw6qS67DT"
+		},
+		"allow_prepaid":true,
+		"accepted_payment_methods":["Visa", "Mastercard", "American Express", "LOCAL CARD"],
+		"customer_service":{
+			"email":"customer.service@mid.com",
+			"url":"http://mid.com",
+			"description":"Some string here..."
+		},
+		"created_at":"2018-04-28T14:40:00.000Z",
+		"updated_at":"2018-04-28T14:40:00.000Z"
+	},
+	{
+		"id":"8a15d551-71c2-4ab1-aa78-119e5377f783",
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"name":"Stripe Live Account",
+		"processor":{
+			"name":"Stripe"
+		},
+		"processing":{
+			"monthly_cap": null,
+			"discount_rate":0.9,
+			"transaction_fee":0.06,
+			"reserve_rate": 0.5,
+			"maximum_chargeback_ratio":0.17
+		},
+		"enabled":true,
+		"gateway": {
+			"type":"Stripe",
+			"name":"Stripe",
+			"api_key":"sk_live_AMHO6C6kwJFGV3GisP6u3yoD"
+		},
+		"allow_prepaid":true,
+		"accepted_payment_methods":["Visa", "Mastercard", "American Express", "LOCAL CARD"],
+		"customer_service":{
+			"email":"customer.service@mid.com",
+			"url":"http://mid.com",
+			"description":"Some string here..."
+		},
+		"created_at":"2018-04-28T14:40:00.000Z",
+		"updated_at":"2018-04-28T14:40:00.000Z"
+	},
+	{
+	  "accepted_payment_methods": [
+	    "American Express",
+	    "Mastercard",
+	    "Visa"
+	  ],
+	  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+	  "allow_prepaid": true,
+	  "created_at": "2018-05-01T20:45:19.285Z",
+	  "customer_service": {},
+	  "enabled": true,
+	  "gateway": {
+	    "api_key": "sk_test_BQokikJOvBiI2HlWgH4olfQ2",
+	    "name": "Stripe",
+	    "type": "Stripe"
+	  },
+	  "id": "8d8f56ef-424f-4db9-9e38-36e1ad78812d",
+	  "name": "Six Test Accounting Stripe",
+	  "processing": {
+	    "discount_rate": 0,
+	    "maximum_chargeback_ratio": 0,
+	    "monthly_cap": null,
+	    "reserve_rate": 0,
+	    "transaction_fee": 0
+	  },
+	  "processor": {
+	    "name": "Stripe"
+	  },
+	  "updated_at": "2018-05-01T20:45:19.285Z"
+	},
+	{
+	  "accepted_payment_methods": [
+	    "American Express",
+	    "Mastercard",
+	    "Visa"
+	  ],
+	  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+	  "allow_prepaid": true,
+	  "created_at": "2018-05-01T20:45:19.285Z",
+	  "customer_service": {},
+	  "enabled": true,
+	  "gateway": {
+	    "api_key": "sk_test_BQokikJOvBiI2HlWgH4olfQ2",
+	    "name": "Stripe",
+	    "type": "Stripe"
+	  },
+	  "id": "8d8f56ef-424f-4db9-9e38-36e1ad78812d",
+	  "name": "Six Test Accounting Stripe",
+	  "processing": {
+	    "discount_rate": 0,
+	    "maximum_chargeback_ratio": 0,
+	    "monthly_cap": null,
+	    "reserve_rate": 0,
+	    "transaction_fee": 0
+	  },
+	  "processor": {
+	    "name": "Stripe"
+	  },
+	  "updated_at": "2018-05-01T20:45:19.285Z"
+	}
+]
