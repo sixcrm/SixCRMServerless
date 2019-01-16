@@ -37,6 +37,11 @@ export default class ProductSetupService {
 	}
 
 	save(product: Product): Promise<Product> {
+		const { account_id } = product;
+		if (this.accountId !== account_id) {
+			throw new Error('Product accountId does not match authorized account ID.')
+		}
+
 		return this.productRepository.save(product);
 	}
 }
