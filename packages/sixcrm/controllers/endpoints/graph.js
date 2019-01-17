@@ -21,9 +21,9 @@ module.exports = class graphController extends userAuthenticatedController {
 
 	}
 
-	preamble({ pathParameters: { account }}) {
-		// Workaround for race condition where global.account has not been defined
-		const { account: accountId = account } = global;
+	// Pull accountId off of the event to workaround a race condition
+	// where global.account has not been defined or is wrong
+	preamble({ pathParameters: { account: accountId }}) {
 		global.SixCRM.setResource('auroraContext', auroraContext);
 
 		const { host, user: username, password } = global.SixCRM.configuration.site_config.aurora;
