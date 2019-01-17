@@ -1,0 +1,42 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/sixcrmcore
+    docker:
+      - image: circleci/node:8.10
+    steps:
+      - checkout
+      - restore_cache:
+          key: node_modules-{{ checksum "yarn.lock" }}
+      - run:
+          name: install
+          command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && yarn install
+      - save_cache:
+          key: node_modules-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+
+      - run:
+          name: lint
+          command: yarn run lint
+      - run:
+          name: types-check
+          command: yarn run types-check
+      - run:
+          name: compile
+          command: yarn run compile
+      - run:
+          name: test
+          command: yarn run test
+
+      - deploy:
+          name: deploy
+          command: |
+            set -ex
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              git config --global user.email $GIT_EMAIL
+              git config --global user.name $GIT_USER
+              # yarn version --new-version 0.0.$CIRCLE_BUILD_NUM
+              # git push --tags
+              yarn publish --new-version 0.0.$CIRCLE_BUILD_NUM
+            fi

@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"target": "es2017",
+		"module": "commonjs",
+		"lib": [ "es2017", "esnext.asynciterable" ],
+		"outDir": "lib",
+		"sourceMap": true,
+		"inlineSources": true,
+		"declaration": true,
+		"moduleResolution": "node",
+		"strictNullChecks": true,
+		"noImplicitReturns": true,
+		"alwaysStrict": true,
+		"noImplicitAny": false
+	},
+	"include": [
+		"src/**/*.ts"
+	],
+	"files": [
+		"global.d.ts"
+	],
+	"baseUrl": "."
+}

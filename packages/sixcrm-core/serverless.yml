@@ -1,0 +1,2 @@
+# This is just here so the system can start up.
+# The real configuration will be specific to each app that consumes this library.

@@ -1,0 +1,17 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/sixcrmaccountidentifier.json",
+	"title": "SixCRM Account",
+	"type": "string",
+	"anyOf": [
+		{
+			"$ref": "./uuidv4.json"
+		},
+		{
+			"type": "string",
+			"enum": [
+				"*"
+			]
+		}
+	]
+}

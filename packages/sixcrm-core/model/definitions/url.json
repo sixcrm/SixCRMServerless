@@ -1,0 +1,8 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/url.json",
+	"title": "URL",
+	"description": "A URL",
+	"type": "string",
+	"format": "uri"
+}

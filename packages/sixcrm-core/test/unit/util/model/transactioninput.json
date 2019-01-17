@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "test/unit/lib/model/transactioninput.json",
+  "title": "Transaction Input",
+  "anyOf": [
+    {
+      "$ref": "./uuidv4.json"
+    },
+    {
+      "$ref": "./iso8601.json"
+    }
+  ]
+}

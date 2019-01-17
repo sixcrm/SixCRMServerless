@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "test/unit/lib/model/sixcrmidentifier.json",
+  "title": "SixCrmIdentifier",
+  "type": "string",
+  "anyOf": [
+    {
+      "$ref": "./uuidv4.json"
+    },
+    {
+      "type": "string",
+      "enum": [
+        "*"
+      ]
+    }
+  ]
+}

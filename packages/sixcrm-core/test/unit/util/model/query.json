@@ -1,0 +1,6 @@
+{
+  "requestContext":{"authorizer":{ "user": "nikola.bosic@coingcs.com" }},
+  "pathParameters": {"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c"},
+  "body":
+    "mutation {createcustomer ( customer: {id: \"b5803b28-c584-4bb3-8fac-3315b91686b4\", email: \"test@test.com\", firstname: \"Test_b5803b28-c584-4bb3-8fac-3315b91686b3\", lastname: \"Test\", phone: \"1234567890\", address: { line1: \"123 Test St.\", line2: \"Apartment 3\", city: \"Portland\", state: \"OR\", zip: \"97213\", country: \"USA\" }, creditcards:[\"df84f7bb-06bd-4daa-b1a3-6a2c113edd72\"]} ) {id,email,firstname,lastname,phone,address {line1,city,state,zip,country},creditcards {id,number,expiration,cvv,name,address {line1,line2,city,state,zip}},created_at,updated_at}}"
+}

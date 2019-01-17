@@ -1,0 +1,12 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/sixcrmbillingplanname.json",
+	"title": "SixCRM Account Billing Plan Name",
+	"type": "string",
+	"enum": [
+		"basic",
+		"professional",
+		"premium",
+		"free"
+	]
+}
