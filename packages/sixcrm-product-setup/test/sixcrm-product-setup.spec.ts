@@ -92,4 +92,45 @@ describe('@6crm/sixcrm-product-setup', () => {
 			).to.have.lengthOf(0);
 		});
 	});
+
+	describe('getProductsByIds', () => {
+		it('retrieves products', async () => {
+			// given
+			const firstProduct = getValidProduct(accountId);
+			const secondProduct = getValidProduct(accountId);
+
+			await productSetupService.save(firstProduct);
+			await productSetupService.save(secondProduct);
+
+			// when
+			const products = await productSetupService.getProductsByIds([
+				firstProduct.id,
+				secondProduct.id
+			]);
+
+			// then
+			expect(products.map(p => p.id)).to.deep.equal([
+				firstProduct.id,
+				secondProduct.id
+			]);
+		});
+
+		it('retrieves only products from same account', async () => {
+			// given
+			const firstProduct = getValidProduct(accountId);
+			const secondProduct = getValidProduct(anotherAccountId);
+
+			await productSetupService.save(firstProduct);
+			await anotherProductSetupService.save(secondProduct);
+
+			// when
+			const products = await productSetupService.getProductsByIds([
+				firstProduct.id,
+				secondProduct.id
+			]);
+
+			// then
+			expect(products.map(p => p.id)).to.deep.equal([firstProduct.id]);
+		});
+	});
 });
