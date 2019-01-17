@@ -14,54 +14,42 @@ describe('@6crm/sixcrm-product-setup', () => {
 	let productSetupService: ProductSetupService;
 	let accountId = v4();
 
-	before(done => {
-		createProductSetupService({
+	before(async () => {
+		productSetupService = await createProductSetupService({
 			accountId,
 			host: 'localhost',
 			username: 'postgres',
 			password: '',
 			schema: 'public'
-		}).then(service => {
-			productSetupService = service;
-			done();
 		});
 	});
 
-	it('persists a product', done => {
+	it('persists a product', async () => {
 		// given
 		const aProduct = getValidProduct(accountId);
+		await productSetupService.save(aProduct);
 
 		// when
-		productSetupService.save(aProduct).then(result => {
-			// then
-			productSetupService.getProduct(aProduct.id).then(productFromDb => {
-				expect(productFromDb.id).to.equal(aProduct.id);
-				expect(productFromDb.account_id).to.equal(aProduct.account_id);
-				expect(productFromDb.name).to.equal(aProduct.name);
-				//expect(productFromDb.price).to.equal(aProduct.price); <-- this fails
-				expect(productFromDb.is_shippable).to.equal(aProduct.is_shippable);
+		const productFromDb = await productSetupService.getProduct(aProduct.id);
 
-				done();
-			});
-		});
+		// then
+		expect(productFromDb.id).to.equal(aProduct.id);
+		expect(productFromDb.account_id).to.equal(aProduct.account_id);
+		expect(productFromDb.name).to.equal(aProduct.name);
+		// expect(productFromDb.price).to.equal(aProduct.price); // this fails cause string conversion
+		expect(productFromDb.is_shippable).to.equal(aProduct.is_shippable);
 	});
 
-	it('lists products', done => {
+	it('lists products', async () => {
 		// given
 		const aProduct = getValidProduct(accountId);
+		const previousProducts = await productSetupService.getAllProducts();
 
-		productSetupService.getAllProducts().then(products => {
-			const originalCount = products.length;
+		// when
+		await productSetupService.save(aProduct);
 
-			// when
-			productSetupService.save(aProduct).then(() => {
-				// then
-				productSetupService.getAllProducts().then(products => {
-					expect(products.length).to.equal(originalCount + 1);
-
-					done();
-				});
-			});
-		});
+		// then
+		const newProducts = await productSetupService.getAllProducts();
+		expect(newProducts.length).to.equal(previousProducts.length + 1);
 	});
 });
