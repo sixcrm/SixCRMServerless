@@ -35,7 +35,7 @@ let this_request = request(endpoint);
 describe('Customer indexing test', function() {
 
 	let test_user = global.test_users[0];
-	let test_account = global.test_accounts[0];
+	let test_account = global.master_account;
 	let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 	let account = test_account.id;
 
