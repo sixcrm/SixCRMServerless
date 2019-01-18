@@ -15,11 +15,12 @@ module.exports.graphObj = new GraphQLInputObjectType({
 		name:					{ type: new GraphQLNonNull(GraphQLString) },
 		description:	{ type: GraphQLString },
 		sku:					{ type: GraphQLString },
-		ship:					{ type: GraphQLBoolean },
+		price:       	{ type: GraphQLFloat, defaultValue: 0 },
+		is_shippable:	{ type: GraphQLBoolean, defaultValue: false },
+		shipping_price: { type: GraphQLFloat },
 		shipping_delay: 		{ type: GraphQLInt },
 		fulfillment_provider: 	{ type: GraphQLString },
-		price:       	{ type: GraphQLFloat },
-		image_urls: { type: new GraphQLNonNull(new GraphQLList(GraphQLString)) },
+		image_urls: { type: new GraphQLList(GraphQLString), defaultValue: [] },
 		updated_at: { type: GraphQLString }
 	})
 });

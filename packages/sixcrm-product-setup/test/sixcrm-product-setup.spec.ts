@@ -34,11 +34,11 @@ describe('@6crm/sixcrm-product-setup', () => {
 		});
 	});
 
-	describe('save', () => {
+	describe('createProduct', () => {
 		it('persists a product', async () => {
 			// given
 			const aProduct = getValidProduct(accountId);
-			await productSetupService.save(aProduct);
+			await productSetupService.createProduct(aProduct);
 
 			// when
 			const productFromDb = await productSetupService.getProduct(aProduct.id);
@@ -57,7 +57,7 @@ describe('@6crm/sixcrm-product-setup', () => {
 			aProduct.account_id = v4(); // altering the account
 
 			// then
-			expect(() => productSetupService.save(aProduct)).to.throw();
+			expect(() => productSetupService.createProduct(aProduct)).to.throw();
 		});
 	});
 
@@ -68,7 +68,7 @@ describe('@6crm/sixcrm-product-setup', () => {
 			const previousProducts = await productSetupService.getAllProducts();
 
 			// when
-			await productSetupService.save(aProduct);
+			await productSetupService.createProduct(aProduct);
 
 			// then
 			const newProducts = await productSetupService.getAllProducts();
@@ -80,8 +80,8 @@ describe('@6crm/sixcrm-product-setup', () => {
 			const myProduct = getValidProduct(accountId);
 			const someoneElsesProduct = getValidProduct(anotherAccountId);
 
-			productSetupService.save(myProduct);
-			anotherProductSetupService.save(someoneElsesProduct);
+			productSetupService.createProduct(myProduct);
+			anotherProductSetupService.createProduct(someoneElsesProduct);
 
 			// when
 			const myProducts = await productSetupService.getAllProducts();
@@ -99,8 +99,8 @@ describe('@6crm/sixcrm-product-setup', () => {
 			const firstProduct = getValidProduct(accountId);
 			const secondProduct = getValidProduct(accountId);
 
-			await productSetupService.save(firstProduct);
-			await productSetupService.save(secondProduct);
+			await productSetupService.createProduct(firstProduct);
+			await productSetupService.createProduct(secondProduct);
 
 			// when
 			const products = await productSetupService.getProductsByIds([
@@ -120,8 +120,8 @@ describe('@6crm/sixcrm-product-setup', () => {
 			const firstProduct = getValidProduct(accountId);
 			const secondProduct = getValidProduct(anotherAccountId);
 
-			await productSetupService.save(firstProduct);
-			await anotherProductSetupService.save(secondProduct);
+			await productSetupService.createProduct(firstProduct);
+			await anotherProductSetupService.createProduct(secondProduct);
 
 			// when
 			const products = await productSetupService.getProductsByIds([

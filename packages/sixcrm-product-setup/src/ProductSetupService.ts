@@ -36,12 +36,47 @@ export default class ProductSetupService {
 		return this.productRepository.findByIds(ids, this.baseFindConditions);
 	}
 
-	async save(product: Product): Promise<Product> {
-		const { account_id } = product;
-		if (this.accountId !== account_id) {
-			throw new Error('Product accountId does not match authorized account ID.')
+	async createProduct(product: Product): Promise<Product> {
+		const { account_id: productAccountId } = product;
+		if (!this.canCreateProduct(productAccountId)) {
+			throw new Error('Products cannot be created on the Master account');
 		}
 
-		return this.productRepository.save(product);
+		const insertResult = await this.productRepository.insert({ account_id: this.accountId, ...product });
+		const [{ id }] = insertResult.identifiers;
+		return this.getProduct(id);
+	}
+
+	async updateProduct(product: Product): Promise<Product> {
+		const { account_id: productAccountId = this.accountId, id } = product;
+		if (!this.canUpdateProduct(productAccountId)) {
+			throw new Error('Not authorized to update product');
+		}
+
+		const updateCriteria = this.isMasterAccount ? { id } : { account_id: productAccountId, id };
+		await this.productRepository.update(updateCriteria, { ...product });
+		return this.getProduct(id);
+	}
+
+	async deleteProduct(id: string): Promise<{ id: string}> {
+		const deleteResult = await this.productRepository.delete({ id, ...this.baseFindConditions });
+		const [, rowsAffected] = deleteResult.raw;
+		if (rowsAffected === 0) {
+			throw new Error('No product found in account');
+		}
+
+		return { id };
+	}
+
+	private canCreateProduct(productAccountId: string): boolean {
+		return !!productAccountId || !this.isMasterAccount();
+	}
+
+	private canUpdateProduct(productAccountId: string): boolean {
+		return productAccountId && this.isMasterAccount() || productAccountId === this.accountId;
+	}
+	
+	private isMasterAccount(): boolean {
+		return this.accountId === MASTER_ACCOUNT_ID;
 	}
 }

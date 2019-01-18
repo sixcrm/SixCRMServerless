@@ -1,3 +1,4 @@
+const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
 let SMTPProviderInputType = require('./smtpprovider/SMTPProviderInputType');
 let SMTPProviderType = require('./smtpprovider/SMTPProviderType');
 
@@ -486,13 +487,7 @@ module.exports.graphObj = new GraphQLObjectType({
 					type: productInputType.graphObj
 				}
 			},
-			resolve: (value, product) => {
-				const productController = new ProductController();
-
-				return productController.create({
-					entity: product.product
-				});
-			}
+			resolve: (value, { product }) => getProductSetupService().createProduct(product)
 		},
 		updateproduct: {
 			type: productType.graphObj,
@@ -502,13 +497,7 @@ module.exports.graphObj = new GraphQLObjectType({
 					type: productInputType.graphObj
 				}
 			},
-			resolve: (value, product) => {
-				const productController = new ProductController();
-
-				return productController.update({
-					entity: product.product
-				});
-			}
+			resolve: (value, { product }) => getProductSetupService().updateProduct(product)
 		},
 		deleteproduct: {
 			type: deleteOutputType.graphObj,
@@ -519,14 +508,7 @@ module.exports.graphObj = new GraphQLObjectType({
 					type: new GraphQLNonNull(GraphQLString)
 				}
 			},
-			resolve: (value, product) => {
-				var id = product.id;
-				const productController = new ProductController();
-
-				return productController.delete({
-					id: id
-				});
-			}
+			resolve: (value, { id }) => getProductSetupService().deleteProduct(id)
 		},
 		createaccesskey: {
 			type: accessKeyType.graphObj,
