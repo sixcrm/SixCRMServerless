@@ -2,15 +2,16 @@
 # yarn lockfile v1
 
 
-"@6crm/sixcrmanalytics@0.0.20":
-  version "0.0.20"
-  resolved "https://registry.yarnpkg.com/@6crm/sixcrmanalytics/-/sixcrmanalytics-0.0.20.tgz#2762b77f7435c1faa6a7df922c539179ab099849"
-  integrity sha512-X3/bOuYt8Jm3RupRCSctreES59lVCh35fmwZUJGbHyrw7GF/QksyN09Taped8C1aKAb4ouD20ll7Z8E8+TFqFg==
+"@6crm/sixcrmanalytics@0.0.60":
+  version "0.0.60"
+  resolved "https://registry.yarnpkg.com/@6crm/sixcrmanalytics/-/sixcrmanalytics-0.0.60.tgz#1222ec0f68629fa674baa05089b23821bf5d0d3e"
+  integrity sha512-8f1juRQ1ybVoNcQ/wP8uVivZh2JjMN8vw+nqcMd8n0Ynwrr80PWMBzDiYkJc0zwNFTKafrNLg72FjShI0VCc2g==
   dependencies:
     "@6crm/sixcrmcore" "0.0.46"
     aws-sdk "^2.338.0"
     bluebird "^3.5.2"
     lodash "^4.17.11"
+    moment-timezone "^0.5.23"
     pg-format "^1.0.4"
 
 "@6crm/sixcrmcore@0.0.25":
@@ -4800,11 +4801,6 @@ hosted-git-info@^2.1.4, hosted-git-info@^2.6.0:
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.7.1.tgz#97f236977bd6e125408930ff6de3eec6281ec047"
   integrity sha512-7T/BxH19zbcCTa8XkMlbK5lTo1WtgkFi3GvdWEyNuc4Vex7/9Dqbnpsf4JMydcfj9HCg4zUWFTL3Za6lapg5/w==
 
-html-comment-regex@^1.1.0:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/html-comment-regex/-/html-comment-regex-1.1.2.tgz#97d4688aeb5c81886a364faa0cad1dda14d433a7"
-  integrity sha512-P+M65QY2JQ5Y0G9KKdlDpo0zK+/OHptU5AaBwUfAIDJZk1MYf32Frm84EcOytfJE0t5JvkAnKlmjsXDnWzCJmQ==
-
 htmlparser2@^3.9.1:
   version "3.10.0"
   resolved "https://registry.yarnpkg.com/htmlparser2/-/htmlparser2-3.10.0.tgz#5f5e422dcf6119c0d983ed36260ce9ded0bee464"
@@ -5411,13 +5407,6 @@ is-subset@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/is-subset/-/is-subset-0.1.1.tgz#8a59117d932de1de00f245fcdd39ce43f1e939a6"
   integrity sha1-ilkRfZMt4d4A8kX83TnOQ/HpOaY=
-
-is-svg@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/is-svg/-/is-svg-3.0.0.tgz#9321dbd29c212e5ca99c4fa9794c714bcafa2f75"
-  integrity sha512-gi4iHK53LR2ujhLVVj+37Ykh9GLqYHX6JOVXbLAucaG/Cqw9xwdFOjDM2qeifLs1sF1npXXFvDu0r5HNgCMrzQ==
-  dependencies:
-    html-comment-regex "^1.1.0"
 
 is-text-path@^1.0.0:
   version "1.0.1"
@@ -6844,7 +6833,7 @@ module-alias@^2.1.0:
   resolved "https://registry.yarnpkg.com/module-alias/-/module-alias-2.1.0.tgz#c36d4fd15f7f9d7112f62fa015385e7b65a286c1"
   integrity sha1-w21P0V9/nXES9i+gFThee2WihsE=
 
-moment-timezone@^0.5.11, moment-timezone@^0.5.17, moment-timezone@^0.5.20:
+moment-timezone@^0.5.11, moment-timezone@^0.5.17, moment-timezone@^0.5.20, moment-timezone@^0.5.23:
   version "0.5.23"
   resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.23.tgz#7cbb00db2c14c71b19303cb47b0fb0a6d8651463"
   integrity sha512-WHFH85DkCfiNMDX5D3X7hpNH3/PUhjTGcD0U1SgfBGZxJ3qUmJh5FdvaFjcClxOvB3rzdfj4oRffbI38jEnC1w==
