@@ -12,7 +12,7 @@ module.exports = class IntegrationTest {
 	constructor(){
 
 		this.endpoint = global.integration_test_config.endpoint;
-		this.account = global.test_accounts[1];
+		this.account = global.test_accounts[0];
 		this.user = global.test_users[0];
 		this.test_jwt = tu.createTestAuth0JWT(this.user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
