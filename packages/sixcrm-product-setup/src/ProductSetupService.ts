@@ -36,7 +36,7 @@ export default class ProductSetupService {
 		return this.productRepository.findByIds(ids, this.baseFindConditions);
 	}
 
-	save(product: Product): Promise<Product> {
+	async save(product: Product): Promise<Product> {
 		const { account_id } = product;
 		if (this.accountId !== account_id) {
 			throw new Error('Product accountId does not match authorized account ID.')
