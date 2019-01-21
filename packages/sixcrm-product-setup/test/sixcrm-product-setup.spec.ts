@@ -114,7 +114,7 @@ describe('@6crm/sixcrm-product-setup', () => {
 			]);
 
 			// then
-			expect(products.map(p => p.id)).to.deep.equal([
+			expect(products.map(p => p.id)).to.have.members([
 				firstProduct.id,
 				secondProduct.id
 			]);
