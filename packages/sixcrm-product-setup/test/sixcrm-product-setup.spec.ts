@@ -1,7 +1,10 @@
 'use strict';
 
 import { v4 } from 'uuid';
-import { expect } from 'chai';
+import * as chai from 'chai';
+import * as chaiAsPromised from 'chai-as-promised';
+chai.use(chaiAsPromised);
+const expect = chai.expect;
 
 import { createProductSetupService } from '../src';
 import ProductSetupService from '../src/ProductSetupService';
@@ -10,6 +13,7 @@ import Product from '../src/models/Product';
 let getValidProduct = function(accountId) {
 	return new Product(v4(), accountId, 'A product', 100, false, []);
 };
+
 describe('@6crm/sixcrm-product-setup', () => {
 	let productSetupService: ProductSetupService;
 	let anotherProductSetupService: ProductSetupService;
@@ -51,13 +55,14 @@ describe('@6crm/sixcrm-product-setup', () => {
 			expect(productFromDb.is_shippable).to.equal(aProduct.is_shippable);
 		});
 
+	describe('updateProduct', () => {
 		it('enforces same account', async () => {
 			// given
 			const aProduct = getValidProduct(accountId);
 			aProduct.account_id = v4(); // altering the account
 
 			// then
-			expect(() => productSetupService.createProduct(aProduct)).to.throw();
+			expect(productSetupService.updateProduct(aProduct)).to.be.rejected;
 		});
 	});
 
