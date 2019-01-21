@@ -1,5 +1,7 @@
 import { Connection, Repository } from 'typeorm';
 import Product from './models/Product';
+import { validate } from "class-validator";
+
 
 const MASTER_ACCOUNT_ID = '*';
 
@@ -37,6 +39,7 @@ export default class ProductSetupService {
 	}
 
 	async createProduct(product: Product): Promise<Product> {
+		await this.validateProduct(product);
 		const { account_id: productAccountId } = product;
 		if (!this.canCreateProduct(productAccountId)) {
 			throw new Error('Products cannot be created on the Master account');
@@ -52,7 +55,6 @@ export default class ProductSetupService {
 		if (!this.canUpdateProduct(productAccountId)) {
 			throw new Error('Not authorized to update product');
 		}
-
 		const updateCriteria = this.isMasterAccount ? { id } : { account_id: productAccountId, id };
 		await this.productRepository.update(updateCriteria, { ...product });
 		return this.getProduct(id);
@@ -75,8 +77,20 @@ export default class ProductSetupService {
 	private canUpdateProduct(productAccountId: string): boolean {
 		return productAccountId && this.isMasterAccount() || productAccountId === this.accountId;
 	}
-	
+
 	private isMasterAccount(): boolean {
 		return this.accountId === MASTER_ACCOUNT_ID;
+	}
+
+	private async isValidProduct(product: Product): Promise<boolean> {
+		const errors = await validate(product);
+		return !errors.length;
+	}
+
+	private async validateProduct(product: Product): Promise<void> {
+		const valid = await this.isValidProduct(product);
+		if (!valid) {
+			throw new Error('Product is not valid');
+		}
 	}
 }

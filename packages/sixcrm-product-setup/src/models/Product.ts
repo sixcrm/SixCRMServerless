@@ -8,6 +8,8 @@ import {
 	Check
 } from 'typeorm';
 
+import { IsUUID } from "class-validator";
+
 @Entity()
 @Check(`"price" >= 0`)
 @Check(`"shipping_price" >= 0`)
@@ -17,6 +19,7 @@ export default class Product {
 
 	@Index()
 	@Column('uuid')
+	@IsUUID()
 	account_id: string;
 
 	@Column({

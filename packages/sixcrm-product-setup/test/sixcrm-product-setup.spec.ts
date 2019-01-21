@@ -39,7 +39,7 @@ describe('@6crm/sixcrm-product-setup', () => {
 	});
 
 	describe('createProduct', () => {
-		it('persists a product', async () => {
+		it('creates a product', async () => {
 			// given
 			const aProduct = getValidProduct(accountId);
 			await productSetupService.createProduct(aProduct);
@@ -54,6 +54,16 @@ describe('@6crm/sixcrm-product-setup', () => {
 			// expect(productFromDb.price).to.equal(aProduct.price); // this fails cause string conversion
 			expect(productFromDb.is_shippable).to.equal(aProduct.is_shippable);
 		});
+
+		it('rejects objects with invalid id', async () => {
+			// given
+			const aProduct = getValidProduct(accountId);
+			aProduct.account_id = 'not-an-uuid';
+
+			// then
+			expect(productSetupService.createProduct(aProduct)).to.be.rejected;
+		});
+	});
 
 	describe('updateProduct', () => {
 		it('enforces same account', async () => {
