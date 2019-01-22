@@ -55,6 +55,17 @@ describe('@6crm/sixcrm-product-setup', () => {
 			expect(productFromDb.is_shippable).to.equal(aProduct.is_shippable);
 		});
 
+		it('returns the generated product ID', async () => {
+			// given
+			const aProduct = getValidProduct(accountId);
+
+			// when
+			const resultFromDb = await productSetupService.createProduct(aProduct);
+
+			// then
+			expect(resultFromDb.id).to.equal(aProduct.id);
+		});
+
 		it('rejects objects with invalid account id', async () => {
 			// given
 			const aProduct = getValidProduct(accountId);

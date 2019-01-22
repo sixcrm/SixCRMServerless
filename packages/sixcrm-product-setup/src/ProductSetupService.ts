@@ -2,8 +2,11 @@ import { Connection, Repository } from 'typeorm';
 import Product from './models/Product';
 import { validate, ValidationError } from "class-validator";
 
-
 const MASTER_ACCOUNT_ID = '*';
+
+interface IProductEntityId {
+	id: string;
+}
 
 export default class ProductSetupService {
 	private readonly productRepository: Repository<Product>;
@@ -38,7 +41,9 @@ export default class ProductSetupService {
 		return this.productRepository.findByIds(ids, this.baseFindConditions);
 	}
 
-	async createProduct(product: Product): Promise<Product> {
+	// defensive copy to avoid typeorm issues with objects without prototypes
+	// https://github.com/typeorm/typeorm/issues/2065
+	async createProduct({ ...product }: Product): Promise<IProductEntityId> {
 		await this.validateProduct(product);
 		const { account_id: productAccountId } = product;
 		if (!this.canCreateProduct(productAccountId)) {
@@ -46,22 +51,22 @@ export default class ProductSetupService {
 		}
 
 		const insertResult = await this.productRepository.insert({ account_id: this.accountId, ...product });
-		const [{ id }] = insertResult.identifiers;
-		return this.getProduct(id);
+		return insertResult.identifiers[0] as IProductEntityId;
 	}
 
-	async updateProduct(product: Product): Promise<Product> {
+	// defensive copy to avoid typeorm issues with objects without prototypes
+	// https://github.com/typeorm/typeorm/issues/2065
+	async updateProduct({ ...product }: Product): Promise<void> {
 		await this.validateProduct(product);
 		const { account_id: productAccountId = this.accountId, id } = product;
 		if (!this.canUpdateProduct(productAccountId)) {
 			throw new Error('Not authorized to update product');
 		}
 		const updateCriteria = this.isMasterAccount ? { id } : { account_id: productAccountId, id };
-		await this.productRepository.update(updateCriteria, { ...product });
-		return this.getProduct(id);
+		await this.productRepository.update(updateCriteria, product );
 	}
 
-	async deleteProduct(id: string): Promise<{ id: string}> {
+	async deleteProduct(id: string): Promise<IProductEntityId> {
 		const deleteResult = await this.productRepository.delete({ id, ...this.baseFindConditions });
 		const [, rowsAffected] = deleteResult.raw;
 		if (rowsAffected === 0) {
