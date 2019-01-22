@@ -8,7 +8,7 @@ import {
 	Check
 } from 'typeorm';
 
-import { IsUUID } from "class-validator";
+import { IsUUID, IsNotEmpty, Min, ArrayUnique, IsOptional } from "class-validator";
 
 @Entity()
 @Check(`"price" >= 0`)
@@ -20,11 +20,13 @@ export default class Product {
 	@Index()
 	@Column('uuid')
 	@IsUUID()
+	@IsNotEmpty()
 	account_id: string;
 
 	@Column({
 		length: 55
 	})
+	@IsNotEmpty()
 	name: string;
 
 	@CreateDateColumn()
@@ -38,9 +40,12 @@ export default class Product {
 		precision: 19,
 		scale: 2
 	})
+	@IsNotEmpty()
+	@Min(0)
 	price: number;
 
 	@Column()
+	@IsNotEmpty()
 	is_shippable: boolean;
 
 	@Column({
@@ -49,6 +54,8 @@ export default class Product {
 		precision: 19,
 		scale: 2
 	})
+	@Min(0)
+	@IsOptional()
 	shipping_price: number;
 
 	@Column({
@@ -61,6 +68,8 @@ export default class Product {
 		type: 'uuid',
 		nullable: true
 	})
+	@IsUUID()
+	@IsOptional()
 	fulfillment_provider_id: string;
 
 	@Column({
@@ -79,12 +88,15 @@ export default class Product {
 		type: 'text',
 		array: true
 	})
+	@ArrayUnique()
 	image_urls: string[];
 
 	@Column({
 		type: 'uuid',
 		nullable: true
 	})
+	@IsUUID()
+	@IsOptional()
 	merchant_provider_group_id: string;
 
 	// Mandatory values only.

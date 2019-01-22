@@ -1,6 +1,6 @@
 import { Connection, Repository } from 'typeorm';
 import Product from './models/Product';
-import { validate } from "class-validator";
+import { validate, ValidationError } from "class-validator";
 
 
 const MASTER_ACCOUNT_ID = '*';
@@ -51,6 +51,7 @@ export default class ProductSetupService {
 	}
 
 	async updateProduct(product: Product): Promise<Product> {
+		await this.validateProduct(product);
 		const { account_id: productAccountId = this.accountId, id } = product;
 		if (!this.canUpdateProduct(productAccountId)) {
 			throw new Error('Not authorized to update product');
@@ -88,9 +89,11 @@ export default class ProductSetupService {
 	}
 
 	private async validateProduct(product: Product): Promise<void> {
-		const valid = await this.isValidProduct(product);
+		const errors: ValidationError[] = await validate(product);
+		const valid: boolean = !errors.length;
 		if (!valid) {
-			throw new Error('Product is not valid');
+			throw new Error(errors[0].toString());
 		}
 	}
+
 }
