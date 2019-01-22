@@ -1,6 +1,6 @@
 require('module-alias/register');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 const CustomMailerHelper = require('@root/controllers/helpers/email/CustomerMailer.js');
 const handlebars = require('@root/controllers/helpers/emailtemplates/Handlebars.js');

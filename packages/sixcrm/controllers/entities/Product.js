@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const entityController = require('./Entity');
 
 module.exports = class ProductController extends entityController {

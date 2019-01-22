@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const fileutilities = require('@6crm/sixcrmcore/util/file-utilities').default;
-const parserutilities = require('@6crm/sixcrmcore/util/parser-utilities').default;
+const fileutilities = require('@6crm/sixcrmcore/lib/util/file-utilities').default;
+const parserutilities = require('@6crm/sixcrmcore/lib/util/parser-utilities').default;
 
 const AccountController = global.SixCRM.routes.include('entities', 'Account.js');
 

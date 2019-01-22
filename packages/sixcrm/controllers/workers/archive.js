@@ -1,8 +1,8 @@
 
 const _ = require('lodash');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 var workerController = global.SixCRM.routes.include('controllers', 'workers/sqs/worker.js');
 const TransactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');

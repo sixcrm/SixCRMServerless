@@ -32,6 +32,7 @@ provider:
   deploymentBucket:
     serverSideEncryption: AES256
   environment:
+    NODE_ENV: ${opt:stage, self:provider.stage} #Technical Debt:  Eliminate
     stage: ${opt:stage, self:provider.stage} #Technical Debt:  Eliminate
     aws_region: ${opt:region, self:provider.region} #Technical Debt:  Eliminate
     aws_account: ${self:provider.account} #Technical Debt:  Eliminate

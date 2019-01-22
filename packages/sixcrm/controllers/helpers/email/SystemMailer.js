@@ -1,7 +1,7 @@
 
 const _ = require('lodash');
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/smtp-provider.js');
 
 //Technical Debt:  Validate, write tests.

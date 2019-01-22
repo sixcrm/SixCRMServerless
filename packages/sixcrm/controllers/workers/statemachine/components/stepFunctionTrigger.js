@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 
 const StateMachineHelperController = global.SixCRM.routes.include('helpers','statemachine/StateMachine.js');
 const StepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');

@@ -3,8 +3,8 @@ const {
 	APIControllers,
 	Constants
 } = require('authorizenet');
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 module.exports = class AuthorizeNet {
 	constructor({api_key, transaction_key}) {

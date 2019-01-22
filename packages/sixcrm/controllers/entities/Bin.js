@@ -1,5 +1,5 @@
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 
 module.exports = class BinController extends entityController {
 

@@ -4,10 +4,10 @@ const chai = require('chai');
 chai.use(require('chai-json-schema'));
 const assert = require('chai').assert
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const tu = require('@6crm/sixcrmcore/util/test-utilities').default;
-const signatureutilities = require('@6crm/sixcrmcore/util/signature').default;
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const tu = require('@6crm/sixcrmcore/lib/util/test-utilities').default;
+const signatureutilities = require('@6crm/sixcrmcore/lib/util/signature').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 try {
 	var config = global.SixCRM.routes.include('test', '/integration/config/'+process.env.stage+'.yml');

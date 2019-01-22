@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');

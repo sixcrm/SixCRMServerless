@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const HelperController = global.SixCRM.routes.include('helpers', 'Helper.js');
 

@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const moment = require('moment');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const TransactionUtilities = global.SixCRM.routes.include('helpers', 'transaction/TransactionUtilities.js');
 const TransactionController = global.SixCRM.routes.include('entities','Transaction.js');
 const RebillController = global.SixCRM.routes.include('entities','Rebill.js');

@@ -1,7 +1,7 @@
 
 require('@6crm/sixcrmcore');
-const encode = require('@6crm/sixcrmcore/util/encode').default;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const encode = require('@6crm/sixcrmcore/lib/util/encode').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 process.env.SIX_VERBOSE = 2;
 let object = {

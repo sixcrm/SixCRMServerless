@@ -1,4 +1,4 @@
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const ShipmentUtilities = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
 
 module.exports = class FulfillController extends ShipmentUtilities {

@@ -4,7 +4,7 @@ const _ = require('lodash');
 const fs = require('fs');
 const uuid = require('uuid/v4');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 const DynamoDBProvider = global.SixCRM.routes.include('controllers', 'providers/dynamodb-provider.js');
 

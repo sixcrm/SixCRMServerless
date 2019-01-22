@@ -3,7 +3,7 @@ const _ = require('lodash');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-let objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+let objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidMerchantProvider(id) {
@@ -320,7 +320,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				body: body
 			};
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					post() {
 						return Promise.resolve(response);
@@ -362,7 +362,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				body: body
 			};
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					post() {
 						return Promise.resolve(response);
@@ -409,7 +409,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				body: body
 			};
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					post() {
 						return Promise.resolve(response);
@@ -453,7 +453,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				body: body
 			};
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					post() {
 						return Promise.resolve(response);
@@ -501,7 +501,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				body: body
 			};
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					post() {
 						return Promise.resolve(response);
@@ -545,7 +545,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				body: body
 			};
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					post() {
 						return Promise.resolve(response);
@@ -594,7 +594,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				body: body
 			};
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					post() {
 						return Promise.resolve(response);
@@ -634,7 +634,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				body: body
 			};
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					post() {
 						return Promise.resolve(response);

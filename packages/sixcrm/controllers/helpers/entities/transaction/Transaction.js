@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const numberutilities = require('@6crm/sixcrmcore/util/number-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const numberutilities = require('@6crm/sixcrmcore/lib/util/number-utilities').default;
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 const TransactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
 

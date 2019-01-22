@@ -2,11 +2,11 @@
 const _ = require('lodash');
 const creditCardType = require('credit-card-type');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
 const Parameters = global.SixCRM.routes.include('providers','Parameters.js');
 
 module.exports = class MerchantProviderGeneralFilter {

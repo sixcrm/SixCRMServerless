@@ -2,7 +2,7 @@ const _ = require('lodash');
 const Bluebird = require('bluebird');
 
 require('@6crm/sixcrmcore');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 const TransactionController = require('../../controllers/entities/Transaction');
 
@@ -10,7 +10,7 @@ const transactionController = new TransactionController();
 
 transactionController.disableACLs();
 
-const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
+const auroraContext = require('@6crm/sixcrmcore/lib/util/analytics/aurora-context').default;
 const configurationAcquistion = require('../../config/controllers/configuration_acquisition');
 
 const batchSize = 25;
@@ -33,9 +33,9 @@ configurationAcquistion.getAuroraClusterEndpoint().then(async (endpoint) => {
 		du.info("Connection established");
 
 		const idsResult = await connection.query(`
-			SELECT id from analytics.f_transaction t where 
-				t.processor_result != 'success' and 
-				t.processor_result != 'error' and 
+			SELECT id from analytics.f_transaction t where
+				t.processor_result != 'success' and
+				t.processor_result != 'error' and
 				t.processor_result != 'fail'
 			`);
 		const ids = _.map(idsResult.rows, row => row.id);
