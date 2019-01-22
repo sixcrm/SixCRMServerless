@@ -33,7 +33,7 @@ export default class Product {
 	created_at: Date;
 
 	@UpdateDateColumn()
-	updated_at: Date;
+	updated_at?: Date;
 
 	@Column({
 		type: 'numeric',

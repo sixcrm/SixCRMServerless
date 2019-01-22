@@ -17,7 +17,7 @@ export const createProductSetupService = async ({
 
 	try {
 		const connection = await connect(databaseConfig);
-		productSetupService = new ProductSetupService({ accountId, connection })
+		productSetupService = new ProductSetupService({ accountId, connection });
 		return productSetupService;
 	} catch (err) {
 		console.error('Error connecting to Aurora', err);

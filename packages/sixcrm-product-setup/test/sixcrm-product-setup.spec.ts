@@ -104,6 +104,21 @@ describe('@6crm/sixcrm-product-setup', () => {
 	});
 
 	describe('updateProduct', () => {
+		it('updates a product', async () => {
+			// given
+			const aProduct = getValidProduct(accountId);
+			aProduct.id = (await productSetupService.createProduct(aProduct)).id;
+			const description = aProduct.description = 'lorem ipsum';
+
+			// when
+			await productSetupService.updateProduct(aProduct);
+			const productFromDb = await productSetupService.getProduct(aProduct.id);
+
+			// then
+			expect(productFromDb.id).to.equal(aProduct.id);
+			expect(productFromDb.description).to.equal(description);
+		});
+
 		it('enforces same account', async () => {
 			// given
 			const aProduct = getValidProduct(accountId);

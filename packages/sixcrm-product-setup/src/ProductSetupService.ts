@@ -56,7 +56,8 @@ export default class ProductSetupService {
 
 	// defensive copy to avoid typeorm issues with objects without prototypes
 	// https://github.com/typeorm/typeorm/issues/2065
-	async updateProduct({ ...product }: Product): Promise<void> {
+	// ignore updated_at to workaround https://github.com/typeorm/typeorm/issues/2651
+	async updateProduct({ updated_at, ...product }: Product): Promise<void> {
 		await this.validateProduct(product);
 		const { account_id: productAccountId = this.accountId, id } = product;
 		if (!this.canUpdateProduct(productAccountId)) {
