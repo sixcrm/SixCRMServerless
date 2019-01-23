@@ -17,6 +17,8 @@ const EncryptionHelper = global.SixCRM.routes.include('helpers', 'encryption/Enc
 //Technical Debt:  We need a "inactivate"  method that is used more prolifically than the delete method is.
 //Technical Debt:  Much of this stuff can be abstracted to a Query Builder class...
 
+const CENSORED_VALUE = '****';
+
 module.exports = class entityUtilitiesController extends PermissionedController {
 
 	constructor(){
@@ -932,6 +934,18 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	censorEncryptedAttributes(entity, custom_censor_fn) {
 		return this.encryptionhelper.censorEncryptedAttributes(this.encrypted_attribute_paths, entity, custom_censor_fn);
+	}
+
+	async handleCensoredValues(entity) {
+		const sanitization = this.sanitization;
+		this.sanitization = false;
+		const original = await this.get({id: entity.id, fatal: true});
+		this.sanitization = sanitization;
+		for (const path of this.encrypted_attribute_paths) {
+			if (_(entity).get(path) === CENSORED_VALUE) {
+				_.set(entity, path, _(original).get(path));
+			}
+		}
 	}
 
 }
