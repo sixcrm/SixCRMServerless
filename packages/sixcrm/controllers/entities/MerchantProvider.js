@@ -2,7 +2,7 @@ const _ = require('lodash');
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const entityController = require('./Entity');
 
-const ENCRYPTED_VALUE = '****';
+const CENSORED_VALUE = '****';
 
 module.exports = class MerchantProviderController extends entityController {
 
@@ -62,10 +62,9 @@ module.exports = class MerchantProviderController extends entityController {
 		this.sanitization = false;
 		const original = await this.get({id: entity.id, fatal: true});
 		this.sanitization = sanitization;
-
-		for (const encrypted_path of this.encrypted_attribute_paths) {
-			if (entity[encrypted_path] === ENCRYPTED_VALUE) {
-				entity[encrypted_path] = original[encrypted_path];
+		for (const path of this.encrypted_attribute_paths) {
+			if (_(entity).get(path) === CENSORED_VALUE) {
+				_.set(entity, path, _(original).get(path));
 			}
 		}
 
