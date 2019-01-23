@@ -72,7 +72,7 @@ describe('Graph ' + entity + ' Test', function () {
 	});
 
 	it(`Test notification endpoint should return success`, function (done) {
-		let account = global.test_accounts[0];
+		let account = global.master_account;
 		let test_user = global.test_users[0];
 		let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
