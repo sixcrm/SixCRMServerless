@@ -40,5 +40,12 @@ module.exports = class FulfillmentProviderController extends entityController {
 
 	}
 
+	async update({entity}) {
+		await this.handleCensoredValues(entity);
+
+		return super.update({entity, ignore_updated_at: true});
+	}
+
+
 }
 
