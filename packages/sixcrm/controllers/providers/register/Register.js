@@ -175,6 +175,7 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	async pushSubscriptionEvents(response) {
+
 		const rebill = this.parameters.get('rebill');
 		const products = rebill && rebill.products;
 
@@ -187,7 +188,7 @@ module.exports = class Register extends RegisterUtilities {
 			return;
 		}
 
-		const product_ids = products.map(product => product.id);
+		const product_ids = products.map(product => product.product.id);
 		const status = response.response_type === this.processor_response_map.success ? 'active' : 'error';
 
 		for (let i = 0; i < product_schedules.length; i++) {
