@@ -41,9 +41,9 @@ export default class ProductSetupService {
 		return this.productRepository.findByIds(ids, this.baseFindConditions);
 	}
 
-	// defensive copy to avoid typeorm issues with objects without prototypes
+	// shallow copy to avoid typeorm issues with objects without prototypes
 	// https://github.com/typeorm/typeorm/issues/2065
-	async createProduct({ ...product }: Product): Promise<IProductEntityId> {
+	async createProduct({ ...product }: Partial<Product>): Promise<IProductEntityId> {
 		await this.validateProduct(product);
 		const { account_id: productAccountId } = product;
 		if (!this.canCreateProduct(productAccountId)) {
@@ -54,10 +54,10 @@ export default class ProductSetupService {
 		return insertResult.identifiers[0] as IProductEntityId;
 	}
 
-	// defensive copy to avoid typeorm issues with objects without prototypes
+	// shallow copy to avoid typeorm issues with objects without prototypes
 	// https://github.com/typeorm/typeorm/issues/2065
 	// ignore updated_at to workaround https://github.com/typeorm/typeorm/issues/2651
-	async updateProduct({ updated_at, ...product }: Product): Promise<void> {
+	async updateProduct({ updated_at, ...product }: Partial<Product>): Promise<void> {
 		await this.validateProduct(product);
 		const { account_id: productAccountId = this.accountId, id } = product;
 		if (!this.canUpdateProduct(productAccountId)) {
@@ -77,7 +77,7 @@ export default class ProductSetupService {
 		return { id };
 	}
 
-	private canCreateProduct(productAccountId: string): boolean {
+	private canCreateProduct(productAccountId?: string): boolean {
 		return !!productAccountId || !this.isMasterAccount();
 	}
 
@@ -94,7 +94,8 @@ export default class ProductSetupService {
 		return !errors.length;
 	}
 
-	private async validateProduct(product: Product): Promise<void> {
+	private async validateProduct(partialProduct: Partial<Product>): Promise<void> {
+		const product = this.productRepository.create(partialProduct);
 		const errors: ValidationError[] = await validate(product);
 		const valid: boolean = !errors.length;
 		if (!valid) {

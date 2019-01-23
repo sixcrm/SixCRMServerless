@@ -72,7 +72,7 @@ describe('@6crm/sixcrm-product-setup', () => {
 			aProduct.account_id = 'not-an-uuid';
 
 			// then
-			expect(productSetupService.createProduct(aProduct)).to.be.rejected;
+			await expect(productSetupService.createProduct(aProduct)).to.be.rejected;
 		});
 
 		it('rejects objects without account id', async () => {
@@ -81,7 +81,7 @@ describe('@6crm/sixcrm-product-setup', () => {
 			delete aProduct.account_id;
 
 			// then
-			expect(productSetupService.createProduct(aProduct)).to.be.rejected;
+			await expect(productSetupService.createProduct(aProduct)).to.be.rejected;
 		});
 
 		it('rejects objects with negative price', async () => {
@@ -90,7 +90,7 @@ describe('@6crm/sixcrm-product-setup', () => {
 			aProduct.price = -1;
 
 			// then
-			expect(productSetupService.createProduct(aProduct)).to.be.rejected;
+			await expect(productSetupService.createProduct(aProduct)).to.be.rejected;
 		});
 
 		it('rejects objects with duplicate images', async () => {
@@ -99,7 +99,7 @@ describe('@6crm/sixcrm-product-setup', () => {
 			aProduct.image_urls = ['http://example.com/img.jpg', 'http://example.com/img.jpg'];
 
 			// then
-			expect(productSetupService.createProduct(aProduct)).to.be.rejected;
+			await expect(productSetupService.createProduct(aProduct)).to.be.rejected;
 		});
 	});
 
@@ -125,7 +125,7 @@ describe('@6crm/sixcrm-product-setup', () => {
 			aProduct.account_id = v4(); // altering the account
 
 			// then
-			expect(productSetupService.updateProduct(aProduct)).to.be.rejected;
+			await expect(productSetupService.updateProduct(aProduct)).to.be.rejected;
 		});
 	});
 
