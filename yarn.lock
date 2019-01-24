@@ -9139,6 +9139,13 @@ serverless-offline@^3.31.0:
     uuid "^3.3.2"
     velocityjs "^1.1.2"
 
+serverless-plugin-monorepo@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/serverless-plugin-monorepo/-/serverless-plugin-monorepo-0.5.0.tgz#5c4f42d2cf61453bc49fa5da2a7d0b7d9942f4c7"
+  integrity sha512-vdh/kfqzVrCrFQqCiH9Tk0cpElnenbYs/nnIwAHuKKyyNNwjTyGcF4Ju6Tduql//8VaqmR/OTG/AC1kBNxFiBg==
+  dependencies:
+    fs-extra "^7.0.0"
+
 serverless-plugin-split-stacks@^1.5.5:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/serverless-plugin-split-stacks/-/serverless-plugin-split-stacks-1.7.0.tgz#786db81bdc1d525d5e8bd72e84837a31678d6e0c"
