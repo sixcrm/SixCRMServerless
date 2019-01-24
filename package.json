@@ -1,8 +1,7 @@
 {
   "private": true,
   "workspaces": {
-    "packages": ["packages/*"],
-    "nohoist": ["sixcrm*/**"]
+    "packages": ["packages/*"]
   },
   "scripts": {
     "compile": "lerna run compile",

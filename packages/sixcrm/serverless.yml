@@ -50,6 +50,7 @@ plugins:
   - serverless-plugin-warmup
   - serverless-plugin-split-stacks
   - serverless-offline
+  - serverless-plugin-monorepo
 
 custom:
   prune:
