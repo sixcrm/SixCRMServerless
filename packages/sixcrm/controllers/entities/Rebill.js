@@ -81,24 +81,6 @@ module.exports = class RebillController extends entityController {
 
 	}
 
-	//Note: rebills don't get product associations, only product schedules
-	//Technical Debt:  Is this deprecated?
-	getProducts(rebill) {
-		if (_.has(rebill, 'products') && arrayutilities.nonEmpty(rebill.products)) {
-
-			return this.executeAssociatedEntityFunction('ProductController', 'listBy', {
-				list_array: rebill.products
-			})
-				.then(products => this.getResult(products, 'products'));
-
-		} else {
-
-			return null;
-
-		}
-
-	}
-
 	listProductSchedules(rebill) {
 		if (_.has(rebill, 'product_schedules') && arrayutilities.nonEmpty(rebill.product_schedules)) {
 

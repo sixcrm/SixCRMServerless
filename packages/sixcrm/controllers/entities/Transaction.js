@@ -4,6 +4,7 @@ var random = require('@6crm/sixcrmcore/util/random').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -57,7 +58,7 @@ class TransactionController extends entityController {
 	}
 
 	getProduct(product){
-		return this.executeAssociatedEntityFunction('ProductController', 'get', {id: this.getID(product)});
+		return getProductSetupService().getProduct(this.getID(product));
 
 	}
 
@@ -118,7 +119,7 @@ class TransactionController extends entityController {
 
 		if(_.has(transaction_product, "product")){
 
-			promises.push(this.executeAssociatedEntityFunction('ProductController', 'get', {id: transaction_product.product}));
+			promises.push(getProductSetupService().getProduct(this.getID(transaction_product.product)));
 
 		}else{
 

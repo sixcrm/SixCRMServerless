@@ -1,4 +1,4 @@
-import { Connection, Repository } from 'typeorm';
+import { Connection, Repository, FindConditions } from 'typeorm';
 import Product from './models/Product';
 import { validate, ValidationError } from "class-validator";
 
@@ -35,6 +35,10 @@ export default class ProductSetupService {
 
 	getAllProducts(): Promise<Product[]> {
 		return this.productRepository.find(this.baseFindConditions);
+	}
+
+	findProducts(conditions: FindConditions<Product>): Promise<Product[]> {
+		return this.productRepository.find({ ...conditions, ...this.baseFindConditions });
 	}
 
 	getProductsByIds(ids: string[]): Promise<Product[]> {

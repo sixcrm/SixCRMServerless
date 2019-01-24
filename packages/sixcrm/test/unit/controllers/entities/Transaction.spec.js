@@ -61,10 +61,14 @@ describe('controllers/Transaction.js', () => {
 				id: 'dummy_id'
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Product.js'), class {
-				get({id}) {
-					expect(id).to.equal(a_product.id);
-					return Promise.resolve('a_product_data');
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductSetupService() {
+					return {
+						getProduct(id) {
+							expect(id).to.equal(a_product.id);
+							return Promise.resolve('a_product_data');
+						}
+					};
 				}
 			});
 

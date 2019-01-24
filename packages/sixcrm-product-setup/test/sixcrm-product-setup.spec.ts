@@ -161,6 +161,44 @@ describe('@6crm/sixcrm-product-setup', () => {
 		});
 	});
 
+	describe('findProducts', () => {
+		it('finds products', async () => {
+			// given
+			const firstProduct = getValidProduct(accountId);
+			const description = firstProduct.description = v4();
+			const secondProduct = getValidProduct(accountId);
+
+			await productSetupService.createProduct(firstProduct);
+			await productSetupService.createProduct(secondProduct);
+
+			// when
+			const products = await productSetupService.findProducts({
+				description
+			});
+
+			// then
+			expect(products.map(p => p.id)).to.deep.equal([firstProduct.id]);
+		});
+
+		it('retrieves only products from same account', async () => {
+			// given
+			const firstProduct = getValidProduct(accountId);
+			const secondProduct = getValidProduct(anotherAccountId);
+			const description = firstProduct.description = secondProduct.description = v4();
+
+			await productSetupService.createProduct(firstProduct);
+			await anotherProductSetupService.createProduct(secondProduct);
+
+			// when
+			const products = await productSetupService.findProducts({
+				description
+			});
+
+			// then
+			expect(products.map(p => p.id)).to.deep.equal([firstProduct.id]);
+		});
+	});
+
 	describe('getProductsByIds', () => {
 		it('retrieves products', async () => {
 			// given
