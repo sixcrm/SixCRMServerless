@@ -1148,7 +1148,7 @@ describe('controllers/providers/Register.js', () => {
 	});
 
 	describe('processTransaction', () => {
-		it('processes transactions', () => {
+		it('processes transactions', async () => {
 			const rebill = getValidRebill();
 			rebill.bill_at = '2018-03-01T00:00:00.000Z';
 			const rebills = [getValidRebill(), rebill, getValidRebill()];
@@ -1165,6 +1165,9 @@ describe('controllers/providers/Register.js', () => {
 			session.customer = customer;
 			transaction.rebill = rebill.id;
 			merchant_provider_groups[group_id] = [getValidTransactionProducts()];
+
+			// Get at least one product id to match a subscription on the session.
+			rebill.products[0].product.id = session.watermark.product_schedules[0].product_schedule.schedule[0].product.id;
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class MockRebill {
 				get({id}) {
@@ -1268,7 +1271,7 @@ describe('controllers/providers/Register.js', () => {
 
 			const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 			const registerController = new RegisterController();
-			return registerController.processTransaction({rebill});
+			await registerController.processTransaction({rebill});
 		});
 	});
 
