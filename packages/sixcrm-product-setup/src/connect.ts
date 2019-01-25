@@ -13,6 +13,7 @@ export interface IDatabaseConfig {
 	password: string;
 	database?: string;
 	schema?: string;
+	logging?: string[]
 }
 
 const toConnectionOptions = (config: IDatabaseConfig) => {

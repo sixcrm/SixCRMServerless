@@ -26,7 +26,8 @@ describe('@6crm/sixcrm-product-setup', () => {
 			host: 'localhost',
 			username: 'postgres',
 			password: '',
-			schema: 'public'
+			schema: 'public',
+			logging: ['error']
 		});
 
 		anotherProductSetupService = await createProductSetupService({
@@ -34,7 +35,8 @@ describe('@6crm/sixcrm-product-setup', () => {
 			host: 'localhost',
 			username: 'postgres',
 			password: '',
-			schema: 'public'
+			schema: 'public',
+			logging: ['error']
 		});
 	});
 
