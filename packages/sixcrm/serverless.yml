@@ -25,8 +25,8 @@ provider:
   runtime: nodejs8.10
   timeout: 90
   stage: ${opt:stage, 'development'} #Technical Debt:  Eliminate
-  region: ${file(./config/${opt:stage}/site.yml):aws.region} #Technical Debt:  Eliminate
-  account: ${file(./config/${opt:stage}/site.yml):aws.account} #Technical Debt:  Eliminate
+  region: ${file(./config/${opt:stage}.yml):aws.region} #Technical Debt:  Eliminate
+  account: ${file(./config/${opt:stage}.yml):aws.account} #Technical Debt:  Eliminate
   role: arn:aws:iam::${self:provider.account}:role/sixcrm_lambda_role
   tracing: true #Technical Debt:  Eliminate
   deploymentBucket:
@@ -36,7 +36,7 @@ provider:
     stage: ${opt:stage, self:provider.stage} #Technical Debt:  Eliminate
     aws_region: ${opt:region, self:provider.region} #Technical Debt:  Eliminate
     aws_account: ${self:provider.account} #Technical Debt:  Eliminate
-    SIX_VERBOSE: ${file(./config/${opt:stage}/site.yml):serverless.verbose}
+    SIX_VERBOSE: ${file(./config/${opt:stage}.yml):serverless.verbose}
     cloudsearch_domainendpoint: ${file(./config/controllers/configuration_acquisition.js):getCloudsearchSearchEndpoint}
     aurora_host: ${file(./config/controllers/configuration_acquisition.js):getAuroraClusterEndpoint}
     elasticsearch_endpoint: ${file(./config/controllers/configuration_acquisition.js):getElasticSearchEndpoint}
