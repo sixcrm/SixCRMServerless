@@ -5,11 +5,11 @@ let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 
 const expect = chai.expect;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const randomutilities = require('@6crm/sixcrmcore/util/random').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
+const randomutilities = require('@6crm/sixcrmcore/lib/util/random').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 
 function getValidWorkerResponseTypes(){
 

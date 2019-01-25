@@ -3,9 +3,9 @@ const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
 
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const randomutilities = require('@6crm/sixcrmcore/util/random').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
+const randomutilities = require('@6crm/sixcrmcore/lib/util/random').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
@@ -82,7 +82,7 @@ describe('helpers/shippingcarriers/Info.js', () => {
 				}
 			}
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					postJSON() {
 						return Promise.resolve({error: null, response: vendor_response, body: json_response});

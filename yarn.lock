@@ -14,10 +14,10 @@
     moment-timezone "^0.5.23"
     pg-format "^1.0.4"
 
-"@6crm/sixcrmcore@0.0.25":
-  version "0.0.25"
-  resolved "https://registry.yarnpkg.com/@6crm/sixcrmcore/-/sixcrmcore-0.0.25.tgz#dec5059032ea5320a2535ac3e06f09c99e231ea9"
-  integrity sha512-g9ZSlxsnVgWivyNv6Sq5SNJJmkDjgvY/1QZfxqOTQmincgrsW1VOCctLkzbWx/mveg+uYNtDPAW0LeWudUUnLg==
+"@6crm/sixcrmcore@0.0.46":
+  version "0.0.46"
+  resolved "https://registry.yarnpkg.com/@6crm/sixcrmcore/-/sixcrmcore-0.0.46.tgz#7d18033d515c6e8aa4b909131c52456a59f7f33a"
+  integrity sha512-hVZnadShWAzhc6TkKJukEA0ONPm1PtszEUj0MWDeSSK6ACSKsA3x23nWlYSnY8x9svf6/4oFQrDq7kQweVJK5Q==
   dependencies:
     "@adexchange/aeg-redshift" "0.0.84"
     ajv "^6.5.0"
@@ -35,17 +35,19 @@
     serverless "^1.27.3"
     source-map-support "^0.5.6"
     striptags "^3.1.1"
+    uuid "^3.3.2"
     xml2js "^0.4.19"
 
-"@6crm/sixcrmcore@0.0.46":
-  version "0.0.46"
-  resolved "https://registry.yarnpkg.com/@6crm/sixcrmcore/-/sixcrmcore-0.0.46.tgz#7d18033d515c6e8aa4b909131c52456a59f7f33a"
-  integrity sha512-hVZnadShWAzhc6TkKJukEA0ONPm1PtszEUj0MWDeSSK6ACSKsA3x23nWlYSnY8x9svf6/4oFQrDq7kQweVJK5Q==
+"@6crm/sixcrmcore@0.0.54":
+  version "0.0.54"
+  resolved "https://registry.yarnpkg.com/@6crm/sixcrmcore/-/sixcrmcore-0.0.54.tgz#5e192a935cc57825da35c380958fc2be65fc43a1"
+  integrity sha512-b8MzCf/lqnW2FYRvuYd1q1r77smKXV5NSHWwqkM85KL+oZ/AvHfxukQO2c7eemUV05ZueZKkUTS+R/ZHlJNlGQ==
   dependencies:
     "@adexchange/aeg-redshift" "0.0.84"
     ajv "^6.5.0"
     base-64 "^0.1.0"
     chalk "^2.4.1"
+    config "^3.0.1"
     jsonwebtoken "^8.2.2"
     lodash "^4.17.10"
     moment "^2.22.2"
@@ -2514,6 +2516,13 @@ config@^1.25.1, config@^1.26.1:
   version "1.31.0"
   resolved "https://registry.yarnpkg.com/config/-/config-1.31.0.tgz#ab08aeba6536015d220cd0afe14b3e0501082542"
   integrity sha512-Ep/l9Rd1J9IPueztJfpbOqVzuKHQh4ZODMNt9xqTYdBBNRXbV4oTu34kCkkfdRVcDq0ohtpaeXGgb+c0LQxFRA==
+  dependencies:
+    json5 "^1.0.1"
+
+config@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/config/-/config-3.0.1.tgz#c3118e2eb45fdfd135277339f87e2492559cb147"
+  integrity sha512-TBNrrk2b6AybUohqXw2AydglFBL9b/+1GG93Di6Fm6x1SyVJ5PYgo+mqY2X0KpU9m0PJDSbFaC5H95utSphtLw==
   dependencies:
     json5 "^1.0.1"
 

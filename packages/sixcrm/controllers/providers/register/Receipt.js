@@ -1,6 +1,6 @@
 
 const _ = require('lodash');
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const TransactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');

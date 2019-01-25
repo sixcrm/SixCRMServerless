@@ -2,7 +2,7 @@
 let chai = require('chai');
 let expect = chai.expect;
 
-let du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+let du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 const accessKeyHelperController = global.SixCRM.routes.include('helpers', 'accesskey/AccessKey.js');
 

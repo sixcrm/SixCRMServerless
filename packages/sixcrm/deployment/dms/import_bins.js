@@ -1,6 +1,6 @@
 require('@6crm/sixcrmcore');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const BinImporter = global.SixCRM.routes.include('deployment', 'utilities/bin-importer.js');
 const binImporter = new BinImporter();
 

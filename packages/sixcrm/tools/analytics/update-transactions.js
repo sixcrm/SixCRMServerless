@@ -2,7 +2,7 @@ const _ = require('lodash');
 const Bluebird = require('bluebird');
 
 require('@6crm/sixcrmcore');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 const TransactionController = require('../../controllers/entities/Transaction');
 const RebillController = require('../../controllers/entities/Rebill');
@@ -16,7 +16,7 @@ const sessionController = new SessionController();
 
 transactionController.disableACLs();
 
-const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
+const auroraContext = require('@6crm/sixcrmcore/lib/util/analytics/aurora-context').default;
 const configurationAcquistion = require('../../config/controllers/configuration_acquisition');
 configurationAcquistion.getAuroraClusterEndpoint().then(async (endpoint) => {
 

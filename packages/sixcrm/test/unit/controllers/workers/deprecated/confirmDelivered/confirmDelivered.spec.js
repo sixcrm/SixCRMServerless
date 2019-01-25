@@ -4,7 +4,7 @@ const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
 
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 

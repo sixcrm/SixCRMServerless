@@ -1,7 +1,7 @@
 
 const _ = require('lodash');
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 //Technical Debt: Override the list method
