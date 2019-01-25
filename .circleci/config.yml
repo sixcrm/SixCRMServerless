@@ -59,7 +59,7 @@ jobs:
           command: mkdir -p deployment_credentials/
       - run:
           name: Create Credentials
-          command: cd packages/sixcrm && SIX_VERBOSE=2 && node ./deployment/sts/create_role_commands.js --branch=$CIRCLE_BRANCH --output=../../deployment_credentials/stscredentials
+          command: cd packages/sixcrm && SIX_VERBOSE=2 && node ./deployment/sts/create_role_commands.js --branch=development --output=../../deployment_credentials/stscredentials
       - persist_to_workspace:
           root: .
           paths:
@@ -83,7 +83,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Backup DynamoDB
-          command: cd packages/sixcrm && export SIX_VERBOSE=2 && printenv && node ./deployment/dynamodb/backup_tables.js --branch=$CIRCLE_BRANCH --version=$CIRCLE_SHA1
+          command: cd packages/sixcrm && export SIX_VERBOSE=2 && printenv && node ./deployment/dynamodb/backup_tables.js --branch=development --version=$CIRCLE_SHA1
   deploy_serverless:
     <<: *job-defaults
     steps:
@@ -100,7 +100,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Serverless Deploy
-          command: cd packages/sixcrm && SLS_DEBUG=* npx serverless deploy --stage $CIRCLE_BRANCH
+          command: cd packages/sixcrm && SLS_DEBUG=* npx serverless deploy --stage development
       - run:
           name: Deploy Step Function State Machines
           command: cd packages/sixcrm && export SIX_VERBOSE=2 && node ./deployment/stepfunctions/deploy_state_machines.js
@@ -135,8 +135,8 @@ jobs:
             source ./aurora-env
             echo "Host *" >> ~/.ssh/config
             echo "   AddressFamily inet" >> ~/.ssh/config
-            chmod 600 ./config/$CIRCLE_BRANCH/ssh-keys/six-crm/sixcrm.pem
-            ssh -i ./config/$CIRCLE_BRANCH/ssh-keys/six-crm/sixcrm.pem -o StrictHostKeyChecking=no -f -N -L5440:$AURORA_HOST:5440 ec2-user@$PROXY_HOST
+            chmod 600 ./config/development/ssh-keys/six-crm/sixcrm.pem
+            ssh -i ./config/development/ssh-keys/six-crm/sixcrm.pem -o StrictHostKeyChecking=no -f -N -L5440:$AURORA_HOST:5440 ec2-user@$PROXY_HOST
       - run:
           name: Aurora Create Tables
           command: cd packages/sixcrm && SIX_VERBOSE=2 AURORA_PROXY=true  node ./deployment/aurora/deploy-schema.js
@@ -236,6 +236,7 @@ workflows:
             branches:
               only:
                 - development
+                - hoist-again
                 - staging
                 - production
                 - priority
@@ -261,11 +262,12 @@ workflows:
                 - priority
       - deploy_serverless:
           requires:
-            - deploy_aurora
+            - pre_deploy
           filters:
             branches:
               only:
                 - development
+                - hoist-again
                 - staging
                 - production
                 - priority
@@ -276,6 +278,7 @@ workflows:
             branches:
               only:
                 - development
+                - hoist-again
                 - staging
                 - production
                 - priority
@@ -286,6 +289,7 @@ workflows:
             branches:
               only:
                 - development
+                - hoist-again
                 - staging
                 - production
                 - priority
@@ -296,6 +300,7 @@ workflows:
             branches:
               only:
                 - development
+                - hoist-again
                 - staging
                 - production
                 - priority
@@ -306,6 +311,7 @@ workflows:
             branches:
               only:
                 - development
+                - hoist-again
                 - staging
                 - production
                 - priority
@@ -316,6 +322,7 @@ workflows:
             branches:
               only:
                 - development
+                - hoist-again
                 - staging
                 - production
                 - priority
@@ -326,6 +333,7 @@ workflows:
             branches:
               only:
                 - development
+                - hoist-again
                 - staging
                 - production
                 - priority
