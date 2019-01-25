@@ -3,9 +3,9 @@ const _ = require('lodash');
 
 require('@6crm/sixcrmcore');
 
-var timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const signatureutilities = require('@6crm/sixcrmcore/util/signature').default;
+var timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const signatureutilities = require('@6crm/sixcrmcore/lib/util/signature').default;
 
 process.env.SIX_VERBOSE = 2;
 

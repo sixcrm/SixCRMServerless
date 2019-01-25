@@ -1,13 +1,13 @@
 const _ = require('lodash');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 
 module.exports = class PermissionedController {
 
 	constructor(){
 
-		this.permissionutilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
+		this.permissionutilities = require('@6crm/sixcrmcore/lib/util/permission-utilities').default;
 
 	}
 

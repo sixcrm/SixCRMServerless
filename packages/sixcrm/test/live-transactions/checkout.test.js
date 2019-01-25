@@ -2,11 +2,11 @@ const _ = require('lodash');
 const chai = require('chai');
 const expect = chai.expect;
 const querystring = require('querystring');
-const currencyutilities = require('@6crm/sixcrmcore/util/currency-utilities').default;
-const HttpProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
+const currencyutilities = require('@6crm/sixcrmcore/lib/util/currency-utilities').default;
+const HttpProvider = require('@6crm/sixcrmcore/lib/providers/http-provider').default;
 const httpprovider = new HttpProvider();
 const auth_helper = global.SixCRM.routes.include('test', 'live-transactions/helpers/authentication.js');
-const tu = require('@6crm/sixcrmcore/util/test-utilities').default;
+const tu = require('@6crm/sixcrmcore/lib/util/test-utilities').default;
 
 const config = global.SixCRM.routes.include('test', 'live-transactions/config/'+process.env.stage+'.yml');
 

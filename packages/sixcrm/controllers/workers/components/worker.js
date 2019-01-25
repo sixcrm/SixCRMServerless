@@ -9,7 +9,7 @@ module.exports = class WorkerController {
 	setPermissions(){
 		//Technical Debt:  This is pretty gross, we should set the user to "system@sixcrm.com"
 
-		this.permissionutilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
+		this.permissionutilities = require('@6crm/sixcrmcore/lib/util/permission-utilities').default;
 		this.permissionutilities.setPermissions('*',['*/*'],[])
 
 	}

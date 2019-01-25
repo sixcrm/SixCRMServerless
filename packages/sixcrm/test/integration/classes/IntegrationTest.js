@@ -2,17 +2,17 @@
 const request = require('supertest');
 const _ = require('lodash');
 
-const tu = require('@6crm/sixcrmcore/util/test-utilities').default;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const tu = require('@6crm/sixcrmcore/lib/util/test-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 
 module.exports = class IntegrationTest {
 
 	constructor(){
 
 		this.endpoint = global.integration_test_config.endpoint;
-		this.account = global.test_accounts[1];
+		this.account = global.test_accounts[0];
 		this.user = global.test_users[0];
 		this.test_jwt = tu.createTestAuth0JWT(this.user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 

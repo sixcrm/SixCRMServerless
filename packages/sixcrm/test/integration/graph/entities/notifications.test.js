@@ -2,7 +2,7 @@ const request = require('supertest');
 const chai = require('chai');
 const fs = require('fs');
 
-const tu = require('@6crm/sixcrmcore/util/test-utilities').default;
+const tu = require('@6crm/sixcrmcore/lib/util/test-utilities').default;
 
 chai.use(require('chai-json-schema'));
 
@@ -72,7 +72,7 @@ describe('Graph ' + entity + ' Test', function () {
 	});
 
 	it(`Test notification endpoint should return success`, function (done) {
-		let account = global.test_accounts[0];
+		let account = global.master_account;
 		let test_user = global.test_users[0];
 		let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 

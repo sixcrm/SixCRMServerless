@@ -1,4 +1,4 @@
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
@@ -32,6 +32,13 @@ module.exports = class FulfillmentProviderController extends entityController {
 		return return_array;
 
 	}
+
+	async update({entity}) {
+		await this.handleCensoredValues(entity);
+
+		return super.update({entity, ignore_updated_at: true});
+	}
+
 
 }
 

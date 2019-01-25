@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const PostbackProvider = global.SixCRM.routes.include('controllers', 'providers/postback-provider.js');
 
 module.exports = class TrackerHelperController {

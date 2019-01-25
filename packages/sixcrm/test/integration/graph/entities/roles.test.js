@@ -2,7 +2,7 @@ const request = require('supertest');
 const chai = require('chai');
 const assert = require('chai').assert
 
-const tu = require('@6crm/sixcrmcore/util/test-utilities').default;
+const tu = require('@6crm/sixcrmcore/lib/util/test-utilities').default;
 
 chai.use(require('chai-json-schema'));
 
@@ -71,7 +71,7 @@ describe('Graph '+entity+' Test', function() {
 	});
 
 	it('Test role index endpoint should return account-bound roles', done => {
-		let account = global.test_accounts[1];
+		let account = global.test_accounts[0];
 		let test_user = global.test_users[1];
 		let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
@@ -88,7 +88,7 @@ describe('Graph '+entity+' Test', function() {
 	});
 
 	it('Test role view endpoint should return only account-bound roles', done => {
-		let account = global.test_accounts[1];
+		let account = global.test_accounts[0];
 		let test_user = global.test_users[1];
 		let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 

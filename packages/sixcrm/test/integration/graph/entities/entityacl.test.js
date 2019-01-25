@@ -1,6 +1,6 @@
 const request = require('supertest');
 const chai = require('chai');
-const tu = require('@6crm/sixcrmcore/util/test-utilities').default;
+const tu = require('@6crm/sixcrmcore/lib/util/test-utilities').default;
 
 chai.use(require('chai-json-schema'));
 
@@ -30,7 +30,7 @@ const tests = [{
 const this_request = request(endpoint);
 
 describe('Graph '+entity+' Test', function() {
-	[global.test_accounts[0]].forEach((test_account) => {
+	[global.master_account].forEach((test_account) => {
 		global.test_users.forEach((test_user) => {
 			describe('Test the graph '+entity+' endpoint using "'+test_user.name+'" credentials on the account "'+test_account.name+'"', function() {
 				const test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);

@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const au = require('@6crm/sixcrmcore/util/array-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const au = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');

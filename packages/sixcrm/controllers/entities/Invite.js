@@ -1,7 +1,7 @@
 
 const _ = require('lodash');
-const random = require('@6crm/sixcrmcore/util/random').default;
-//const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const random = require('@6crm/sixcrmcore/lib/util/random').default;
+//const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 

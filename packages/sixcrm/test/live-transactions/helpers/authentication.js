@@ -1,7 +1,7 @@
-const HttpProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
+const HttpProvider = require('@6crm/sixcrmcore/lib/providers/http-provider').default;
 const httpprovider = new HttpProvider();
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const signatureutilities = require('@6crm/sixcrmcore/util/signature').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
+const signatureutilities = require('@6crm/sixcrmcore/lib/util/signature').default;
 const config = global.SixCRM.routes.include('test', 'live-transactions/config/'+process.env.stage+'.yml');
 
 function authenticate(campaign_id) {

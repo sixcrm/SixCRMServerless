@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js');
-const parserutilities = require('@6crm/sixcrmcore/util/parser-utilities').default;
+const parserutilities = require('@6crm/sixcrmcore/lib/util/parser-utilities').default;
 
 module.exports = class StepFunctionProvider extends AWSProvider{
 

@@ -1,12 +1,12 @@
 
 const _ = require('lodash');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
+const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
 
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const EncryptionHelper = global.SixCRM.routes.include('helpers', 'encryption/Encryption.js');
@@ -16,6 +16,8 @@ const EncryptionHelper = global.SixCRM.routes.include('helpers', 'encryption/Enc
 //Technical Debt:  Deletes must cascade in some respect.  Otherwise, we are going to get continued problems in the Graph schemas
 //Technical Debt:  We need a "inactivate"  method that is used more prolifically than the delete method is.
 //Technical Debt:  Much of this stuff can be abstracted to a Query Builder class...
+
+const CENSORED_VALUE = '****';
 
 module.exports = class entityUtilitiesController extends PermissionedController {
 
@@ -932,6 +934,18 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	censorEncryptedAttributes(entity, custom_censor_fn) {
 		return this.encryptionhelper.censorEncryptedAttributes(this.encrypted_attribute_paths, entity, custom_censor_fn);
+	}
+
+	async handleCensoredValues(entity) {
+		const sanitization = this.sanitization;
+		this.sanitization = false;
+		const original = await this.get({id: entity.id, fatal: true});
+		this.sanitization = sanitization;
+		for (const path of this.encrypted_attribute_paths) {
+			if (_(entity).get(path) === CENSORED_VALUE) {
+				_.set(entity, path, _(original).get(path));
+			}
+		}
 	}
 
 }

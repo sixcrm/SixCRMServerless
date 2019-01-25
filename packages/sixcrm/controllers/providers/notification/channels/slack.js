@@ -1,7 +1,7 @@
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const HttpProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const HttpProvider = require('@6crm/sixcrmcore/lib/providers/http-provider').default;
 const httpprovider = new HttpProvider();
-const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
 
 const ChannelNotification = global.SixCRM.routes.include('providers', 'notification/components/ChannelNotification.js');
 

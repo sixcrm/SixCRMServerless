@@ -1,7 +1,7 @@
 require('@6crm/sixcrmcore');
 const APNProvider = global.SixCRM.routes.include('controllers', 'providers/apn-provider.js');
 const apnprovider = new APNProvider();
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 let message = process.argv[2];
 let user = process.argv[3];

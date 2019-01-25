@@ -2,8 +2,8 @@ require('@6crm/sixcrmcore');
 
 const NotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/Notification.js');
 const notificationProvider = new NotificationProvider();
-const PermissionUtilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const PermissionUtilities = require('@6crm/sixcrmcore/lib/util/permission-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 PermissionUtilities.disableACLs();
 

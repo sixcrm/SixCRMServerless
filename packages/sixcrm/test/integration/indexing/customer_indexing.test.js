@@ -3,8 +3,8 @@ const chai = require('chai');
 const expect = require('chai').expect;
 const fs = require('fs');
 
-const tu = require('@6crm/sixcrmcore/util/test-utilities').default;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const tu = require('@6crm/sixcrmcore/lib/util/test-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 const minute = 60 * 1000;
 
@@ -35,7 +35,7 @@ let this_request = request(endpoint);
 describe('Customer indexing test', function() {
 
 	let test_user = global.test_users[0];
-	let test_account = global.test_accounts[0];
+	let test_account = global.master_account;
 	let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 	let account = test_account.id;
 
