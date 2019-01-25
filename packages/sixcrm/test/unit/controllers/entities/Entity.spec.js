@@ -583,10 +583,10 @@ describe('controllers/Entity.js', () => {
 			let anEntity = {
 				"id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
 				"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-				"name": "Test Product",
-				"description":"This is a test description",
-				"sku":"123",
-				"ship":true,
+				"name": "Test campaign",
+				"allow_on_order_form": true,
+				"allow_prepaid": true,
+				"show_prepaid": false,
 				"created_at":"2017-04-06T18:40:41.405Z",
 				"updated_at":"2017-04-06T18:40:41.405Z"
 			};
@@ -611,15 +611,8 @@ describe('controllers/Entity.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
-			mockery.registerMock(global.SixCRM.routes.path('helpers', 'analytics/Activity.js'), class {
-				createActivity() {
-					return Promise.resolve();
-				}
-			});
-
-
 			const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
-			let entityController = new EC('product');
+			let entityController = new EC('campaign');
 
 			// when
 			return entityController.update({entity: anEntity}).then((updatedEntity) => {

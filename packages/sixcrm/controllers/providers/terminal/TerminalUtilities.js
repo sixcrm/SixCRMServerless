@@ -2,11 +2,11 @@
 var _ =  require('lodash');
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
 
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const FulfillmentProviderController = global.SixCRM.routes.include('entities', 'FulfillmentProvider.js');
-const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
 const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
@@ -58,7 +58,6 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 		};
 
 		this.rebillController = new RebillController();
-		this.productController = new ProductController();
 		this.fulfillmentProviderController = new FulfillmentProviderController();
 		this.shippingReceiptController = new ShippingReceiptController();
 
@@ -120,7 +119,7 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 
 	}
 
-	acquireProducts(){
+	async acquireProducts(){
 		let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
 
 		let product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
@@ -129,13 +128,9 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 
 		product_ids = arrayutilities.unique(product_ids);
 
-		return this.productController.getListByAccount({ids: product_ids})
-			.then((results) => this.productController.getResult(results, 'products'))
-			.then(products => {
-				this.parameters.set('products', products);
-				return true;
-			});
-
+		const products = await getProductSetupService().getProductsByIds(product_ids);
+		this.parameters.set('products', products);
+		return true;
 	}
 
 	setAugmentedTransactionProducts(){
