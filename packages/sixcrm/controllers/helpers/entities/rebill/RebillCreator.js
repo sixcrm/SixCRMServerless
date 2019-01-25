@@ -6,14 +6,13 @@ const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const numberutilities = require('@6crm/sixcrmcore/util/number-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
 const Parameters = require('../../../providers/Parameters');
-const ProductController = require('../../../entities/Product');
 const ProductScheduleController = require('../../../entities/ProductSchedule');
 const ProductScheduleHelperController = require('../../entities/productschedule/ProductSchedule');
 const RebillController = require('../../../entities/Rebill');
 const SessionController = require('../../../entities/Session');
 
-const productController = new ProductController();
 const productScheduleController = new ProductScheduleController();
 const productScheduleHelperController = new ProductScheduleHelperController();
 const rebillController = new RebillController();
@@ -137,13 +136,14 @@ module.exports = class RebillCreatorHelper {
 
 	async normalizeProducts(products) {
 		let normalized_products = arrayutilities.map(products, async product_group => {
-			if (productController.isUUID(product_group.product)) {
-				const result = await productController.get({id: product_group.product});
-				if (_.isNull(result)) {
-					throw eu.getError('not_found', 'Product does not exist: '+product_group.product);
+			if (rebillController.isUUID(product_group.product)) {
+				try {
+					const product = await getProductSetupService().getProduct(product_group.product);
+					product_group.product = product;
+					return product_group;
+				} catch (e) {
+					throw eu.getError('not_found', 'Product does not exist: ' +product_group.product);
 				}
-				product_group.product = result;
-				return product_group;
 			} else if (_.isObject(product_group.product)) {
 				return product_group;
 			}
@@ -209,11 +209,11 @@ module.exports = class RebillCreatorHelper {
 			if (!_.has(product_group, 'price')) {
 				return true;
 			}
-			return productController.validateDynamicPrice(product_group.product, product_group.price);
+			return product_group.price >= 0;
 		});
 
 		if (!valid) {
-			throw eu.getError('bad_request', 'Price must be within product\'s dynamic price range.');
+			throw eu.getError('bad_request', 'Price must be greater than or equal to zero.');
 		}
 
 		return valid;
@@ -226,12 +226,12 @@ module.exports = class RebillCreatorHelper {
 				if (!_.has(product_group, 'price')) {
 					return true;
 				}
-				return productController.validateDynamicPrice(product_group.product, product_group.price);
+				return product_group.price >= 0;
 			});
 		});
 
 		if (!valid) {
-			throw eu.getError('bad_request', 'Price must be within product\'s dynamic price range.');
+			throw eu.getError('bad_request', 'Price must be greater than or equal to zero.');
 		}
 
 		return valid;

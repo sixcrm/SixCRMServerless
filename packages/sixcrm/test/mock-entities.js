@@ -714,42 +714,14 @@ class MockEntities {
 			id: this.getValidId(id),
 			name: randomutilities.createRandomString(20),
 			sku: randomutilities.createRandomString(20),
-			ship: randomutilities.randomBoolean(),
+			is_shippable: randomutilities.randomBoolean(),
 			shipping_delay: randomutilities.randomInt(60, 9999999),
 			fulfillment_provider: uuidV4(),
-			default_price: randomutilities.randomDouble(1.0, 300.0, 2),
-			attributes: {
-				images: [{
-					path: spoofer.createURL(),
-					dimensions: {
-						width: randomutilities.randomInt(10, 1000),
-						height: randomutilities.randomInt(10, 1000)
-					},
-					format: 'jpg',
-					name: randomutilities.createRandomString(randomutilities.randomInt(10, 40)),
-					description: randomutilities.createRandomString(randomutilities.randomInt(10, 300)),
-					default_image: randomutilities.randomBoolean()
-				}],
-				weight: {
-					unitofmeasurement: 'kilos',
-					units: 100
-				},
-				dimensions: {
-					height: {
-						unitofmeasurement: 'centimeters',
-						units: randomutilities.randomInt(1, 100)
-					},
-					width: {
-						unitofmeasurement: 'centimeters',
-						units: randomutilities.randomInt(1, 100)
-					},
-					length: {
-						unitofmeasurement: 'centimeters',
-						units: randomutilities.randomInt(1, 100)
-					}
-				}
-			},
-			account: this.getTestAccountID(),
+			price: randomutilities.randomDouble(1.0, 300.0, 2),
+			image_urls: [
+			  spoofer.createURL()
+			],
+			account_id: this.getTestAccountID(),
 			created_at: timestamp.getISO8601(),
 			updated_at: timestamp.getISO8601()
 		};
