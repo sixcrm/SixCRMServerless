@@ -21,9 +21,21 @@ export abstract class DataMigration {
 	protected dynamoConnector: DynamoConnector;
 	protected auroraConnector: AuroraConnector;
 
-	async execute(): Promise<void> {
+	async prepare(): Promise<void> {
 		this.dynamoConnector = new DynamoConnector(dynamoConfig);
 		this.auroraConnector = new AuroraConnector(await connect(auroraConfig), Product)
+	}
+
+	abstract migrate(): Promise<void>;
+
+	async cleanup(): Promise<void> {
+		this.auroraConnector.connection.close();
+	}
+
+	async execute(): Promise<void> {
+		await this.prepare();
+		await this.migrate();
+		await this.cleanup();
 	}
 
 	getOneFromDynamo(entityName: string, id: string): Promise<any> {

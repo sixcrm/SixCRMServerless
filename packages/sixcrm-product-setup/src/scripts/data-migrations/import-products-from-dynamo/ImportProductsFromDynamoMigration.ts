@@ -4,9 +4,7 @@ import {DataMigration} from "../DataMigration";
 
 export class ImportProductsFromDynamoMigration extends DataMigration {
 
-	async execute(): Promise<void> {
-		await super.execute();
-
+	async migrate(): Promise<void> {
 		const dynamoProducts: DynamoProduct[] = DynamoProduct.fromArray(await this.getAllFromDynamo('product'));
 		const productsToInsert: Product[] = dynamoProducts.map(p => p.toProduct()).filter(p => p.account_id !== '*');
 
