@@ -1,9 +1,9 @@
 var _ = require('lodash');
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const NotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/Notification.js');
 const notificationProvider =  new NotificationProvider();
-const PermissionUtilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
+const PermissionUtilities = require('@6crm/sixcrmcore/lib/util/permission-utilities').default;
 
 
 var workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');

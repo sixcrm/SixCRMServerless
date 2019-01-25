@@ -3,7 +3,7 @@ const _ = require('lodash');
 const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
-let arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+let arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 

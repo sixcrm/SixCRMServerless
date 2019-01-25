@@ -3,7 +3,7 @@ const chai = require("chai");
 const expect = chai.expect;
 const querystring = require('querystring');
 const mockery = require('mockery');
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const spoofer = global.SixCRM.routes.include('test', 'spoofer.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
@@ -317,7 +317,7 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () => {
 
 			let bad_response = getValidBadResponse();
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					getJSON() {
 						return Promise.resolve(bad_response);
@@ -354,7 +354,7 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () => {
 
 			let good_response = getValidGoodResponse();
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					getJSON() {
 						return Promise.resolve(good_response);
@@ -397,7 +397,7 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () => {
 			let customer = getValidCustomer();
 			let products = getValidProducts();
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					postJSON() {
 						return Promise.resolve(good_response);
@@ -444,7 +444,7 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () => {
 
 			let good_response = getValidGoodResponse();
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					getJSON() {
 						return Promise.resolve(good_response);

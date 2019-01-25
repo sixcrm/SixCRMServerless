@@ -1,7 +1,7 @@
 const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 //const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 describe('vendors/tokenizationproviders/tokenex/tokenex.js', () =>{
@@ -40,7 +40,7 @@ describe('vendors/tokenizationproviders/tokenex/tokenex.js', () =>{
 			let expected_value = 'someplaintextvalue';
 			let token = '9IB97FXD2ZLQLWIZF5NNYL0IVNJKMB6C49E8ET';
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					constructor(){}
 					postJSON(){
@@ -75,7 +75,7 @@ describe('vendors/tokenizationproviders/tokenex/tokenex.js', () =>{
 			let expected_value = '9IB97FXD2ZLQLWIZF5NNYL0IVNJKMB6C49E8ET';
 			let value = 'someplaintextvalue';
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					constructor(){}
 					postJSON(){
@@ -110,7 +110,7 @@ describe('vendors/tokenizationproviders/tokenex/tokenex.js', () =>{
 			let expected_value = true;
 			let token = '9IB97FXD2ZLQLWIZF5NNYL0IVNJKMB6C49E8ET';
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					constructor(){}
 					postJSON(){

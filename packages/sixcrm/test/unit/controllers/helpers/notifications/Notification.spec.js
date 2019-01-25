@@ -1,7 +1,7 @@
 const mockery = require('mockery');
 const chai = require('chai');
 const expect = chai.expect;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
 describe('/helpers/notifications/Notification.js', () => {

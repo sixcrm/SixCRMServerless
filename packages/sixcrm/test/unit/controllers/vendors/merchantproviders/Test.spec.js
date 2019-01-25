@@ -4,7 +4,7 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 let querystring = require('querystring');
-let objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+let objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidMerchantProvider(id){
@@ -245,7 +245,7 @@ describe('vendors/merchantproviders/Test.js', () => {
 			body: body
 		};
 
-		mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+		mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 			default: class {
 				postJSON() {
 					return Promise.resolve(response);

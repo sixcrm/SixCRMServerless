@@ -5,8 +5,8 @@ const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
 
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
@@ -109,7 +109,7 @@ describe('vendors/fulfillmentproviders/Test/handler.js', () =>{
 
 			fulfillment_provider.provider.name = 'Test';
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					postJSON() {
 						return Promise.resolve(getValidResponse());
@@ -143,7 +143,7 @@ describe('vendors/fulfillmentproviders/Test/handler.js', () =>{
 			fulfillment_provider.provider.name = 'Test';
 			let shipping_receipt = getValidShippingReceipt();
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					postJSON() {
 						return Promise.resolve(response_object);
@@ -185,7 +185,7 @@ describe('vendors/fulfillmentproviders/Test/handler.js', () =>{
 			let fulfillment_provider = getValidFulfillmentProvider();
 			let response_object = getValidResponse();
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					postJSON() {
 						return Promise.resolve(response_object);

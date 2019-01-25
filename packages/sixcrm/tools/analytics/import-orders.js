@@ -2,7 +2,7 @@ const _ = require('lodash');
 const moment = require('moment');
 
 require('@6crm/sixcrmcore');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 const RebillController = require('../../controllers/entities/Rebill');
 const SessionController = require('../../controllers/entities/Session');
@@ -18,7 +18,7 @@ rebillController.disableACLs();
 
 const now = moment();
 
-const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
+const auroraContext = require('@6crm/sixcrmcore/lib/util/analytics/aurora-context').default;
 const configurationAcquistion = require('../../config/controllers/configuration_acquisition');
 
 // This is somewhat more complicated than the transaction update.  We're basically going to process all existing rebills.

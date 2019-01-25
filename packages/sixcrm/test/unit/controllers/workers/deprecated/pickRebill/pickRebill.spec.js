@@ -4,7 +4,7 @@ const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
 const uuidV4 = require('uuid/v4');
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 
 function getValidSpoofedRebillMessage(){
 
