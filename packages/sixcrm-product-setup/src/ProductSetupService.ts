@@ -45,30 +45,33 @@ export default class ProductSetupService {
 		return this.productRepository.findByIds(ids, this.baseFindConditions);
 	}
 
-	// shallow copy to avoid typeorm issues with objects without prototypes
-	// https://github.com/typeorm/typeorm/issues/2065
-	async createProduct({ ...product }: Partial<Product>): Promise<IProductEntityId> {
-		await this.validateProduct(product);
-		const { account_id: productAccountId } = product;
-		if (!this.canCreateProduct(productAccountId)) {
-			throw new Error('Products cannot be created on the Master account');
-		}
+	async createProduct(partialProduct: Partial<Product>): Promise<IProductEntityId> {
+		// shallow copy to avoid typeorm issues with objects without prototypes
+		// https://github.com/typeorm/typeorm/issues/2065
+		const product = this.productRepository.create({
+			account_id: this.accountId,
+			...partialProduct
+		});
+		await this.validateCreateProduct(product);
 
-		const insertResult = await this.productRepository.insert({ account_id: this.accountId, ...product });
+		const insertResult = await this.productRepository.insert(product);
 		return insertResult.identifiers[0] as IProductEntityId;
 	}
 
-	// shallow copy to avoid typeorm issues with objects without prototypes
-	// https://github.com/typeorm/typeorm/issues/2065
-	// ignore updated_at to workaround https://github.com/typeorm/typeorm/issues/2651
-	async updateProduct({ updated_at, ...product }: Partial<Product>): Promise<void> {
+	async updateProduct({ updated_at, ...partialProduct }: Partial<Product>): Promise<void> {
+		// shallow copy to avoid typeorm issues with objects without prototypes
+		// https://github.com/typeorm/typeorm/issues/2065
+		const product = this.productRepository.create({
+			account_id: this.accountId,
+			...partialProduct
+		});
+		// remove updated_at to workaround https://github.com/typeorm/typeorm/issues/2651
+		delete product.updated_at;
 		await this.validateProduct(product);
-		const { account_id: productAccountId = this.accountId, id } = product;
-		if (!this.canUpdateProduct(productAccountId)) {
-			throw new Error('Not authorized to update product');
-		}
-		const updateCriteria = this.isMasterAccount ? { id } : { account_id: productAccountId, id };
-		await this.productRepository.update(updateCriteria, product );
+
+		const { account_id, id } = product;
+		const updateCriteria = this.isMasterAccount ? { id } : { account_id, id };
+		await this.productRepository.update(updateCriteria, product);
 	}
 
 	async deleteProduct(id: string): Promise<IProductEntityId> {
@@ -81,25 +84,27 @@ export default class ProductSetupService {
 		return { id };
 	}
 
-	private canCreateProduct(productAccountId?: string): boolean {
-		return !!productAccountId || !this.isMasterAccount();
-	}
-
 	private canUpdateProduct(productAccountId: string): boolean {
-		return productAccountId && this.isMasterAccount() || productAccountId === this.accountId;
+		return this.isMasterAccount() || productAccountId === this.accountId;
 	}
 
 	private isMasterAccount(): boolean {
 		return this.accountId === MASTER_ACCOUNT_ID;
 	}
 
-	private async isValidProduct(product: Product): Promise<boolean> {
-		const errors = await validate(product);
-		return !errors.length;
+	private async validateCreateProduct(product: Product): Promise<void> {
+		const { account_id } = product;
+		if (account_id === MASTER_ACCOUNT_ID) {
+			throw new Error('Products cannot be created on the Master account');
+		}
+		return this.validateProduct(product);
 	}
 
-	private async validateProduct(partialProduct: Partial<Product>): Promise<void> {
-		const product = this.productRepository.create(partialProduct);
+	private async validateProduct(product: Product): Promise<void> {
+		const { account_id } = product;
+		if (!this.canUpdateProduct(account_id)) {
+			throw new Error('Not authorized to save product');
+		}
 		const errors: ValidationError[] = await validate(product);
 		const valid: boolean = !errors.length;
 		if (!valid) {

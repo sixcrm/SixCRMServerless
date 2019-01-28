@@ -77,10 +77,10 @@ describe('@6crm/sixcrm-product-setup', () => {
 			await expect(productSetupService.createProduct(aProduct)).to.be.rejected;
 		});
 
-		it('rejects objects without account id', async () => {
+		it('rejects objects with the master account id', async () => {
 			// given
 			const aProduct = getValidProduct(accountId);
-			delete aProduct.account_id;
+			aProduct.account_id = '*';
 
 			// then
 			await expect(productSetupService.createProduct(aProduct)).to.be.rejected;
