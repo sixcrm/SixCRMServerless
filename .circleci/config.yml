@@ -99,8 +99,8 @@ jobs:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
-          name: Serveless Deploy
-          command: cd packages/sixcrm && SLS_DEBUG=* node ./node_modules/serverless/bin/serverless deploy --stage $CIRCLE_BRANCH
+          name: Serverless Deploy
+          command: cd packages/sixcrm && SLS_DEBUG=* npx serverless deploy --stage $CIRCLE_BRANCH
       - run:
           name: Deploy Step Function State Machines
           command: cd packages/sixcrm && export SIX_VERBOSE=2 && node ./deployment/stepfunctions/deploy_state_machines.js

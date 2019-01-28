@@ -1,28 +1,14 @@
 const chai = require('chai');
 const expect = chai.expect;
 const _ = require('lodash');
-const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
 const AWSTestUtils = require('./aws-test-utils');
 
 describe('controllers/providers/sqs-provider', () => {
 
-	let copy_stage = stringutilities.clone(process.env.stage);
-
-	beforeEach(() => {
-		// cleanup
-		delete require.cache[require.resolve(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'))];
-	});
-
-	afterEach(() => {
-		global.SixCRM.configuration.handleStage(copy_stage);
-	});
-
 	describe('getQueueARN', () => {
 
 		it('successfully returns queue arn', () => {
-
-			global.SixCRM.configuration.handleStage('development');
-			global.SixCRM.configuration.setConfigurationFiles();
 
 			const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
 			const sqsprovider = new SQSProvider();
@@ -31,7 +17,7 @@ describe('controllers/providers/sqs-provider', () => {
 
 			let queue_arn = sqsprovider.getQueueARN(argumentation);
 
-			expect(queue_arn).to.match(/^arn:aws:sqs:us-[a-zA-Z]+-[0-9]:[0-9]+:sampleQueueName$/);
+			expect(queue_arn).to.contain('sampleQueueName');
 
 		});
 
@@ -58,69 +44,20 @@ describe('controllers/providers/sqs-provider', () => {
 				expect(error.message).to.equal('[500] Improper argumentation for getQueueARN');
 			}
 		});
-
-		it('returns queue arn template with appointed queue name for localhost', () => {
-
-			let argumentation = {QueueName: 'sampleQueueName'};
-
-			const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
-			const sqsprovider = new SQSProvider();
-
-			global.SixCRM.configuration.handleStage('local');
-			global.SixCRM.configuration.setConfigurationFiles();
-
-			let queue_arn = sqsprovider.getQueueARN(argumentation);
-
-			expect(queue_arn).to.equal(argumentation.QueueName);
-		});
 	});
 
 	describe('getQueueURL', () => {
 
 		it('returns queue url template with appointed queue name', () => {
 
-			global.SixCRM.configuration.handleStage('development');
-			global.SixCRM.configuration.setConfigurationFiles();
-
 			let input = 'example';
 
 			const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
 			const sqsprovider = new SQSProvider();
 
-			expect(sqsprovider.getQueueURL(input)).to.match(/https:\/\/sqs.us-[a-zA-Z]+-[0-9].amazonaws.com\/[0-9]+\/example/);
+			expect(sqsprovider.getQueueURL(input)).to.include('example');
 		});
 
-		it('returns url template with queue name from appointed input', () => {
-
-			global.SixCRM.configuration.handleStage('development');
-			global.SixCRM.configuration.setConfigurationFiles();
-
-			let input = {queue:'example'};
-
-			const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
-			const sqsprovider = new SQSProvider();
-
-			expect(sqsprovider.getQueueURL(input)).to.match(/https:\/\/sqs.us-[a-zA-Z]+-[0-9].amazonaws.com\/[0-9]+\/example/);
-		});
-
-		it('returns localhost endpoint with appointed queue name', () => {
-
-			global.SixCRM.configuration.handleStage('local');
-			global.SixCRM.configuration.setConfigurationFiles();
-
-			let endpoint = global.SixCRM.configuration.site_config.sqs.endpoint;
-			let input = 'example';
-			const queue = '/queue/';
-
-			let expected_result = endpoint+queue+input;
-
-			const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
-			const sqsprovider = new SQSProvider();
-			let queue_url = sqsprovider.getQueueURL(input);
-
-			expect(queue_url).to.equal(expected_result);
-
-		});
 	});
 
 	describe('getQueueParameters', () => {
@@ -139,8 +76,6 @@ describe('controllers/providers/sqs-provider', () => {
 
 		it('returns queue parameters with appointed queue name', () => {
 
-			global.SixCRM.configuration.handleStage('development');
-			global.SixCRM.configuration.setConfigurationFiles();
 
 			let queue_name = 'test';
 
@@ -149,7 +84,7 @@ describe('controllers/providers/sqs-provider', () => {
 
 			let queue_parameters = sqsprovider.getQueueParameters(queue_name);
 
-			expect(queue_parameters.account).to.match(/[0-9]/);
+			expect(queue_parameters.account).to.exist;
 			expect(queue_parameters.queue_name).to.equal(queue_name);
 			expect(queue_parameters.region).to.match(/us-[a-zA-Z]+-[0-9]/);
 		});
@@ -276,8 +211,6 @@ describe('controllers/providers/sqs-provider', () => {
 
 		it('returns received message', () => {
 
-			global.SixCRM.configuration.handleStage('development');
-			global.SixCRM.configuration.setConfigurationFiles();
 
 			let params = {
 				queue:'example',
@@ -300,8 +233,6 @@ describe('controllers/providers/sqs-provider', () => {
 
 		it('returns error when message wasn\'t received', () => {
 
-			global.SixCRM.configuration.handleStage('development');
-			global.SixCRM.configuration.setConfigurationFiles();
 
 			let params = {
 				queue:'example',
@@ -327,8 +258,6 @@ describe('controllers/providers/sqs-provider', () => {
 
 		it('successfully deletes message', () => {
 
-			global.SixCRM.configuration.handleStage('development');
-			global.SixCRM.configuration.setConfigurationFiles();
 
 			let input = {queue:'example'};
 
@@ -349,8 +278,6 @@ describe('controllers/providers/sqs-provider', () => {
 
 		it('successfully sends message', () => {
 
-			global.SixCRM.configuration.handleStage('development');
-			global.SixCRM.configuration.setConfigurationFiles();
 
 			let input = {queue:'example'};
 
@@ -371,8 +298,6 @@ describe('controllers/providers/sqs-provider', () => {
 
 		it('successfully deletes messages', () => {
 
-			global.SixCRM.configuration.handleStage('development');
-			global.SixCRM.configuration.setConfigurationFiles();
 
 			let input = {
 				queue: 'example',
@@ -398,8 +323,6 @@ describe('controllers/providers/sqs-provider', () => {
 
 		it('returns response from deleted message batch', () => {
 
-			global.SixCRM.configuration.handleStage('development');
-			global.SixCRM.configuration.setConfigurationFiles();
 
 			let input = {
 				queue: 'example',
@@ -427,8 +350,6 @@ describe('controllers/providers/sqs-provider', () => {
 
 		it('returns error when messages haven\'t been removed', () => {
 
-			global.SixCRM.configuration.handleStage('development');
-			global.SixCRM.configuration.setConfigurationFiles();
 
 			let fail = new Error('fail');
 
@@ -456,8 +377,6 @@ describe('controllers/providers/sqs-provider', () => {
 
 		it('returns false when there aren\'t any messages to delete', () => {
 
-			global.SixCRM.configuration.handleStage('development');
-			global.SixCRM.configuration.setConfigurationFiles();
 
 			let input = {queue: 'example'};
 
@@ -796,20 +715,6 @@ describe('controllers/providers/sqs-provider', () => {
 			};
 
 			return sqsprovider.queueExists(short_name).then((result) => {
-				expect(result).to.equal(true);
-			});
-		});
-
-		it('returns true when queue is contained inside preexisting list', () => {
-
-			let shortname = 'test';
-
-			const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
-			const sqsprovider = new SQSProvider();
-
-			sqsprovider.existing_queues = ['test', 'test2'];
-
-			return sqsprovider.queueExists(shortname).then((result) => {
 				expect(result).to.equal(true);
 			});
 		});

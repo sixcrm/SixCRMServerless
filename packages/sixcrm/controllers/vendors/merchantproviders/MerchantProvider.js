@@ -1,9 +1,9 @@
 const _ = require('lodash');
 const querystring = require('querystring');
 
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const HttpProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const HttpProvider = require('@6crm/sixcrmcore/lib/providers/http-provider').default;
 const httpprovider = new HttpProvider();
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 

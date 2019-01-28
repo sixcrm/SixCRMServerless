@@ -1,9 +1,9 @@
 
 const _ = require('lodash');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js');
 
 /*

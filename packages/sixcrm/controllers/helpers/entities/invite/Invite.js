@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const signatureutilities = require('@6crm/sixcrmcore/util/signature').default;
-const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const signatureutilities = require('@6crm/sixcrmcore/lib/util/signature').default;
+const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
 
 const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
 const InviteUtilities = global.SixCRM.routes.include('helpers', 'entities/invite/InviteUtilities.js');

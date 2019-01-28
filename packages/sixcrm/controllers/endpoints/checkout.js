@@ -1,5 +1,5 @@
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
 const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 const ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');

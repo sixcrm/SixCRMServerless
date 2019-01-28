@@ -2,14 +2,14 @@
 const _ = require('lodash');
 const chai = require('chai');
 const expect = chai.expect;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const HttpProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const HttpProvider = require('@6crm/sixcrmcore/lib/providers/http-provider').default;
 const httpprovider = new HttpProvider();
-const random = require('@6crm/sixcrmcore/util/random').default;
-const signatureutilities = require('@6crm/sixcrmcore/util/signature').default;
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+const random = require('@6crm/sixcrmcore/lib/util/random').default;
+const signatureutilities = require('@6crm/sixcrmcore/lib/util/signature').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 

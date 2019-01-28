@@ -4,9 +4,9 @@ let chai = require('chai');
 let expect = chai.expect;
 
 const mockery = require('mockery');
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const fileutilities = require('@6crm/sixcrmcore/util/file-utilities').default;
-const random = require('@6crm/sixcrmcore/util/random').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const fileutilities = require('@6crm/sixcrmcore/lib/util/file-utilities').default;
+const random = require('@6crm/sixcrmcore/lib/util/random').default;
 
 describe('controllers/helpers/resources/accountimages/AccountImages.js', () => {
 

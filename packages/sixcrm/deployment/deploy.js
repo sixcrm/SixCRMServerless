@@ -2,7 +2,7 @@
 require('@6crm/sixcrmcore');
 const fs = require('fs');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 du.info('Deploying stage \'' + process.env.stage + '\'.');
 

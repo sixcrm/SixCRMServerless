@@ -3,7 +3,7 @@ const BBPromise = require('bluebird');
 const moment = require('moment-timezone');
 
 require('@6crm/sixcrmcore');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 const DynamoClient = require('./dynamo');
 const dynamoClient = new DynamoClient();

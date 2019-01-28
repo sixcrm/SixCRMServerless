@@ -4,10 +4,10 @@ const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
-const random = require('@6crm/sixcrmcore/util/random').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
+const random = require('@6crm/sixcrmcore/lib/util/random').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
@@ -181,7 +181,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 	describe('getMostRecentRebill', async () => {
 
-		const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+		const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 		it('successfully gets the most recent rebill', async () => {
 
@@ -944,7 +944,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 	describe('getBillableRebills', () => {
 
-		const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+		const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 		it('successfully retrieves billable rebills', () => {
 			const rebill = getValidRebill();
@@ -1187,7 +1187,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 	describe('getAvailableRebillsAsMessages', () => {
 
-		const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+		const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 		it('successfully retrieves spoofed messages of billable rebills', () => {
 
@@ -1335,7 +1335,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		beforeEach(() => {
 
-			mockery.registerMock('@6crm/sixcrmcore/util/timestamp', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/util/timestamp', {
 				default: class {
 					static getThisHourInISO8601() {
 						return '2018-07-10T06:00:00Z';
@@ -1357,7 +1357,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		it('adds history object with new state to rebill', () => {
 
-			const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+			const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 			let rebill = getValidRebill();
 
@@ -1392,7 +1392,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		it('adds history object with new state when rebill has no previous history', () => {
 
-			const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+			const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 			let rebill = getValidRebill();
 
@@ -1428,7 +1428,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		beforeEach(() => {
 
-			mockery.registerMock('@6crm/sixcrmcore/util/timestamp', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/util/timestamp', {
 				default: class {
 					static getThisHourInISO8601() {
 						return '2018-07-10T06:00:00Z';
@@ -1450,7 +1450,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		it('successfully creates history element', () => {
 
-			const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+			const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 			let params = {
 				state: 'pending',
@@ -1470,7 +1470,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		it('successfully creates history element when parameters are not specified', () => {
 
-			const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+			const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 			let params = {
 				state: 'pending',
@@ -1493,7 +1493,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		it('sets history element with an error message', () => {
 
-			const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+			const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 			let params = {
 				state: '',
@@ -1521,7 +1521,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		beforeEach(() => {
 
-			mockery.registerMock('@6crm/sixcrmcore/util/timestamp', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/util/timestamp', {
 				default: class {
 					static getThisHourInISO8601() {
 						return '2018-07-10T06:00:00Z';
@@ -1543,7 +1543,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		it('gets matching state when there is only one corresponding previous state', () => {
 
-			const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+			const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 			let rebill = getValidRebill();
 			const now = timestamp.getISO8601();
@@ -1570,7 +1570,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		it('gets last matching state when there are more than one specified previous state', () => {
 
-			const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+			const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 			let rebill = getValidRebill();
 
@@ -1604,7 +1604,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		it('gets last matching state when rebill does not have a history of specified previous state', () => {
 
-			const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+			const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 			let rebill = getValidRebill();
 			let previous_state = 'pending';
@@ -1651,7 +1651,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		beforeEach(() => {
 
-			mockery.registerMock('@6crm/sixcrmcore/util/timestamp', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/util/timestamp', {
 				default: class {
 					static getThisHourInISO8601() {
 						return '2018-07-10T06:00:00Z';
@@ -1673,7 +1673,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		it('updates previous state from history with new exit', () => {
 
-			const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+			const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 			let rebill = getValidRebill();
 
@@ -1734,7 +1734,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		beforeEach(() => {
 
-			mockery.registerMock('@6crm/sixcrmcore/util/timestamp', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/util/timestamp', {
 				default: class {
 					static getThisHourInISO8601() {
 						return '2018-07-10T06:00:00Z';
@@ -1756,7 +1756,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		it('successfully builds updated rebill prototype', () => {
 
-			const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+			const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 			let rebill = getValidRebill();
 
@@ -1794,7 +1794,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		it('successfully builds updated rebill prototype', () => {
 
-			const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+			const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 			let rebill = getValidRebill();
 
@@ -1838,7 +1838,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		beforeEach(() => {
 
-			mockery.registerMock('@6crm/sixcrmcore/util/timestamp', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/util/timestamp', {
 				default: class {
 					static getThisHourInISO8601() {
 						return '2018-07-10T06:00:00Z';
@@ -1860,7 +1860,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		it('successfully updates rebill from updated rebill prototype', () => {
 
-			const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+			const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 			let rebill = getValidRebill();
 
@@ -1898,7 +1898,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 		it('successfully updates rebill from updated rebill prototype when rebill controller is already set', () => {
 
-			const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+			const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 			let rebill = getValidRebill();
 			const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');

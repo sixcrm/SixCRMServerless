@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-//const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+//const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 module.exports = class UserACLHelperController {
 

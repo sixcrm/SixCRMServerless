@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
 const jwtprovider = new JWTProvider();
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 
