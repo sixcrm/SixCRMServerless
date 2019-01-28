@@ -1,7 +1,8 @@
 {
   "private": true,
   "workspaces": {
-    "packages": ["packages/*"]
+    "packages": ["packages/*"],
+    "nohoist": ["**/module-alias", "**/module-alias/**"]
   },
   "scripts": {
     "compile": "lerna run compile",
