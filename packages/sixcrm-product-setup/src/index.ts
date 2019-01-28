@@ -20,6 +20,7 @@ export const createProductSetupService = async ({
 		productSetupService = new ProductSetupService({ accountId, connection });
 		return productSetupService;
 	} catch (err) {
+		// tslint:disable-next-line no-console
 		console.error('Error connecting to Aurora', err);
 		throw err;
 	}

@@ -1,6 +1,10 @@
 import Product from "../../models/Product";
 
 export class DynamoProduct {
+
+	static fromArray(items: any[]) {
+		return items.map(d => new DynamoProduct(d));
+	}
 	readonly id: string;
 	readonly name: string;
 	readonly account: string;
@@ -31,10 +35,6 @@ export class DynamoProduct {
 		this.merchantprovidergroup = this.get(data, 'merchantprovidergroup.S');
 	}
 
-	static fromArray(items: any[]) {
-		return items.map(d => new DynamoProduct(d))
-	}
-
 	toProduct() : Product {
 		return {
 			id: this.id,
@@ -51,7 +51,7 @@ export class DynamoProduct {
 			fulfillment_provider_id: this.fulfillment_provider,
 			merchant_provider_group_id: this.merchantprovidergroup,
 			image_urls: this.getImages()
-		}
+		};
 	}
 
 	private get(object: any, path: string): any {

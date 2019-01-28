@@ -8,6 +8,7 @@ export class ImportProductsFromDynamoMigration extends DataMigration {
 		const dynamoProducts: DynamoProduct[] = DynamoProduct.fromArray(await this.getAllFromDynamo('product'));
 		const productsToInsert: Product[] = dynamoProducts.map(p => p.toProduct()).filter(p => p.account_id !== '*');
 
+		// tslint:disable-next-line no-console
 		console.log(`Found ${productsToInsert.length} products in DynamoDB.`);
 
 		for (const product of productsToInsert) {
@@ -18,11 +19,13 @@ export class ImportProductsFromDynamoMigration extends DataMigration {
 		for (const product of productsToInsert) {
 			insertedProductCount++;
 			await this.getOneFromAurora(product.id).catch(e => {
+				// tslint:disable-next-line no-console
 				console.log(`Product ${product.id} not found in Aurora.`);
 				insertedProductCount--;
-			})
+			});
 		}
 
+		// tslint:disable-next-line no-console
 		console.log(`Inserted ${insertedProductCount}/${productsToInsert.length} products to Aurora.`);
 	}
 

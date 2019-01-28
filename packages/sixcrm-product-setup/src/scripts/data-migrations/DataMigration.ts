@@ -23,7 +23,7 @@ export abstract class DataMigration {
 
 	async prepare(): Promise<void> {
 		this.dynamoConnector = new DynamoConnector(dynamoConfig);
-		this.auroraConnector = new AuroraConnector(await connect(auroraConfig), Product)
+		this.auroraConnector = new AuroraConnector(await connect(auroraConfig), Product);
 	}
 
 	abstract migrate(): Promise<void>;

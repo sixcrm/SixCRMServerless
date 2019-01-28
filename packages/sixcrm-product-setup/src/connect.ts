@@ -13,7 +13,7 @@ export interface IDatabaseConfig {
 	password: string;
 	database?: string;
 	schema?: string;
-	logging?: string[]
+	logging?: string[];
 }
 
 const toConnectionOptions = (config: IDatabaseConfig) => {
@@ -35,6 +35,7 @@ export const connect = async (config: IDatabaseConfig) => {
 		try {
 			return getConnection(connectionName);
 		} catch (e) {
+			// tslint:disable-next-line no-console
 			console.error('Error with connection', e);
 			connection = null;
 		}
@@ -42,4 +43,4 @@ export const connect = async (config: IDatabaseConfig) => {
 
 	connection = createConnection(toConnectionOptions(config));
 	return connection;
-}
+};
