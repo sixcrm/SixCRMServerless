@@ -53,7 +53,8 @@ module.exports = class InfoController extends transactionEndpointController{
 
 	}
 
-	async preamble(event) {
+	async preamble(event, context) {
+		context.callbackWaitsForEmptyEventLoop = false;
 		await super.preamble(event);
 
 		// Pull accountId off of the event to workaround a race condition

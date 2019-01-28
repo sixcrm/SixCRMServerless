@@ -18,8 +18,8 @@ module.exports = class EndpointController {
 	/* lambda lifecycle */
 
 	// run the lambda lifecycle
-	execute(event) {
-		return this.preamble(event)
+	execute(event, context) {
+		return this.preamble(event, context)
 			.then(() => this.body(event))
 			.then((res) => this.epilogue().then(() => Promise.resolve(res)))
 

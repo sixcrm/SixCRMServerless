@@ -37,7 +37,8 @@ module.exports = class graphController extends userAuthenticatedController {
 
 	// Pull accountId off of the event to workaround a race condition
 	// where global.account has not been defined or is wrong
-	async preamble({ pathParameters: { account: accountId }}) {
+	async preamble({ pathParameters: { account: accountId }}, context) {
+		context.callbackWaitsForEmptyEventLoop = false;
 		global.SixCRM.setResource('auroraContext', auroraContext);
 
 		const auroraConfig = await getAuroraConfig();
