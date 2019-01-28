@@ -55,9 +55,6 @@ jobs:
       - run:
           name: 'Legacy Unit Tests (TypeScript)'
           command: stage=circle yarn run ts-test
-      - run:
-          name: 'Unit Tests'
-          command: yarn test
   pre_deploy:
     <<: *job-defaults
     steps:
