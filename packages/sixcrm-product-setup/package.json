@@ -33,6 +33,7 @@
     "url": "https://github.com/sixcrm/SixCRMServerless/issues"
   },
   "devDependencies": {
+    "@types/chai-as-promised": "^7.1.0",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.18",
     "aws-sdk": "^2.394.0",

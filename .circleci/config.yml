@@ -50,11 +50,14 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: 'Unit Tests (JavaScript)'
+          name: 'Legacy Unit Tests (JavaScript)'
           command: stage=circle yarn run test-unit-circle
       - run:
-          name: 'Unit Tests (TypeScript)'
+          name: 'Legacy Unit Tests (TypeScript)'
           command: stage=circle yarn run ts-test
+      - run:
+          name: 'Unit Tests'
+          command: yarn test
   pre_deploy:
     <<: *job-defaults
     steps:
