@@ -18,12 +18,20 @@ jobs:
       - run:
           name: Install
           command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && yarn install --frozen-lockfile
+      - run:
+          name: compile
+          command: yarn run compile
       - save_cache:
           key: v2-dependency-cache-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
             - packages/sixcrm/node_modules
             - packages/sixcrm-product-setup/node_modules
+      - persist_to_workspace:
+          root: .
+          paths:
+            - packages/sixcrm/lib
+            - packages/sixcrm-product-setup/lib
   lint:
     <<: *job-defaults
     steps:
@@ -39,6 +47,8 @@ jobs:
       - checkout
       - restore_cache:
           key: v2-dependency-cache-{{ checksum "yarn.lock" }}
+      - attach_workspace:
+          at: .
       - run:
           name: 'Unit Tests (JavaScript)'
           command: stage=circle yarn run test-unit-circle
@@ -92,9 +102,6 @@ jobs:
           key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - attach_workspace:
           at: .
-      - run:
-          name: Compile
-          command: yarn run compile
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
