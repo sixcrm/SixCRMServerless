@@ -1042,6 +1042,14 @@ const fields = Object.assign({}, {
 	},
 	productlist: {
 		type: productListType.graphObj,
+		args: {
+			pagination: {
+				type: paginationInputType.graphObj
+			},
+			search: {
+				type: entitySearchInputType.graphObj
+			}
+		},
 		resolve: async () => {
 			const productSetupService = getProductSetupService();
 

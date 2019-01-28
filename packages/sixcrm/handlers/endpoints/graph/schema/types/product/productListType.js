@@ -2,6 +2,7 @@ const {
 	GraphQLObjectType,
 	GraphQLList
 } = require('graphql');
+const paginationType = require('../pagination/paginationType');
 const productType = require('./productType');
 
 module.exports.graphObj = new GraphQLObjectType({
@@ -11,6 +12,10 @@ module.exports.graphObj = new GraphQLObjectType({
 		products: {
 			type: new GraphQLList(productType.graphObj),
 			description: 'The products',
+		},
+		pagination: {
+			type: paginationType.graphObj,
+			description: 'Query pagination'
 		}
 	}),
 	interfaces: []
