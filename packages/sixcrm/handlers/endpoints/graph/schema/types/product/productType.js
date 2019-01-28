@@ -23,6 +23,8 @@ const merchantProviderGroupController = new MerchantProviderGroupController();
 const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 const emailTemplateController = new EmailTemplateController();
 
+const shippingIntervalToSeconds = ({ hours = 0, minutes = 0, seconds = 0 } = {}) => hours * 60 * 60 + minutes * 60 + seconds;
+
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'Product',
 	description: 'A product for sale.',
@@ -60,12 +62,13 @@ module.exports.graphObj = new GraphQLObjectType({
 		shipping_delay: {
 			type: GraphQLInt,
 			description: 'The number of seconds to delay shipping after a transaction.',
+			resolve: ({ shipping_delay }) => shippingIntervalToSeconds(shipping_delay)
 		},
 		default_price: {
 			type: GraphQLFloat,
 			description: '`default_price` will be removed. Use `Product.price` and `Product.shipping_price` instead.',
 			deprecationReason: 'The `default_price` field is deprecated and will be removed soon.',
-			resolve: ({ price, shipping_price }) => price + (shipping_price || 0)
+			resolve: ({ price, shipping_price }) => parseFloat(price) + parseFloat(shipping_price)
 		},
 		price: {
 			type: GraphQLFloat,

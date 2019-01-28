@@ -487,6 +487,7 @@ module.exports.graphObj = new GraphQLObjectType({
 				}
 			},
 			resolve: async (value, { product }) => {
+				product = productInputType.toProductInput(product);
 				const productSetupService = getProductSetupService();
 				const { id } = await productSetupService.createProduct(product);
 				return productSetupService.getProduct(id);
@@ -501,6 +502,7 @@ module.exports.graphObj = new GraphQLObjectType({
 				}
 			},
 			resolve: async (value, { product }) => {
+				product = productInputType.toProductInput(product);
 				const productSetupService = getProductSetupService();
 				await productSetupService.updateProduct(product);
 				return productSetupService.getProduct(product.id);
