@@ -197,8 +197,10 @@ module.exports = class Register extends RegisterUtilities {
 				const scheduleItem = product_schedule.schedule[j];
 				const product_id = scheduleItem.product.id;
 				if (_.includes(product_ids, product_id)) {
+					const cycle = this.computeCycle(session.created_at, rebill.bill_at, scheduleItem);
+					let nextBillingDay = moment(rebill.bill_at);
+					this.incrementBillingDay(nextBillingDay, scheduleItem);
 
-					const { cycle, nextBillingDay } = this.computeCycleAndNextBillingDay(session.created_at, rebill.bill_at, scheduleItem);
 					await AnalyticsEvent.push('subscription', {
 						session_id: session.id,
 						product_schedule_id: product_schedule.id,
@@ -206,7 +208,7 @@ module.exports = class Register extends RegisterUtilities {
 						session_alias: session.alias,
 						product_schedule_name: product_schedule.name,
 						product_name: scheduleItem.product.name,
-						datetime: nextBillingDay,
+						datetime: nextBillingDay.toISOString(),
 						status,
 						amount: scheduleItem.price * product_schedule_item.quantity,
 						item_count: product_schedule_item.quantity,
@@ -226,35 +228,29 @@ module.exports = class Register extends RegisterUtilities {
 
 	}
 
-	computeCycleAndNextBillingDay(session_start, bill_at, schedule) {
+	computeCycle(session_start, bill_at, schedule) {
 
 		let cycle = 0;
 		let current = moment(session_start).startOf('day').add(schedule.start, 'days');
 		const bill_day = moment(bill_at).startOf('day');
 		while (current.isBefore(bill_day)) {
 
-			incrementBillingDay(current, schedule);
+			this.incrementBillingDay(current, schedule);
 			cycle++;
 
 		}
 
-		// Get the NEXT billing day.
-		incrementBillingDay(current, schedule);
+		return cycle;
 
-		return {
-			cycle,
-			nextBillingDay: current.toISOString()
-		};
+	}
 
-		function incrementBillingDay(current, schedule) {
+	incrementBillingDay(current, schedule) {
 
-			if (schedule.samedayofmonth) {
-				current.add(1, 'months');
-			}
-			else {
-				current.add(schedule.period, 'days')
-			}
-
+		if (schedule.samedayofmonth) {
+			current.add(1, 'months');
+		}
+		else {
+			current.add(schedule.period, 'days')
 		}
 
 	}
