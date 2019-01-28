@@ -9,6 +9,20 @@ const userAuthenticatedController = global.SixCRM.routes.include('controllers', 
 const resolveController = global.SixCRM.routes.include('providers', 'Resolve.js');
 const auroraContext = require('@6crm/sixcrmcore/lib/util/analytics/aurora-context').default;
 
+const getEnvironmentAuroraHost = () => global.SixCRM.configuration.getEnvironmentConfig(`aurora_host`);
+const getAuroraConfig = async () => {
+	const {
+		host = await getEnvironmentAuroraHost(),
+		user: username,
+		password
+	} = global.SixCRM.configuration.site_config.aurora;
+	return {
+		host,
+		username,
+		password
+	};
+};
+
 module.exports = class graphController extends userAuthenticatedController {
 
 	constructor() {
@@ -23,15 +37,13 @@ module.exports = class graphController extends userAuthenticatedController {
 
 	// Pull accountId off of the event to workaround a race condition
 	// where global.account has not been defined or is wrong
-	preamble({ pathParameters: { account: accountId }}) {
+	async preamble({ pathParameters: { account: accountId }}) {
 		global.SixCRM.setResource('auroraContext', auroraContext);
 
-		const { host, user: username, password } = global.SixCRM.configuration.site_config.aurora;
+		const auroraConfig = await getAuroraConfig();
 		const productSetupServiceOptions = {
 			accountId,
-			host,
-			username,
-			password
+			...auroraConfig
 		};
 		return Promise.all([
 			createProductSetupService(productSetupServiceOptions),

@@ -8,6 +8,20 @@ const { createProductSetupService, getProductSetupService } = require('@6crm/six
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
+const getEnvironmentAuroraHost = () => global.SixCRM.configuration.getEnvironmentConfig(`aurora_host`);
+const getAuroraConfig = async () => {
+	const {
+		host = await getEnvironmentAuroraHost(),
+		user: username,
+		password
+	} = global.SixCRM.configuration.site_config.aurora;
+	return {
+		host,
+		username,
+		password
+	};
+};
+
 module.exports = class InfoController extends transactionEndpointController{
 
 	constructor(){
@@ -45,12 +59,10 @@ module.exports = class InfoController extends transactionEndpointController{
 		// Pull accountId off of the event to workaround a race condition
 		// where global.account has not been defined or is wrong
 		const { pathParameters: { account: accountId }} = event;
-		const { host, user: username, password } = global.SixCRM.configuration.site_config.aurora;
+		const auroraConfig = await getAuroraConfig();
 		const productSetupServiceOptions = {
 			accountId,
-			host,
-			username,
-			password
+			...auroraConfig
 		};
 		return createProductSetupService(productSetupServiceOptions);
 	}
