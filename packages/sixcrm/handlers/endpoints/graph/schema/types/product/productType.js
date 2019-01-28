@@ -9,7 +9,9 @@ const {
 } = require('graphql');
 
 const merchantProviderGroupType = require('../merchantprovidergroup/merchantProviderGroupType');
+const dynamicPricingType = require('./components/dynamicPricingType');
 const fulfillmentProviderType = require('../fulfillmentprovider/fulfillmentProviderType');
+const productAttributesType = require('./components/attributesType');
 const emailTemplateType = require('../emailtemplate/emailTemplateType');
 
 const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
@@ -41,6 +43,12 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: GraphQLString,
 			description: 'The product SKU',
 		},
+		ship: {
+			type: GraphQLBoolean,
+			description: '`ship` will be removed. Use `Product.is_shippable` instead.',
+			deprecationReason: 'The `ship` field is deprecated and will be removed soon.',
+			resolve: ({ is_shippable }) => is_shippable
+		},
 		is_shippable: {
 			type: GraphQLBoolean,
 			description: 'The product ship, no-ship status.',
@@ -53,19 +61,42 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: GraphQLInt,
 			description: 'The number of seconds to delay shipping after a transaction.',
 		},
+		default_price: {
+			type: GraphQLFloat,
+			description: '`default_price` will be removed. Use `Product.price` and `Product.shipping_price` instead.',
+			deprecationReason: 'The `default_price` field is deprecated and will be removed soon.',
+			resolve: ({ price, shipping_price }) => price + (shipping_price || 0)
+		},
 		price: {
 			type: GraphQLFloat,
 			description: 'A default price for product.',
+		},
+		dynamic_pricing: {
+			type: dynamicPricingType.graphObj,
+			description: '`dynamic_pricing` will be removed. Use `Product.price` and `Product.shipping_price` instead.',
+			deprecationReason: 'The `DynamicPricing` type is deprecated and will be removed soon.',
+			resolve: () => ({ min: 0, max: 9999999 })
 		},
 		fulfillment_provider: {
 			type: fulfillmentProviderType.graphObj,
 			description: 'The session associated with the transaction.',
 			resolve: ({ fulfillment_provider_id }) => fulfillment_provider_id && fulfillmentProviderController.get(fulfillment_provider_id)
 		},
-		merchantprovidergroup:{
+		merchantprovidergroup: {
 			type: merchantProviderGroupType.graphObj,
 			description: 'The merchant provider group associated with the product.',
 			resolve: ({ merchant_provider_group_id }) => merchant_provider_group_id && merchantProviderGroupController.get(merchant_provider_group_id)
+		},
+		attributes: {
+			type: productAttributesType.graphObj,
+			description: '`attributes` will be removed. Use `Product.image_urls` instead.',
+			deprecationReason: 'The `ProductAttributes` type is deprecated and will be removed soon.',
+			resolve: ({ image_urls }) => ({
+				images: image_urls.map((path, index) => ({
+					default_image: index === 0,
+					path
+				}))
+			})
 		},
 		image_urls: {
 			type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
