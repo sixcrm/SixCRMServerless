@@ -1,12 +1,11 @@
-
-const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
-const GraphQLNonNull = require('graphql').GraphQLNonNull;
-const GraphQLFloat = require('graphql').GraphQLFloat;
-const GraphQLInt = require('graphql').GraphQLInt;
-const GraphQLBoolean = require('graphql').GraphQLBoolean;
-const GraphQLString = require('graphql').GraphQLString;
-
-let productAttributesInputType = require('./../../product/components/attributesInputType');
+const {
+	GraphQLInputObjectType,
+	GraphQLNonNull,
+	GraphQLFloat,
+	GraphQLInt,
+	GraphQLBoolean,
+	GraphQLString
+} = require('graphql');
 
 module.exports.graphObj = new GraphQLInputObjectType({
 	name: 'TransactionalProductInput',
@@ -47,10 +46,6 @@ module.exports.graphObj = new GraphQLInputObjectType({
 		fulfillment_provider: {
 			type: GraphQLString,
 			description: 'The session associated with the transaction.'
-		},
-		attributes:{
-			type: productAttributesInputType.graphObj,
-			description: 'The attributes associated with the product.'
 		}
 	}),
 	interfaces: []

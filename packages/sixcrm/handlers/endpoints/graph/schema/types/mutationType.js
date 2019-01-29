@@ -1,3 +1,4 @@
+const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
 let SMTPProviderInputType = require('./smtpprovider/SMTPProviderInputType');
 let SMTPProviderType = require('./smtpprovider/SMTPProviderType');
 
@@ -146,7 +147,6 @@ const UserACLController = global.SixCRM.routes.include('controllers', 'entities/
 const UserDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 const UserSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
-const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const ReturnController = global.SixCRM.routes.include('controllers', 'entities/Return.js');
@@ -486,12 +486,11 @@ module.exports.graphObj = new GraphQLObjectType({
 					type: productInputType.graphObj
 				}
 			},
-			resolve: (value, product) => {
-				const productController = new ProductController();
-
-				return productController.create({
-					entity: product.product
-				});
+			resolve: async (value, { product }) => {
+				product = productInputType.toProductInput(product);
+				const productSetupService = getProductSetupService();
+				const { id } = await productSetupService.createProduct(product);
+				return productSetupService.getProduct(id);
 			}
 		},
 		updateproduct: {
@@ -502,12 +501,11 @@ module.exports.graphObj = new GraphQLObjectType({
 					type: productInputType.graphObj
 				}
 			},
-			resolve: (value, product) => {
-				const productController = new ProductController();
-
-				return productController.update({
-					entity: product.product
-				});
+			resolve: async (value, { product }) => {
+				product = productInputType.toProductInput(product);
+				const productSetupService = getProductSetupService();
+				await productSetupService.updateProduct(product);
+				return productSetupService.getProduct(product.id);
 			}
 		},
 		deleteproduct: {
@@ -519,14 +517,7 @@ module.exports.graphObj = new GraphQLObjectType({
 					type: new GraphQLNonNull(GraphQLString)
 				}
 			},
-			resolve: (value, product) => {
-				var id = product.id;
-				const productController = new ProductController();
-
-				return productController.delete({
-					id: id
-				});
-			}
+			resolve: (value, { id }) => getProductSetupService().deleteProduct(id)
 		},
 		createaccesskey: {
 			type: accessKeyType.graphObj,

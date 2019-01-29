@@ -1,13 +1,12 @@
-
-const GraphQLObjectType = require('graphql').GraphQLObjectType;
-const GraphQLString = require('graphql').GraphQLString;
-const GraphQLNonNull = require('graphql').GraphQLNonNull;
-const GraphQLInt = require('graphql').GraphQLInt;
-const GraphQLList = require('graphql').GraphQLList;
-
+const {
+	GraphQLObjectType,
+	GraphQLString,
+	GraphQLNonNull,
+	GraphQLInt,
+	GraphQLList
+} = require('graphql');
+const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
 const productType = require('../product/productType');
-const ProductController = global.SixCRM.routes.include('entities', 'Product');
-
 const returnHistoryType = require('./returnHistoryType');
 
 module.exports.graphObj = new GraphQLObjectType({
@@ -19,10 +18,7 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		product:{
 			type: new GraphQLNonNull(productType.graphObj),
-			resolve:(product) => {
-				let productController = new ProductController();
-				return productController.get({id: product.product});
-			}
+			resolve: ({ product: productId }) => getProductSetupService().getProduct(productId)
 		},
 		quantity:{
 			type: new GraphQLNonNull(GraphQLInt),

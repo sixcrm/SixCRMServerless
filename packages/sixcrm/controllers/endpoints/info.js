@@ -3,10 +3,24 @@ const _ = require('lodash');
 
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const { createProductSetupService, getProductSetupService } = require('@6crm/sixcrm-product-setup');
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
-const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+
+const getEnvironmentAuroraHost = () => global.SixCRM.configuration.getEnvironmentConfig(`aurora_host`);
+const getAuroraConfig = async () => {
+	const {
+		host = await getEnvironmentAuroraHost(),
+		user: username,
+		password
+	} = global.SixCRM.configuration.site_config.aurora;
+	return {
+		host,
+		username,
+		password
+	};
+};
 
 module.exports = class InfoController extends transactionEndpointController{
 
@@ -33,11 +47,25 @@ module.exports = class InfoController extends transactionEndpointController{
 			'product_schedules':global.SixCRM.routes.path('model', 'entities/components/productschedules.json')
 		};
 
-		this.productController = new ProductController();
 		this.productScheduleController = new ProductScheduleController();
 
 		this.initialize();
 
+	}
+
+	async preamble(event, context) {
+		context.callbackWaitsForEmptyEventLoop = false;
+		await super.preamble(event);
+
+		// Pull accountId off of the event to workaround a race condition
+		// where global.account has not been defined or is wrong
+		const { pathParameters: { account: accountId }} = event;
+		const auroraConfig = await getAuroraConfig();
+		const productSetupServiceOptions = {
+			accountId,
+			...auroraConfig
+		};
+		return createProductSetupService(productSetupServiceOptions);
 	}
 
 	execute(event){
@@ -60,14 +88,13 @@ module.exports = class InfoController extends transactionEndpointController{
 
 	}
 
-	acquireProducts(){
+	async acquireProducts(){
 		let event = this.parameters.get('event');
 
 		if(!_.has(event, 'products') || !arrayutilities.nonEmpty(event.products)){ return null; }
 
-		return this.productController.getListByAccount({ids: event.products}).then(result => {
-			return this.parameters.set('products', result.products);
-		});
+		const products = await getProductSetupService().getProductsByIds(event.products);
+		return this.parameters.set('products', products);
 
 	}
 

@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 const RebillController = global.SixCRM.routes.include('entities','Rebill.js');
@@ -7,7 +8,6 @@ const CustomerController = global.SixCRM.routes.include('entities','Customer.js'
 const CampaignController = global.SixCRM.routes.include('entities','Campaign.js');
 const CreditCardController = global.SixCRM.routes.include('entities','CreditCard.js');
 const TransactionController = global.SixCRM.routes.include('entities','Transaction.js');
-const ProductController = global.SixCRM.routes.include('entities','Product.js');
 const ProductHelperController = global.SixCRM.routes.include('helpers', 'entities/product/Product.js');
 
 module.exports = class ReturnController extends entityController {
@@ -24,7 +24,6 @@ module.exports = class ReturnController extends entityController {
 		this.customerController = new CustomerController();
 		this.campaignController = new CampaignController();
 		this.creditCardController = new CreditCardController();
-		this.productontroller = new ProductController();
 		this.productHelperController = new ProductHelperController();
 
 	}
@@ -58,7 +57,7 @@ module.exports = class ReturnController extends entityController {
 
 			for (let transaction of ret.transactions) {
 				for (let product of transaction.products) {
-					product.product = await this.productontroller.get({id: product.product});
+					product.product = await getProductSetupService().getProduct(product.product);
 					product.image = this.productHelperController.getDefaultImage(product.product);
 				}
 			}

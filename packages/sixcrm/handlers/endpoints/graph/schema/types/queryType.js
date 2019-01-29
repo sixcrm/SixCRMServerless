@@ -1,5 +1,6 @@
 require('module-alias/register');
 const _ = require('lodash');
+const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
 
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
@@ -165,7 +166,6 @@ const UserACLController = global.SixCRM.routes.include('controllers', 'entities/
 const UserDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 const UserSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
-const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const ReturnController = global.SixCRM.routes.include('controllers', 'entities/Return.js');
@@ -882,14 +882,7 @@ const fields = Object.assign({}, {
 				type: GraphQLString
 			}
 		},
-		resolve: function(root, product) {
-			const productController = new ProductController();
-
-			return productController.get({
-				id: product.id,
-				fatal: get_fatal
-			});
-		}
+		resolve: (root, { id }) => getProductSetupService().getProduct(id)
 	},
 	emailtemplate: {
 		type: emailTemplateType.graphObj,
@@ -1057,14 +1050,12 @@ const fields = Object.assign({}, {
 				type: entitySearchInputType.graphObj
 			}
 		},
-		resolve: function(root, products) {
-			const productController = new ProductController();
+		resolve: async () => {
+			const productSetupService = getProductSetupService();
 
-			return productController.listByAccount({
-				pagination: products.pagination,
-				fatal: list_fatal,
-				search: products.search
-			});
+			return {
+				products: await productSetupService.getAllProducts()
+			};
 		}
 	},
 	useracllist: {
