@@ -17,8 +17,13 @@ export class AuroraConnector {
 	public getAll(): Promise<void> {
 		return this.repository.find({});
 	}
+
 	public getOne(id: any): Promise<void> {
 		return this.repository.findOneOrFail({id});
+	}
+
+	public deleteOne(id: any): Promise<void> {
+		return this.repository.delete(id);
 	}
 
 }

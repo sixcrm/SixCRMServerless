@@ -12,6 +12,7 @@ export class ImportProductsFromDynamoMigration extends DataMigration {
 		console.log(`Found ${productsToInsert.length} products in DynamoDB.`);
 
 		for (const product of productsToInsert) {
+			await this.deleteOneFromAurora(product.id);
 			await this.saveOneToAurora(product);
 		}
 

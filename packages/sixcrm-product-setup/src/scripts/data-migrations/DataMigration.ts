@@ -58,4 +58,7 @@ export abstract class DataMigration {
 		return this.auroraConnector.save(entity);
 	}
 
+	deleteOneFromAurora(id: any): Promise<void> {
+		return this.auroraConnector.deleteOne(id);
+	}
 }
