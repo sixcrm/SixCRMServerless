@@ -10,6 +10,12 @@ import {
 
 import { IsUUID, IsNotEmpty, Min, ArrayUnique, IsOptional } from "class-validator";
 
+interface IProductInterval {
+	hours?: number;
+	minutes?: number;
+	seconds?: number;
+}
+
 @Entity()
 @Check(`"price" >= 0`)
 @Check(`"shipping_price" >= 0`)
@@ -62,7 +68,7 @@ export default class Product {
 		type: 'interval',
 		nullable: true
 	})
-	shipping_delay: number;
+	shipping_delay?: IProductInterval;
 
 	@Column({
 		type: 'uuid',

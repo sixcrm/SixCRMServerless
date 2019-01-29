@@ -1,3 +1,4 @@
+import { sortBy } from 'lodash';
 import Product from "../../models/Product";
 
 export class DynamoProduct {
@@ -7,6 +8,7 @@ export class DynamoProduct {
 	}
 	readonly id: string;
 	readonly name: string;
+	readonly description: string;
 	readonly account: string;
 	readonly attributes: any;
 	readonly created_at: string;
@@ -22,13 +24,14 @@ export class DynamoProduct {
 	constructor(data: any) {
 		this.id = this.get(data, 'id.S');
 		this.name = this.get(data, 'name.S');
+		this.description = this.get(data, 'description.S');
 		this.account = this.get(data, 'account.S');
 		this.attributes = this.get(data, 'attributes.M');
 		this.created_at = this.get(data, 'created_at.S');
 		this.updated_at = this.get(data, 'updated_at.S');
 		this.default_price = this.get(data, 'default_price.N');
 		this.dynamic_pricing = this.get(data, 'dynamic_pricing.M');
-		this.ship = this.get(data, 'ship.B');
+		this.ship = this.get(data, 'ship.BOOL');
 		this.shipping_delay = this.get(data, 'shipping_delay.N');
 		this.sku = this.get(data, 'sku.S');
 		this.fulfillment_provider = this.get(data, 'fulfillment_provider.S');
@@ -38,16 +41,16 @@ export class DynamoProduct {
 	toProduct() : Product {
 		return {
 			id: this.id,
-			name: this.name.substring(0, 55),
+			name: this.name.substring(0, 55).trim(),
 			account_id: this.account,
 			price: Number(this.default_price),
 			shipping_price: 0,
 			is_shippable: !!this.ship,
 			created_at: new Date(this.created_at),
 			updated_at: new Date(this.updated_at),
-			description: '',
+			description: this.description,
 			sku: this.sku,
-			shipping_delay: this.shipping_delay,
+			shipping_delay: this.ship && this.shipping_delay ? { seconds: this.shipping_delay } : undefined,
 			fulfillment_provider_id: this.fulfillment_provider,
 			merchant_provider_group_id: this.merchantprovidergroup,
 			image_urls: this.getImages()
@@ -62,7 +65,10 @@ export class DynamoProduct {
 		if (!this.attributes || !this.attributes.images) {
 			return [];
 		}
-
-		return this.attributes.images.L.filter(i => i.path).map(i => i.path);
+		const images = sortBy(
+			this.attributes.images.L.filter(i => i.M.path).map(i => i.M),
+			({ default_image }) => default_image && !default_image.BOOL
+		);
+		return images.map(image => image.path.S);
 	}
 }

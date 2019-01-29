@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "class-validator": "^0.9.1",
+    "lodash": "^4.17.11",
     "pg": "^7.8.0",
     "reflect-metadata": "^0.1.12",
     "typeorm": "^0.2.11"
