@@ -83,12 +83,12 @@ module.exports.graphObj = new GraphQLObjectType({
 		fulfillment_provider: {
 			type: fulfillmentProviderType.graphObj,
 			description: 'The session associated with the transaction.',
-			resolve: ({ fulfillment_provider_id }) => fulfillment_provider_id && fulfillmentProviderController.get(fulfillment_provider_id)
+			resolve: async ({ fulfillment_provider_id }) => fulfillment_provider_id && fulfillmentProviderController.get({ id: fulfillment_provider_id })
 		},
 		merchantprovidergroup: {
 			type: merchantProviderGroupType.graphObj,
 			description: 'The merchant provider group associated with the product.',
-			resolve: ({ merchant_provider_group_id }) => merchant_provider_group_id && merchantProviderGroupController.get(merchant_provider_group_id)
+			resolve: async ({ merchant_provider_group_id }) => merchant_provider_group_id && merchantProviderGroupController.get({ id: merchant_provider_group_id })
 		},
 		attributes: {
 			type: productAttributesType.graphObj,
