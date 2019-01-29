@@ -17,6 +17,7 @@ let getValidProduct = function(accountId) {
 describe('@6crm/sixcrm-product-setup', () => {
 	let productSetupService: ProductSetupService;
 	let anotherProductSetupService: ProductSetupService;
+	let masterAccountProductSetupService: ProductSetupService;
 	let accountId = v4();
 	let anotherAccountId = v4();
 
@@ -38,13 +39,38 @@ describe('@6crm/sixcrm-product-setup', () => {
 			schema: 'public',
 			logging: ['error']
 		});
+
+		masterAccountProductSetupService = await createProductSetupService({
+			accountId: '*',
+			host: 'localhost',
+			username: 'postgres',
+			password: '',
+			schema: 'public',
+			logging: ['error']
+		});
 	});
 
 	describe('createProduct', () => {
-		it('creates a product', async () => {
+		it('creates a product in the account', async () => {
 			// given
 			const aProduct = getValidProduct(accountId);
 			await productSetupService.createProduct(aProduct);
+
+			// when
+			const productFromDb = await productSetupService.getProduct(aProduct.id);
+
+			// then
+			expect(productFromDb.id).to.equal(aProduct.id);
+			expect(productFromDb.account_id).to.equal(aProduct.account_id);
+			expect(productFromDb.name).to.equal(aProduct.name);
+			// expect(productFromDb.price).to.equal(aProduct.price); // this fails cause string conversion
+			expect(productFromDb.is_shippable).to.equal(aProduct.is_shippable);
+		});
+
+		it('creates a product in an account as the master account', async () => {
+			// given
+			const aProduct = getValidProduct(accountId);
+			await masterAccountProductSetupService.createProduct(aProduct);
 
 			// when
 			const productFromDb = await productSetupService.getProduct(aProduct.id);
@@ -72,6 +98,15 @@ describe('@6crm/sixcrm-product-setup', () => {
 			// given
 			const aProduct = getValidProduct(accountId);
 			aProduct.account_id = 'not-an-uuid';
+
+			// then
+			await expect(productSetupService.createProduct(aProduct)).to.be.rejected;
+		});
+
+		it('rejects objects with empty string account id', async () => {
+			// given
+			const aProduct = getValidProduct(accountId);
+			aProduct.account_id = '';
 
 			// then
 			await expect(productSetupService.createProduct(aProduct)).to.be.rejected;
@@ -106,7 +141,7 @@ describe('@6crm/sixcrm-product-setup', () => {
 	});
 
 	describe('updateProduct', () => {
-		it('updates a product', async () => {
+		it('updates a product in the account', async () => {
 			// given
 			const aProduct = getValidProduct(accountId);
 			aProduct.id = (await productSetupService.createProduct(aProduct)).id;
@@ -114,6 +149,22 @@ describe('@6crm/sixcrm-product-setup', () => {
 
 			// when
 			await productSetupService.updateProduct(aProduct);
+			const productFromDb = await productSetupService.getProduct(aProduct.id);
+
+			// then
+			expect(productFromDb.id).to.equal(aProduct.id);
+			expect(productFromDb.description).to.equal(description);
+		});
+
+		it('updates a product as the master account', async () => {
+			// given
+			const aProduct = getValidProduct(accountId);
+			aProduct.id = (await productSetupService.createProduct(aProduct)).id;
+			delete aProduct.account_id;
+			const description = aProduct.description = 'lorem ipsum';
+
+			// when
+			await masterAccountProductSetupService.updateProduct(aProduct);
 			const productFromDb = await productSetupService.getProduct(aProduct.id);
 
 			// then

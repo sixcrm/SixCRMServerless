@@ -27,6 +27,7 @@ export default class Product {
 	@Column('uuid')
 	@IsUUID()
 	@IsNotEmpty()
+	@IsOptional()
 	account_id: string;
 
 	@Column({
