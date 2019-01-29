@@ -5,6 +5,7 @@ import * as Logger from 'js-logger';
 Logger.useDefaults({
 	defaultLevel: {value: Number(process.env.VERBOSE), name: 'SIX_VERBOSE'},
 	formatter: (messages, context) => {
+		messages.unshift(`[${context.name}]`);
 		messages.unshift(']');
 		messages.unshift(new Date());
 		messages.unshift('[');
