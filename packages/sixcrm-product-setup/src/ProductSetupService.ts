@@ -61,10 +61,10 @@ export default class ProductSetupService {
 	async updateProduct({ updated_at, ...partialProduct }: Partial<Product>): Promise<void> {
 		// shallow copy to avoid typeorm issues with objects without prototypes
 		// https://github.com/typeorm/typeorm/issues/2065
-		const product = this.productRepository.create({
-			account_id: this.accountId,
-			...partialProduct
-		});
+		const product = this.productRepository.create(partialProduct);
+		if (this.isMasterAccount()) {
+			delete product.account_id;
+		}
 		// remove updated_at to workaround https://github.com/typeorm/typeorm/issues/2651
 		delete product.updated_at;
 		await this.validateProduct(product);
