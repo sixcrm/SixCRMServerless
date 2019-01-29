@@ -9,6 +9,7 @@ const {
 } = require('graphql');
 const attributesInputType = require('./components/attributesInputType');
 const dynamicPricingInputType = require('./components/dynamicPricingInputType');
+const imageInputType = require('./components/imageInputType')
 
 module.exports.graphObj = new GraphQLInputObjectType({
 	name: 'ProductInput',
@@ -40,7 +41,8 @@ module.exports.graphObj = new GraphQLInputObjectType({
 			type: attributesInputType.graphObj,
 			deprecationReason: 'The `ProductAttributes` type is deprecated and will be removed soon.',
 		},
-		image_urls: { type: new GraphQLList(GraphQLString), defaultValue: [] },
+		defaultImage: { type: imageInputType.graphObj },
+		images: { type: new GraphQLList(imageInputType.graphObj), defaultValue: [] },
 		updated_at: { type: GraphQLString }
 	})
 });

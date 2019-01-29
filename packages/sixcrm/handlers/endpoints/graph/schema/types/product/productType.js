@@ -13,6 +13,7 @@ const dynamicPricingType = require('./components/dynamicPricingType');
 const fulfillmentProviderType = require('../fulfillmentprovider/fulfillmentProviderType');
 const productAttributesType = require('./components/attributesType');
 const emailTemplateType = require('../emailtemplate/emailTemplateType');
+const imageType = require('./components/imageType');
 
 const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
 const fulfillmentProviderController = new FulfillmentProviderController();
@@ -92,7 +93,7 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		attributes: {
 			type: productAttributesType.graphObj,
-			description: '`attributes` will be removed. Use `Product.image_urls` instead.',
+			description: '`attributes` will be removed. Use `Product.defaultImage` or Product.images` instead.',
 			deprecationReason: 'The `ProductAttributes` type is deprecated and will be removed soon.',
 			resolve: ({ image_urls }) => ({
 				images: image_urls.map((path, index) => ({
@@ -101,9 +102,15 @@ module.exports.graphObj = new GraphQLObjectType({
 				}))
 			})
 		},
-		image_urls: {
-			type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
+		defaultImage: {
+			type: imageType.graphObj,
+			description: 'The default image for the product',
+			resolve: ({ image_urls: [imageUrl] }) => imageUrl ? imageType.toImage(imageUrl): null
+		},
+		images: {
+			type: new GraphQLNonNull(new GraphQLList(imageType.graphObj)),
 			description: 'The product images',
+			resolve: ({ image_urls }) => image_urls.map(url => imageType.toImage(url))
 		},
 		emailtemplates: {
 			type: new GraphQLList(emailTemplateType.graphObj),
