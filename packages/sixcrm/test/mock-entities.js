@@ -834,7 +834,7 @@ class MockEntities {
 			history: [this.getValidHistoryElement()],
 			status: "intransit",
 			fulfillment_provider: uuidV4(),
-			fulfillment_provider_reference: uuidV4(),
+			fulfillment_provider_reference: uuidV4().slice(0, 8),
 			created_at: timestamp.getISO8601(),
 			updated_at: timestamp.getISO8601()
 		};
