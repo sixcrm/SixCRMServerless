@@ -13,7 +13,7 @@ export class AuroraConnector {
 	}
 
 	public async save(entity: any): Promise<any> {
-		return this.connection.createQueryBuilder().insert().into(this.objectType).values([entity]).execute()
+		return this.connection.createQueryBuilder().insert().into(this.objectType).values([entity]).execute();
 	}
 
 	public getAll(): Promise<void> {
