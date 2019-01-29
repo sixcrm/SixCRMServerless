@@ -13,13 +13,13 @@ configurationAcquistion.getAuroraClusterEndpoint()
 
 	})
 	.then(() => auroraSchemaDeployment.deploy())
-	.then((result) => {
+	.then(() => {
 
-		return du.info(result);
+		return du.info('Aurora schema deployment complete.');
 
 	}).catch(error => {
 
 		du.error(error);
-		du.warning(error.message);
+		throw error;
 
 	});
