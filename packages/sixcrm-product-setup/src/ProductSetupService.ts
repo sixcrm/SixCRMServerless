@@ -1,8 +1,10 @@
 import { Connection, Repository, FindConditions } from 'typeorm';
 import Product from './models/Product';
 import { validate, ValidationError } from "class-validator";
+import * as Logger from 'js-logger';
 
 const MASTER_ACCOUNT_ID = '*';
+const log = Logger.get('ProductSetupService');
 
 interface IProductEntityId {
 	id: string;
@@ -27,6 +29,7 @@ export default class ProductSetupService {
 	}
 
 	getProduct(id: string): Promise<Product> {
+		log.debug('getProduct', id);
 		return this.productRepository.findOneOrFail({
 			...this.baseFindConditions,
 			id

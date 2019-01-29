@@ -1,5 +1,15 @@
 import ProductSetupService from './ProductSetupService';
 import { connect, IDatabaseConfig } from './connect';
+import * as Logger from 'js-logger';
+
+Logger.useDefaults({
+	defaultLevel: {value: Number(process.env.VERBOSE), name: 'SIX_VERBOSE'},
+	formatter: (messages, context) => {
+		messages.unshift(']');
+		messages.unshift(new Date());
+		messages.unshift('[');
+	}
+});
 
 let productSetupService;
 
