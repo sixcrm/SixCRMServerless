@@ -1,17 +1,19 @@
-import {EntitySchema, ObjectType} from "typeorm";
+import {EntitySchema, ObjectType, Connection} from "typeorm";
 
 export class AuroraConnector {
 
 	public readonly repository;
-	public readonly connection;
+	public readonly connection: Connection;
+	private readonly objectType;
 
-	constructor(connection, objectType: ObjectType<any> | EntitySchema<any>) {
+	constructor(connection: Connection, objectType: ObjectType<any> | EntitySchema<any>) {
 		this.repository = connection.getRepository(objectType);
 		this.connection = connection;
+		this.objectType = objectType;
 	}
 
-	public save(entity: any): Promise<void> {
-		return this.repository.save(entity);
+	public async save(entity: any): Promise<any> {
+		return this.connection.createQueryBuilder().insert().into(this.objectType).values([entity]).execute()
 	}
 
 	public getAll(): Promise<void> {
