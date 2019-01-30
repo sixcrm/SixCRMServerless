@@ -78,8 +78,8 @@ module.exports = class ReattemptRebillController extends transactionEndpointCont
 		return event;
 	}
 
-	async execute(event) {
-		await this.preamble(event)
+	async execute(event, context) {
+		await this.preamble(event, context);
 		const {rebill: rebill_id, creditcard: raw_creditcard} = this.parameters.get('event');
 
 		const account = await accountController.get({id: global.account});

@@ -58,15 +58,14 @@ module.exports = class CheckoutController extends transactionEndpointController{
 
 	}
 
-	execute(event){
-		return this.preamble(event)
-			.then(() => this.validateParameters())
-			.then(() => this.createLead())
-			.then(() => this.setSession())
-			.then(() => this.createOrder())
-			.then(() => this.confirmOrder())
-			.then(() => this.respond());
-
+	async execute(event, context) {
+		await this.preamble(event, context);
+		await this.validateParameters();
+		await this.createLead();
+		await this.setSession();
+		await this.createOrder();
+		await this.confirmOrder()
+		this.respond();
 	}
 
 	async validateParameters() {

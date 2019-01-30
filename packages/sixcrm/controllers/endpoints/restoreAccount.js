@@ -80,8 +80,8 @@ module.exports = class RestoreAccountController extends transactionEndpointContr
 		return event;
 	}
 
-	async execute(event) {
-		await this.preamble(event)
+	async execute(event, context) {
+		await this.preamble(event, context);
 		const {creditcard: raw_creditcard, account: account_id} = this.parameters.get('event');
 		await this.useAccountingContext();
 
