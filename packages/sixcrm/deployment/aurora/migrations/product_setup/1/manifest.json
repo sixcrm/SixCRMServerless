@@ -1,0 +1,8 @@
+[
+	{
+		"script": "release.sql"
+	},
+	{
+		"script": "product.sql"
+	}
+]
