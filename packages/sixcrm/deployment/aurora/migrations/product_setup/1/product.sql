@@ -12,7 +12,7 @@ CREATE TABLE product_setup.product (
 	description TEXT,
 	sku VARCHAR(36),
 	image_urls TEXT[] NOT NULL,
-	merchant_provider_group_id UUID
+	merchant_provider_group_id UUID,
 	CHECK (is_shippable = FALSE OR (shipping_price IS NOT NULL AND shipping_delay IS NOT NULL AND fulfillment_provider_id IS NOT NULL))
 );
 
