@@ -97,11 +97,10 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 	}
 
-	execute(event) {
-		return this.preamble(event)
-			.then(() => this.validateParameters(this.parameters.get('event')))
-			.then(() => this.createOrder(this.parameters.get('event')));
-
+	async execute(event, context) {
+		await this.preamble(event, context);
+		await this.validateParameters(this.parameters.get('event'));
+		return this.createOrder(this.parameters.get('event'));
 	}
 
 	async validateParameters(event) {

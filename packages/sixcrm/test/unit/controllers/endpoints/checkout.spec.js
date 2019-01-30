@@ -746,6 +746,7 @@ describe('checkout', function () {
 		it('successfully executes a checkout event', () => {
 
 			let event = getValidEvent();
+			const context = {};
 			let affiliates = getValidAffiliates();
 			let campaign = getValidCampaign();
 			let session = getSessionWithoutProductSchedules();
@@ -1004,12 +1005,18 @@ describe('checkout', function () {
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'AccountDetails.js'), mock_account_details);
 
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
+
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 			let CheckoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
 			const checkoutController = new CheckoutController();
 
-			return checkoutController.execute(event).then(()=> {
+			return checkoutController.execute(event, context).then(()=> {
 				expect(checkoutController.parameters.store['confirmation']).to.be.defined;
 			});
 
