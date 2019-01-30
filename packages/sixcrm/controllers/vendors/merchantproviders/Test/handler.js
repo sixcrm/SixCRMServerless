@@ -1,9 +1,9 @@
 
 const _ = require('lodash');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const HttpProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const HttpProvider = require('@6crm/sixcrmcore/lib/providers/http-provider').default;
 const httpprovider = new HttpProvider();
 
 const MerchantProvider = global.SixCRM.routes.include('vendors', 'merchantproviders/MerchantProvider.js');

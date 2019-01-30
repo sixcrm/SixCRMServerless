@@ -1,12 +1,12 @@
 const _ = require('lodash');
 
 require('@6crm/sixcrmcore');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 const DynamoClient = require('./dynamo');
 const dynamoClient = new DynamoClient();
 
-const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
+const auroraContext = require('@6crm/sixcrmcore/lib/util/analytics/aurora-context').default;
 const configurationAcquistion = require('../../config/controllers/configuration_acquisition');
 
 dynamoClient.scan('customers').then(async result => {

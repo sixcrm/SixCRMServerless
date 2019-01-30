@@ -3,7 +3,7 @@ const anyEntity = 'someEntity';
 const anyPermission = `${anyEntity}/${anyAction}`;
 const anotherPermission = `${anyEntity}1/${anyAction}1`;
 
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 
 module.exports = class PermissionTestGenerators {
 

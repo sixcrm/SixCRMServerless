@@ -3,12 +3,12 @@ const mockery = require('mockery');
 const chai = require('chai');
 const expect = chai.expect;
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 let anyItem = { property: 'value' };
 let anyTableName = 'tableName';
 
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const AWSTestUtils = require('./aws-test-utils');
 
 describe('controllers/providers/dynamodb-provider', () => {

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 
 module.exports = class ShippingCarrierController {
 

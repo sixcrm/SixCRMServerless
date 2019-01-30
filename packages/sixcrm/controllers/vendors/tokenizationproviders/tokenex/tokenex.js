@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 
 module.exports = class TokenEx {
 
@@ -101,7 +101,7 @@ module.exports = class TokenEx {
 	_performRequest(argumentation_object){
 
 		if(!_.has(this, 'httputilities')){
-			const HTTPUtilities = require('@6crm/sixcrmcore/providers/http-provider').default;
+			const HTTPUtilities = require('@6crm/sixcrmcore/lib/providers/http-provider').default;
 			this.httputilities = new HTTPUtilities();
 		}
 

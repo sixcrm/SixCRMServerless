@@ -1,13 +1,13 @@
 
 const _ = require('lodash');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const fileutilities = require('@6crm/sixcrmcore/util/file-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const permissionutilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const fileutilities = require('@6crm/sixcrmcore/lib/util/file-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
+const permissionutilities = require('@6crm/sixcrmcore/lib/util/permission-utilities').default;
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 const DynamoDBProvider = global.SixCRM.routes.include('controllers', 'providers/dynamodb-provider.js');
 const IAMProvider = global.SixCRM.routes.include('controllers', 'providers/iam-provider.js');

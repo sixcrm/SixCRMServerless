@@ -1,6 +1,6 @@
 
 const _ = require('lodash');
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 

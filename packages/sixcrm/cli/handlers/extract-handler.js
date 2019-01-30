@@ -1,5 +1,5 @@
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const fs = require('fs-extra');
 const path = require('path');
 const moment = require('moment-timezone');

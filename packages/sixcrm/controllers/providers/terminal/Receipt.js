@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 const FulfillmentProviderController = global.SixCRM.routes.include('entities', 'FulfillmentProvider.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
@@ -36,8 +36,7 @@ module.exports = class TerminalRecieptGenerator {
 			'shippingreceipt': global.SixCRM.routes.path('model', 'entities/shippingreceipt.json'),
 			'shippingreceiptprototype': global.SixCRM.routes.path('model', 'providers/shipping/terminal/shippingreceiptprototype.json'),
 			'account': global.SixCRM.routes.path('model', 'definitions/sixcrmaccountidentifier.json'),
-			'augmentedtransactionproducts': global.SixCRM.routes.path('model', 'providers/shipping/terminal/augmentedtransactionproducts.json'),
-			'fulfillmentproviderreference': global.SixCRM.routes.path('model', 'definitions/uuidv4.json')
+			'augmentedtransactionproducts': global.SixCRM.routes.path('model', 'providers/shipping/terminal/augmentedtransactionproducts.json')
 		};
 
 		this.parameters = new Parameters({

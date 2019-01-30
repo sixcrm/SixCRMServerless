@@ -1,4 +1,4 @@
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 

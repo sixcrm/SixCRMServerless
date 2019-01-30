@@ -1,6 +1,6 @@
 
 const _ = require('lodash');
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class AccessKeyController extends entityController {

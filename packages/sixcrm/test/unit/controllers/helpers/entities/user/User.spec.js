@@ -2,7 +2,7 @@ const mockery = require('mockery');
 let chai = require('chai');
 const expect = chai.expect;
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 
 describe('controllers/helpers/entities/user/User.js', () => {
 
@@ -62,7 +62,7 @@ describe('controllers/helpers/entities/user/User.js', () => {
 			delete user.alias;
 			user.id = 'first.last@example.com'; //any email type id
 
-			mockery.registerMock('@6crm/sixcrmcore/util/munge-utilities', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/util/munge-utilities', {
 				default: {
 					munge: () => {
 						return 'a_munge_string';

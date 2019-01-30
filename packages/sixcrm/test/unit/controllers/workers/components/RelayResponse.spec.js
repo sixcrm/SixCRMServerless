@@ -1,6 +1,6 @@
 const chai = require("chai");
 const expect = chai.expect;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 
 describe('controllers/workers/components/RelayResponse.js', function () {
 

@@ -1,7 +1,7 @@
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 
 describe('controllers/providers/notification/channels/slack.js', () => {
 
@@ -48,7 +48,7 @@ describe('controllers/providers/notification/channels/slack.js', () => {
 
 			let webhook = 'http://test.com/webhook';
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					postJSON() {
 						return Promise.resolve(true);

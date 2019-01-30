@@ -1,10 +1,10 @@
 
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const randomutilities = require('@6crm/sixcrmcore/util/random').default;
-const signatureutilities = require('@6crm/sixcrmcore/util/signature').default;
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const HttpProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const randomutilities = require('@6crm/sixcrmcore/lib/util/random').default;
+const signatureutilities = require('@6crm/sixcrmcore/lib/util/signature').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
+const HttpProvider = require('@6crm/sixcrmcore/lib/providers/http-provider').default;
 const httpprovider = new HttpProvider();
 
 const Parameters  = global.SixCRM.routes.include('providers', 'Parameters.js');

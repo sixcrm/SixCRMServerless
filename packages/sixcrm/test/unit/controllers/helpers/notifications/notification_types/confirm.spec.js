@@ -3,9 +3,9 @@ const _ = require('lodash');
 const mockery = require('mockery');
 const chai = require('chai');
 const expect = chai.expect;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 let notification_name = 'confirm';
 let notification_readable_name = 'Confirm';

@@ -3,7 +3,7 @@ const moment = require('moment');
 const Bluebird = require('bluebird');
 
 require('@6crm/sixcrmcore');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 const RebillController = require('../../controllers/entities/Rebill');
 const SessionController = require('../../controllers/entities/Session');

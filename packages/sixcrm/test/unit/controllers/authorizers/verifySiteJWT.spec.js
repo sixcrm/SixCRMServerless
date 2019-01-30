@@ -3,11 +3,11 @@ const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const testutilities = require('@6crm/sixcrmcore/util/test-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const testutilities = require('@6crm/sixcrmcore/lib/util/test-utilities').default;
 const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
 const jwtprovider = new JWTProvider();
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 
 function getValidSelfSignedJWT(){
 
