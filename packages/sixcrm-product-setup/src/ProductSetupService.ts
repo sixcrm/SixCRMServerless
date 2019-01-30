@@ -58,10 +58,13 @@ export default class ProductSetupService {
 		return insertResult.identifiers[0] as IProductEntityId;
 	}
 
-	async updateProduct({ updated_at, ...partialProduct }: Partial<Product>): Promise<void> {
+	async updateProduct(partialProduct: Partial<Product>): Promise<void> {
 		// shallow copy to avoid typeorm issues with objects without prototypes
 		// https://github.com/typeorm/typeorm/issues/2065
-		const product = this.productRepository.create(partialProduct);
+		const product = this.productRepository.create({
+			account_id: this.accountId,
+			...partialProduct
+		});
 		if (this.isMasterAccount()) {
 			delete product.account_id;
 		}
@@ -85,7 +88,7 @@ export default class ProductSetupService {
 	}
 
 	private canUpdateProduct(productAccountId: string): boolean {
-		return this.isMasterAccount() || productAccountId === this.accountId;
+		return this.isMasterAccount() || !!productAccountId && productAccountId === this.accountId;
 	}
 
 	private isMasterAccount(): boolean {

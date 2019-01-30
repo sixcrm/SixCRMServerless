@@ -67,6 +67,23 @@ describe('@6crm/sixcrm-product-setup', () => {
 			expect(productFromDb.is_shippable).to.equal(aProduct.is_shippable);
 		});
 
+		it('creates a product using the ProductSetupService account', async () => {
+			// given
+			const aProduct = getValidProduct(accountId);
+			delete aProduct.account_id;
+			await productSetupService.createProduct(aProduct);
+
+			// when
+			const productFromDb = await productSetupService.getProduct(aProduct.id);
+
+			// then
+			expect(productFromDb.id).to.equal(aProduct.id);
+			expect(productFromDb.account_id).to.equal(accountId);
+			expect(productFromDb.name).to.equal(aProduct.name);
+			// expect(productFromDb.price).to.equal(aProduct.price); // this fails cause string conversion
+			expect(productFromDb.is_shippable).to.equal(aProduct.is_shippable);
+		});
+
 		it('creates a product in an account as the master account', async () => {
 			// given
 			const aProduct = getValidProduct(accountId);
@@ -145,6 +162,22 @@ describe('@6crm/sixcrm-product-setup', () => {
 			// given
 			const aProduct = getValidProduct(accountId);
 			aProduct.id = (await productSetupService.createProduct(aProduct)).id;
+			const description = aProduct.description = 'lorem ipsum';
+
+			// when
+			await productSetupService.updateProduct(aProduct);
+			const productFromDb = await productSetupService.getProduct(aProduct.id);
+
+			// then
+			expect(productFromDb.id).to.equal(aProduct.id);
+			expect(productFromDb.description).to.equal(description);
+		});
+
+		it('updates a product using the ProductSetupService account', async () => {
+			// given
+			const aProduct = getValidProduct(accountId);
+			aProduct.id = (await productSetupService.createProduct(aProduct)).id;
+			delete aProduct.account_id;
 			const description = aProduct.description = 'lorem ipsum';
 
 			// when
