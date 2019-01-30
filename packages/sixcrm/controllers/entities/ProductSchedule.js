@@ -111,13 +111,18 @@ module.exports = class ProductScheduleController extends entityController {
 
 	}
 
-	getProduct(scheduled_product){
+	async getProduct(scheduled_product){
 		let product_id = _.has(scheduled_product, 'product') ? scheduled_product.product : scheduled_product.product_id;
 
 		//Technical Debt: Hack
 		if(_.isNull(product_id) || _.isUndefined(product_id)){ return Promise.resolve(null) }
 
-		return getProductSetupService().getProduct(product_id);
+		try {
+			return await getProductSetupService().getProduct(product_id);
+		} catch (e) {
+			du.error('Cannot retrieve product on account', e);
+			return null;
+		}
 	}
 
 	async getProducts(product_schedule){
