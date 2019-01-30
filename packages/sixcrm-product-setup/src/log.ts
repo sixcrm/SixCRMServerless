@@ -3,7 +3,9 @@ import * as Logger from 'js-logger';
 Logger.useDefaults({
 	defaultLevel: {value: Number(process.env.VERBOSE), name: 'SIX_VERBOSE'},
 	formatter: (messages, context) => {
-		if (context.name) messages.unshift(`[${context.name}]`);
+		if (context.name) {
+			messages.unshift(`[${context.name}]`);
+		}
 		messages.unshift(context.level.name);
 		messages.unshift(`[${new Date().toISOString()}]`);
 	}
@@ -13,13 +15,13 @@ export function logger(classname: string) {
 	return Logger.get(classname);
 }
 
-const getMessage = function (target, key: string | symbol, args, result) {
+function getMessage(target, key: string | symbol, args, result) {
 	let message = `${String(key)}(${args})`;
 	if (!(result instanceof Promise)) {
 		message += ` === ${result}`;
 	}
 	return message;
-};
+}
 
 export function LogMethod(level: 'info' | 'debug' = 'info') {
 	return (target: any, key: string | symbol, propertyDescriptor?: PropertyDescriptor) => {
@@ -39,12 +41,12 @@ export function LogMethod(level: 'info' | 'debug' = 'info') {
 					logger(classname)[level](message, 'resolved into:', r);
 
 					return r;
-				})
+				});
 			}
 
 			return result;
 		};
 
 		return descriptor;
-	}
+	};
 }
