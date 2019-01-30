@@ -46,13 +46,18 @@ module.exports.graphObj = new GraphQLInputObjectType({
 });
 
 module.exports.toProductInput = ({
-	attributes: { images = [] },
+	attributes: {
+		images =[]
+	} = {},
 	default_price,
+	image_urls,
+	is_shippable,
+	price,
 	ship,
 	...productInput
 }) => ({
-	image_urls: images.map(image => image.path),
-	is_shippable: ship,
-	price: default_price,
-	...productInput
+	...productInput,
+	is_shippable: is_shippable || ship,
+	price: price || default_price,
+	image_urls: image_urls.length ? image_urls : images.map(image => image.path)
 });
