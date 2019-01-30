@@ -142,6 +142,7 @@ module.exports = class RebillCreatorHelper {
 					product_group.product = product;
 					return product_group;
 				} catch (e) {
+					du.error('Error retrieving product', e);
 					throw eu.getError('not_found', 'Product does not exist: ' +product_group.product);
 				}
 			} else if (_.isObject(product_group.product)) {
