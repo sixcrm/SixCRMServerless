@@ -1,4 +1,4 @@
-const DynamoClient = require('../../controllers/workers/analytics/transforms/entities/dynamo');
+const DynamoClient = require('@6crm/sixcrmanalytics/lib/entities/dynamo').default;
 
 module.exports = class ImportDynamoClient extends DynamoClient {
 
@@ -18,7 +18,7 @@ module.exports = class ImportDynamoClient extends DynamoClient {
 				params.ExclusiveStartKey = result.LastEvaluatedKey;
 			}
 
-			result = await this.client.scan(params).promise();
+			result = await this._client.scan(params).promise();
 
 			items = items.concat(result.Items);
 
