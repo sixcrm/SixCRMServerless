@@ -199,6 +199,7 @@ describe('tracking', () => {
 		it('successfully runs execute method', () => {
 
 			let event = getValidEvent();
+			const context = {};
 			let user = MockEntities.getValidUser();
 
 			let campaign = getValidCampaign();
@@ -270,12 +271,18 @@ describe('tracking', () => {
 				}
 			});
 
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
+
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 			let TrackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
 			const trackingController = new TrackingController();
 
-			return trackingController.execute(event).then(result => {
+			return trackingController.execute(event, context).then(result => {
 				expect(result).to.deep.equal({trackers: trackers});
 			});
 

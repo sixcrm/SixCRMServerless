@@ -125,7 +125,12 @@ module.exports = class Parameters {
 
 		if(_.has(this.parameter_validation, key)){
 
-			return global.SixCRM.validate(value, this.parameter_validation[key], fatal);
+			try {
+				return global.SixCRM.validate(value, this.parameter_validation[key], fatal);
+			} catch (e) {
+				du.warning(`Failed to validate ${key}`, value);
+				throw e;
+			}
 
 		}else{
 
