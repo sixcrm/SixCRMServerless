@@ -64,8 +64,9 @@ module.exports = class CheckoutController extends transactionEndpointController{
 		await this.createLead();
 		await this.setSession();
 		await this.createOrder();
-		await this.confirmOrder()
-		this.respond();
+		await this.confirmOrder();
+
+		return this.respond();
 	}
 
 	async validateParameters() {
