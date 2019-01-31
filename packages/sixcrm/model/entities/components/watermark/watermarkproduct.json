@@ -12,11 +12,25 @@
 			"minLength": 3
 		},
 		"description": {
-			"type": "string"
+		  "anyOf": [
+			{
+			  "type": "null"
+			},
+			{
+			  "type": "string"
+			}
+		  ]
 		},
 		"sku": {
-			"type": "string",
-			"minLength": 3
+		  "anyOf": [
+			{
+			  "type": "null"
+			},
+			{
+			  "type": "string",
+			  "minLength": 3
+			}
+		  ]
 		},
 		"ship": {
 			"type": "boolean"
