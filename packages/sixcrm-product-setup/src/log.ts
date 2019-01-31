@@ -1,7 +1,7 @@
 import * as Logger from 'js-logger';
 
 Logger.useDefaults({
-	defaultLevel: {value: Number(process.env.VERBOSE), name: 'SIX_VERBOSE'},
+	defaultLevel: {value: Number(process.env.VERBOSE || 3), name: 'SIX_VERBOSE'},
 	formatter: (messages, context) => {
 		if (context.name) {
 			messages.unshift(`[${context.name}]`);
