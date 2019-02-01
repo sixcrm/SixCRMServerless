@@ -475,7 +475,11 @@ module.exports = class NotificationProvider {
 	}
 
 	receiveChannelOnNotification({channel, notification, augmented_normalized_notification_settings}){
-		let found_category = arrayutilities.find(augmented_normalized_notification_settings.settings.notification_groups, notification_group => {
+		const notification_groups = (
+			augmented_normalized_notification_settings.settings ||
+			augmented_normalized_notification_settings.notification_settings).notification_groups;
+
+		let found_category = arrayutilities.find(notification_groups, notification_group => {
 			return (notification_group.key == notification.category);
 		});
 
