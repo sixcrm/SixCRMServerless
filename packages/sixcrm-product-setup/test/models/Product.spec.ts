@@ -101,7 +101,7 @@ describe('@6crm/sixcrm-product-setup/models/Product', () => {
 					images: []
 				},
 				created_at: created_at.toISOString(),
-				default_price: price + shipping_price,
+				default_price: Number(price) + Number(shipping_price),
 				dynamic_pricing: {
 					max: 9999999,
 					min: 0
