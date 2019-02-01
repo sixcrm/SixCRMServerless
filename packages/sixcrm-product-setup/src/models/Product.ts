@@ -10,7 +10,7 @@ import {
 
 import { IsUUID, IsNotEmpty, Min, ArrayUnique, IsOptional } from "class-validator";
 
-interface IProductInterval {
+export interface IProductInterval {
 	hours?: number;
 	minutes?: number;
 	seconds?: number;
@@ -20,6 +20,7 @@ interface IProductInterval {
 @Check(`"price" >= 0`)
 @Check(`"shipping_price" >= 0`)
 export default class Product {
+
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
@@ -40,7 +41,7 @@ export default class Product {
 	created_at: Date;
 
 	@UpdateDateColumn()
-	updated_at?: Date;
+	updated_at: Date;
 
 	@Column({
 		type: 'numeric',
@@ -49,7 +50,7 @@ export default class Product {
 	})
 	@IsNotEmpty()
 	@Min(0)
-	price: number;
+	price: number | string;
 
 	@Column()
 	@IsNotEmpty()
@@ -63,7 +64,7 @@ export default class Product {
 	})
 	@Min(0)
 	@IsOptional()
-	shipping_price: number;
+	shipping_price: number | string;
 
 	@Column({
 		type: 'interval',
