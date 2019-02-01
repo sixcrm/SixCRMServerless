@@ -1,13 +1,14 @@
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import { v4 } from 'uuid';
-import Product from '../../src/models/Product';
+import Product from '../../../src/models/Product';
+import {LegacyProduct} from "../../../src/models/legacy/LegacyProduct";
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-describe('@6crm/sixcrm-product-setup/models/Product', () => {
-	describe('toLegacyProduct', () => {
+describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
+	describe('fromProduct', () => {
 		it('should transform all required fields', () => {
 			const product = new Product(v4(), v4(), 'A product', 100, false, []);
 			const {
@@ -21,7 +22,7 @@ describe('@6crm/sixcrm-product-setup/models/Product', () => {
 				...commonProductFields
 			} = product;
 
-			const legacyProduct = Product.toLegacyProduct(product);
+			const legacyProduct = LegacyProduct.fromProduct(product);
 
 			expect(legacyProduct).to.deep.equal({
 				account: account_id,
@@ -53,7 +54,7 @@ describe('@6crm/sixcrm-product-setup/models/Product', () => {
 				...commonProductFields
 			} = product;
 
-			const legacyProduct = Product.toLegacyProduct(product);
+			const legacyProduct = LegacyProduct.fromProduct(product);
 
 			expect(legacyProduct).to.deep.equal({
 				account: account_id,
@@ -93,7 +94,7 @@ describe('@6crm/sixcrm-product-setup/models/Product', () => {
 				...commonProductFields
 			} = product;
 
-			const legacyProduct = Product.toLegacyProduct(product);
+			const legacyProduct = LegacyProduct.fromProduct(product);
 
 			expect(legacyProduct).to.deep.equal({
 				account: account_id,
@@ -127,7 +128,7 @@ describe('@6crm/sixcrm-product-setup/models/Product', () => {
 				...commonProductFields
 			} = product;
 
-			const legacyProduct = Product.toLegacyProduct(product);
+			const legacyProduct = LegacyProduct.fromProduct(product);
 
 			expect(legacyProduct).to.deep.equal({
 				account: account_id,
@@ -162,7 +163,7 @@ describe('@6crm/sixcrm-product-setup/models/Product', () => {
 				...commonProductFields
 			} = product;
 
-			const legacyProduct = Product.toLegacyProduct(product);
+			const legacyProduct = LegacyProduct.fromProduct(product);
 
 			expect(legacyProduct).to.deep.equal({
 				account: account_id,
@@ -198,7 +199,7 @@ describe('@6crm/sixcrm-product-setup/models/Product', () => {
 				...commonProductFields
 			} = product;
 
-			const legacyProduct = Product.toLegacyProduct(product);
+			const legacyProduct = LegacyProduct.fromProduct(product);
 
 			expect(legacyProduct).to.deep.equal({
 				account: account_id,
@@ -219,4 +220,20 @@ describe('@6crm/sixcrm-product-setup/models/Product', () => {
 			});
 		});
 	});
+
+	describe('toProduct', () => {
+		it('should transform to Product', () => {
+			const legacyProduct = new LegacyProduct(
+				v4(), [], new Date().toISOString(), 100, 'abc', 0,
+				v4(), v4(), v4(), 'A Product', true, 0, 123, new Date().toISOString());
+
+			const product = legacyProduct.toProduct();
+
+			expect(product.id).to.equal(legacyProduct.id);
+			expect(product.account_id).to.equal(legacyProduct.account);
+			expect(product.created_at.toISOString()).to.equal(legacyProduct.created_at);
+			expect(product.updated_at.toISOString()).to.equal(legacyProduct.updated_at);
+
+		});
+	})
 });
