@@ -279,7 +279,17 @@ workflows:
                 - staging
                 - production
                 - priority
-      - seed:
+#      - seed:
+#          requires:
+#            - environment_test
+#          filters:
+#            branches:
+#              only:
+#                - development
+#                - staging
+#                - production
+#                - priority
+      - entity_integration_tests:
           requires:
             - environment_test
           filters:
@@ -289,19 +299,9 @@ workflows:
                 - staging
                 - production
                 - priority
-      - entity_integration_tests:
-          requires:
-            - seed
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
       - deleteblock_integration_tests:
           requires:
-            - seed
+            - environment_test
           filters:
             branches:
               only:
@@ -311,7 +311,7 @@ workflows:
                 - priority
       - analytics_integration_tests:
           requires:
-            - seed
+            - environment_test
           filters:
             branches:
               only:
@@ -321,7 +321,7 @@ workflows:
                 - priority
       - transactional_integration_tests:
           requires:
-            - seed
+            - environment_test
           filters:
             branches:
               only:
