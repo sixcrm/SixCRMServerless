@@ -2,7 +2,7 @@ import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import { v4 } from 'uuid';
 import Product from '../../../src/models/Product';
-import {LegacyProduct} from "../../../src/models/legacy/LegacyProduct";
+import LegacyProduct from "../../../src/models/legacy/LegacyProduct";
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
@@ -235,5 +235,5 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 			expect(product.updated_at.toISOString()).to.equal(legacyProduct.updated_at);
 
 		});
-	})
+	});
 });

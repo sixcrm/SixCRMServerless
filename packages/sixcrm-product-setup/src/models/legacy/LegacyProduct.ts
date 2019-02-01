@@ -1,6 +1,6 @@
 import Product, {IProductInterval} from "../Product";
 
-export class LegacyProduct {
+export default class LegacyProduct {
 	public account;
 	public attributes;
 	public created_at;
