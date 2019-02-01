@@ -27,3 +27,5 @@ export const createProductSetupService = async ({
 };
 
 export const getProductSetupService = () => productSetupService;
+
+export { default as Product } from './models/Product';

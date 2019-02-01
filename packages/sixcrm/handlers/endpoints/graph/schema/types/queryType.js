@@ -1,6 +1,6 @@
 require('module-alias/register');
 const _ = require('lodash');
-const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService, Product } = require('@6crm/sixcrm-product-setup');
 
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
@@ -882,7 +882,13 @@ const fields = Object.assign({}, {
 				type: GraphQLString
 			}
 		},
-		resolve: (root, { id }) => getProductSetupService().getProduct(id)
+		resolve: async (root, { id }) => {
+			const product = await getProductSetupService().getProduct(id);
+			return {
+				...Product.toLegacyProduct(product),
+				...product
+			};
+		}
 	},
 	emailtemplate: {
 		type: emailTemplateType.graphObj,
@@ -1052,9 +1058,14 @@ const fields = Object.assign({}, {
 		},
 		resolve: async () => {
 			const productSetupService = getProductSetupService();
+			const products = (await productSetupService.getAllProducts())
+				.map(product => ({
+					...Product.toLegacyProduct(product),
+					...product
+				}));
 
 			return {
-				products: await productSetupService.getAllProducts()
+				products
 			};
 		}
 	},
