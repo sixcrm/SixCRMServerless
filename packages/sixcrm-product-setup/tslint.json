@@ -19,6 +19,7 @@
 		"radix": false,
 		"arrow-parens": false,
 		"array-type": false,
-		"semicolon": [true, "always"]
+		"semicolon": [true, "always"],
+	  	"member-ordering": false
 	}
 }
