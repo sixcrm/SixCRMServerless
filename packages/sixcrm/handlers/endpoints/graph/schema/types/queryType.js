@@ -1,6 +1,6 @@
 require('module-alias/register');
 const _ = require('lodash');
-const { getProductSetupService, Product } = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
@@ -885,7 +885,7 @@ const fields = Object.assign({}, {
 		resolve: async (root, { id }) => {
 			const product = await getProductSetupService().getProduct(id);
 			return {
-				...Product.toLegacyProduct(product),
+				...LegacyProduct.fromProduct(product),
 				...product
 			};
 		}
@@ -1060,7 +1060,7 @@ const fields = Object.assign({}, {
 			const productSetupService = getProductSetupService();
 			const products = (await productSetupService.getAllProducts())
 				.map(product => ({
-					...Product.toLegacyProduct(product),
+					...LegacyProduct.fromProduct(product),
 					...product
 				}));
 
