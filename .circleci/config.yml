@@ -216,8 +216,6 @@ jobs:
       - checkout
       - restore_cache:
           key: v2-dependency-cache-{{ checksum "yarn.lock" }}
-      - attach_workspace:
-                at: .
       - run:
           name: Install Docker Compose
           command: |
@@ -228,10 +226,10 @@ jobs:
           name: Start Aurora Docker Image
           command: |
             set -x
-            cd packages/sixcrm && docker-compose --file tools/docker/docker-compose-aurora.yml up -d
+            cd packages/sixcrm && docker-compose --file tools/docker/docker-compose-productsetup.yml up -d
       - run:
           name: Product Setup Tests
-          command: yarn run test-productsetup
+          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose-productsetup.yml run -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project/packages/sixcrm-product-setup:/sixcrmserverless -w /sixcrmserverless node yarn run test-productsetup
 
 workflows:
   version: 2
@@ -360,7 +358,8 @@ workflows:
                 - priority
       - product_setup_tests:
           requires:
-            - build
+            - lint
+            - unit_tests
           filters:
             branches:
               ignore:
