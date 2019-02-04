@@ -227,7 +227,6 @@ jobs:
           command: |
             set -x
             cd packages/sixcrm && docker-compose --file tools/docker/docker-compose-aurora.yml up -d
-      - run: echo "Pausing to allow docker to catch up..." && sleep 15
       - run:
           name: Product Setup Tests
           command: yarn run test-productsetup
