@@ -216,6 +216,8 @@ jobs:
       - checkout
       - restore_cache:
           key: v2-dependency-cache-{{ checksum "yarn.lock" }}
+      - attach_workspace:
+                at: .
       - run:
           name: Install Docker Compose
           command: |
