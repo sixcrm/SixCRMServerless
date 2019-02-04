@@ -219,7 +219,7 @@ jobs:
           key: v2-dependency-cache-{{ checksum "yarn.lock" }}
       - run:
           name: Product Setup Tests
-          command: lerna run test-productsetup
+          command: yarn run test-productsetup
 
 workflows:
   version: 2
