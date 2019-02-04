@@ -211,7 +211,7 @@ jobs:
           name: Transactional Integration Tests
           command: SIX_VERBOSE=6 yarn run test-transactions
   product_setup_tests:
-    <<: *job-defaults
+    machine: true
     steps:
       - checkout
       - restore_cache:
@@ -226,7 +226,7 @@ jobs:
           name: Start Aurora Docker Image
           command: |
             set -x
-            cd packages/sixcrm && sudo docker-compose --file tools/docker/docker-compose-aurora.yml up -d
+            cd packages/sixcrm && docker-compose --file tools/docker/docker-compose-aurora.yml up -d
       - run: echo "Pausing to allow docker to catch up..." && sleep 15
       - run:
           name: Product Setup Tests
