@@ -231,9 +231,6 @@ jobs:
           name: docker ps
           command: docker ps
       - run:
-          name: yarn install
-          command: cd packages/sixcrm-product-setup && docker-compose --file ../sixcrm/tools/docker/docker-compose-productsetup.yml run -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless/packages/sixcrm-product-setup node yarn install
-      - run:
           name: Product Setup Tests
           command: cd packages/sixcrm-product-setup && docker-compose --file ../sixcrm/tools/docker/docker-compose-productsetup.yml run -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless/packages/sixcrm-product-setup node yarn run test-productsetup
 
