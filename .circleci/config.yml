@@ -231,6 +231,9 @@ jobs:
           name: docker ps
           command: docker ps
       - run:
+          name: Start Aurora Docker Image
+          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose-productsetup.yml logs
+      - run:
           name: Product Setup Tests
           command: cd packages/sixcrm-product-setup && docker-compose --file ../sixcrm/tools/docker/docker-compose-productsetup.yml run -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless/packages/sixcrm-product-setup node yarn run test-productsetup
 
