@@ -358,8 +358,7 @@ workflows:
                 - priority
       - product_setup_tests:
           requires:
-            - lint
-            - unit_tests
+            - build
           filters:
             branches:
               ignore:
