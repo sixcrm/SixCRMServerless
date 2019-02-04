@@ -212,6 +212,7 @@ jobs:
           command: SIX_VERBOSE=6 yarn run test-transactions
   product_setup_tests:
     <<: *job-defaults
+    machine: true
     steps:
       - checkout
       - restore_cache:
