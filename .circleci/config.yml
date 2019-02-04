@@ -237,8 +237,11 @@ jobs:
           name: yarn install
           command: cd packages/sixcrm-product-setup && docker-compose --file ../sixcrm/tools/docker/docker-compose-productsetup.yml run -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project/packages/sixcrm-product-setup:/sixcrmserverless -w /sixcrmserverless node yarn install
       - run:
+          name: yarn compile
+          command: cd packages/sixcrm-product-setup && docker-compose --file ../sixcrm/tools/docker/docker-compose-productsetup.yml run -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project/packages/sixcrm-product-setup:/sixcrmserverless -w /sixcrmserverless node yarn compile
+      - run:
           name: Product Setup Tests
-          command: cd packages/sixcrm-product-setup && docker-compose --file ../sixcrm/tools/docker/docker-compose-productsetup.yml run -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project/packages/sixcrm-product-setup:/sixcrmserverless -w /sixcrmserverless node yarn run test-productsetup
+          command: cd packages/sixcrm-product-setup && docker-compose --file ../sixcrm/tools/docker/docker-compose-productsetup.yml run -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project/packages/sixcrm-product-setup:/sixcrmserverless -w /sixcrmserverless node yarn run test
 
 workflows:
   version: 2
