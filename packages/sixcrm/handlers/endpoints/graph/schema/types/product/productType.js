@@ -1,24 +1,29 @@
+const {
+	GraphQLObjectType,
+	GraphQLNonNull,
+	GraphQLFloat,
+	GraphQLBoolean,
+	GraphQLInt,
+	GraphQLString,
+	GraphQLList
+} = require('graphql');
 
-const GraphQLObjectType = require('graphql').GraphQLObjectType;
-const GraphQLNonNull = require('graphql').GraphQLNonNull;
-const GraphQLFloat = require('graphql').GraphQLFloat;
-const GraphQLBoolean = require('graphql').GraphQLBoolean;
-const GraphQLInt = require('graphql').GraphQLInt;
-const GraphQLString = require('graphql').GraphQLString;
-const GraphQLList = require('graphql').GraphQLList;
+const merchantProviderGroupType = require('../merchantprovidergroup/merchantProviderGroupType');
+const dynamicPricingType = require('./components/dynamicPricingType');
+const fulfillmentProviderType = require('../fulfillmentprovider/fulfillmentProviderType');
+const productAttributesType = require('./components/attributesType');
+const emailTemplateType = require('../emailtemplate/emailTemplateType');
 
+const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
+const fulfillmentProviderController = new FulfillmentProviderController();
 
-let merchantProviderGroupType = require('../merchantprovidergroup/merchantProviderGroupType');
-let dynamicPricingType = require('./components/dynamicPricingType');
-let fulfillmentProviderType = require('../fulfillmentprovider/fulfillmentProviderType');
-let productAttributesType = require('./components/attributesType');
-let emailTemplateType = require('../emailtemplate/emailTemplateType');
-
-const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
-const productController = new ProductController();
+const MerchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
+const merchantProviderGroupController = new MerchantProviderGroupController();
 
 const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 const emailTemplateController = new EmailTemplateController();
+
+const shippingIntervalToSeconds = ({ hours = 0, minutes = 0, seconds = 0 }) => hours * 60 * 60 + minutes * 60 + seconds;
 
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'Product',
@@ -42,33 +47,54 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		ship: {
 			type: GraphQLBoolean,
+			description: '`ship` will be removed. Use `Product.is_shippable` instead.',
+			deprecationReason: 'The `ship` field is deprecated and will be removed soon.',
+		},
+		is_shippable: {
+			type: GraphQLBoolean,
 			description: 'The product ship, no-ship status.',
+		},
+		shipping_price: {
+			type: GraphQLFloat,
+			description: 'A default shipping price for product.',
 		},
 		shipping_delay: {
 			type: GraphQLInt,
 			description: 'The number of seconds to delay shipping after a transaction.',
+			resolve: ({ shipping_delay }) => shipping_delay ? shippingIntervalToSeconds(shipping_delay): shipping_delay
 		},
 		default_price: {
+			type: GraphQLFloat,
+			description: '`default_price` will be removed. Use `Product.price` and `Product.shipping_price` instead.',
+			deprecationReason: 'The `default_price` field is deprecated and will be removed soon.',
+		},
+		price: {
 			type: GraphQLFloat,
 			description: 'A default price for product.',
 		},
 		dynamic_pricing: {
 			type: dynamicPricingType.graphObj,
-			description: 'The dynamic pricing range for product.',
+			description: '`dynamic_pricing` will be removed. Use `Product.price` and `Product.shipping_price` instead.',
+			deprecationReason: 'The `DynamicPricing` type is deprecated and will be removed soon.',
 		},
 		fulfillment_provider: {
 			type: fulfillmentProviderType.graphObj,
 			description: 'The session associated with the transaction.',
-			resolve: product => productController.getFulfillmentProvider(product),
+			resolve: async ({ fulfillment_provider_id }) => fulfillment_provider_id && fulfillmentProviderController.get({ id: fulfillment_provider_id })
 		},
-		merchantprovidergroup:{
+		merchantprovidergroup: {
 			type: merchantProviderGroupType.graphObj,
 			description: 'The merchant provider group associated with the product.',
-			resolve: product => productController.getMerchantProviderGroup(product)
+			resolve: async ({ merchant_provider_group_id }) => merchant_provider_group_id && merchantProviderGroupController.get({ id: merchant_provider_group_id })
 		},
-		attributes:{
+		attributes: {
 			type: productAttributesType.graphObj,
-			description: 'The attributes associated with the product.'
+			description: '`attributes` will be removed. Use `Product.image_urls` instead.',
+			deprecationReason: 'The `ProductAttributes` type is deprecated and will be removed soon.',
+		},
+		image_urls: {
+			type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
+			description: 'The product images',
 		},
 		emailtemplates: {
 			type: new GraphQLList(emailTemplateType.graphObj),

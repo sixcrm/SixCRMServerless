@@ -246,6 +246,7 @@ describe('createOrder', function () {
 
 		it('successfully runs execute method', () => {
 			let event = getValidEvent();
+			const context = {};
 			let session = getSessionWithoutProductSchedules();
 			let campaign = getValidCampaign();
 			let customer = getValidCustomer();
@@ -429,12 +430,18 @@ describe('createOrder', function () {
 			};
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'AccountDetails.js'), mock_account_details);
+
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
-			return createOrderController.execute(event).then(() => {
+			return createOrderController.execute(event, context).then(() => {
 				expect(createOrderController.parameters.store).to.have.property('info');
 				let info = createOrderController.parameters.get('info');
 				expect(global.SixCRM.validate(info, global.SixCRM.routes.path('model', 'endpoints/createOrder/info.json'))).to.equal(true);
@@ -445,6 +452,7 @@ describe('createOrder', function () {
 		it('successfully runs execute method if required customer fields provided', () => {
 
 			let event = getValidEvent();
+			const context = {};
 			let session = getSessionWithoutProductSchedules();
 			let campaign = getValidCampaign();
 
@@ -638,10 +646,16 @@ describe('createOrder', function () {
 				}
 			});
 
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
+
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
-			return createOrderController.execute(event).then(() => {
+			return createOrderController.execute(event, context).then(() => {
 				expect(createOrderController.parameters.store).to.have.property('info');
 				let info = createOrderController.parameters.get('info');
 				expect(global.SixCRM.validate(info, global.SixCRM.routes.path('model', 'endpoints/createOrder/info.json'))).to.equal(true);
@@ -657,6 +671,7 @@ describe('createOrder', function () {
 			event.transaction_subtype = 'upsell';
 			event.body = JSON.stringify(getValidEventBody(null, true));
 
+			const context = {};
 			let session = getSessionWithoutProductSchedules();
 			let campaign = getValidCampaign();
 
@@ -845,10 +860,16 @@ describe('createOrder', function () {
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'AccountDetails.js'), mock_account_details);
 
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
+
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
-			return createOrderController.execute(event).then(() => {
+			return createOrderController.execute(event, context).then(() => {
 				expect(createOrderController.parameters.store).to.have.property('info');
 				let info = createOrderController.parameters.get('info');
 				expect(global.SixCRM.validate(info, global.SixCRM.routes.path('model', 'endpoints/createOrder/info.json'))).to.equal(true);
@@ -1612,6 +1633,7 @@ describe('createOrder', function () {
 		it('successfully creates a order', () => {
 
 			let event = getValidEventBody(null, true);
+			const context = {};
 			let product_schedule_ids = arrayutilities.map(event.product_schedules, product_schedule_group => product_schedule_group.product_schedule);
 			let product_schedules = getValidProductSchedules(product_schedule_ids, true);
 			let session = getSessionWithoutProductSchedules();
@@ -1775,7 +1797,7 @@ describe('createOrder', function () {
 
 			createOrderController.parameters.set('event', event);
 
-			return createOrderController.createOrder(event).then(() => {
+			return createOrderController.createOrder(event, context).then(() => {
 				let info = createOrderController.parameters.get('info');
 				expect(global.SixCRM.validate(info, global.SixCRM.routes.path('model', 'endpoints/createOrder/info.json'))).to.equal(true);
 			});

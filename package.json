@@ -16,7 +16,9 @@
     "test-functional-analytics-queries": "lerna run test-functional-analytics-queries",
     "test-integration-analytics": "lerna run test-integration-analytics",
     "test-transactions": "lerna run test-transactions",
-    "ts-test": "lerna run ts-test"
+    "test-productsetup": "lerna run test-productsetup",
+    "ts-test": "lerna run ts-test",
+    "test": "lerna run test"
   },
   "devDependencies": {
     "lerna": "^3.8.1"

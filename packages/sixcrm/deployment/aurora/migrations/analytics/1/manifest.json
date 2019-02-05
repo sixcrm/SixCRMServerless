@@ -1,8 +1,5 @@
 [
 	{
-		"script": "scripts/schema.sql"
-	},
-	{
 		"script": "tables/f_activity.sql"
 	},
 	{
@@ -31,9 +28,6 @@
 	},
 	{
 		"script": "tables/f_transaction_chargeback.sql"
-	},
-	{
-		"script": "tables/m_release.sql"
 	},
 	{
 		"script": "scripts/seed-data.sql"

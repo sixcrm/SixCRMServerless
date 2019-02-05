@@ -18,6 +18,8 @@
 		"prefer-const": true,
 		"radix": false,
 		"arrow-parens": false,
-		"array-type": false
+		"array-type": false,
+		"semicolon": [true, "always"],
+	  	"member-ordering": false
 	}
 }

@@ -59,9 +59,9 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 	}
 
-	execute(event) {
-		return this.preamble(event).then(() => this.confirmOrder(this.parameters.get('event')));
-
+	async execute(event, context) {
+		await this.preamble(event, context);
+		return this.confirmOrder(this.parameters.get('event'));
 	}
 
 	async confirmOrder(event) {

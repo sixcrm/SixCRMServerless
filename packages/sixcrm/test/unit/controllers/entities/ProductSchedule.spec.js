@@ -253,10 +253,19 @@ describe('controllers/ProductSchedule.js', () => {
 
 			PermissionTestGenerators.givenUserWithAllowed('read', 'productschedule');
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Product.js'), class {
-				get({id}) {
-					expect(id).to.equal(product_schedule.schedule[0].product);
-					return Promise.resolve('a_product');
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductSetupService() {
+					return {
+						getProduct(id) {
+							expect(id).to.equal(product_schedule.schedule[0].product);
+							return Promise.resolve({ name: 'a_product' });
+						}
+					};
+				},
+				LegacyProduct: class LegacyProduct {
+					static fromProduct() {
+						return { legacy_prop: 'foo' };
+					}
 				}
 			});
 
@@ -264,7 +273,7 @@ describe('controllers/ProductSchedule.js', () => {
 			const productScheduleController = new ProductScheduleController();
 
 			return productScheduleController.getProduct(product_schedule.schedule[0]).then((result) => {
-				expect(result).to.equal('a_product');
+				expect(result).to.deep.equal({name: 'a_product', legacy_prop: 'foo' });
 			});
 		});
 	});
@@ -286,9 +295,13 @@ describe('controllers/ProductSchedule.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Product.js'), class {
-				listByAccount() {
-					return Promise.resolve(['a_product']);
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductSetupService() {
+					return {
+						getProductsByIds() {
+							return Promise.resolve(['a_product']);
+						}
+					};
 				}
 			});
 
@@ -296,7 +309,7 @@ describe('controllers/ProductSchedule.js', () => {
 			const productScheduleController = new ProductScheduleController();
 
 			return productScheduleController.getProducts(product_schedule).then((result) => {
-				expect(result).to.deep.equal(['a_product']);
+				expect(result).to.deep.equal({ products: ['a_product'] });
 			});
 		});
 	});

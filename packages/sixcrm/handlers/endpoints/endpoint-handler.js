@@ -9,7 +9,7 @@ module.exports = class EndpointHandler extends LambdaHandler {
 
 		try {
 
-			const response = await handlerDelegate(event);
+			const response = await handlerDelegate(event, lambdaContext);
 
 			return new LambdaResponse().issueSuccess(response, lambdaCallback);
 

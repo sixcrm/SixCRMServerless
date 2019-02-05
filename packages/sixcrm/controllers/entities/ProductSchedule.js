@@ -1,9 +1,9 @@
-
 const _ = require('lodash');
 
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 
 const ProductScheduleHelper = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
@@ -111,17 +111,25 @@ module.exports = class ProductScheduleController extends entityController {
 
 	}
 
-	getProduct(scheduled_product){
+	async getProduct(scheduled_product){
 		let product_id = _.has(scheduled_product, 'product') ? scheduled_product.product : scheduled_product.product_id;
 
 		//Technical Debt: Hack
 		if(_.isNull(product_id) || _.isUndefined(product_id)){ return Promise.resolve(null) }
 
-		return this.executeAssociatedEntityFunction('ProductController', 'get', {id: product_id});
-
+		try {
+			const product = await getProductSetupService().getProduct(product_id);
+			return {
+				...LegacyProduct.fromProduct(product),
+				...product
+			};
+		} catch (e) {
+			du.error('Cannot retrieve product on account', e);
+			return null;
+		}
 	}
 
-	getProducts(product_schedule){
+	async getProducts(product_schedule){
 		if(_.has(product_schedule, 'schedule') && arrayutilities.nonEmpty(product_schedule.schedule)){
 
 			let product_ids = arrayutilities.map(product_schedule.schedule, (product_schedule) => {
@@ -140,11 +148,9 @@ module.exports = class ProductScheduleController extends entityController {
 			});
 
 			if(arrayutilities.nonEmpty(product_ids)){
-
-				let query_parameters = this.createINQueryParameters({field: 'id', list_array: product_ids});
-
-				return this.executeAssociatedEntityFunction('ProductController', 'listByAccount', {query_parameters: query_parameters});
-
+				return {
+					products: await getProductSetupService().getProductsByIds(product_ids)
+				};
 			}
 
 		}

@@ -1,19 +1,19 @@
 require('module-alias/register');
-const GraphQLObjectType = require('graphql').GraphQLObjectType;
-const GraphQLNonNull = require('graphql').GraphQLNonNull;
-const GraphQLString = require('graphql').GraphQLString;
-const GraphQLInt = require('graphql').GraphQLInt;
-const GraphQLList = require('graphql').GraphQLList;
-const GraphQLBoolean = require('graphql').GraphQLBoolean;
+const {
+	GraphQLObjectType,
+	GraphQLNonNull,
+	GraphQLString,
+	GraphQLInt,
+	GraphQLList,
+	GraphQLBoolean
+} = require('graphql');
+const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
 
 const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 const SMTPProviderType = require('../smtpprovider/SMTPProviderType');
 const productType = require('../product/productType');
 const productScheduleType = require('../productschedule/productScheduleType');
 const campaignType = require('../campaign/campaignType');
-
-const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
-const productController = new ProductController();
 
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 const productScheduleController = new ProductScheduleController();
@@ -62,12 +62,7 @@ module.exports.graphObj = new GraphQLObjectType({
 		products: {
 			type: new GraphQLList(productType.graphObj),
 			description: 'Products associated with email template',
-			resolve: (emailtemplate) => {
-				if (!emailtemplate.products) {
-					return [];
-				}
-				return productController.batchGet({ids: emailtemplate.products})
-			}
+			resolve: ({ products: productIds }) => getProductSetupService().getProductsByIds(productIds)
 		},
 		product_schedules: {
 			type: new GraphQLList(productScheduleType.graphObj),
