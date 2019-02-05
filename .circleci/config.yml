@@ -210,6 +210,26 @@ jobs:
       - run:
           name: Transactional Integration Tests
           command: SIX_VERBOSE=6 yarn run test-transactions
+  product_setup_tests:
+    machine: true
+    steps:
+      - checkout
+      - restore_cache:
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Docker Compose
+          command: |
+            curl -L https://github.com/docker/compose/releases/download/1.15.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
+            chmod +x ~/docker-compose
+            sudo mv ~/docker-compose /usr/local/bin/docker-compose
+      - run:
+          name: Start Aurora Docker Image
+          command: |
+            set -x
+            cd packages/sixcrm-product-setup && docker-compose up -d
+      - run:
+          name: Product Setup Tests
+          command: cd packages/sixcrm-product-setup && docker-compose run -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless/packages/sixcrm-product-setup node yarn run test-productsetup
 
 workflows:
   version: 2
@@ -333,6 +353,15 @@ workflows:
             branches:
               only:
                 - development
+                - staging
+                - production
+                - priority
+      - product_setup_tests:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore:
                 - staging
                 - production
                 - priority

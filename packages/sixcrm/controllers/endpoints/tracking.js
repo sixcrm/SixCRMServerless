@@ -36,12 +36,12 @@ module.exports = class TrackingController extends transactionEndpointController{
 
 	}
 
-	execute(event){
-		return this.preamble(event)
-			.then(() => this.acquireEventProperties())
-			.then(() => this.acquireTrackers())
+	async execute(event, context){
+		await this.preamble(event, context)
+		await this.acquireEventProperties();
+		await this.acquireTrackers();
 		//Note: filtering or validation here?
-			.then(() => this.respond());
+		return this.respond();
 
 	}
 

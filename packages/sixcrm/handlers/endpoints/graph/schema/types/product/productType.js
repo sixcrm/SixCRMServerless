@@ -23,7 +23,7 @@ const merchantProviderGroupController = new MerchantProviderGroupController();
 const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 const emailTemplateController = new EmailTemplateController();
 
-const shippingIntervalToSeconds = ({ hours = 0, minutes = 0, seconds = 0 } = {}) => hours * 60 * 60 + minutes * 60 + seconds;
+const shippingIntervalToSeconds = ({ hours = 0, minutes = 0, seconds = 0 }) => hours * 60 * 60 + minutes * 60 + seconds;
 
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'Product',
@@ -49,7 +49,6 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: GraphQLBoolean,
 			description: '`ship` will be removed. Use `Product.is_shippable` instead.',
 			deprecationReason: 'The `ship` field is deprecated and will be removed soon.',
-			resolve: ({ is_shippable }) => is_shippable
 		},
 		is_shippable: {
 			type: GraphQLBoolean,
@@ -62,13 +61,12 @@ module.exports.graphObj = new GraphQLObjectType({
 		shipping_delay: {
 			type: GraphQLInt,
 			description: 'The number of seconds to delay shipping after a transaction.',
-			resolve: ({ shipping_delay }) => shippingIntervalToSeconds(shipping_delay)
+			resolve: ({ shipping_delay }) => shipping_delay ? shippingIntervalToSeconds(shipping_delay): shipping_delay
 		},
 		default_price: {
 			type: GraphQLFloat,
 			description: '`default_price` will be removed. Use `Product.price` and `Product.shipping_price` instead.',
 			deprecationReason: 'The `default_price` field is deprecated and will be removed soon.',
-			resolve: ({ price, shipping_price }) => parseFloat(price) + parseFloat(shipping_price)
 		},
 		price: {
 			type: GraphQLFloat,
@@ -78,7 +76,6 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: dynamicPricingType.graphObj,
 			description: '`dynamic_pricing` will be removed. Use `Product.price` and `Product.shipping_price` instead.',
 			deprecationReason: 'The `DynamicPricing` type is deprecated and will be removed soon.',
-			resolve: () => ({ min: 0, max: 9999999 })
 		},
 		fulfillment_provider: {
 			type: fulfillmentProviderType.graphObj,
@@ -94,12 +91,6 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: productAttributesType.graphObj,
 			description: '`attributes` will be removed. Use `Product.image_urls` instead.',
 			deprecationReason: 'The `ProductAttributes` type is deprecated and will be removed soon.',
-			resolve: ({ image_urls }) => ({
-				images: image_urls.map((path, index) => ({
-					default_image: index === 0,
-					path
-				}))
-			})
 		},
 		image_urls: {
 			type: new GraphQLNonNull(new GraphQLList(GraphQLString)),

@@ -1,8 +1,10 @@
 import { Connection, Repository, FindConditions } from 'typeorm';
 import Product from './models/Product';
 import { validate, ValidationError } from "class-validator";
+import {LogMethod} from "./log";
 
 const MASTER_ACCOUNT_ID = '*';
+
 
 interface IProductEntityId {
 	id: string;
@@ -26,6 +28,7 @@ export default class ProductSetupService {
 			accountId === MASTER_ACCOUNT_ID ? {} : { account_id: accountId };
 	}
 
+	@LogMethod()
 	getProduct(id: string): Promise<Product> {
 		return this.productRepository.findOneOrFail({
 			...this.baseFindConditions,
@@ -33,18 +36,22 @@ export default class ProductSetupService {
 		});
 	}
 
+	@LogMethod()
 	getAllProducts(): Promise<Product[]> {
 		return this.productRepository.find(this.baseFindConditions);
 	}
 
+	@LogMethod()
 	findProducts(conditions: FindConditions<Product>): Promise<Product[]> {
 		return this.productRepository.find({ ...conditions, ...this.baseFindConditions });
 	}
 
+	@LogMethod()
 	getProductsByIds(ids: string[]): Promise<Product[]> {
 		return this.productRepository.findByIds(ids, this.baseFindConditions);
 	}
 
+	@LogMethod()
 	async createProduct(partialProduct: Partial<Product>): Promise<IProductEntityId> {
 		// shallow copy to avoid typeorm issues with objects without prototypes
 		// https://github.com/typeorm/typeorm/issues/2065
@@ -58,6 +65,7 @@ export default class ProductSetupService {
 		return insertResult.identifiers[0] as IProductEntityId;
 	}
 
+	@LogMethod()
 	async updateProduct(partialProduct: Partial<Product>): Promise<void> {
 		// shallow copy to avoid typeorm issues with objects without prototypes
 		// https://github.com/typeorm/typeorm/issues/2065
@@ -77,6 +85,7 @@ export default class ProductSetupService {
 		await this.productRepository.update(updateCriteria, product);
 	}
 
+	@LogMethod()
 	async deleteProduct(id: string): Promise<IProductEntityId> {
 		const deleteResult = await this.productRepository.delete({ id, ...this.baseFindConditions });
 		const [, rowsAffected] = deleteResult.raw;
@@ -87,10 +96,12 @@ export default class ProductSetupService {
 		return { id };
 	}
 
+	@LogMethod('debug')
 	private canUpdateProduct(productAccountId: string): boolean {
 		return this.isMasterAccount() || !!productAccountId && productAccountId === this.accountId;
 	}
 
+	@LogMethod('debug')
 	private isMasterAccount(): boolean {
 		return this.accountId === MASTER_ACCOUNT_ID;
 	}
@@ -103,6 +114,7 @@ export default class ProductSetupService {
 		return this.validateProduct(product);
 	}
 
+	@LogMethod('debug')
 	private async validateProduct(product: Product): Promise<void> {
 		const { account_id } = product;
 		if (!this.canUpdateProduct(account_id)) {

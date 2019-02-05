@@ -3,7 +3,7 @@ const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
-const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 
 const ProductScheduleHelper = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
@@ -118,7 +118,11 @@ module.exports = class ProductScheduleController extends entityController {
 		if(_.isNull(product_id) || _.isUndefined(product_id)){ return Promise.resolve(null) }
 
 		try {
-			return await getProductSetupService().getProduct(product_id);
+			const product = await getProductSetupService().getProduct(product_id);
+			return {
+				...LegacyProduct.fromProduct(product),
+				...product
+			};
 		} catch (e) {
 			du.error('Cannot retrieve product on account', e);
 			return null;

@@ -2,6 +2,7 @@ const _ = require('lodash');
 
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const { createProductSetupService } = require('@6crm/sixcrm-product-setup');
 
 const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
@@ -12,6 +13,20 @@ const authenticatedController = global.SixCRM.routes.include('controllers', 'end
 
 const accountController = new AccountController();
 const accountHelperController = new AccountHelperController();
+
+const getEnvironmentAuroraHost = () => global.SixCRM.configuration.getEnvironmentConfig(`aurora_host`);
+const getAuroraConfig = async () => {
+	const {
+		host = await getEnvironmentAuroraHost(),
+		user: username,
+		password
+	} = global.SixCRM.configuration.site_config.aurora;
+	return {
+		host,
+		username,
+		password
+	};
+};
 
 module.exports = class transactionEndpointController extends authenticatedController {
 
@@ -31,18 +46,28 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
 	}
 
-	preamble(event) {
-		return this.preprocessing(event)
-			.then((event) => this.acquireRequestProperties(event))
-			.then((event_body) => {
-				return this.parameters.setParameters({
-					argumentation: {
-						event: event_body
-					},
-					action: 'execute'
-				});
-			});
+	async preamble(event, context) {
+		context.callbackWaitsForEmptyEventLoop = false;
 
+		const preprocessedEvent = await this.preprocessing(event);
+		// Pull accountId off of the event to workaround a race condition
+		// where global.account has not been defined or is wrong
+		const { pathParameters: { account: accountId }} = preprocessedEvent;
+
+		const auroraConfig = await getAuroraConfig();
+		const productSetupServiceOptions = {
+			accountId,
+			...auroraConfig
+		};
+		await createProductSetupService(productSetupServiceOptions);
+
+		const eventBody = this.acquireRequestProperties(preprocessedEvent);
+		return this.parameters.setParameters({
+			argumentation: {
+				event: eventBody
+			},
+			action: 'execute'
+		});
 	}
 
 	async validateAccount(event) {

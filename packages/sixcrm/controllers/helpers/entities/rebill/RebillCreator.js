@@ -6,7 +6,7 @@ const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').defa
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const numberutilities = require('@6crm/sixcrmcore/lib/util/number-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
-const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 const Parameters = require('../../../providers/Parameters');
 const ProductScheduleController = require('../../../entities/ProductSchedule');
 const ProductScheduleHelperController = require('../../entities/productschedule/ProductSchedule');
@@ -139,9 +139,13 @@ module.exports = class RebillCreatorHelper {
 			if (rebillController.isUUID(product_group.product)) {
 				try {
 					const product = await getProductSetupService().getProduct(product_group.product);
-					product_group.product = product;
+					product_group.product = {
+						...LegacyProduct.fromProduct(product),
+						...product
+					};
 					return product_group;
 				} catch (e) {
+					du.error('Error retrieving product', e);
 					throw eu.getError('not_found', 'Product does not exist: ' +product_group.product);
 				}
 			} else if (_.isObject(product_group.product)) {

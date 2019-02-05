@@ -27,3 +27,6 @@ export const createProductSetupService = async ({
 };
 
 export const getProductSetupService = () => productSetupService;
+
+export { default as Product } from './models/Product';
+export { default as LegacyProduct } from './models/legacy/LegacyProduct';

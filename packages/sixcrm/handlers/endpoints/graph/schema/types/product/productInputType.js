@@ -31,7 +31,11 @@ module.exports.graphObj = new GraphQLInputObjectType({
 		is_shippable:	{ type: GraphQLBoolean, defaultValue: false },
 		shipping_price: { type: GraphQLFloat },
 		shipping_delay: 		{ type: GraphQLInt },
-		fulfillment_provider: 	{ type: GraphQLString },
+		fulfillment_provider: {
+			type: GraphQLString,
+			deprecationReason: 'The `fulfillment_provider` field is deprecated and will be removed soon.',
+		},
+		fulfillment_provider_id: 	{ type: GraphQLString },
 		dynamic_pricing: {
 			type: dynamicPricingInputType.graphObj,
 			deprecationReason: 'The `DynamicPricing` type is deprecated and will be removed soon.',
@@ -50,6 +54,8 @@ module.exports.toProductInput = ({
 		images =[]
 	} = {},
 	default_price,
+	fulfillment_provider,
+	fulfillment_provider_id,
 	image_urls,
 	is_shippable,
 	price,
@@ -57,6 +63,7 @@ module.exports.toProductInput = ({
 	...productInput
 }) => ({
 	...productInput,
+	fulfillment_provider_id: fulfillment_provider_id || fulfillment_provider,
 	is_shippable: is_shippable || ship,
 	price: price || default_price,
 	image_urls: image_urls.length ? image_urls : images.map(image => image.path)
