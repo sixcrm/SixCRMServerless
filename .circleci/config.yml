@@ -226,16 +226,10 @@ jobs:
           name: Start Aurora Docker Image
           command: |
             set -x
-            cd packages/sixcrm && docker-compose --file tools/docker/docker-compose-productsetup.yml up -d
-      - run:
-          name: docker ps
-          command: docker ps
-      - run:
-          name: docker logs
-          command: cd packages/sixcrm && docker-compose --file tools/docker/docker-compose-productsetup.yml logs
+            cd packages/sixcrm-product-setup && docker-compose up -d
       - run:
           name: Product Setup Tests
-          command: cd packages/sixcrm-product-setup && docker-compose --file ../sixcrm/tools/docker/docker-compose-productsetup.yml run -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless/packages/sixcrm-product-setup node yarn run test-productsetup
+          command: cd packages/sixcrm-product-setup && docker-compose run -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless/packages/sixcrm-product-setup node yarn run test-productsetup
 
 workflows:
   version: 2
