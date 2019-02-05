@@ -44,3 +44,9 @@ export const connect = async (config: IDatabaseConfig) => {
 	connection = createConnection(toConnectionOptions(config));
 	return connection;
 };
+
+export const disconnect = async () => {
+	if (connection) {
+		return (await connection).close();
+	}
+};
