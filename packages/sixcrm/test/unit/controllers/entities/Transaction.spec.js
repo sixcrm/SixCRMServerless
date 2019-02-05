@@ -69,6 +69,11 @@ describe('controllers/Transaction.js', () => {
 							return Promise.resolve('a_product_data');
 						}
 					};
+				},
+				LegacyProduct: class LegacyProduct {
+					static fromProduct(product) {
+						return product;
+					}
 				}
 			});
 

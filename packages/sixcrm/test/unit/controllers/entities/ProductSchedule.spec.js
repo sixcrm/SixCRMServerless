@@ -261,6 +261,11 @@ describe('controllers/ProductSchedule.js', () => {
 							return Promise.resolve('a_product');
 						}
 					};
+				},
+				LegacyProduct: class LegacyProduct {
+					static fromProduct(product) {
+						return product;
+					}
 				}
 			});
 

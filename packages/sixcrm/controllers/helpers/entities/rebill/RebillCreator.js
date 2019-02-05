@@ -6,7 +6,7 @@ const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').defa
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const numberutilities = require('@6crm/sixcrmcore/lib/util/number-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
-const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 const Parameters = require('../../../providers/Parameters');
 const ProductScheduleController = require('../../../entities/ProductSchedule');
 const ProductScheduleHelperController = require('../../entities/productschedule/ProductSchedule');
@@ -138,7 +138,7 @@ module.exports = class RebillCreatorHelper {
 		let normalized_products = arrayutilities.map(products, async product_group => {
 			if (rebillController.isUUID(product_group.product)) {
 				try {
-					const product = await getProductSetupService().getProduct(product_group.product);
+					const product = LegacyProduct.fromProduct(await getProductSetupService().getProduct(product_group.product));
 					product_group.product = product;
 					return product_group;
 				} catch (e) {
