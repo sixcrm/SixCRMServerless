@@ -66,9 +66,14 @@ describe('controllers/Transaction.js', () => {
 					return {
 						getProduct(id) {
 							expect(id).to.equal(a_product.id);
-							return Promise.resolve('a_product_data');
+							return Promise.resolve({ name: 'a_product' });
 						}
 					};
+				},
+				LegacyProduct: class LegacyProduct {
+					static fromProduct() {
+						return { legacy_prop: 'foo' };
+					}
 				}
 			});
 
@@ -76,7 +81,7 @@ describe('controllers/Transaction.js', () => {
 			const transactionController = new TransactionController();
 
 			return transactionController.getProduct(a_product).then((result) => {
-				expect(result).to.equal('a_product_data');
+				expect(result).to.deep.equal({ name: 'a_product', legacy_prop: 'foo' });
 			});
 		});
 	});
