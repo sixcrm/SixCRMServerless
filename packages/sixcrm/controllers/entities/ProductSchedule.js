@@ -118,7 +118,11 @@ module.exports = class ProductScheduleController extends entityController {
 		if(_.isNull(product_id) || _.isUndefined(product_id)){ return Promise.resolve(null) }
 
 		try {
-			return LegacyProduct.fromProduct(await getProductSetupService().getProduct(product_id));
+			const product = await getProductSetupService().getProduct(product_id);
+			return {
+				...LegacyProduct.fromProduct(product),
+				...product
+			};
 		} catch (e) {
 			du.error('Cannot retrieve product on account', e);
 			return null;
