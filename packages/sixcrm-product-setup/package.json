@@ -27,6 +27,7 @@
     "compile": "tsc --pretty",
     "prettier": "prettier --write \"src/**/*.{ts,json}\"",
     "test": "mocha --colors --require ts-node/register test/*.spec.ts test/**/*.spec.ts --recursive",
+    "test-productsetup": "yarn run test",
     "precommit": "pretty-quick --staged"
   },
   "bugs": {

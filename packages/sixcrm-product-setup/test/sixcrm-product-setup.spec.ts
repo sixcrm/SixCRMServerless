@@ -9,6 +9,7 @@ const expect = chai.expect;
 import { createProductSetupService } from '../src';
 import ProductSetupService from '../src/ProductSetupService';
 import Product from '../src/models/Product';
+import {disconnect} from "../src/connect";
 
 let getValidProduct = function(accountId) {
 	return new Product(v4(), accountId, 'A product', 100, false, []);
@@ -48,6 +49,10 @@ describe('@6crm/sixcrm-product-setup', () => {
 			schema: 'public',
 			logging: ['error']
 		});
+	});
+
+	after(async () => {
+		await disconnect();
 	});
 
 	describe('createProduct', () => {
