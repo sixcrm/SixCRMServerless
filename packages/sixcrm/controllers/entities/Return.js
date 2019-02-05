@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 const RebillController = global.SixCRM.routes.include('entities','Rebill.js');
@@ -57,7 +57,11 @@ module.exports = class ReturnController extends entityController {
 
 			for (let transaction of ret.transactions) {
 				for (let product of transaction.products) {
-					product.product = await getProductSetupService().getProduct(product.product);
+					const product_result = await getProductSetupService().getProduct(product.product);
+					product.product = {
+						...LegacyProduct.fromProduct(product_result),
+						...product_result
+					};
 					product.image = this.productHelperController.getDefaultImage(product.product);
 				}
 			}

@@ -258,9 +258,14 @@ describe('controllers/ProductSchedule.js', () => {
 					return {
 						getProduct(id) {
 							expect(id).to.equal(product_schedule.schedule[0].product);
-							return Promise.resolve('a_product');
+							return Promise.resolve({ name: 'a_product' });
 						}
 					};
+				},
+				LegacyProduct: class LegacyProduct {
+					static fromProduct() {
+						return { legacy_prop: 'foo' };
+					}
 				}
 			});
 
@@ -268,7 +273,7 @@ describe('controllers/ProductSchedule.js', () => {
 			const productScheduleController = new ProductScheduleController();
 
 			return productScheduleController.getProduct(product_schedule.schedule[0]).then((result) => {
-				expect(result).to.equal('a_product');
+				expect(result).to.deep.equal({name: 'a_product', legacy_prop: 'foo' });
 			});
 		});
 	});
