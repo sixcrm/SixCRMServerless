@@ -138,8 +138,11 @@ module.exports = class RebillCreatorHelper {
 		let normalized_products = arrayutilities.map(products, async product_group => {
 			if (rebillController.isUUID(product_group.product)) {
 				try {
-					const product = LegacyProduct.fromProduct(await getProductSetupService().getProduct(product_group.product));
-					product_group.product = product;
+					const product = await getProductSetupService().getProduct(product_group.product);
+					product_group.product = {
+						...LegacyProduct.fromProduct(product),
+						...product
+					};
 					return product_group;
 				} catch (e) {
 					du.error('Error retrieving product', e);
