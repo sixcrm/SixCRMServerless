@@ -4,15 +4,15 @@ const graphql = require('graphql').graphql;
 
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const { createProductSetupService } = require('@6crm/sixcrm-product-setup');
+const { getAuroraClusterEndpoint } = require('../configuration-acquisition');
 
 const userAuthenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/userauthenticated.js');
 const resolveController = global.SixCRM.routes.include('providers', 'Resolve.js');
 const auroraContext = require('@6crm/sixcrmcore/lib/util/analytics/aurora-context').default;
 
-const getEnvironmentAuroraHost = () => global.SixCRM.configuration.getEnvironmentConfig(`aurora_host`);
 const getAuroraConfig = async () => {
 	const {
-		host = await getEnvironmentAuroraHost(),
+		host = await getAuroraClusterEndpoint(),
 		user: username,
 		password
 	} = global.SixCRM.configuration.site_config.aurora;
