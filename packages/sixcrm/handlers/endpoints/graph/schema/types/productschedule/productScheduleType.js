@@ -2,6 +2,7 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 
 let scheduleType = require('./scheduleType');
 let merchantProviderGroupType = require('../merchantprovidergroup/merchantProviderGroupType');
@@ -50,6 +51,7 @@ module.exports.graphObj = new GraphQLObjectType({
 			description: 'Email templates associated with this product schedule.',
 			resolve: (productschedule) => emailTemplateController.listByProductSchedule(productschedule)
 		},
+		confirmation_required: { type: GraphQLBoolean },
 		created_at: {
 			type: new GraphQLNonNull(GraphQLString),
 			description: 'ISO8601 datetime when the entity was created.',

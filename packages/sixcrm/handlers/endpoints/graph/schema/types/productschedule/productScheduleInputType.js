@@ -1,6 +1,7 @@
 
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 
 let productScheduleProductConfigurationInputType = require('./productScheduleProductConfigurationInputType');
@@ -12,6 +13,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
 		name:           { type: GraphQLString },
 		schedule:			  { type: new GraphQLList(productScheduleProductConfigurationInputType.graphObj) },
 		merchantprovidergroup:  { type: GraphQLString },
+		confirmation_required: { type: GraphQLBoolean },
 		updated_at:     { type: GraphQLString }
 	})
 });

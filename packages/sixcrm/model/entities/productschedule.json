@@ -47,6 +47,9 @@
 		"account": {
 			"$ref": "../definitions/sixcrmaccountidentifier.json"
 		},
+		"confirmation_required": {
+			"type": "boolean"
+		},
 		"created_at": {
 			"$ref": "../definitions/iso8601.json"
 		},
