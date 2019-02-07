@@ -71,10 +71,6 @@ module.exports = class CloudwatchDeployment extends AWSDeploymentUtilities{
 	}
 
 	async deploySubscriptionFilter(lambda_name, subscription_filter_template) {
-		if(lambda_name == this.logger_lambda_name){
-			du.warning('Can not log the errors of the logger (recursive.)');
-			return;
-		}
 
 		let parameters = this.parseSubscriptionFilterTemplate(lambda_name, subscription_filter_template);
 
