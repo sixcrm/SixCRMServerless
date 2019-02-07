@@ -391,11 +391,3 @@ functions:
            name: verifysitejwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
-
-########################
-# Utility
-########################
-
-  logger:
-    handler: handlers/handlers.logger
-    role: arn:aws:iam::${self:provider.account}:role/sixcrm_lambda_role
