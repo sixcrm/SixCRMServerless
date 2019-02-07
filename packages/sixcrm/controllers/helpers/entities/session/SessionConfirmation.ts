@@ -1,7 +1,7 @@
 require('module-alias/register');
 
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
-const eu = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 
 const SessionController = require('@root/controllers/entities/Session.js');
 const CustomerController = require('@root/controllers/entities/Customer.js');
