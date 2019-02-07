@@ -1673,6 +1673,30 @@ module.exports.graphObj = new GraphQLObjectType({
 
 			}
 		},
+		confirmsessiondelivery: {
+			type: new GraphQLObjectType({
+				name: 'DeliveryConfirmationTest',
+				fields: () => ({
+					result: {
+						type: GraphQLString,
+						description: 'OK',
+					}
+				}),
+				interfaces: []
+			}),
+			description: 'Triggers request for session delivery confirmation',
+			args: {
+				id: {
+					description: 'id of the session',
+					type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (root, session) => {
+				let helper = require('@lib/controllers/helpers/entities/session/SessionConfirmation.js').default;
+				return new helper().sendDeliveryConfirmationSms(session.id).then(() => { return {result: 'OK'} });
+
+			}
+		},
 		createshippingreceipt: {
 			type: shippingReceiptType.graphObj,
 			description: 'Adds a new shippingreceipt.',
