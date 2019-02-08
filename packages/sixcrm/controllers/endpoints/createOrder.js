@@ -509,7 +509,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			return session;
 		}
 
-		const trialConfirmationRequired = !!session.watermark.product_schedules.find(ps => ps.trial_required);
+		const trialConfirmationRequired = !!session.watermark.product_schedules.find(ps => ps.product_schedule.trial_required);
 
 		if (!trialConfirmationRequired) {
 			du.debug(`Trial confirmation not required for session with id ${session.id}`)
