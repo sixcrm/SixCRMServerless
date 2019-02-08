@@ -24,7 +24,7 @@ module.exports = class TrialConfirmationController extends entityController {
 	}
 
 	async getByCode({code}) {
-		return this.getBySecondaryIndex({field: 'code', index_value: hash, index_name: 'code-index'});
+		return this.getBySecondaryIndex({field: 'code', index_value: code, index_name: 'code-index'});
 	}
 
 	async markDelivered({entity}) {

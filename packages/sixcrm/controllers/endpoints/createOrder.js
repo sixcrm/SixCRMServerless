@@ -519,9 +519,9 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		session.trial_confirmation =
 			await this.trialConfirmationController.create({session: session.id, customer: session.customer});
 
-		du.debug('Updating session with trial confirmation', confirmation);
+		du.debug('Updating session with trial confirmation', session.trial_confirmation);
 
-		return this.sessionController.update({ entity: session });				
+		return this.sessionController.update({ entity: session });
 	}
 
 }
