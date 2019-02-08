@@ -516,10 +516,12 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			return session;
 		}
 
-		session.trial_confirmation =
+		const confirmation =
 			await this.trialConfirmationController.create({session: session.id, customer: session.customer});
 
-		du.debug('Updating session with trial confirmation', session.trial_confirmation);
+		session.trial_confirmation = confirmation.id;
+
+		du.debug('Updating session with trial confirmation', confirmation);
 
 		return this.sessionController.update({ entity: session });
 	}

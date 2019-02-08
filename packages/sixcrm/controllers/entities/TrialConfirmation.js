@@ -27,20 +27,20 @@ module.exports = class TrialConfirmationController extends entityController {
 		return this.getBySecondaryIndex({field: 'code', index_value: code, index_name: 'code-index'});
 	}
 
-	async markDelivered({entity}) {
-		if(!_.has(entity, 'delivered_at')){
-			entity.delivered = timestamp.getISO8601();
+	async markDelivered({confirmation}) {
+		if(!_.has(confirmation, 'delivered_at')){
+			confirmation.delivered_at = timestamp.getISO8601();
 		}
 
-		return super.update({entity: entity, ignore_updated_at: true});
+		return super.update({entity: confirmation, ignore_updated_at: true});
 	}
 
-	async markConfirmed({entity}) {
-		if(!_.has(entity, 'confirmed_at')) {
-			entity.confirmed_at = timestamp.getISO8601();
+	async markConfirmed({confirmation}) {
+		if(!_.has(confirmation, 'confirmed_at')) {
+			confirmation.confirmed_at = timestamp.getISO8601();
 		}
 
-		return super.update({entity: entity, ignore_updated_at: true});
+		return super.update({entity: confirmation, ignore_updated_at: true});
 	}
 
 	generateCode() {
