@@ -5,13 +5,13 @@ const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 
 const SessionController = require('@root/controllers/entities/Session.js');
 const CustomerController = require('@root/controllers/entities/Customer.js');
-const SNSProvider = require('@root/controllers/providers/sns-provider.js');
+const TwilioProvider = require('@lib/controllers/providers/twilio-provider.js').default;
 
 export default class SessionConfirmation {
 
 	private readonly sessionController = new SessionController();
 	private readonly customerController = new CustomerController();
-	private readonly snsProvider = new SNSProvider();
+	private readonly twilioProvider = new TwilioProvider();
 
 	async sendDeliveryConfirmationSms(sessionId: string) {
 
@@ -31,7 +31,7 @@ export default class SessionConfirmation {
 
 		const message = `Please confirm package delivery at https://development-admin.sixcrm.com/confirm/${session.alias}`;
 
-		return this.snsProvider.sendSMS(message, customer.phone);
+		return this.twilioProvider.sendSMS(message, customer.phone);
 	}
 
 
