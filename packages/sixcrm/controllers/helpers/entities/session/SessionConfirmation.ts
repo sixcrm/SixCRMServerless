@@ -57,7 +57,7 @@ export default class SessionConfirmation {
 		}
 
 		du.error(message);
-		eu.throw('bad_request', message);
+		throw eu.getError('bad_request', message);
 	}
 
 }
