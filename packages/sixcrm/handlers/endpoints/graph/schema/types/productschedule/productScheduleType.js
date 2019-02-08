@@ -51,7 +51,7 @@ module.exports.graphObj = new GraphQLObjectType({
 			description: 'Email templates associated with this product schedule.',
 			resolve: (productschedule) => emailTemplateController.listByProductSchedule(productschedule)
 		},
-		confirmation_required: { type: GraphQLBoolean },
+		trial_required: { type: GraphQLBoolean },
 		created_at: {
 			type: new GraphQLNonNull(GraphQLString),
 			description: 'ISO8601 datetime when the entity was created.',

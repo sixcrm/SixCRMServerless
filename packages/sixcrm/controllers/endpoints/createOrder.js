@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
@@ -20,7 +21,7 @@ const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('he
 const OrderHelperController = global.SixCRM.routes.include('helpers', 'order/Order.js');
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
-
+const TrialConfirmationController = global.SixCRM.routes.include('entities', 'TrialConfirmation.js');
 
 module.exports = class CreateOrderController extends transactionEndpointController {
 
@@ -92,6 +93,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		this.merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 		this.orderHelperController = new OrderHelperController();
 		this.productScheduleController = new ProductScheduleController();
+		this.trialConfirmationController = new TrialConfirmationController();
 
 		this.initialize();
 
@@ -185,7 +187,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			this.reversePreviousRebill(rebill, previous_rebill),
 			this.incrementMerchantProviderSummary(processed_rebill.transactions),
 			this.updateSessionWithWatermark(session, event.product_schedules, event.products)
-				.then(() => this.markNonSuccessfulSession(processed_rebill.result, session)),
+				.then(() => this.markNonSuccessfulSession(processed_rebill.result, session))
+				.then(() => this.markTrialConfirmationRequired(session)),
 			this.markNonSuccessfulRebill(processed_rebill.result, rebill),
 			AnalyticsEvent.push('order', {
 				session,
@@ -486,6 +489,39 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		}
 
+	}
+
+	async markTrialConfirmationRequired(session) {
+		du.debug('markTrialConfirmationRequired', session.id);
+
+		if (session.concluded) {
+			du.debug('Session already concluded.')
+			return session;
+		}
+
+		if (session.trial_confirmation) {
+			du.debug('Session already has a trial confirmation');
+			return session;
+		}
+
+		if (!session.watermark || !session.watermark.product_schedules) {
+			du.debug('Session watermark missing or no product schedules.', session);
+			return session;
+		}
+
+		const trialConfirmationRequired = !!session.watermark.product_schedules.find(ps => ps.confirmation_required);
+
+		if (!trialConfirmationRequired) {
+			du.debug(`Trial confirmation not required for session with id ${session.id}`)
+			return session;
+		}
+
+		session.trial_confirmation =
+			await this.trialConfirmationController.create({session: session.id, customer: session.customer});
+
+		du.debug('Updating session with trial confirmation', session.trial_confirmation);
+
+		return this.sessionController.update({ entity: session });
 	}
 
 }
