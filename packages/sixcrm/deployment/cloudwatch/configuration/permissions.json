@@ -1,7 +1,7 @@
 [
   {
     "Action": "lambda:InvokeFunction",
-    "FunctionName": "sixcrm-{{stage}}-StreamToElasticSearch",
+    "FunctionName": "sixcrm-{{stage}}-ElasticSearchStream",
     "Principal": "logs.amazonaws.com",
     "StatementId": "cloudwatchlogs-{{random_string}}",
     "SourceArn": "arn:aws:logs:{{aws_account_region}}:{{aws_account_id}}:*"
