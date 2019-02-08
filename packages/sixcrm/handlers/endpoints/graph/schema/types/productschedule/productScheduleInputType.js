@@ -13,7 +13,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
 		name:           { type: GraphQLString },
 		schedule:			  { type: new GraphQLList(productScheduleProductConfigurationInputType.graphObj) },
 		merchantprovidergroup:  { type: GraphQLString },
-		confirmation_required: { type: GraphQLBoolean },
+		trial_required: { type: GraphQLBoolean },
 		updated_at:     { type: GraphQLString }
 	})
 });
