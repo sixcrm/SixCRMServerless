@@ -114,6 +114,13 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: new GraphQLNonNull(GraphQLBoolean),
 			description: 'A boolean denoting that that session has otherwise been completed or expired.',
 		},
+		trial_confirmation: {
+			type: GraphQLBoolean,
+			description: 'Trial confirmation',
+			resolve: function(session){
+				return !!session.trial_confirmation;
+			}
+		},
 		created_at: {
 			type: new GraphQLNonNull(GraphQLString),
 			description: 'ISO8601 datetime when the entity was created.',

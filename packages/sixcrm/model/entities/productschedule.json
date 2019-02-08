@@ -47,7 +47,7 @@
 		"account": {
 			"$ref": "../definitions/sixcrmaccountidentifier.json"
 		},
-		"confirmation_required": {
+		"trial_required": {
 			"type": "boolean"
 		},
 		"created_at": {
