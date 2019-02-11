@@ -14,14 +14,14 @@ module.exports = class SMTPProviderController extends entityController {
 		super('smsprovider');
 	}
 
-	async validateSMSProvider({recipient_phone, smtpprovider_id}) {
-		du.debug('Validate SMS provider', recipient_phone, smtpprovider_id);
+	async validateSMSProvider({recipient_phone, smsprovider_id}) {
+		du.debug('Validate SMS provider', recipient_phone, smsprovider_id);
 
-		const configuration = await this.get({id: smtpprovider_id});
+		const configuration = await this.get({id: smsprovider_id});
 
 		if(!configuration) {
-			du.error(`Can't find sms provider with ID ${smtpprovider_id}`);
-			throw eu.getError('notfound', 	`Can't find sms provider with ID ${smtpprovider_id}`);
+			du.error(`Can't find sms provider with ID ${smsprovider_id}`);
+			throw eu.getError('notfound', 	`Can't find sms provider with ID ${smsprovider_id}`);
 		}
 
 		const implementation = providerMapping[configuration.type];
