@@ -174,6 +174,7 @@ const SessionController = global.SixCRM.routes.include('entities', 'Session.js')
 const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
 const ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
+const SMSProviderController = global.SixCRM.routes.include('entities', 'SMSProvider.js');
 const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
 const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 const AccountDetailsController = global.SixCRM.routes.include('controllers', 'entities/AccountDetails.js');
@@ -965,6 +966,23 @@ const fields = Object.assign({}, {
 
 			return smtpProviderController.get({
 				id: smtpprovider.id,
+				fatal: get_fatal
+			});
+		}
+	},
+	smsprovider: {
+		type: SMTPProviderType.graphObj,
+		args: {
+			id: {
+				description: 'id of the SMS Provider',
+				type: GraphQLString
+			}
+		},
+		resolve: function(root, smsprovider) {
+			const smsProviderController = new SMSProviderController();
+
+			return smsProviderController.get({
+				id: smsprovider.id,
 				fatal: get_fatal
 			});
 		}
