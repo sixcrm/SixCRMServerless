@@ -14,7 +14,7 @@ module.exports = class SMTPProviderController extends entityController {
 		super('smsprovider');
 	}
 
-	async validate({recipient_phone, smtpprovider_id}) {
+	async validateSMSProvider({recipient_phone, smtpprovider_id}) {
 		du.debug('Validate SMS provider', recipient_phone, smtpprovider_id);
 
 		const configuration = await this.get({id: smtpprovider_id});
