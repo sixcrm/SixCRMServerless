@@ -5,7 +5,7 @@ export default class LegacyProduct {
 	public attributes;
 	public created_at;
 	public default_price;
-	public description;
+	public description = '';
 	public dynamic_pricing;
 	public fulfillment_provider;
 	public id;
