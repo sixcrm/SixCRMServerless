@@ -7,8 +7,42 @@
 	"properties": {
 		"id": {
 			"$ref": "../definitions/uuidv4.json"
+		},
+		"account": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"session": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"customer": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"code": {
+			"type": "string"
+		},
+		"delivered_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"confirmed_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"expires_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
 		}
 	},
 	"required": [
+		"id",
+		"account",
+		"session",
+		"customer",
+		"code",
+		"created_at",
+		"updated_at"
 	]
 }

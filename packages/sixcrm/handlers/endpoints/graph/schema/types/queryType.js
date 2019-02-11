@@ -115,6 +115,8 @@ let shippingReceiptListType = require('./shippingreceipt/shippingReceiptListType
 let trackerType = require('./tracker/trackerType');
 let trackerListType = require('./tracker/trackerListType');
 
+let trialConfirmationType = require('./trialconfirmation/trialConfirmationType');
+
 let tokenListType = require('./token/tokenListType');
 
 let tagType = require('./tag/tagType');
@@ -180,6 +182,7 @@ const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPPro
 const SMSProviderController = global.SixCRM.routes.include('entities', 'SMSProvider.js');
 const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
 const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+const TrialConfirmationController = global.SixCRM.routes.include('entities', 'TrialConfirmation.js');
 const AccountDetailsController = global.SixCRM.routes.include('controllers', 'entities/AccountDetails.js');
 
 
@@ -821,6 +824,39 @@ const fields = Object.assign({}, {
 			return sessionController.get({
 				id: session,
 				fatal: get_fatal
+			});
+		}
+	},
+	trialconfirmation: {
+		type: trialConfirmationType.graphObj,
+		args: {
+			id: {
+				description: 'id of the trial confirmation',
+				type: GraphQLString
+			}
+		},
+		resolve: function(root, trial_confirmation) {
+			const trialConfirmationController = new TrialConfirmationController();
+
+			return trialConfirmationController.get({
+				id: trial_confirmation,
+				fatal: get_fatal
+			});
+		}
+	},
+	trialconfirmationbycode: {
+		type: trialConfirmationType.graphObj,
+		args: {
+			code: {
+				description: 'code of the trial confirmation',
+				type: GraphQLString
+			}
+		},
+		resolve: function(root, trial_confirmation) {
+			const trialConfirmationController = new TrialConfirmationController();
+
+			return trialConfirmationController.getByCode({
+				code: trial_confirmation
 			});
 		}
 	},
