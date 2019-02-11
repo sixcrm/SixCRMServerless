@@ -18,6 +18,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 				is_shippable,
 				price,
 				sku,
+				shipping_price,
 				updated_at,
 				...commonProductFields
 			} = product;
@@ -25,6 +26,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 			const legacyProduct = LegacyProduct.fromProduct(product);
 
 			expect(legacyProduct).to.deep.equal({
+				...commonProductFields,
 				account: account_id,
 				attributes: {
 					images: []
@@ -39,7 +41,42 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 				ship: is_shippable,
 				shipping_delay: 0,
 				updated_at: updated_at.toISOString(),
+			});
+		});
+
+		it('should transform nullable fields', () => {
+			const product = new Product(v4(), v4(), 'A product', 100, false, []);
+			product.description = product.sku = product.shipping_price = product.shipping_delay = null;
+			const {
+				account_id,
+				created_at,
+				image_urls,
+				is_shippable,
+				price,
+				sku,
+				shipping_price,
+				updated_at,
 				...commonProductFields
+			} = product;
+
+			const legacyProduct = LegacyProduct.fromProduct(product);
+
+			expect(legacyProduct).to.deep.equal({
+				...commonProductFields,
+				account: account_id,
+				attributes: {
+					images: []
+				},
+				created_at: created_at.toISOString(),
+				default_price: price,
+				description: '',
+				dynamic_pricing: {
+					max: 9999999,
+					min: 0
+				},
+				ship: is_shippable,
+				shipping_delay: 0,
+				updated_at: updated_at.toISOString(),
 			});
 		});
 
@@ -51,6 +88,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 				image_urls: [defaultImageURL, imageURL2],
 				is_shippable,
 				price,
+				shipping_price,
 				updated_at,
 				...commonProductFields
 			} = product;
@@ -127,6 +165,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 				is_shippable,
 				price,
 				shipping_delay,
+				shipping_price,
 				updated_at,
 				...commonProductFields
 			} = product;
