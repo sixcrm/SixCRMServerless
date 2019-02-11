@@ -2,7 +2,7 @@
 var _ =  require('lodash');
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
-const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
@@ -128,7 +128,9 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 
 		product_ids = arrayutilities.unique(product_ids);
 
-		const products = await getProductSetupService().getProductsByIds(product_ids);
+		const products = (
+			await getProductSetupService().getProductsByIds(product_ids)
+		).map(product => LegacyProduct.fromProduct(product));
 		this.parameters.set('products', products);
 		return true;
 	}
