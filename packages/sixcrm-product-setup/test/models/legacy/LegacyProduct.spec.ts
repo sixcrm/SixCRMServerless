@@ -31,6 +31,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 				},
 				created_at: created_at.toISOString(),
 				default_price: price,
+				description: '',
 				dynamic_pricing: {
 					max: 9999999,
 					min: 0
@@ -69,6 +70,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 				},
 				created_at: created_at.toISOString(),
 				default_price: price,
+				description: '',
 				dynamic_pricing: {
 					max: 9999999,
 					min: 0
@@ -103,6 +105,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 				},
 				created_at: created_at.toISOString(),
 				default_price: Number(price) + Number(shipping_price),
+				description: '',
 				dynamic_pricing: {
 					max: 9999999,
 					min: 0
@@ -137,6 +140,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 				},
 				created_at: created_at.toISOString(),
 				default_price: price,
+				description: '',
 				dynamic_pricing: {
 					max: 9999999,
 					min: 0
@@ -172,6 +176,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 				},
 				created_at: created_at.toISOString(),
 				default_price: price,
+				description: '',
 				dynamic_pricing: {
 					max: 9999999,
 					min: 0
@@ -208,6 +213,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 				},
 				created_at: created_at.toISOString(),
 				default_price: price,
+				description: '',
 				dynamic_pricing: {
 					max: 9999999,
 					min: 0
