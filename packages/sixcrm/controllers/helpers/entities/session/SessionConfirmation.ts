@@ -13,14 +13,14 @@ export default class SessionConfirmation {
 	private readonly sessionController = new SessionController();
 	private readonly customerController = new CustomerController();
 	private readonly trialconfirmationController = new TrialConfirmationController();
-	private readonly twilioProvider = new TwilioProvider();
+	// private readonly twilioProvider = new TwilioProvider();
 
 	private async sendDeliveryConfirmationSms(phone: string, code: string) {
 		du.debug('sendDeliveryConfirmationSms', phone, code);
 
 		const message = `Please confirm package delivery at https://development-admin.sixcrm.com/confirm/${code}`;
 
-		await this.twilioProvider.sendSMS(message, phone);
+		// await this.twilioProvider.sendSMS(message, phone);
 	}
 
 	async confirmTrialDelivery(sessionId: string) {

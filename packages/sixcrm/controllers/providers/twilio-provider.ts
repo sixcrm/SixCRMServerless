@@ -5,19 +5,29 @@ const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 
 export default class TwilioProvider {
 
+	private readonly api_account: string;
+	private readonly api_token: string;
+	private readonly from_number: string;
+
+	constructor(configuration: any) {
+		this.api_account = configuration.api_account;
+		this.api_token = configuration.api_token;
+		this.from_number = configuration.from_number
+	}
+
 	async sendSMS(text: string, phoneNumber: string) {
 
 		du.info(`Sending SMS to ${phoneNumber}`);
 
-		const accountSid = 'AC895a65b65e4820ee38aff9e91ffe278f';
-		const authToken = '7baa8504b0d563e8dda709958976a5a9';
-		const client = require('twilio')(accountSid, authToken);
+		const client = require('twilio')(this.api_account, this.api_token);
 
 		return client.messages
 			.create({
 				body: text,
-				from: '+14245432319',
+				from: this.from_number,
 				to: phoneNumber
 			})
 	}
+
+
 }
