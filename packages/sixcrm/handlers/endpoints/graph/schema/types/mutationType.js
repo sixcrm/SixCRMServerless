@@ -296,7 +296,7 @@ module.exports.graphObj = new GraphQLObjectType({
 			resolve: function(root, args) {
 				const smsProviderController = new SMSProviderController();
 
-				return smsProviderController.validate({recipient_phone: args.recipient_phone, smtpprovider_id: args.smtpprovider});
+				return smsProviderController.validateSMSProvider({recipient_phone: args.recipient_phone, smtpprovider_id: args.smtpprovider});
 			}
 		},
 		fulfillmentprovidervalidation: {

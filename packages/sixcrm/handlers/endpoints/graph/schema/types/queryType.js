@@ -106,6 +106,9 @@ let sessionType = require('./session/sessionType');
 let SMTPProviderListType = require('./smtpprovider/SMTPProviderListType');
 let SMTPProviderType = require('./smtpprovider/SMTPProviderType');
 
+let SMSProviderListType = require('./smsprovider/SMSProviderListType');
+let SMSProviderType = require('./smsprovider/SMSProviderType');
+
 let shippingReceiptType = require('./shippingreceipt/shippingReceiptType');
 let shippingReceiptListType = require('./shippingreceipt/shippingReceiptListType');
 
@@ -971,7 +974,7 @@ const fields = Object.assign({}, {
 		}
 	},
 	smsprovider: {
-		type: SMTPProviderType.graphObj,
+		type: SMSProviderType.graphObj,
 		args: {
 			id: {
 				description: 'id of the SMS Provider',
@@ -1061,6 +1064,26 @@ const fields = Object.assign({}, {
 				pagination: smtpproviders.pagination,
 				fatal: list_fatal,
 				search: smtpproviders.search
+			});
+		}
+	},
+	smsproviderlist: {
+		type: SMSProviderListType.graphObj,
+		args: {
+			pagination: {
+				type: paginationInputType.graphObj
+			},
+			search: {
+				type: entitySearchInputType.graphObj
+			}
+		},
+		resolve: function(root, smsproviders) {
+			const smsProviderController = new SMSProviderController();
+
+			return smsProviderController.listByAccount({
+				pagination: smsproviders.pagination,
+				fatal: list_fatal,
+				search: smsproviders.search
 			});
 		}
 	},
