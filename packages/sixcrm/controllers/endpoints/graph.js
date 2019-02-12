@@ -3,7 +3,7 @@ const _ = require('lodash');
 const graphql = require('graphql').graphql;
 
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
-const { createProductSetupService } = require('@6crm/sixcrm-product-setup');
+const { createProductSetupService, disconnect } = require('@6crm/sixcrm-product-setup');
 
 const userAuthenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/userauthenticated.js');
 const resolveController = global.SixCRM.routes.include('providers', 'Resolve.js');
@@ -65,6 +65,7 @@ module.exports = class graphController extends userAuthenticatedController {
 
 	epilogue() {
 		if (auroraContext._connection) {
+			disconnect();
 			return auroraContext.dispose();
 		}
 
