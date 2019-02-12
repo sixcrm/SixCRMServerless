@@ -8,7 +8,7 @@ const CustomerController = require('@root/controllers/entities/Customer.js');
 const TrialConfirmationController = require('@root/controllers/entities/TrialConfirmation.js');
 const SMSProvider = require('@root/controllers/entities/SMSProvider.js');
 
-export default class SessionConfirmation {
+export default class TrialConfirmation {
 
 	private readonly sessionController = new SessionController();
 	private readonly customerController = new CustomerController();
@@ -18,7 +18,7 @@ export default class SessionConfirmation {
 	private async sendDeliveryConfirmationSms(phone: string, code: string, provider_id: string) {
 		du.debug('sendDeliveryConfirmationSms', phone, code);
 
-		const message = `Please confirm package delivery at https://development-admin.sixcrm.com/confirm/${code}`;
+		const message = `Please confirm your trial at https://development-admin.sixcrm.com/confirm/${code}`;
 
 		return this.smsProviderController.sendSMS(provider_id, phone, message);
 	}
