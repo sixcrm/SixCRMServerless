@@ -1745,7 +1745,7 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		confirmtrialdelivery: {
 			type: new GraphQLObjectType({
-				name: 'TrialConfirmationTrigger',
+				name: 'TrialDeliveryTrigger',
 				fields: () => ({
 					result: {
 						type: GraphQLString,
