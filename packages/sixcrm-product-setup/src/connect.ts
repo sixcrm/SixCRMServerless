@@ -2,9 +2,12 @@ import { randomBytes } from 'crypto';
 import 'reflect-metadata';
 import { createConnection, getConnection, getConnectionOptions, ConnectionOptions } from 'typeorm';
 import Product from './models/Product';
+import { logger } from './log';
 
 const connectionName = randomBytes(5).toString('hex');
 let connection;
+
+const log = logger('ProductSetupConnect');
 
 export interface IDatabaseConfig {
 	host: string;
@@ -35,8 +38,7 @@ export const connect = async (config: IDatabaseConfig) => {
 		try {
 			return getConnection(connectionName);
 		} catch (e) {
-			// tslint:disable-next-line no-console
-			console.error('Error with connection', e);
+			log.warn('Replacing connection due to error', e);
 			connection = null;
 		}
 	}
