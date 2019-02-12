@@ -21,7 +21,7 @@ module.exports = class FulfillmentProviderController extends entityController {
 
 		const products = (await getProductSetupService().findProducts({
 			fulfillment_provider: id
-		})).map(product => LegacyProduct.fromProduct(product));
+		})).map(product => LegacyProduct.hybridFromProduct(product));
 
 		if(arrayutilities.nonEmpty(products)) {
 			arrayutilities.map(products, (product) => {

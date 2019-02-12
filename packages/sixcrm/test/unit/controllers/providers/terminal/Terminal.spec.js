@@ -370,7 +370,7 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 					};
 				},
 				LegacyProduct: class LegacyProduct {
-					static fromProduct(product) {
+					static hybridFromProduct(product) {
 						return product;
 					}
 				}
@@ -1261,7 +1261,7 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 					};
 				},
 				LegacyProduct: class LegacyProduct {
-					static fromProduct(product) {
+					static hybridFromProduct(product) {
 						return product;
 					}
 				}
