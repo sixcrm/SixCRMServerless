@@ -1762,7 +1762,7 @@ module.exports.graphObj = new GraphQLObjectType({
 				}
 			},
 			resolve: (root, session) => {
-				let helper = require('@lib/controllers/helpers/entities/session/SessionConfirmation.js').default;
+				let helper = require('@lib/controllers/helpers/entities/trialconfirmation/TrialConfirmation.js').default;
 				return new helper().confirmTrialDelivery(session.id).then(() => { return {result: 'OK'} });
 
 			}
