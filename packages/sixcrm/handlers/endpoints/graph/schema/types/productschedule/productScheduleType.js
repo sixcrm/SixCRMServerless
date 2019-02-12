@@ -57,6 +57,9 @@ module.exports.graphObj = new GraphQLObjectType({
 		trial_sms_provider:  {
 			type: smsProviderType.graphObj,
 			resolve: (productschedule) => {
+				if (!productschedule.trial_sms_provider) {
+					return Promise.resolve(null);
+				}
 				return smsProviderController.get({id: productschedule.trial_sms_provider})
 			}
 		},
