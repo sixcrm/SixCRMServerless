@@ -14,6 +14,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
 		schedule:			  { type: new GraphQLList(productScheduleProductConfigurationInputType.graphObj) },
 		merchantprovidergroup:  { type: GraphQLString },
 		trial_required: { type: GraphQLBoolean },
+		trial_sms_provider:  { type: GraphQLString },
 		updated_at:     { type: GraphQLString }
 	})
 });

@@ -7,9 +7,11 @@ const GraphQLBoolean = require('graphql').GraphQLBoolean;
 let scheduleType = require('./scheduleType');
 let merchantProviderGroupType = require('../merchantprovidergroup/merchantProviderGroupType');
 let ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule');
+const SMSProviderController = global.SixCRM.routes.include('controllers', 'entities/SMSProvider');
+const smsProviderController = new SMSProviderController();
 
 let emailTemplateType = require('../emailtemplate/emailTemplateType');
-
+const smsProviderType = require('../smsprovider/SMSProviderType');
 const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 const emailTemplateController = new EmailTemplateController();
 
@@ -52,6 +54,12 @@ module.exports.graphObj = new GraphQLObjectType({
 			resolve: (productschedule) => emailTemplateController.listByProductSchedule(productschedule)
 		},
 		trial_required: { type: GraphQLBoolean },
+		trial_sms_provider:  {
+			type: smsProviderType.graphObj,
+			resolve: (productschedule) => {
+				return smsProviderController.get({id: productschedule.trial_sms_provider})
+			}
+		},
 		created_at: {
 			type: new GraphQLNonNull(GraphQLString),
 			description: 'ISO8601 datetime when the entity was created.',
