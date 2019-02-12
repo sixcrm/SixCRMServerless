@@ -121,6 +121,9 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: trialConfirmationType.graphObj,
 			description: 'Trial confirmation',
 			resolve: function(session){
+				if (!session.trial_confirmation) {
+					return Promise.resolve(null);
+				}
 				return trialConfirmationController.get({id: session.trial_confirmation});
 			}
 		},
