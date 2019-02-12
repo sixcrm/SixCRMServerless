@@ -139,10 +139,7 @@ module.exports = class RebillCreatorHelper {
 			if (rebillController.isUUID(product_group.product)) {
 				try {
 					const product = await getProductSetupService().getProduct(product_group.product);
-					product_group.product = {
-						...LegacyProduct.fromProduct(product),
-						...product
-					};
+					product_group.product = LegacyProduct.fromProduct(product);
 					return product_group;
 				} catch (e) {
 					du.error('Error retrieving product', e);

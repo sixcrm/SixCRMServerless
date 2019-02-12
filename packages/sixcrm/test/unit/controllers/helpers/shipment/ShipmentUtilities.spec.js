@@ -160,6 +160,11 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
 							return Promise.resolve(products);
 						}
 					};
+				},
+				LegacyProduct: class LegacyProduct {
+					static fromProduct(product) {
+						return product;
+					}
 				}
 			});
 
