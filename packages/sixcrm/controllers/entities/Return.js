@@ -57,7 +57,7 @@ module.exports = class ReturnController extends entityController {
 
 			for (let transaction of ret.transactions) {
 				for (let product of transaction.products) {
-					product.product = LegacyProduct.fromProduct(
+					product.product = LegacyProduct.hybridFromProduct(
 						await getProductSetupService().getProduct(product.product)
 					);
 					product.image = this.productHelperController.getDefaultImage(product.product);

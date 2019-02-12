@@ -64,9 +64,9 @@ module.exports = class InfoController extends transactionEndpointController{
 
 		if(!_.has(event, 'products') || !arrayutilities.nonEmpty(event.products)){ return null; }
 
-		const products = (
-			await getProductSetupService().getProductsByIds(event.products)
-		).map(product => LegacyProduct.fromProduct(product));
+		const products = (await getProductSetupService().getProductsByIds(
+			event.products
+		)).map(product => LegacyProduct.hybridFromProduct(product));
 		return this.parameters.set('products', products);
 
 	}

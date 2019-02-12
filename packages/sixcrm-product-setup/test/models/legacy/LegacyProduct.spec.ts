@@ -266,6 +266,53 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 		});
 	});
 
+	describe('hybridFromProduct', () => {
+		it('should transform to an intersection of LegacyProduct and Product', () => {
+			const product = new Product(v4(), v4(), 'A product', 100, false, ['http://default/image', 'http//image2']);
+			const {
+				account_id,
+				created_at,
+				id,
+				image_urls: [defaultImageURL, imageURL2],
+				is_shippable,
+				name,
+				price,
+				updated_at
+			} = product;
+
+			const hybridProduct = LegacyProduct.hybridFromProduct(product);
+
+			expect(hybridProduct).to.deep.equal({
+				account: account_id,
+				account_id,
+				attributes: {
+					images: [{
+						default_image: true,
+						path: defaultImageURL
+					}, {
+						default_image: false,
+						path: imageURL2
+					}]
+				},
+				created_at: created_at.toISOString(),
+				default_price: price,
+				description: '',
+				dynamic_pricing: {
+					max: 9999999,
+					min: 0
+				},
+				id,
+				image_urls: product.image_urls,
+				is_shippable,
+				name,
+				price,
+				ship: is_shippable,
+				shipping_delay: 0,
+				updated_at: updated_at.toISOString(),
+			});
+		});
+	});
+
 	describe('toProduct', () => {
 		it('should transform to Product', () => {
 			const legacyProduct = new LegacyProduct(
