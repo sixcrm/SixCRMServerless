@@ -15,7 +15,7 @@ module.exports = class SMTPProviderController extends entityController {
 	}
 
 	async sendSMS(provider_id, recipient_phone, message) {
-		const provider = await this.getImplementation(provider_id).sendSMS();
+		const provider = await this.getImplementation(provider_id);
 
 		return provider.sendSMS(message, recipient_phone);
 	}
