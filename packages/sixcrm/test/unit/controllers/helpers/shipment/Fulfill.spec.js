@@ -311,11 +311,6 @@ describe('helpers/shipment/Fulfill.js', () => {
 							return Promise.resolve(products);
 						}
 					};
-				},
-				LegacyProduct: class LegacyProduct {
-					static fromProduct(product) {
-						return product;
-					}
 				}
 			});
 

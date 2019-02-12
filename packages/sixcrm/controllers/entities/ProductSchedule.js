@@ -119,7 +119,10 @@ module.exports = class ProductScheduleController extends entityController {
 
 		try {
 			const product = await getProductSetupService().getProduct(product_id);
-			return LegacyProduct.fromProduct(product);
+			return {
+				...LegacyProduct.fromProduct(product),
+				...product
+			};
 		} catch (e) {
 			du.error('Cannot retrieve product on account', e);
 			return null;
@@ -145,12 +148,8 @@ module.exports = class ProductScheduleController extends entityController {
 			});
 
 			if(arrayutilities.nonEmpty(product_ids)){
-				const products = (
-					await getProductSetupService().getProductsByIds(product_ids)
-				).map(product => LegacyProduct.fromProduct(product));
-
 				return {
-					products
+					products: await getProductSetupService().getProductsByIds(product_ids)
 				};
 			}
 

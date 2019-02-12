@@ -71,8 +71,8 @@ describe('controllers/Transaction.js', () => {
 					};
 				},
 				LegacyProduct: class LegacyProduct {
-					static fromProduct(product) {
-						return product;
+					static fromProduct() {
+						return { legacy_prop: 'foo' };
 					}
 				}
 			});
@@ -81,7 +81,7 @@ describe('controllers/Transaction.js', () => {
 			const transactionController = new TransactionController();
 
 			return transactionController.getProduct(a_product).then((result) => {
-				expect(result).to.deep.equal({ name: 'a_product' });
+				expect(result).to.deep.equal({ name: 'a_product', legacy_prop: 'foo' });
 			});
 		});
 	});

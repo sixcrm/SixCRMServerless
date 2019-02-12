@@ -5,7 +5,7 @@ const {
 	GraphQLInt,
 	GraphQLList
 } = require('graphql');
-const { getProductSetupService, LegacyProduct} = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
 const productType = require('../product/productType');
 const returnHistoryType = require('./returnHistoryType');
 
@@ -18,13 +18,7 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		product:{
 			type: new GraphQLNonNull(productType.graphObj),
-			resolve: async ({ product: productId }) => {
-				const product = await getProductSetupService().getProduct(productId);
-				return {
-					...LegacyProduct.fromProduct(product),
-					...product
-				};
-			}
+			resolve: ({ product: productId }) => getProductSetupService().getProduct(productId)
 		},
 		quantity:{
 			type: new GraphQLNonNull(GraphQLInt),

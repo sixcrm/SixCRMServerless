@@ -368,11 +368,6 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 							return Promise.resolve(products);
 						}
 					};
-				},
-				LegacyProduct: class LegacyProduct {
-					static fromProduct(product) {
-						return product;
-					}
 				}
 			});
 
@@ -1259,11 +1254,6 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 							return Promise.resolve(products);
 						}
 					};
-				},
-				LegacyProduct: class LegacyProduct {
-					static fromProduct(product) {
-						return product;
-					}
 				}
 			});
 

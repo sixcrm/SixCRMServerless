@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
-const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
@@ -64,9 +64,7 @@ module.exports = class InfoController extends transactionEndpointController{
 
 		if(!_.has(event, 'products') || !arrayutilities.nonEmpty(event.products)){ return null; }
 
-		const products = (
-			await getProductSetupService().getProductsByIds(event.products)
-		).map(product => LegacyProduct.fromProduct(product));
+		const products = await getProductSetupService().getProductsByIds(event.products);
 		return this.parameters.set('products', products);
 
 	}

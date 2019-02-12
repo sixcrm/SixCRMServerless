@@ -64,13 +64,13 @@ export default class Product {
 	})
 	@Min(0)
 	@IsOptional()
-	shipping_price: number | string | null;
+	shipping_price: number | string;
 
 	@Column({
 		type: 'interval',
 		nullable: true
 	})
-	shipping_delay?: IProductInterval | null;
+	shipping_delay?: IProductInterval;
 
 	@Column({
 		type: 'uuid',
@@ -84,14 +84,13 @@ export default class Product {
 		type: 'text',
 		nullable: true
 	})
-	description: string | null;
+	description: string;
 
 	@Column({
-		type: 'varchar',
 		length: 36,
 		nullable: true
 	})
-	sku: string | null;
+	sku: string;
 
 	@Column({
 		type: 'text',

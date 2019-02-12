@@ -52,11 +52,6 @@ describe('controllers/FulfillmentProvider.js', () => {
 							return Promise.resolve([product]);
 						}
 					};
-				},
-				LegacyProduct: class LegacyProduct {
-					static fromProduct(product) {
-						return product;
-					}
 				}
 			});
 
@@ -89,11 +84,6 @@ describe('controllers/FulfillmentProvider.js', () => {
 							return Promise.resolve([product]);
 						}
 					};
-				},
-				LegacyProduct: class LegacyProduct {
-					static fromProduct(product) {
-						return product;
-					}
 				}
 			});
 

@@ -1,5 +1,5 @@
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
-const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -19,9 +19,9 @@ module.exports = class FulfillmentProviderController extends entityController {
 	async associatedEntitiesCheck({id}){
 		let return_array = [];
 
-		const products = (await getProductSetupService().findProducts({
+		const products = await getProductSetupService().findProducts({
 			fulfillment_provider: id
-		})).map(product => LegacyProduct.fromProduct(product));
+		});
 
 		if(arrayutilities.nonEmpty(products)) {
 			arrayutilities.map(products, (product) => {
