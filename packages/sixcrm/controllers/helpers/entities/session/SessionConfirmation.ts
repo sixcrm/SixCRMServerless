@@ -6,21 +6,21 @@ const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const SessionController = require('@root/controllers/entities/Session.js');
 const CustomerController = require('@root/controllers/entities/Customer.js');
 const TrialConfirmationController = require('@root/controllers/entities/TrialConfirmation.js');
-const TwilioProvider = require('@lib/controllers/providers/twilio-provider.js').default;
+const SMSProvider = require('@root/controllers/entities/SMSProvider.js');
 
 export default class SessionConfirmation {
 
 	private readonly sessionController = new SessionController();
 	private readonly customerController = new CustomerController();
 	private readonly trialconfirmationController = new TrialConfirmationController();
-	// private readonly twilioProvider = new TwilioProvider();
+	private readonly smsProviderController = SMSProvider();
 
-	private async sendDeliveryConfirmationSms(phone: string, code: string) {
+	private async sendDeliveryConfirmationSms(phone: string, code: string, provider_id: string) {
 		du.debug('sendDeliveryConfirmationSms', phone, code);
 
 		const message = `Please confirm package delivery at https://development-admin.sixcrm.com/confirm/${code}`;
 
-		// await this.twilioProvider.sendSMS(message, phone);
+		return this.smsProviderController.sendSMS(provider_id, phone, message);
 	}
 
 	async confirmTrialDelivery(sessionId: string) {
@@ -35,9 +35,10 @@ export default class SessionConfirmation {
 
 		const confirmation = await this.trialconfirmationController.get({id: session.trial_confirmation, fatal: true});
 		this.assure(confirmation, `Can't find confirmation with ID ${session.trial_confirmation}`);
+		this.assure(confirmation.sms_provider, `Confirmation with ID ${session.trial_confirmation} has no SMS provider.`);
 
 		await this.trialconfirmationController.markDelivered({confirmation});
-		await this.sendDeliveryConfirmationSms(customer.phone, confirmation.code);
+		return this.sendDeliveryConfirmationSms(customer.phone, confirmation.code, confirmation.sms_provider);
 	}
 
 	async confirmTrial(code: string) {
