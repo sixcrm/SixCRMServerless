@@ -20,6 +20,9 @@
 		"code": {
 			"type": "string"
 		},
+	    "sms_provider": {
+		  	"$ref": "../definitions/uuidv4.json"
+		},
 		"delivered_at": {
 			"$ref": "../definitions/iso8601.json"
 		},

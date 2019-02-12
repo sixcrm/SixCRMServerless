@@ -13,11 +13,12 @@ module.exports = class TrialConfirmationController extends entityController {
 		this.search_fields = ['code'];
 	}
 
-	async create({session, customer}){
+	async create({session, customer, sms_provider}){
 		const entity = {
 			code: this.generateCode(),
-			customer: customer,
-			session: session
+			customer,
+			session,
+			sms_provider
 		};
 
 		return super.create({entity: entity});

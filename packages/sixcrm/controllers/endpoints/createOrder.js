@@ -495,7 +495,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		du.debug('markTrialConfirmationRequired', session.id);
 
 		if (session.concluded) {
-			du.debug('Session already concluded.')
+			du.debug('Session already concluded.');
 			return session;
 		}
 
@@ -509,15 +509,19 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			return session;
 		}
 
-		const trialConfirmationRequired = !!session.watermark.product_schedules.find(ps => ps.product_schedule.trial_required);
+		const trialProductSchedule = session.watermark.product_schedules.find(ps => ps.product_schedule.trial_required);
 
-		if (!trialConfirmationRequired) {
-			du.debug(`Trial confirmation not required for session with id ${session.id}`)
+		if (!trialProductSchedule) {
+			du.debug(`Trial confirmation not required for session with id ${session.id}`);
 			return session;
 		}
 
 		const confirmation =
-			await this.trialConfirmationController.create({session: session.id, customer: session.customer});
+			await this.trialConfirmationController.create({
+				session: session.id,
+				customer: session.customer,
+				sms_provider: trialProductSchedule.product_schedule.trial_sms_provider
+			});
 
 		session.trial_confirmation = confirmation.id;
 
@@ -526,4 +530,4 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		return this.sessionController.update({ entity: session });
 	}
 
-}
+};
