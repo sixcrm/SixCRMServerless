@@ -1743,9 +1743,9 @@ module.exports.graphObj = new GraphQLObjectType({
 
 			}
 		},
-		confirmsessiondelivery: {
+		confirmtrialdelivery: {
 			type: new GraphQLObjectType({
-				name: 'DeliveryConfirmationTest',
+				name: 'TrialConfirmationTrigger',
 				fields: () => ({
 					result: {
 						type: GraphQLString,
@@ -1754,16 +1754,16 @@ module.exports.graphObj = new GraphQLObjectType({
 				}),
 				interfaces: []
 			}),
-			description: 'Triggers request for session delivery confirmation',
+			description: 'Triggers request for trial delivery',
 			args: {
-				id: {
+				session_id: {
 					description: 'id of the session',
 					type: new GraphQLNonNull(GraphQLString)
 				}
 			},
-			resolve: (root, session) => {
+			resolve: (root, args) => {
 				let helper = require('@lib/controllers/helpers/entities/trialconfirmation/TrialConfirmation.js').default;
-				return new helper().confirmTrialDelivery(session.id).then(() => { return {result: 'OK'} });
+				return new helper().confirmTrialDelivery(args.session_id).then(() => { return {result: 'OK'} });
 
 			}
 		},
