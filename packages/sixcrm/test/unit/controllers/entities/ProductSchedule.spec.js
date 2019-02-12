@@ -263,7 +263,7 @@ describe('controllers/ProductSchedule.js', () => {
 					};
 				},
 				LegacyProduct: class LegacyProduct {
-					static fromProduct(product) {
+					static hybridFromProduct(product) {
 						return product;
 					}
 				}
@@ -304,7 +304,7 @@ describe('controllers/ProductSchedule.js', () => {
 					};
 				},
 				LegacyProduct: class LegacyProduct {
-					static fromProduct(product) {
+					static hybridFromProduct(product) {
 						return product;
 					}
 				}

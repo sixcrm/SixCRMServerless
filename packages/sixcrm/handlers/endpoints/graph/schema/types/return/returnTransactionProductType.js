@@ -20,10 +20,7 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: new GraphQLNonNull(productType.graphObj),
 			resolve: async ({ product: productId }) => {
 				const product = await getProductSetupService().getProduct(productId);
-				return {
-					...LegacyProduct.fromProduct(product),
-					...product
-				};
+				return LegacyProduct.hybridFromProduct(product);
 			}
 		},
 		quantity:{
