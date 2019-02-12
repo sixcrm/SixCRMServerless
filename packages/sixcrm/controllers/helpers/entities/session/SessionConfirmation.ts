@@ -13,7 +13,7 @@ export default class SessionConfirmation {
 	private readonly sessionController = new SessionController();
 	private readonly customerController = new CustomerController();
 	private readonly trialconfirmationController = new TrialConfirmationController();
-	private readonly smsProviderController = SMSProvider();
+	private readonly smsProviderController = new SMSProvider();
 
 	private async sendDeliveryConfirmationSms(phone: string, code: string, provider_id: string) {
 		du.debug('sendDeliveryConfirmationSms', phone, code);
