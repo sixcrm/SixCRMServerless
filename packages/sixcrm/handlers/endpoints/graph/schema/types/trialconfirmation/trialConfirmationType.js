@@ -35,15 +35,15 @@ module.exports.graphObj = new GraphQLObjectType({
 			description: 'A short unique code to reference the confirmation.',
 		},
 		delivered_at: {
-			type: new GraphQLNonNull(GraphQLString),
+			type: GraphQLString,
 			description: 'ISO8601 datetime when the trial was delivered.',
 		},
 		confirmed_at: {
-			type: new GraphQLNonNull(GraphQLString),
+			type: GraphQLString,
 			description: 'ISO8601 datetime when the trial was confirmed.',
 		},
 		expires_at: {
-			type: new GraphQLNonNull(GraphQLString),
+			type: GraphQLString,
 			description: 'ISO8601 datetime when the trial period expires.',
 		},
 		created_at: {
