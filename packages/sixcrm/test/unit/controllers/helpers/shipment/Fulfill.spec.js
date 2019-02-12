@@ -313,7 +313,7 @@ describe('helpers/shipment/Fulfill.js', () => {
 					};
 				},
 				LegacyProduct: class LegacyProduct {
-					static fromProduct(product) {
+					static hybridFromProduct(product) {
 						return product;
 					}
 				}

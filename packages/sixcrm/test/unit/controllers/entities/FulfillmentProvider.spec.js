@@ -54,7 +54,7 @@ describe('controllers/FulfillmentProvider.js', () => {
 					};
 				},
 				LegacyProduct: class LegacyProduct {
-					static fromProduct(product) {
+					static hybridFromProduct(product) {
 						return product;
 					}
 				}
@@ -91,7 +91,7 @@ describe('controllers/FulfillmentProvider.js', () => {
 					};
 				},
 				LegacyProduct: class LegacyProduct {
-					static fromProduct(product) {
+					static hybridFromProduct(product) {
 						return product;
 					}
 				}

@@ -128,9 +128,9 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 
 		product_ids = arrayutilities.unique(product_ids);
 
-		const products = (
-			await getProductSetupService().getProductsByIds(product_ids)
-		).map(product => LegacyProduct.fromProduct(product));
+		const products = (await getProductSetupService().getProductsByIds(
+			product_ids
+		)).map(product => LegacyProduct.hybridFromProduct(product));
 		this.parameters.set('products', products);
 		return true;
 	}
