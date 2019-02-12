@@ -293,10 +293,11 @@ module.exports.graphObj = new GraphQLObjectType({
 				smsprovider: {type: GraphQLString},
 				recipient_phone: {type: GraphQLString},
 			},
-			resolve: function(root, args) {
+			resolve: async function(root, args) {
 				const smsProviderController = new SMSProviderController();
 
-				return smsProviderController.validateSMSProvider({recipient_phone: args.recipient_phone, smsprovider_id: args.smsprovider});
+				const response = await smsProviderController.validateSMSProvider({recipient_phone: args.recipient_phone, smsprovider_id: args.smsprovider});
+				return { sms_response: response };
 			}
 		},
 		fulfillmentprovidervalidation: {
