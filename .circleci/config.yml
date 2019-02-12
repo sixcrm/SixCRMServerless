@@ -41,7 +41,7 @@ jobs:
       - run:
           name: 'Lint'
           command: yarn run lint
-  unit_tests:
+  unit_tests1:
     <<: *job-defaults
     steps:
       - checkout
@@ -50,11 +50,22 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: 'Legacy Unit Tests (JavaScript)'
-          command: stage=circle yarn run test-unit-circle
+          name: 'Legacy Unit Tests (JavaScript) (first half)'
+          command: stage=circle yarn run test-unit-circle1
       - run:
           name: 'Legacy Unit Tests (TypeScript)'
           command: stage=circle yarn run ts-test
+  unit_tests2:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v2-dependency-cache-{{ checksum "yarn.lock" }}
+      - attach_workspace:
+          at: .
+      - run:
+          name: 'Legacy Unit Tests (JavaScript) (second half)'
+          command: stage=circle yarn run test-unit-circle2
   pre_deploy:
     <<: *job-defaults
     steps:
@@ -245,7 +256,16 @@ workflows:
                 - staging
                 - production
                 - priority
-      - unit_tests:
+      - unit_tests1:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore:
+                - staging
+                - production
+                - priority
+       unit_tests2:
           requires:
             - build
           filters:
@@ -257,7 +277,8 @@ workflows:
       - pre_deploy:
           requires:
             - build
-            - unit_tests
+            - unit_tests1
+            - unit_tests2
             - lint
           filters:
             branches:
