@@ -1,4 +1,4 @@
-const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 let SMTPProviderInputType = require('./smtpprovider/SMTPProviderInputType');
 let SMTPProviderType = require('./smtpprovider/SMTPProviderType');
 
@@ -510,7 +510,9 @@ module.exports.graphObj = new GraphQLObjectType({
 				product = productInputType.toProductInput(product);
 				const productSetupService = getProductSetupService();
 				const { id } = await productSetupService.createProduct(product);
-				return productSetupService.getProduct(id);
+				return LegacyProduct.hybridFromProduct(
+					await productSetupService.getProduct(id)
+				);
 			}
 		},
 		updateproduct: {
@@ -525,7 +527,9 @@ module.exports.graphObj = new GraphQLObjectType({
 				product = productInputType.toProductInput(product);
 				const productSetupService = getProductSetupService();
 				await productSetupService.updateProduct(product);
-				return productSetupService.getProduct(product.id);
+				return LegacyProduct.hybridFromProduct(
+					await productSetupService.getProduct(product.id)
+				);
 			}
 		},
 		deleteproduct: {
