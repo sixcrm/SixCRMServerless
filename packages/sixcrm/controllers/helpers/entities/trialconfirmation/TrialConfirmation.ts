@@ -44,12 +44,7 @@ export default class TrialConfirmation {
 	async confirmTrial(code: string) {
 		du.debug('confirmTrial', code);
 
-		const confirmation = await this.trialconfirmationController.getByCode({code});
-
-		await this.trialconfirmationController.markConfirmed(confirmation);
-
-		// TODO continue with rebill creator
-		// ...
+		return true; // TODO finish public confirmation
 	}
 
 	assure(object: any, message: string) {
