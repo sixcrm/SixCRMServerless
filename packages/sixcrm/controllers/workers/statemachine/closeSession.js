@@ -32,6 +32,7 @@ module.exports = class CloseSessionController extends stepFunctionWorkerControll
 
 		const confirmation = await trialConfirmationController.create({
 			session: session.id,
+			account: session.account,
 			customer: session.customer,
 			sms_provider: trialProductSchedule.product_schedule.trial_sms_provider
 		});
