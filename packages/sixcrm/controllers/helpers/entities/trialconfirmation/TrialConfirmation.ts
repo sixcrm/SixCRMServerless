@@ -2,6 +2,7 @@ require('module-alias/register');
 
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const _ = require('lodash');
 
 const SessionController = require('@root/controllers/entities/Session.js');
 const CustomerController = require('@root/controllers/entities/Customer.js');
@@ -18,9 +19,21 @@ export default class TrialConfirmation {
 	private async sendDeliveryConfirmationSms(phone: string, code: string, provider_id: string) {
 		du.debug('sendDeliveryConfirmationSms', phone, code);
 
-		const message = `Please confirm your trial at https://development-admin.sixcrm.com/confirm/${code}`;
+		const message = `Please confirm your trial at ${this.buildConfirmationLink(code)}`;
 
 		return this.smsProviderController.sendSMS(provider_id, phone, message);
+	}
+
+	private buildConfirmationLink(code: string) {
+		const domain = _(global).get('SixCRM.configuration.site_config.site.domain');
+		const include_stage = _(global).get('SixCRM.configuration.site_config.site.include_stage');
+		const stage = process.env.stage;
+		const frontend_url = `http://${include_stage ? stage+'-' : ''}admin.${domain}`;
+
+		const confirmationLink = `${frontend_url}/confirm/${code}`;
+
+		console.log(confirmationLink);
+		return confirmationLink;
 	}
 
 	async confirmTrialDelivery(sessionId: string) {
