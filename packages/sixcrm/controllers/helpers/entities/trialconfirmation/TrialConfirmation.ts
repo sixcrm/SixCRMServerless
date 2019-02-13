@@ -30,10 +30,7 @@ export default class TrialConfirmation {
 		const stage = process.env.stage;
 		const frontend_url = `http://${include_stage ? stage+'-' : ''}admin.${domain}`;
 
-		const confirmationLink = `${frontend_url}/confirm/${code}`;
-
-		console.log(confirmationLink);
-		return confirmationLink;
+		return `${frontend_url}/confirm/${code}`;
 	}
 
 	async confirmTrialDelivery(sessionId: string) {
