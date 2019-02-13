@@ -8,7 +8,7 @@
   "main": "index.js",
   "dependencies": {
     "@6crm/sixcrm-product-setup": "^1.0.0",
-    "@6crm/sixcrmanalytics": "0.0.85",
+    "@6crm/sixcrmanalytics": "0.0.90",
     "@6crm/sixcrmcore": "0.0.54",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.5",
