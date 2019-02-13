@@ -2,7 +2,6 @@ const _ = require('lodash');
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
-const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
@@ -102,29 +101,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		return this.createOrder(this.parameters.get('event'));
 	}
 
-	async validateParameters(event) {
-		if (event.product_schedules) {
-			if (event.product_schedules.length > 1) {
-				throw eu.getError('bad_request', 'There can only be one product schedule per request')
-			}
+	async validateParameters() {
 
-			for (const product_schedule of event.product_schedules) {
-				let hydrated_product_schedule = null;
-
-				if (stringutilities.isUUID(product_schedule.product_schedule)) {
-					const id = product_schedule.product_schedule;
-					hydrated_product_schedule = await this.productScheduleController.get({id});
-				} else {
-					hydrated_product_schedule = product_schedule.product_schedule;
-				}
-
-				if (hydrated_product_schedule.schedule && hydrated_product_schedule.schedule.length > 1) {
-					throw eu.getError('bad_request', 'Product schedule can only have one product')
-				}
-
-			}
-
-		}
 	}
 
 	async createOrder(event) {
