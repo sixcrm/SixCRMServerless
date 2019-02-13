@@ -884,10 +884,7 @@ const fields = Object.assign({}, {
 		},
 		resolve: async (root, { id }) => {
 			const product = await getProductSetupService().getProduct(id);
-			return {
-				...LegacyProduct.fromProduct(product),
-				...product
-			};
+			return LegacyProduct.hybridFromProduct(product);
 		}
 	},
 	emailtemplate: {
@@ -1058,11 +1055,9 @@ const fields = Object.assign({}, {
 		},
 		resolve: async () => {
 			const productSetupService = getProductSetupService();
-			const products = (await productSetupService.getAllProducts())
-				.map(product => ({
-					...LegacyProduct.fromProduct(product),
-					...product
-				}));
+			const products = (await productSetupService.getAllProducts()).map(product =>
+				LegacyProduct.hybridFromProduct(product)
+			);
 
 			return {
 				products

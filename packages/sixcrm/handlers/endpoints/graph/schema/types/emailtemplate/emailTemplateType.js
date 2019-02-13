@@ -7,7 +7,7 @@ const {
 	GraphQLList,
 	GraphQLBoolean
 } = require('graphql');
-const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 
 const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 const SMTPProviderType = require('../smtpprovider/SMTPProviderType');
@@ -62,7 +62,12 @@ module.exports.graphObj = new GraphQLObjectType({
 		products: {
 			type: new GraphQLList(productType.graphObj),
 			description: 'Products associated with email template',
-			resolve: ({ products: productIds }) => getProductSetupService().getProductsByIds(productIds)
+			resolve: async ({ products: productIds }) => {
+				const productSetupService = getProductSetupService();
+				return (await productSetupService.getProductsByIds(productIds)).map(product =>
+					LegacyProduct.hybridFromProduct(product)
+				);
+			}
 		},
 		product_schedules: {
 			type: new GraphQLList(productScheduleType.graphObj),

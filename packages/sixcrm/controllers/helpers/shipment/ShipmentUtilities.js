@@ -3,7 +3,7 @@ const _ = require('lodash');
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
-const { getProductSetupService } = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 const FulfillmentProviderController = global.SixCRM.routes.include('entities', 'FulfillmentProvider.js');
 const Parameters  = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
@@ -133,7 +133,9 @@ module.exports = class ShipmentUtilities {
 
 		product_ids = arrayutilities.unique(product_ids);
 
-		const products = await getProductSetupService().getProductsByIds(product_ids);
+		const products = (await getProductSetupService().getProductsByIds(
+			product_ids
+		)).map(product => LegacyProduct.hybridFromProduct(product));
 		this.parameters.set('products', products);
 		return true;
 	}

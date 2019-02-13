@@ -2,10 +2,25 @@ const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
+const { createProductSetupService } = require('@6crm/sixcrm-product-setup');
 
 const StateMachineHelperController = global.SixCRM.routes.include('helpers', 'statemachine/StateMachine.js');
 
 const WorkerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
+
+const getEnvironmentAuroraHost = () => global.SixCRM.configuration.getEnvironmentConfig(`aurora_host`);
+const getAuroraConfig = async () => {
+	const {
+		host = await getEnvironmentAuroraHost(),
+		user: username,
+		password
+	} = global.SixCRM.configuration.site_config.aurora;
+	return {
+		host,
+		username,
+		password
+	};
+};
 
 module.exports = class StepFunctionWorkerController extends WorkerController {
 
@@ -50,4 +65,12 @@ module.exports = class StepFunctionWorkerController extends WorkerController {
 
 	}
 
+	async createProductSetupService(accountId) {
+		const auroraConfig = await getAuroraConfig();
+		const productSetupServiceOptions = {
+			accountId,
+			...auroraConfig
+		};
+		return createProductSetupService(productSetupServiceOptions);
+	}
 }

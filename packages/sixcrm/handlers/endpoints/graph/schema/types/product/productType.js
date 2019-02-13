@@ -23,8 +23,6 @@ const merchantProviderGroupController = new MerchantProviderGroupController();
 const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 const emailTemplateController = new EmailTemplateController();
 
-const shippingIntervalToSeconds = ({ hours = 0, minutes = 0, seconds = 0 }) => hours * 60 * 60 + minutes * 60 + seconds;
-
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'Product',
 	description: 'A product for sale.',
@@ -60,8 +58,7 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		shipping_delay: {
 			type: GraphQLInt,
-			description: 'The number of seconds to delay shipping after a transaction.',
-			resolve: ({ shipping_delay }) => shipping_delay ? shippingIntervalToSeconds(shipping_delay): shipping_delay
+			description: 'The number of seconds to delay shipping after a transaction.'
 		},
 		default_price: {
 			type: GraphQLFloat,

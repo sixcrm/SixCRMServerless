@@ -59,10 +59,7 @@ class TransactionController extends entityController {
 
 	async getProduct(product){
 		const product_result = await getProductSetupService().getProduct(this.getID(product));
-		return {
-			...LegacyProduct.fromProduct(product_result),
-			...product_result
-		};
+		return LegacyProduct.hybridFromProduct(product_result);
 	}
 
 	listByState({state, state_changed_after, pagination}){
@@ -122,11 +119,9 @@ class TransactionController extends entityController {
 
 		if(_.has(transaction_product, "product")){
 
-			const promise = getProductSetupService().getProduct(this.getID(transaction_product.product))
-				.then(product => ({
-					...LegacyProduct.fromProduct(product),
-					...product
-				}));
+			const promise = getProductSetupService()
+				.getProduct(this.getID(transaction_product.product))
+				.then(product => LegacyProduct.hybridFromProduct(product));
 			promises.push(promise);
 
 		}else{

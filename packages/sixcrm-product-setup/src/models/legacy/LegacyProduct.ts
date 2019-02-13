@@ -1,3 +1,4 @@
+import { merge } from 'lodash';
 import Product, {IProductInterval} from "../Product";
 
 export default class LegacyProduct {
@@ -5,7 +6,7 @@ export default class LegacyProduct {
 	public attributes;
 	public created_at;
 	public default_price;
-	public description;
+	public description = '';
 	public dynamic_pricing;
 	public fulfillment_provider;
 	public id;
@@ -64,6 +65,10 @@ export default class LegacyProduct {
 			product.sku || null,
 			product.updated_at.toISOString()
 		);
+	}
+
+	public static hybridFromProduct(product: Product): LegacyProduct & Product {
+		return merge({}, product, LegacyProduct.fromProduct(product));
 	}
 
 	public static toLegacyProductAttributes(image_urls: string[]) {
