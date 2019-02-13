@@ -104,6 +104,8 @@
     "test-unit": "mocha --colors --require test/unit/dependencies.js --recursive './test/unit/**/*.spec.js'",
     "test-unit-bail": "mocha --bail --colors --require test/unit/dependencies.js --recursive './test/unit/**/*.spec.js'",
     "test-unit-circle": "nyc mocha --colors --require test/unit/dependencies.js --recursive --max-old-space-size=4096 './test/unit/**/*.spec.js'",
+    "test-unit-circle1": "nyc mocha --colors --require test/unit/dependencies.js --recursive --max-old-space-size=4096 './test/unit/**/[a-z]*.spec.js'",
+    "test-unit-circle2": "nyc mocha --colors --require test/unit/dependencies.js --recursive --max-old-space-size=4096 './test/unit/**/[A-Z]*.spec.js'",
     "test-local-integration": "mocha --colors ./test/integration/local/createOrder/createOrder.test.js",
     "test-integration-analytics": "mocha --recursive --retries 3 --colors --require test/config/global.js test/bootstrap.test.js 'test/integration/graph/analytics/**/*.test.js'",
     "lint-eslint": "eslint --color '{**/*.js,**/*.json}'",
