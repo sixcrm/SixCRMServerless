@@ -49,8 +49,17 @@ module.exports = class RebillCreatorHelper {
 		let {session, day, products, product_schedules} = argumentation;
 		let normalized_products, normalized_product_schedules;
 
+		if (session.trial_confirmation && !session.started_at) {
+			return 'CONFIRMATION_REQUIRED';
+		}
+
+		if (session.completed && !session.started_at) {
+			session.started_at = session.created_at;
+			await sessionController.updateProperties({id: session.id, properties: { started_at: session.created_at }});
+		}
+
 		if (day === undefined) {
-			day = timestamp.getDaysDifference(session.created_at);
+			day = timestamp.getDaysDifference(session.started_at);
 		}
 
 		if (product_schedules === undefined && day >= 0) {
@@ -308,7 +317,7 @@ module.exports = class RebillCreatorHelper {
 		}
 
 		arrayutilities.map(normalized_product_schedules, normalized_product_schedule => {
-			let sub_elements = productScheduleHelperController.getScheduleElementsOnDayInSchedule({start_date: session.created_at, day: bill_day, product_schedule: normalized_product_schedule.product_schedule})
+			let sub_elements = productScheduleHelperController.getScheduleElementsOnDayInSchedule({start_date: session.started_at, day: bill_day, product_schedule: normalized_product_schedule.product_schedule})
 			if (!_.isNull(sub_elements) && arrayutilities.nonEmpty(sub_elements)) {
 				arrayutilities.map(sub_elements, sub_element => {
 					schedule_elements.push({
@@ -442,10 +451,10 @@ module.exports = class RebillCreatorHelper {
 	}
 
 	calculateBillAt(session, bill_day) {
-		let session_start = parseInt(timestamp.dateToTimestamp(session.created_at));
+		let session_start = parseInt(timestamp.dateToTimestamp(session.started_at));
 		let additional_seconds = timestamp.getDayInSeconds() * bill_day;
 		let bill_date = timestamp.toISO8601(session_start + additional_seconds);
-		du.warning(session.created_at+' plus '+bill_day+' days should equal '+bill_date);
+		du.warning(session.started_at+' plus '+bill_day+' days should equal '+bill_date);
 		return bill_date;
 	}
 };
