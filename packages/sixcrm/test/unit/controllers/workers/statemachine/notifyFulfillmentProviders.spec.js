@@ -174,6 +174,12 @@ describe('controllers/workers/statemachine/notifyFulfillmentProviders.js', async
         }
       });
 
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
+
       const NotifyFulfillmentProvidersController = global.SixCRM.routes.include('workers', 'statemachine/notifyFulfillmentProviders.js');
       let notifyFulfillmentProvidersController = new NotifyFulfillmentProvidersController();
 
@@ -224,6 +230,12 @@ describe('controllers/workers/statemachine/notifyFulfillmentProviders.js', async
           });
         }
       });
+
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
 
       const NotifyFulfillmentProvidersController = global.SixCRM.routes.include('workers', 'statemachine/notifyFulfillmentProviders.js');
       let notifyFulfillmentProvidersController = new NotifyFulfillmentProvidersController();
@@ -279,6 +291,12 @@ describe('controllers/workers/statemachine/notifyFulfillmentProviders.js', async
           });
         }
       });
+
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
 
       const NotifyFulfillmentProvidersController = global.SixCRM.routes.include('workers', 'statemachine/notifyFulfillmentProviders.js');
       let notifyFulfillmentProvidersController = new NotifyFulfillmentProvidersController();
@@ -446,6 +464,12 @@ describe('controllers/workers/statemachine/notifyFulfillmentProviders.js', async
           return Promise.resolve(customer);
         }
       });
+
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
 
       const NotifyFulfillmentProvidersController = global.SixCRM.routes.include('workers', 'statemachine/notifyFulfillmentProviders.js');
       let notifyFulfillmentProvidersController = new NotifyFulfillmentProvidersController();

@@ -16,6 +16,7 @@ module.exports = class NotifyFulfillmentProvidersController extends stepFunction
 		this.validateEvent(event);
 
 		let rebill = await this.getRebill(event.guid, true);
+		await this.createProductSetupService(rebill.account);
 
 		let fulfillment_request_result = await this.triggerFulfillment(rebill);
 

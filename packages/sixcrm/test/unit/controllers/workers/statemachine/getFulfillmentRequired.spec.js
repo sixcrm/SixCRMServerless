@@ -281,6 +281,12 @@ describe('controllers/workers/statemachine/getFulfillmentRequired.js', () => {
         }
       });
 
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
+
       const GetFulfillmentRequiredController = global.SixCRM.routes.include('workers', 'statemachine/getFulfillmentRequired.js');
       let getFulfillmentRequiredController = new GetFulfillmentRequiredController();
 
@@ -322,6 +328,12 @@ describe('controllers/workers/statemachine/getFulfillmentRequired.js', () => {
           return Promise.resolve(products);
         }
       });
+
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
 
       const GetFulfillmentRequiredController = global.SixCRM.routes.include('workers', 'statemachine/getFulfillmentRequired.js');
       let getFulfillmentRequiredController = new GetFulfillmentRequiredController();
