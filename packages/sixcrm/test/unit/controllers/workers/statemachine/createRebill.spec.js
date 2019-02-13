@@ -241,6 +241,12 @@ describe('controllers/workers/statemachine/createRebill.js', () => {
         }
       });
 
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
+
       const CreateRebillController = global.SixCRM.routes.include('workers', 'statemachine/createRebill.js');
       let createRebillController = new CreateRebillController();
 
@@ -273,6 +279,12 @@ describe('controllers/workers/statemachine/createRebill.js', () => {
         }
       });
 
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
+
       const CreateRebillController = global.SixCRM.routes.include('workers', 'statemachine/createRebill.js');
       let createRebillController = new CreateRebillController();
 
@@ -304,6 +316,12 @@ describe('controllers/workers/statemachine/createRebill.js', () => {
           return Promise.resolve(session);
         }
       });
+
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
 
       const CreateRebillController = global.SixCRM.routes.include('workers', 'statemachine/createRebill.js');
       let createRebillController = new CreateRebillController();
