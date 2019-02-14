@@ -10,8 +10,9 @@ module.exports = class ConfirmSubscriptionController {
 	async execute(event, context, lambdaCallback) {
 		this.lambdaCallback = lambdaCallback;
 		const {code} = event;
-		const confirmation = await trialConfirmationController.getByCode({code});
+		sessionController.disableACLs();
 
+		const confirmation = await trialConfirmationController.getByCode({code});
 		if (!confirmation) {
 			return this.respond('Subscription trial code not found.', 404);
 		}
@@ -47,6 +48,7 @@ module.exports = class ConfirmSubscriptionController {
 	}
 
 	async respond(message, code = 200) {
+		sessionController.enableACLs();
 		const response = new LambdaResponse();
 		response.setGlobalHeaders({
 			'Content-Type': 'text/html',
