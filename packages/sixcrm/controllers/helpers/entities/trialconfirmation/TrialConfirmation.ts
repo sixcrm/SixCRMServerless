@@ -51,11 +51,6 @@ export default class TrialConfirmation {
 		return this.sendDeliveryConfirmationSms(customer.phone, confirmation.code, confirmation.sms_provider);
 	}
 
-	async confirmTrial(code: string) {
-		du.debug('confirmTrial', code);
-
-		return true; // TODO finish public confirmation
-	}
 
 	assure(object: any, message: string) {
 		if (object) {
