@@ -2,13 +2,16 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 
 let scheduleType = require('./scheduleType');
 let merchantProviderGroupType = require('../merchantprovidergroup/merchantProviderGroupType');
 let ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule');
+const SMSProviderController = global.SixCRM.routes.include('controllers', 'entities/SMSProvider');
+const smsProviderController = new SMSProviderController();
 
 let emailTemplateType = require('../emailtemplate/emailTemplateType');
-
+const smsProviderType = require('../smsprovider/SMSProviderType');
 const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 const emailTemplateController = new EmailTemplateController();
 
@@ -49,6 +52,16 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: new GraphQLList(emailTemplateType.graphObj),
 			description: 'Email templates associated with this product schedule.',
 			resolve: (productschedule) => emailTemplateController.listByProductSchedule(productschedule)
+		},
+		trial_required: { type: GraphQLBoolean },
+		trial_sms_provider:  {
+			type: smsProviderType.graphObj,
+			resolve: (productschedule) => {
+				if (!productschedule.trial_sms_provider) {
+					return Promise.resolve(null);
+				}
+				return smsProviderController.get({id: productschedule.trial_sms_provider})
+			}
 		},
 		created_at: {
 			type: new GraphQLNonNull(GraphQLString),

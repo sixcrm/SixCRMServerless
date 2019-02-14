@@ -1,0 +1,121 @@
+{
+  "Table":{
+    "TableName":"trialconfirmations",
+    "KeySchema":[
+      {
+        "AttributeName":"id",
+        "KeyType":"HASH"
+      }
+    ],
+    "AttributeDefinitions":[
+      {
+        "AttributeName":"id",
+        "AttributeType":"S"
+      },
+      {
+        "AttributeName":"account",
+        "AttributeType":"S"
+      },
+	  {
+		"AttributeName":"code",
+		"AttributeType":"S"
+	  },
+	  {
+		"AttributeName":"delivered_at",
+		"AttributeType":"S"
+	  },
+	  {
+		"AttributeName":"confirmed_at",
+		"AttributeType":"S"
+	  },
+	  {
+		"AttributeName":"expires_at",
+		"AttributeType":"S"
+	  }
+    ],
+    "GlobalSecondaryIndexes":[
+      {
+        "IndexName":"code-index",
+        "KeySchema":[
+          {
+            "AttributeName":"code",
+            "KeyType":"HASH"
+          }
+        ],
+        "Projection":{
+          "ProjectionType":"ALL"
+        },
+        "ProvisionedThroughput":{
+          "ReadCapacityUnits":3,
+          "WriteCapacityUnits":3
+        }
+      },
+      {
+        "IndexName":"account-index",
+        "KeySchema":[
+          {
+            "AttributeName":"account",
+            "KeyType":"HASH"
+          }
+        ],
+        "Projection":{
+          "ProjectionType":"ALL"
+        },
+        "ProvisionedThroughput":{
+          "ReadCapacityUnits":125,
+          "WriteCapacityUnits":3
+        }
+      },
+      {
+        "IndexName": "delivered_at-index",
+        "KeySchema": [{
+          "AttributeName": "delivered_at",
+          "KeyType": "HASH"
+        }],
+        "Projection": {
+          "ProjectionType": "ALL"
+        },
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 3,
+          "WriteCapacityUnits": 3
+        }
+      },
+      {
+        "IndexName": "confirmed_at-index",
+        "KeySchema": [{
+          "AttributeName": "confirmed_at",
+          "KeyType": "HASH"
+        }],
+        "Projection": {
+          "ProjectionType": "ALL"
+        },
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 3,
+          "WriteCapacityUnits": 3
+        }
+      },
+      {
+        "IndexName": "expires_at-index",
+        "KeySchema": [{
+          "AttributeName": "expires_at",
+          "KeyType": "HASH"
+        }],
+        "Projection": {
+          "ProjectionType": "ALL"
+        },
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 3,
+          "WriteCapacityUnits": 3
+        }
+      }
+    ],
+    "ProvisionedThroughput":{
+      "ReadCapacityUnits":15,
+      "WriteCapacityUnits":3
+    },
+    "StreamSpecification":{
+      "StreamEnabled":true,
+      "StreamViewType":"NEW_AND_OLD_IMAGES"
+    }
+  }
+}

@@ -392,10 +392,10 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
 
-########################
-# Utility
-########################
-
-  logger:
-    handler: handlers/handlers.logger
-    role: arn:aws:iam::${self:provider.account}:role/sixcrm_logger_lambda_role
+  confirmsubscription:
+    handler: handlers/endpoints/handlers.confirmsubscription
+    warmup: true
+    events:
+      - http:
+          path: confirm/{code}
+          method: get
