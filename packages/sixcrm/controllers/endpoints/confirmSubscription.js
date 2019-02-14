@@ -17,6 +17,14 @@ module.exports = class ConfirmSubscriptionController {
 			return this.respond('Subscription trial code not found.', 404);
 		}
 
+		if (!confirmation.delivered_at) {
+			return this.respond('This subscription has not been delivered yet.');
+		}
+
+		if (confirmation.confirmed_at) {
+			return this.respond('Subscription has already been confirmed, no action needed.');
+		}
+
 		await trialConfirmationController.markConfirmed({confirmation});
 
 		const session = await sessionController.updateProperties({
