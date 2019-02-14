@@ -1,0 +1,12 @@
+{
+	"requestContext":{
+		"authorizer":{
+			"user":"60fc8ccc85d8b7e6eaae333bb20d2db51aa37693"
+		}
+	},
+	"pathParameters": {
+		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c"
+	},
+	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2RldmVsb3BtZW50LWFwaS5zaXhjcm0uY29tIiwic3ViIjoiIiwiYXVkIjoiIiwiaWF0IjoxNTE3NzE4ODA5LCJleHAiOjE1MTc3MjI0MDksInVzZXJfYWxpYXMiOiI2MGZjOGNjYzg1ZDhiN2U2ZWFhZTMzM2JiMjBkMmRiNTFhYTM3NjkzIn0.55k5yQNf-5nsUDwFiG8I57Z40KKXiLWXdNG9Wijf5IU",
+	"code":"VPJP84"
+}

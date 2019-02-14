@@ -10,10 +10,19 @@ module.exports = class ConfirmSubscriptionController {
 	async execute(event, context, lambdaCallback) {
 		this.lambdaCallback = lambdaCallback;
 		const {code} = event;
-		const confirmation = await trialConfirmationController.getByCode({code});
+		sessionController.disableACLs();
 
+		const confirmation = await trialConfirmationController.getByCode({code});
 		if (!confirmation) {
 			return this.respond('Subscription trial code not found.', 404);
+		}
+
+		if (!confirmation.delivered_at) {
+			return this.respond('This subscription has not been delivered yet.');
+		}
+
+		if (confirmation.confirmed_at) {
+			return this.respond('Subscription has already been confirmed, no action needed.');
 		}
 
 		await trialConfirmationController.markConfirmed({confirmation});
@@ -47,8 +56,9 @@ module.exports = class ConfirmSubscriptionController {
 	}
 
 	async respond(message, code = 200) {
+		sessionController.enableACLs();
 		const response = new LambdaResponse();
-		response.setGlobalResponseHeaders({
+		response.setGlobalHeaders({
 			'Content-Type': 'text/html',
 		});
 		const body = `<html><head></head><body>${message}</body></html>`;
