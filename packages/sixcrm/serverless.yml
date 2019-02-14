@@ -391,3 +391,11 @@ functions:
            name: verifysitejwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
+
+  confirmsubscription:
+    handler: handlers/endpoints/handlers.confirmsubscription
+    warmup: true
+    events:
+      - http:
+          path: confirm/{code}
+          method: get
