@@ -9,7 +9,7 @@ const sessionController = new SessionController();
 module.exports = class ConfirmSubscriptionController {
 	async execute(event, context, lambdaCallback) {
 		this.lambdaCallback = lambdaCallback;
-		const {code} = event;
+		const code = event.pathParameters.code;
 		sessionController.disableACLs();
 
 		const confirmation = await trialConfirmationController.getByCode({code});
