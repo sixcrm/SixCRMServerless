@@ -28,9 +28,9 @@ export default class TrialConfirmation {
 		const domain = _(global).get('SixCRM.configuration.site_config.site.domain');
 		const include_stage = _(global).get('SixCRM.configuration.site_config.site.include_stage');
 		const stage = process.env.stage;
-		const frontend_url = `http://${include_stage ? stage+'-' : ''}admin.${domain}`;
+		const api_url = `https://${include_stage ? stage+'-' : ''}api.${domain}`;
 
-		return `${frontend_url}/confirm/${code}`;
+		return `${api_url}/confirm/${code}`;
 	}
 
 	async confirmTrialDelivery(sessionId: string) {
