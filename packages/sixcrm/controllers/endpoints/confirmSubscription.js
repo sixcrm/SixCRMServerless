@@ -48,7 +48,7 @@ module.exports = class ConfirmSubscriptionController {
 
 	async respond(message, code = 200) {
 		const response = new LambdaResponse();
-		response.setGlobalResponseHeaders({
+		response.setGlobalHeaders({
 			'Content-Type': 'text/html',
 		});
 		const body = `<html><head></head><body>${message}</body></html>`;
