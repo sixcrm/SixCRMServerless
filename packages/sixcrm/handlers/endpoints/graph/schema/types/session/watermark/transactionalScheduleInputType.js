@@ -28,8 +28,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
 		},
 		product: {
 			type: transactionalProductInputType.graphObj,
-			description:  'The product.',
-			resolve: (product) => transactionalProductInputType.toTransactionalProductInput(product)
+			description:  'The product.'
 		},
 		samedayofmonth: {
 			type: GraphQLBoolean
