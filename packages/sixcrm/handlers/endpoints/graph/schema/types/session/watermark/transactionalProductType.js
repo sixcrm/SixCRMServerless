@@ -2,10 +2,14 @@ const {
 	GraphQLObjectType,
 	GraphQLNonNull,
 	GraphQLFloat,
-	GraphQLString
+	GraphQLString,
+	GraphQLBoolean,
+	GraphQLList
 } = require('graphql');
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 const merchantProviderGroupType = require('../../merchantprovidergroup/merchantProviderGroupType');
 const fulfillmentProviderType = require('../../fulfillmentprovider/fulfillmentProviderType');
+const productAttributesType = require('../../product/components/attributesType');
 
 const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
 const fulfillmentProviderController = new FulfillmentProviderController();
@@ -35,7 +39,16 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		ship: {
 			type: GraphQLString,
+			description: '`ship` will be removed. Use `TransactionalProduct.is_shippable` instead.',
+			deprecationReason: 'The `ship` field is deprecated and will be removed soon.',
+		},
+		is_shippable: {
+			type: GraphQLBoolean,
 			description: 'The product ship, no-ship status.',
+		},
+		shipping_price: {
+			type: GraphQLFloat,
+			description: 'A default shipping price for product.',
 		},
 		shipping_delay: {
 			type: GraphQLString,
@@ -43,7 +56,8 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		default_price: {
 			type: GraphQLFloat,
-			description: 'A default price for product.',
+			description: '`default_price` will be removed. Use `TransactionalProduct.price` and `TransactionalProduct.shipping_price` instead.',
+			deprecationReason: 'The `default_price` field is deprecated and will be removed soon.',
 		},
 		merchantprovidergroup:{
 			type: merchantProviderGroupType.graphObj,
@@ -54,6 +68,23 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: fulfillmentProviderType.graphObj,
 			description: 'The session associated with the transaction.',
 			resolve: ({ fulfillment_provider_id }) => fulfillment_provider_id && fulfillmentProviderController.get(fulfillment_provider_id)
+		},
+		attributes: {
+			type: productAttributesType.graphObj,
+			description: '`attributes` will be removed. Use `TransactionalProduct.image_urls` instead.',
+			deprecationReason: 'The `ProductAttributes` type is deprecated and will be removed soon.',
+			resolve: async (product) => {
+				const databaseProduct = await getProductSetupService().getProduct(product.id);
+				if (databaseProduct) {
+					return LegacyProduct.hybridFromProduct(databaseProduct).attributes;
+				}
+
+				return LegacyProduct.hybridFromProduct(product).attributes;
+			}
+		},
+		image_urls: {
+			type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
+			description: 'The product images'
 		},
 		created_at: {
 			type: GraphQLString,

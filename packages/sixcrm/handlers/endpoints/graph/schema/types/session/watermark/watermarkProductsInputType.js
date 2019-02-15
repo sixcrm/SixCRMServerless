@@ -20,7 +20,8 @@ module.exports.graphObj = new GraphQLInputObjectType({
 		},
 		product:{
 			type: new GraphQLNonNull(transactionalProductInputType.graphObj),
-			description: 'The watermark product.'
+			description: 'The watermark product.',
+			resolve: (product) => transactionalProductInputType.toTransactionalProductInput(product)
 		}
 	}),
 	interfaces: []
