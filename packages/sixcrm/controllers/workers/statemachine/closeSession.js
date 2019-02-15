@@ -35,6 +35,7 @@ module.exports = class CloseSessionController extends stepFunctionWorkerControll
 			account: session.account,
 			customer: session.customer,
 			sms_provider: trialProductSchedule.product_schedule.trial_sms_provider
+			confirmed_at: null
 		});
 
 		session.trial_confirmation = confirmation.id;

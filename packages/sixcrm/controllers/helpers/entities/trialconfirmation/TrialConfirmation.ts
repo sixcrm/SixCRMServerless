@@ -33,8 +33,8 @@ export default class TrialConfirmation {
 		return `${api_url}/confirm/${code}`;
 	}
 
-	async confirmTrialDelivery(sessionId: string) {
-		du.debug('confirmTrialDelivery', sessionId);
+	async confirmTrialDelivery(sessionId: string, markAsDelivered = true) {
+		du.debug('confirmTrialDelivery', sessionId, markAsDelivered);
 
 		const session = await this.sessionController.get({id: sessionId, fatal: true});
 		this.assure(session, `Can't find session with ID ${sessionId}`);
@@ -47,8 +47,14 @@ export default class TrialConfirmation {
 		this.assure(confirmation, `Can't find confirmation with ID ${session.trial_confirmation}`);
 		this.assure(confirmation.sms_provider, `Confirmation with ID ${session.trial_confirmation} has no SMS provider.`);
 
-		await this.trialconfirmationController.markDelivered({confirmation});
+		if (markAsDelivered) {
+			await this.trialconfirmationController.markDelivered({confirmation});
+		}
 		return this.sendDeliveryConfirmationSms(customer.phone, confirmation.code, confirmation.sms_provider);
+	}
+
+	async retryNotification(sessionId: string) {
+		return this.confirmTrialDelivery(sessionId, false);
 	}
 
 
