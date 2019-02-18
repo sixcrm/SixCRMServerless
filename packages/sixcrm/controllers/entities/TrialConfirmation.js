@@ -31,13 +31,13 @@ module.exports = class TrialConfirmationController extends entityController {
 	}
 
 	async getAllUnconfirmed() {
-		const result = await this.queryBySecondaryIndex({field: 'confirmed_at', index_value: null, index_name: 'confirmed_at-index'});
+		const result = await this.queryBySecondaryIndex({field: 'confirmed_at', index_value: 'null', index_name: 'confirmed_at-index'});
 		const confirmations = (result && result.trialconfirmations) ? result.trialconfirmations : [];
 
 		return confirmations
 			.filter(confirmation => confirmation.delivered_at)
 			.filter(confirmation => moment(confirmation.expires_at).isBefore(moment())
-		)
+			)
 	}
 
 	async markDelivered({confirmation}) {
@@ -49,7 +49,7 @@ module.exports = class TrialConfirmationController extends entityController {
 	}
 
 	async markConfirmed({confirmation}) {
-		if(!_.has(confirmation, 'confirmed_at')) {
+		if(!confirmation.confirmed_at || confirmation.confirmed_at === 'null') {
 			confirmation.confirmed_at = timestamp.getISO8601();
 		}
 
