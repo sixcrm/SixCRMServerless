@@ -23,6 +23,12 @@ const merchantProviderGroupController = new MerchantProviderGroupController();
 const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 const emailTemplateController = new EmailTemplateController();
 
+const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+const productScheduleController = new ProductScheduleController();
+
+const TransactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+const transactionController = new TransactionController();
+
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'Product',
 	description: 'A product for sale.',
@@ -109,3 +115,30 @@ module.exports.graphObj = new GraphQLObjectType({
 	}),
 	interfaces: []
 });
+
+module.exports.canDelete = async productId => {
+	const [
+		{ productschedules: productSchedules = [] },
+		transactionResult
+	] = await Promise.all([
+		productScheduleController.listByProduct({ product: productId }),
+		transactionController.listByProductID({ id: productId })
+	]);
+	const transactions = transactionResult ? transactionResult.transactions : []; //workaround unimplemented listByProductID
+
+	return productSchedules
+		.map(schedule =>
+			productScheduleController.createAssociatedEntitiesObject({
+				name: "Product Schedule",
+				object: schedule
+			})
+		)
+		.concat(
+			transactions.map(transaction =>
+				transactionController.createAssociatedEntitiesObject({
+					name: "Transaction",
+					object: transaction
+				})
+			)
+		);
+};
