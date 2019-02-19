@@ -140,7 +140,7 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 
 		let augmented_transaction_products = arrayutilities.map(transactions, transaction => {
 
-			let transaction_products = this.transactionHelperController.getTransactionProducts([transaction], false);
+			let transaction_products = this.transactionHelperController.getTransactionProducts([transaction]);
 
 			return arrayutilities.map(transaction_products, (transaction_product) => {
 				let augmented_transaction_product = objectutilities.clone(transaction_product);
