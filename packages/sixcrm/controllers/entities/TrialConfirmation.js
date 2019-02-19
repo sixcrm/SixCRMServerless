@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const moment = require('moment');
 
 const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 const random = require('@6crm/sixcrmcore/lib/util/random').default;
@@ -29,6 +30,16 @@ module.exports = class TrialConfirmationController extends entityController {
 		return this.getBySecondaryIndex({field: 'code', index_value: code, index_name: 'code-index'});
 	}
 
+	async getAllUnconfirmed() {
+		const result = await this.queryBySecondaryIndex({field: 'confirmed_at', index_value: 'null', index_name: 'confirmed_at-index'});
+		const confirmations = (result && result.trialconfirmations) ? result.trialconfirmations : [];
+
+		return confirmations
+			.filter(confirmation => confirmation.delivered_at)
+			.filter(confirmation => moment(confirmation.expires_at).isBefore(moment())
+			)
+	}
+
 	async markDelivered({confirmation}) {
 		if(!_.has(confirmation, 'delivered_at')){
 			confirmation.delivered_at = timestamp.getISO8601();
@@ -38,7 +49,7 @@ module.exports = class TrialConfirmationController extends entityController {
 	}
 
 	async markConfirmed({confirmation}) {
-		if(!_.has(confirmation, 'confirmed_at')) {
+		if(!confirmation.confirmed_at || confirmation.confirmed_at === 'null') {
 			confirmation.confirmed_at = timestamp.getISO8601();
 		}
 
