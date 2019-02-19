@@ -36,7 +36,7 @@ module.exports = class TrialConfirmationController extends entityController {
 
 		return confirmations
 			.filter(confirmation => confirmation.delivered_at)
-			.filter(confirmation => moment(confirmation.expires_at).isBefore(moment())
+			.filter(confirmation => !confirmation.expires_at || (moment(confirmation.expires_at).isBefore(moment()))
 			)
 	}
 
