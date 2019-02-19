@@ -405,5 +405,5 @@ functions:
     warmup: true
     events:
       - schedule:
-          rate: rate(60 minutes)
+          rate: rate(24 hours)
           enabled: true
