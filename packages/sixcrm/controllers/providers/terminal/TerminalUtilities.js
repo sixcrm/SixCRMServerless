@@ -114,7 +114,7 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 		return this.rebillController.listTransactions(rebill)
 			.then(transactions => this.rebillController.getResult(transactions, 'transactions'))
 			.then(transactions => {
-				this.parameters.set('transactions', transactions);
+				this.parameters.set('transactions', transactions.filter(transaction => transaction.result === 'success'));
 				return true;
 			});
 
