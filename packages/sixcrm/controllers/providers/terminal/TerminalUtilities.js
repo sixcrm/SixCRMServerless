@@ -113,7 +113,7 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 		return this.rebillController.listTransactions(rebill)
 			.then(transactions => this.rebillController.getResult(transactions, 'transactions'))
 			.then(transactions => {
-				this.parameters.set('transactions', transactions);
+				this.parameters.set('transactions', transactions.filter(transaction => transaction.result === 'success'));
 				return true;
 			});
 
@@ -140,7 +140,7 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 
 		let augmented_transaction_products = arrayutilities.map(transactions, transaction => {
 
-			let transaction_products = this.transactionHelperController.getTransactionProducts([transaction]);
+			let transaction_products = this.transactionHelperController.getTransactionProducts([transaction], false);
 
 			return arrayutilities.map(transaction_products, (transaction_product) => {
 				let augmented_transaction_product = objectutilities.clone(transaction_product);
