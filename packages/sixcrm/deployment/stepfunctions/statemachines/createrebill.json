@@ -85,11 +85,6 @@
           "Variable": "$.status",
           "StringEquals": "INCOMPLETE",
           "Next": "Session Incomplete"
-        },
-        {
-          "Variable": "$.status",
-          "StringEquals": "CONFIRMATION_REQUIRED",
-          "Next": "Session Requires Confirmation"
         }
       ],
       "Default": "Rebill Creation Failed"
@@ -120,9 +115,6 @@
     },
     "Session Incomplete":{
       "Type":"Succeed"
-		},
-		"Session Requires Confirmation":{
-			"Type":"Succeed"
-		}
+    }
   }
 }

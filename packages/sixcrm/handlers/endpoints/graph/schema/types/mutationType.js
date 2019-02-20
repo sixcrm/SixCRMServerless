@@ -2,9 +2,6 @@ const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-
 let SMTPProviderInputType = require('./smtpprovider/SMTPProviderInputType');
 let SMTPProviderType = require('./smtpprovider/SMTPProviderType');
 
-let SMSProviderInputType = require('./smsprovider/SMSProviderInputType');
-let SMSProviderType = require('./smsprovider/SMSProviderType');
-
 let accessKeyInputType = require('./accesskey/accessKeyInputType');
 let accessKeyType = require('./accesskey/accessKeyType');
 
@@ -118,10 +115,8 @@ let refundInputType = require('./register/refund/refundInputType');
 let reverseType = require('./register/reverse/reverseType');
 let reverseInputType = require('./register/reverse/reverseInputType');
 
-let SMTPValidationInputType = require('./smtpvalidation/SMTPValidationInputType');
+let SMTPValidationInputType = require('./smtpvalidation/SMTPValidationInputType')
 let SMTPValidationType = require('./smtpvalidation/SMTPValidationType');
-
-let SMSValidationType = require('./smsvalidation/SMSValidationType');
 
 let accountImageType = require('./accountimage/accountImageType');
 let accountImageInputType = require('./accountimage/accountImageInputType');
@@ -159,7 +154,6 @@ const RoleController = global.SixCRM.routes.include('controllers', 'entities/Rol
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
-const SMSProviderController = global.SixCRM.routes.include('entities', 'SMSProvider.js');
 const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
 const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 const AccountDetailsController = global.SixCRM.routes.include('controllers', 'entities/AccountDetails.js');
@@ -284,20 +278,6 @@ module.exports.graphObj = new GraphQLObjectType({
 				const smtpProviderController = new SMTPProviderController();
 
 				return smtpProviderController.validateSMTPProvider(args.smtpvalidation);
-			}
-		},
-		smsvalidation: {
-			type: SMSValidationType.graphObj,
-			description: 'Validates an SMS Provider configuration',
-			args: {
-				smsprovider: {type: GraphQLString},
-				recipient_phone: {type: GraphQLString},
-			},
-			resolve: async function(root, args) {
-				const smsProviderController = new SMSProviderController();
-
-				const response = await smsProviderController.validateSMSProvider({recipient_phone: args.recipient_phone, smsprovider_id: args.smsprovider});
-				return { sms_response: response };
 			}
 		},
 		fulfillmentprovidervalidation: {
@@ -884,56 +864,6 @@ module.exports.graphObj = new GraphQLObjectType({
 				const smtpProviderController = new SMTPProviderController();
 
 				return smtpProviderController.delete({
-					id: id
-				});
-			}
-		},
-		createsmsprovider: {
-			type: SMSProviderType.graphObj,
-			description: 'Adds a new SMS Provider.',
-			args: {
-				smsprovider: {
-					type: SMSProviderInputType.graphObj
-				}
-			},
-			resolve: (value, smsprovider) => {
-				const smsProviderController = new SMSProviderController();
-
-				return smsProviderController.create({
-					entity: smsprovider.smsprovider
-				});
-			}
-		},
-		updatesmsprovider: {
-			type: SMSProviderType.graphObj,
-			description: 'Updates an SMS Provider.',
-			args: {
-				smsprovider: {
-					type: SMSProviderInputType.graphObj
-				}
-			},
-			resolve: (value, smsprovider) => {
-				const smsProviderController = new SMSProviderController();
-
-				return smsProviderController.update({
-					entity: smsprovider.smsprovider
-				});
-			}
-		},
-		deletesmsprovider: {
-			type: deleteOutputType.graphObj,
-			description: 'Deletes an SMS Provider.',
-			args: {
-				id: {
-					description: 'id of the smsprovider',
-					type: new GraphQLNonNull(GraphQLString)
-				}
-			},
-			resolve: (value, smsprovider) => {
-				var id = smsprovider.id;
-				const smsProviderController = new SMSProviderController();
-
-				return smsProviderController.delete({
 					id: id
 				});
 			}
@@ -1744,30 +1674,6 @@ module.exports.graphObj = new GraphQLObjectType({
 				return sessionController.cancelSession({
 					entity: session.session
 				});
-
-			}
-		},
-		confirmtrialdelivery: {
-			type: new GraphQLObjectType({
-				name: 'TrialDeliveryTrigger',
-				fields: () => ({
-					result: {
-						type: GraphQLString,
-						description: 'OK',
-					}
-				}),
-				interfaces: []
-			}),
-			description: 'Triggers request for trial delivery',
-			args: {
-				session_id: {
-					description: 'id of the session',
-					type: new GraphQLNonNull(GraphQLString)
-				}
-			},
-			resolve: (root, args) => {
-				let helper = require('@lib/controllers/helpers/entities/trialconfirmation/TrialConfirmation.js').default;
-				return new helper().confirmTrialDelivery(args.session_id).then(() => { return {result: 'OK'} });
 
 			}
 		},

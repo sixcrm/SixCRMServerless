@@ -13,12 +13,9 @@ let productScheduleType = require('../productschedule/productScheduleType');
 let customerType = require('../customer/customerType');
 let watermarkType = require('./watermark/watermarkType');
 let sessionCancelType = require('./sessionCancelType')
-let trialConfirmationType = require('../trialconfirmation/trialConfirmationType');
 
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
-const TrialConfirmationController = global.SixCRM.routes.include('entities', 'TrialConfirmation');
 const sessionController = new SessionController();
-const trialConfirmationController = new TrialConfirmationController();
 
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'Session',
@@ -116,20 +113,6 @@ module.exports.graphObj = new GraphQLObjectType({
 		completed: {
 			type: new GraphQLNonNull(GraphQLBoolean),
 			description: 'A boolean denoting that that session has otherwise been completed or expired.',
-		},
-		trial_confirmation: {
-			type: trialConfirmationType.graphObj,
-			description: 'Trial confirmation',
-			resolve: function(session){
-				if (!session.trial_confirmation) {
-					return Promise.resolve(null);
-				}
-				return trialConfirmationController.get({id: session.trial_confirmation});
-			}
-		},
-		started_at: {
-			type: new GraphQLNonNull(GraphQLString),
-			description: 'ISO8601 datetime when the subscription started.',
 		},
 		created_at: {
 			type: new GraphQLNonNull(GraphQLString),

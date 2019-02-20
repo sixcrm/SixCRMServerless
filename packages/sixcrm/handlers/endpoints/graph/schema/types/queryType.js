@@ -106,16 +106,11 @@ let sessionType = require('./session/sessionType');
 let SMTPProviderListType = require('./smtpprovider/SMTPProviderListType');
 let SMTPProviderType = require('./smtpprovider/SMTPProviderType');
 
-let SMSProviderListType = require('./smsprovider/SMSProviderListType');
-let SMSProviderType = require('./smsprovider/SMSProviderType');
-
 let shippingReceiptType = require('./shippingreceipt/shippingReceiptType');
 let shippingReceiptListType = require('./shippingreceipt/shippingReceiptListType');
 
 let trackerType = require('./tracker/trackerType');
 let trackerListType = require('./tracker/trackerListType');
-
-let trialConfirmationType = require('./trialconfirmation/trialConfirmationType');
 
 let tokenListType = require('./token/tokenListType');
 
@@ -179,10 +174,8 @@ const SessionController = global.SixCRM.routes.include('entities', 'Session.js')
 const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
 const ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
-const SMSProviderController = global.SixCRM.routes.include('entities', 'SMSProvider.js');
 const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
 const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
-const TrialConfirmationController = global.SixCRM.routes.include('entities', 'TrialConfirmation.js');
 const AccountDetailsController = global.SixCRM.routes.include('controllers', 'entities/AccountDetails.js');
 
 
@@ -827,39 +820,6 @@ const fields = Object.assign({}, {
 			});
 		}
 	},
-	trialconfirmation: {
-		type: trialConfirmationType.graphObj,
-		args: {
-			id: {
-				description: 'id of the trial confirmation',
-				type: GraphQLString
-			}
-		},
-		resolve: function(root, trial_confirmation) {
-			const trialConfirmationController = new TrialConfirmationController();
-
-			return trialConfirmationController.get({
-				id: trial_confirmation,
-				fatal: get_fatal
-			});
-		}
-	},
-	trialconfirmationbycode: {
-		type: trialConfirmationType.graphObj,
-		args: {
-			code: {
-				description: 'code of the trial confirmation',
-				type: GraphQLString
-			}
-		},
-		resolve: function(root, trial_confirmation) {
-			const trialConfirmationController = new TrialConfirmationController();
-
-			return trialConfirmationController.getByCode({
-				code: trial_confirmation
-			});
-		}
-	},
 	customer: {
 		type: customerType.graphObj,
 		args: {
@@ -1006,23 +966,6 @@ const fields = Object.assign({}, {
 			});
 		}
 	},
-	smsprovider: {
-		type: SMSProviderType.graphObj,
-		args: {
-			id: {
-				description: 'id of the SMS Provider',
-				type: GraphQLString
-			}
-		},
-		resolve: function(root, smsprovider) {
-			const smsProviderController = new SMSProviderController();
-
-			return smsProviderController.get({
-				id: smsprovider.id,
-				fatal: get_fatal
-			});
-		}
-	},
 	emailtemplatelist: {
 		type: emailTemplateListType.graphObj,
 		args: {
@@ -1097,26 +1040,6 @@ const fields = Object.assign({}, {
 				pagination: smtpproviders.pagination,
 				fatal: list_fatal,
 				search: smtpproviders.search
-			});
-		}
-	},
-	smsproviderlist: {
-		type: SMSProviderListType.graphObj,
-		args: {
-			pagination: {
-				type: paginationInputType.graphObj
-			},
-			search: {
-				type: entitySearchInputType.graphObj
-			}
-		},
-		resolve: function(root, smsproviders) {
-			const smsProviderController = new SMSProviderController();
-
-			return smsProviderController.listByAccount({
-				pagination: smsproviders.pagination,
-				fatal: list_fatal,
-				search: smsproviders.search
 			});
 		}
 	},

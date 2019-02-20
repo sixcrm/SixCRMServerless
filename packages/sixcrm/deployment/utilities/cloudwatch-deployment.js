@@ -1,5 +1,7 @@
 const BBPromise = require('bluebird');
+//const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+//const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const parserutilities = require('@6crm/sixcrmcore/lib/util/parser-utilities').default;
@@ -17,7 +19,7 @@ module.exports = class CloudwatchDeployment extends AWSDeploymentUtilities{
 		this.cloudwatchprovider = new CloudwatchProvider();
 		this.lambdaprovider = new LambdaProvider();
 
-		this.logger_lambda_name = 'ElasticSearchStream';
+		this.logger_lambda_name = 'logger';
 
 	}
 
@@ -69,12 +71,28 @@ module.exports = class CloudwatchDeployment extends AWSDeploymentUtilities{
 	}
 
 	async deploySubscriptionFilter(lambda_name, subscription_filter_template) {
+		if(lambda_name == this.logger_lambda_name){
+			du.warning('Can not log the errors of the logger (recursive.)');
+			return;
+		}
 
 		let parameters = this.parseSubscriptionFilterTemplate(lambda_name, subscription_filter_template);
 
 		du.info(parameters);
 
+		if (await this.subscriptionFilterExists(parameters.logGroupName, parameters.filterName)) {
+			du.info("Filter exists");
+			return;
+		}
+
 		return this.cloudwatchprovider.putSubscriptionFilter(parameters);
+
+	}
+
+	async subscriptionFilterExists(logGroupName, filterName) {
+
+		const filters = (await this.cloudwatchprovider.getSubscriptionFilters(logGroupName, filterName)).subscriptionFilters;
+		return filters.length > 0 && filters[0].filterName === filterName;
 
 	}
 

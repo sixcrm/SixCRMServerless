@@ -1,6 +1,7 @@
 const _ = require('lodash');
 
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 
@@ -20,10 +21,30 @@ module.exports = class ProductScheduleController extends entityController {
 	}
 
 	create({entity, parameters}) {
+		if (this.permissionutilities.areACLsDisabled() || !entity.schedule) {
+			return super.create({entity, parameters});
+		}
+
+		if (entity.schedule.length > 1) {
+			du.warning('Product schedule can only have 1 product.', entity.name);
+			throw eu.getError('forbidden', 'Product schedule can only have 1 product.');
+		}
+
 		return super.create({entity, parameters});
 	}
 
 	async update({entity, ignore_updated_at}) {
+		if (entity.schedule.length > 1) {
+
+			const already_existing_schedule_length = _(await this.get({id: entity.id, fatal: true})).get('schedule.length', 0);
+
+			if (already_existing_schedule_length < entity.schedule.length) {
+				du.warning('Product schedule can only have 1 product.', entity.name);
+				throw eu.getError('forbidden', 'Product schedule can only have 1 product.');
+			}
+
+		}
+
 		return super.update({entity, ignore_updated_at});
 	}
 

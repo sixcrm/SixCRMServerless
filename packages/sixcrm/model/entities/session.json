@@ -127,12 +127,6 @@
 		},
 		"concluded": {
 			"type": "boolean"
-		},
-		"trial_confirmation": {
-			"$ref": "../definitions/uuidv4.json"
-		},
-		"started_at": {
-			"$ref": "../definitions/iso8601.json"
 		}
 	},
 	"required": [

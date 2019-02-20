@@ -47,12 +47,6 @@
 		"account": {
 			"$ref": "../definitions/sixcrmaccountidentifier.json"
 		},
-		"trial_required": {
-			"type": "boolean"
-		},
-		"trial_sms_provider": {
-		  "type": "string"
-		},
 		"created_at": {
 			"$ref": "../definitions/iso8601.json"
 		},
