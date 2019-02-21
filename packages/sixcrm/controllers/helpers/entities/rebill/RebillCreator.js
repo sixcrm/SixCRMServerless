@@ -389,7 +389,7 @@ module.exports = class RebillCreatorHelper {
 		const transaction_products = this.getTransactionProducts({session, bill_day, normalized_product_schedules, normalized_products});
 		const amount = this.calculateAmount(transaction_products);
 		const bill_at = this.calculateBillAt(session, bill_day);
-		const cycle = await this.calculateCycle(session, bill_at);
+		const cycle = await this.calculateCycle(session, bill_at, day);
 
 		const rebill_prototype = this.createRebillPrototype({
 			session,
@@ -430,9 +430,12 @@ module.exports = class RebillCreatorHelper {
 		return product_schedules;
 	}
 
-	async calculateCycle(session, bill_at) {
+	async calculateCycle(session, bill_at, day) {
 		const rebills = await sessionController.listRebills(session);
 		let cycle = 0;
+		if (day === -1) {
+			return cycle;
+		}
 
 		if (rebills) {
 			cycle = rebills.filter(r => moment(r.bill_at).isBefore(bill_at)).length;
