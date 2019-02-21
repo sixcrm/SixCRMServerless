@@ -97,7 +97,7 @@ module.exports = class RebillCreatorHelper {
 		return rebillController.create({entity: prototype_rebill});
 	}
 
-	createRebillPrototype({session, transaction_products = [], bill_at = timestamp.getISO8601(), cycle = 0, amount = 0.00, product_schedules = null, merchant_provider = null, merchant_provider_selections = null}){
+	createRebillPrototype({session, transaction_products = [], bill_at = timestamp.getISO8601(), cycle = 0, amount = 0.00, product_schedules = null, merchant_provider = null, merchant_provider_selections = null, processing = null}){
 		const rebill_prototype = {
 			account: session.account,
 			parentsession: session.id,
@@ -117,6 +117,10 @@ module.exports = class RebillCreatorHelper {
 
 		if (!_.isNull(product_schedules)) {
 			rebill_prototype.product_schedules = product_schedules;
+		}
+
+		if (!_.isNull(processing)) {
+			rebill_prototype.processing = processing;
 		}
 
 		return rebill_prototype;
