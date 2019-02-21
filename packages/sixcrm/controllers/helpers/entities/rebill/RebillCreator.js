@@ -398,7 +398,7 @@ module.exports = class RebillCreatorHelper {
 			cycle
 		});
 
-		if (bill_day == 0) {
+		if (bill_day <= 0) {
 			rebill_prototype.processing = true;
 		}
 
