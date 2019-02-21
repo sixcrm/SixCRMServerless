@@ -63,6 +63,10 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: new GraphQLList(productType.graphObj),
 			description: 'Products associated with email template',
 			resolve: async ({ products: productIds }) => {
+				if (!productIds) {
+					return [];
+				}
+
 				const productSetupService = getProductSetupService();
 				return (await productSetupService.getProductsByIds(productIds)).map(product =>
 					LegacyProduct.hybridFromProduct(product)
