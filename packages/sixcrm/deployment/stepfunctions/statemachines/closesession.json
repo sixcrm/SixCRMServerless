@@ -27,11 +27,11 @@
           "Next": "Clean-up Session"
         }
       ],
-      "Default": "Wait 2 Hours"
+      "Default": "Wait for timeout"
     },
-    "Wait 2 Hours": {
+    "Wait for timeout": {
       "Type": "Wait",
-      "Seconds": 7200,
+      "Seconds": 1800,
       "Next": "Close Session"
     },
     "Close Session": {

@@ -41,6 +41,7 @@
 			"session/*",
 			"shippingreceipt/*",
 			"smtpprovider/*",
+			"smsprovider/*",
 			"transaction/*",
 			"notification/*",
 			"notificationread/*",

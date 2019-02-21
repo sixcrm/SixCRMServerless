@@ -1,3 +1,4 @@
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 let SMTPProviderInputType = require('./smtpprovider/SMTPProviderInputType');
 let SMTPProviderType = require('./smtpprovider/SMTPProviderType');
@@ -541,7 +542,19 @@ module.exports.graphObj = new GraphQLObjectType({
 					type: new GraphQLNonNull(GraphQLString)
 				}
 			},
-			resolve: (value, { id }) => getProductSetupService().deleteProduct(id)
+			resolve: async (value, { id }) => {
+				const canDeleteErrors = await productType.canDelete(id);
+				if (canDeleteErrors.length) {
+					throw eu.getError(
+						'forbidden',
+						'The product entity that you are attempting to delete is currently associated with other entities.  Please delete the entity associations before deleting this product.',
+						{
+							associated_entites: JSON.stringify(canDeleteErrors)
+						}
+					);
+				}
+				return getProductSetupService().deleteProduct(id);
+			}
 		},
 		createaccesskey: {
 			type: accessKeyType.graphObj,

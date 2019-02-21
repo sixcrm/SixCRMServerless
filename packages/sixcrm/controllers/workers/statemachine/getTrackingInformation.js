@@ -6,6 +6,8 @@ const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').defa
 
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 const ShippoTracker = require('../../../lib/controllers/vendors/ShippoTracker').default;
+const RebillController = require('../../entities/Rebill');
+const TrialConfirmationHelper = require('../../../lib/controllers/helpers/entities/trialconfirmation/TrialConfirmation').default;
 
 module.exports = class GetTrackingInformationController extends stepFunctionWorkerController {
 
@@ -68,6 +70,19 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 	async sendShipmentConfirmedNotification({shipping_receipt, tracking}) {
 
 		if(_.includes(['DELIVERED','TRANSIT'], tracking.status)) {
+
+			if (!_.has(shipping_receipt, 'rebill')) {
+
+				const rebillController = new RebillController();
+				const rebill = rebillController.get(rebill);
+				if (rebill) {
+
+					const trialConfirmationHelper = new TrialConfirmationHelper();
+					await trialConfirmationHelper.confirmTrialDelivery(rebill.parentsession);
+
+				}
+
+			}
 
 			if(!_.has(shipping_receipt, 'history') || !arrayutilities.nonEmpty(shipping_receipt.history)) {
 

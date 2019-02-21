@@ -399,3 +399,11 @@ functions:
       - http:
           path: confirm/{code}
           method: get
+
+  retrysubscriptionconfirmation:
+    handler: handlers/endpoints/handlers.retrysubscriptionconfirmation
+    warmup: true
+    events:
+      - schedule:
+          rate: rate(24 hours)
+          enabled: true

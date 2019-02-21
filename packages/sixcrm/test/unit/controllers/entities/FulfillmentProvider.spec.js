@@ -47,8 +47,8 @@ describe('controllers/FulfillmentProvider.js', () => {
 			mockery.registerMock('@6crm/sixcrm-product-setup', {
 				getProductSetupService() {
 					return {
-						findProducts({ fulfillment_provider }) {
-							expect(fulfillment_provider).to.equal(a_fulfillment_provider_id);
+						findProducts({ fulfillment_provider_id }) {
+							expect(fulfillment_provider_id).to.equal(a_fulfillment_provider_id);
 							return Promise.resolve([product]);
 						}
 					};
@@ -84,8 +84,8 @@ describe('controllers/FulfillmentProvider.js', () => {
 			mockery.registerMock('@6crm/sixcrm-product-setup', {
 				getProductSetupService() {
 					return {
-						findProducts({ fulfillment_provider }) {
-							expect(fulfillment_provider).to.equal(a_fulfillment_provider_id);
+						findProducts({ fulfillment_provider_id }) {
+							expect(fulfillment_provider_id).to.equal(a_fulfillment_provider_id);
 							return Promise.resolve([product]);
 						}
 					};

@@ -97,7 +97,7 @@ module.exports = class RebillCreatorHelper {
 		return rebillController.create({entity: prototype_rebill});
 	}
 
-	createRebillPrototype({session, transaction_products = [], bill_at = timestamp.getISO8601(), cycle = 0, amount = 0.00, product_schedules = null, merchant_provider = null, merchant_provider_selections = null}){
+	createRebillPrototype({session, transaction_products = [], bill_at = timestamp.getISO8601(), cycle = 0, amount = 0.00, product_schedules = null, merchant_provider = null, merchant_provider_selections = null, processing = null}){
 		const rebill_prototype = {
 			account: session.account,
 			parentsession: session.id,
@@ -117,6 +117,10 @@ module.exports = class RebillCreatorHelper {
 
 		if (!_.isNull(product_schedules)) {
 			rebill_prototype.product_schedules = product_schedules;
+		}
+
+		if (!_.isNull(processing)) {
+			rebill_prototype.processing = processing;
 		}
 
 		return rebill_prototype;
@@ -385,7 +389,7 @@ module.exports = class RebillCreatorHelper {
 		const transaction_products = this.getTransactionProducts({session, bill_day, normalized_product_schedules, normalized_products});
 		const amount = this.calculateAmount(transaction_products);
 		const bill_at = this.calculateBillAt(session, bill_day);
-		const cycle = await this.calculateCycle(session, bill_at);
+		const cycle = await this.calculateCycle(session, bill_at, day);
 
 		const rebill_prototype = this.createRebillPrototype({
 			session,
@@ -398,7 +402,7 @@ module.exports = class RebillCreatorHelper {
 			cycle
 		});
 
-		if (bill_day == 0) {
+		if (bill_day <= 0) {
 			rebill_prototype.processing = true;
 		}
 
@@ -426,9 +430,12 @@ module.exports = class RebillCreatorHelper {
 		return product_schedules;
 	}
 
-	async calculateCycle(session, bill_at) {
+	async calculateCycle(session, bill_at, day) {
 		const rebills = await sessionController.listRebills(session);
 		let cycle = 0;
+		if (day === -1) {
+			return cycle;
+		}
 
 		if (rebills) {
 			cycle = rebills.filter(r => moment(r.bill_at).isBefore(bill_at)).length;
