@@ -37,8 +37,8 @@ export default class ProductSetupService {
 	}
 
 	@LogMethod()
-	getAllProducts(): Promise<Product[]> {
-		return this.productRepository.find(this.baseFindConditions);
+	getAllProducts(limit?: number): Promise<Product[]> {
+		return this.productRepository.find({...this.baseFindConditions, take: limit});
 	}
 
 	@LogMethod()

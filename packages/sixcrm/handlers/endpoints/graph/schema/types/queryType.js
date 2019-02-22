@@ -1130,14 +1130,22 @@ const fields = Object.assign({}, {
 				type: entitySearchInputType.graphObj
 			}
 		},
-		resolve: async () => {
+		resolve: async (root, params) => {
+			const limit = params && params.pagination && params.pagination.limit;
+
 			const productSetupService = getProductSetupService();
-			const products = (await productSetupService.getAllProducts()).map(product =>
+			const products = (await productSetupService.getAllProducts(limit)).map(product =>
 				LegacyProduct.hybridFromProduct(product)
 			);
 
 			return {
-				products
+				products,
+				pagination: {
+					count: products.length,
+					end_cursor: '',
+					has_next_page: 'false',
+					last_evaluated: ''
+				}
 			};
 		}
 	},

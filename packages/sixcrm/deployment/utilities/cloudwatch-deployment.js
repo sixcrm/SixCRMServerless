@@ -17,7 +17,7 @@ module.exports = class CloudwatchDeployment extends AWSDeploymentUtilities{
 		this.cloudwatchprovider = new CloudwatchProvider();
 		this.lambdaprovider = new LambdaProvider();
 
-		this.logger_lambda_name = 'ElasticSearchStream';
+		this.logger_lambda_name = 'logger';
 
 	}
 
@@ -69,6 +69,13 @@ module.exports = class CloudwatchDeployment extends AWSDeploymentUtilities{
 	}
 
 	async deploySubscriptionFilter(lambda_name, subscription_filter_template) {
+
+		if (lambda_name === this.logger_lambda_name) {
+
+			du.info('Skipping logger to avoid infinite recursion.');
+			return;
+
+		}
 
 		let parameters = this.parseSubscriptionFilterTemplate(lambda_name, subscription_filter_template);
 
