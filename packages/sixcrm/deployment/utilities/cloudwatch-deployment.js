@@ -17,7 +17,7 @@ module.exports = class CloudwatchDeployment extends AWSDeploymentUtilities{
 		this.cloudwatchprovider = new CloudwatchProvider();
 		this.lambdaprovider = new LambdaProvider();
 
-		this.logger_lambda_name = 'ElasticSearchStream';
+		this.logger_lambda_name = 'logger';
 
 	}
 
