@@ -1137,7 +1137,13 @@ const fields = Object.assign({}, {
 			);
 
 			return {
-				products
+				products,
+				pagination: {
+					count: products.length,
+					end_cursor: '',
+					has_next_page: 'false',
+					last_evaluated: ''
+				}
 			};
 		}
 	},
