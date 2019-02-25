@@ -1,6 +1,5 @@
-
-const _ = require('lodash');
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -17,26 +16,20 @@ module.exports = class FulfillmentProviderController extends entityController {
 		];
 	}
 
-	associatedEntitiesCheck({id}){
+	async associatedEntitiesCheck({id}){
 		let return_array = [];
 
-		let data_acquisition_promises = [
-			this.executeAssociatedEntityFunction('ProductController', 'listByFulfillmentProvider', {fulfillment_provider:id})
-		];
+		const products = (await getProductSetupService().findProducts({
+			fulfillment_provider_id: id
+		})).map(product => LegacyProduct.hybridFromProduct(product));
 
-		return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
+		if(arrayutilities.nonEmpty(products)) {
+			arrayutilities.map(products, (product) => {
+				return_array.push(this.createAssociatedEntitiesObject({name:'Product', object: product}));
+			});
+		}
 
-			let products = data_acquisition_promises[0];
-
-			if(_.has(products, 'products') && arrayutilities.nonEmpty(products.products)){
-				arrayutilities.map(products.products, (product) => {
-					return_array.push(this.createAssociatedEntitiesObject({name:'Product', object: product}));
-				});
-			}
-
-			return return_array;
-
-		});
+		return return_array;
 
 	}
 

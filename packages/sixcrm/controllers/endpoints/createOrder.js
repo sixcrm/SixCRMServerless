@@ -21,7 +21,6 @@ const OrderHelperController = global.SixCRM.routes.include('helpers', 'order/Ord
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
-
 module.exports = class CreateOrderController extends transactionEndpointController {
 
 	constructor() {
@@ -97,11 +96,10 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 	}
 
-	execute(event) {
-		return this.preamble(event)
-			.then(() => this.validateParameters(this.parameters.get('event')))
-			.then(() => this.createOrder(this.parameters.get('event')));
-
+	async execute(event, context) {
+		await this.preamble(event, context);
+		await this.validateParameters(this.parameters.get('event'));
+		return this.createOrder(this.parameters.get('event'));
 	}
 
 	async validateParameters(event) {
@@ -488,5 +486,4 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		}
 
 	}
-
 }

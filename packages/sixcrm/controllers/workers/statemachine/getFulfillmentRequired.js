@@ -17,13 +17,14 @@ module.exports = class GetFulfillmentRequiredController extends stepFunctionWork
 	async execute(event) {
 		this.validateEvent(event);
 
-		let rebill = await this.getRebill(event.guid);
+		const rebill = await this.getRebill(event.guid);
+		await this.createProductSetupService(rebill.account);
 
-		let transactions = await this.getRebillTransactions(rebill);
+		const transactions = await this.getRebillTransactions(rebill);
 
-		let products = await this.getTransactionProducts(transactions);
+		const products = await this.getTransactionProducts(transactions);
 
-		let noship = this.areProductsNoShip(products);
+		const noship = this.areProductsNoShip(products);
 
 		return this.respond(noship);
 

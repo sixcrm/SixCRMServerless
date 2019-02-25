@@ -8,23 +8,50 @@ const auroraContext = require('@6crm/sixcrmcore/lib/util/analytics/aurora-contex
 module.exports = class AuroraSchemaDeployment {
 
 	async deploy(options = {}) {
-		return auroraContext.withConnection(async (connection) => {
 
-			const migrations = await this._getVersionDirectories(connection, options);
-			du.debug('AuroraSchemaDeployment.deploy(): migrations', migrations);
-			await BBPromise.each(migrations, m => this._deployMigration(m, connection));
-			return 'Aurora deploy complete';
+		const schemas = this._getSchemas();
 
-		});
+		return auroraContext.withConnection(async connection =>
+			BBPromise.each(schemas, schema => this._deploySchema(schema, connection, options)));
 
 	}
 
-	async destroy() {
-		return auroraContext.withConnection(async (connection) => {
+	async _getSchemas() {
 
-			return this._executeQuery(connection, 'DROP SCHEMA IF EXISTS analytics CASCADE');
+		return fileutilities.getDirectories(global.SixCRM.routes.path('deployment', 'aurora/migrations'));
 
-		});
+	}
+
+	async _deploySchema(schema, connection, options) {
+
+		du.info('Deploying schema ' + schema);
+
+		this._executeQuery(connection, `CREATE SCHEMA IF NOT EXISTS ${schema}`);
+		this._executeQuery(connection, `CREATE TABLE IF NOT EXISTS ${schema}.m_release (
+			id INT NOT NULL PRIMARY KEY,
+			created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+		)`);
+
+		let currentRevision;
+
+		try {
+
+			const currentRevisionRaw = await this._executeQuery(connection, `SELECT id FROM ${schema}.m_release ORDER BY id DESC LIMIT 1`);
+			currentRevision = Number(currentRevisionRaw.rows.length ? currentRevisionRaw.rows[0].id : 0);
+			du.debug('AuroraSchemaDeployment._deploySchema(): current revision', currentRevision);
+
+		} catch (ex) {
+
+			du.error('Could not resolve the current aurora schema version', ex);
+			throw ex;
+
+		}
+
+		const fromRevision = options.fromRevision || currentRevision || 0;
+
+		const migrations = await this._getNewMigrations(schema, fromRevision);
+
+		return BBPromise.each(migrations, migration => this._deployMigration(migration, schema, connection));
 
 	}
 
@@ -32,50 +59,26 @@ module.exports = class AuroraSchemaDeployment {
 		We want all revisions from the current version from the database up until the configured version
 		in the configuration, and then run them sequentially
 	*/
-	async _getVersionDirectories(connection, options) {
+	async _getNewMigrations(schema, fromRevision) {
+
 		const release = global.SixCRM.configuration.site_config.aurora.release;
 
-		const results = await fileutilities.getDirectories(global.SixCRM.routes.path('deployment', 'aurora/migrations'));
-
-		du.debug('AuroraSchemaDeployment._getVersionDirectories(): getDirectoryFiles', results);
+		const results = await fileutilities.getDirectories(path.join(global.SixCRM.routes.path('deployment', 'aurora/migrations'), schema));
 
 		const migrations = results.map((r) => {
 			return {
 				version: Number(r),
-				path: path.join(global.SixCRM.routes.path('deployment', 'aurora/migrations'), r)
+				path: path.join(global.SixCRM.routes.path('deployment', 'aurora/migrations'), schema, r)
 			};
 		});
 
-		let currentRevision = null;
-
-		try {
-
-			const currentRevisionRaw = await this._executeQuery(connection, 'SELECT id FROM analytics.m_release ORDER BY id DESC LIMIT 1');
-			currentRevision = Number(currentRevisionRaw.rows.length ? currentRevisionRaw.rows[0].id : 0);
-
-		} catch (ex) {
-
-			du.warning('Could not resolve the current aurora schema version', ex);
-
-			currentRevision = 0;
-
-		}
-
-		du.debug('AuroraSchemaDeployment._getVersionDirectories(): current revision', currentRevision);
-
-		return _.sortBy(_.filter(migrations, (f) => {
-
-			const revision = (options.fromRevision ? options.fromRevision : currentRevision) || 0;
-
-			return f.version <= Number(release) && f.version > revision;
-
-		}), 'version');
+		return _.sortBy(_.filter(migrations, (f) => f.version <= Number(release) && f.version > fromRevision), 'version');
 
 	}
 
-	async _deployMigration(migration, connection) {
+	async _deployMigration(migration, schema, connection) {
 
-		du.debug('AuroraSchemaDeployment._deployMigration()', migration);
+		du.info('Deploying migration ' + migration.path);
 
 		const body = await fileutilities.getFileContents(path.join(migration.path, 'manifest.json'));
 		const manifests = JSON.parse(body);
@@ -87,7 +90,7 @@ module.exports = class AuroraSchemaDeployment {
 
 		});
 
-		await this._executeQuery(connection, 'INSERT INTO analytics.m_release (id) VALUES($1) ON CONFLICT (id) DO UPDATE SET id = $2', [migration.version, migration.version]);
+		await this._executeQuery(connection, `INSERT INTO ${schema}.m_release (id) VALUES($1) ON CONFLICT (id) DO UPDATE SET id = $2`, [migration.version, migration.version]);
 
 	}
 

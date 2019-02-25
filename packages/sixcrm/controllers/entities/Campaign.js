@@ -180,20 +180,6 @@ module.exports = class CampaignController extends entityController {
 
 	}
 
-	getProducts(campaign){
-		if(_.has(campaign, "products") && arrayutilities.nonEmpty(campaign.products)){
-
-			return this.executeAssociatedEntityFunction('ProductController', 'listBy', {list_array: campaign.products})
-				.then(products => this.getResult(products, 'products'));
-
-		}else{
-
-			return Promise.resolve(null);
-
-		}
-
-	}
-
 	getProductSchedules(campaign){
 		if(_.has(campaign, "productschedules") && arrayutilities.nonEmpty(campaign.productschedules)){
 

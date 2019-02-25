@@ -174,6 +174,12 @@ describe('controllers/workers/statemachine/notifyFulfillmentProviders.js', async
         }
       });
 
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
+
       const NotifyFulfillmentProvidersController = global.SixCRM.routes.include('workers', 'statemachine/notifyFulfillmentProviders.js');
       let notifyFulfillmentProvidersController = new NotifyFulfillmentProvidersController();
 
@@ -224,6 +230,12 @@ describe('controllers/workers/statemachine/notifyFulfillmentProviders.js', async
           });
         }
       });
+
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
 
       const NotifyFulfillmentProvidersController = global.SixCRM.routes.include('workers', 'statemachine/notifyFulfillmentProviders.js');
       let notifyFulfillmentProvidersController = new NotifyFulfillmentProvidersController();
@@ -279,6 +291,12 @@ describe('controllers/workers/statemachine/notifyFulfillmentProviders.js', async
           });
         }
       });
+
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
 
       const NotifyFulfillmentProvidersController = global.SixCRM.routes.include('workers', 'statemachine/notifyFulfillmentProviders.js');
       let notifyFulfillmentProvidersController = new NotifyFulfillmentProvidersController();
@@ -420,28 +438,6 @@ describe('controllers/workers/statemachine/notifyFulfillmentProviders.js', async
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
-        constructor(){}
-        get({id}){
-          expect(id).to.be.a('string');
-          return Promise.resolve(product);
-        }
-        getListByAccount({ids}){
-          expect(ids).to.be.a('array');
-          return Promise.resolve({products: [product]})
-        }
-        getResult(result, field){
-          if(_.isUndefined(field)){
-          	field = this.descriptive_name+'s';
-          }
-          if(_.has(result, field)){
-          	return Promise.resolve(result[field]);
-          }else{
-          	return Promise.resolve(null);
-          }
-        }
-      });
-
       mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
         constructor(){}
         get({id}){
@@ -468,6 +464,12 @@ describe('controllers/workers/statemachine/notifyFulfillmentProviders.js', async
           return Promise.resolve(customer);
         }
       });
+
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
 
       const NotifyFulfillmentProvidersController = global.SixCRM.routes.include('workers', 'statemachine/notifyFulfillmentProviders.js');
       let notifyFulfillmentProvidersController = new NotifyFulfillmentProvidersController();

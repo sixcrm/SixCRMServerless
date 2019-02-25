@@ -62,10 +62,9 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 	}
 
-	execute(event) {
-		return this.preamble(event)
-			.then(() => this.createLead(this.parameters.get('event')));
-
+	async execute(event, context) {
+		await this.preamble(event, context);
+		return this.createLead(this.parameters.get('event'));
 	}
 
 	async createLead(event) {

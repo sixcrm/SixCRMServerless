@@ -153,19 +153,17 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
 			let augmented_transaction_products = getValidAugmentedTransactionProducts();
 			let products = getValidProducts();
 
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
-				getListByAccount() {
-					return Promise.resolve({products: products});
-				}
-				getResult(result, field) {
-					if(_.isUndefined(field)){
-						field = this.descriptive_name+'s';
-					}
-
-					if(_.has(result, field)){
-						return Promise.resolve(result[field]);
-					}else{
-						return Promise.resolve(null);
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductSetupService() {
+					return {
+						getProductsByIds() {
+							return Promise.resolve(products);
+						}
+					};
+				},
+				LegacyProduct: class LegacyProduct {
+					static hybridFromProduct(product) {
+						return product;
 					}
 				}
 			});

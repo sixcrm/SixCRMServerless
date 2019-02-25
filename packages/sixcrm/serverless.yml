@@ -392,6 +392,22 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
 
+  confirmsubscription:
+    handler: handlers/endpoints/handlers.confirmsubscription
+    warmup: true
+    events:
+      - http:
+          path: confirm/{code}
+          method: get
+
+  retrysubscriptionconfirmation:
+    handler: handlers/endpoints/handlers.retrysubscriptionconfirmation
+    warmup: true
+    events:
+      - schedule:
+          rate: rate(24 hours)
+          enabled: true
+
 ########################
 # Utility
 ########################

@@ -4,6 +4,7 @@ var random = require('@6crm/sixcrmcore/lib/util/random').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -56,9 +57,9 @@ class TransactionController extends entityController {
 
 	}
 
-	getProduct(product){
-		return this.executeAssociatedEntityFunction('ProductController', 'get', {id: this.getID(product)});
-
+	async getProduct(product){
+		const product_result = await getProductSetupService().getProduct(this.getID(product));
+		return LegacyProduct.hybridFromProduct(product_result);
 	}
 
 	listByState({state, state_changed_after, pagination}){
@@ -118,7 +119,10 @@ class TransactionController extends entityController {
 
 		if(_.has(transaction_product, "product")){
 
-			promises.push(this.executeAssociatedEntityFunction('ProductController', 'get', {id: transaction_product.product}));
+			const promise = getProductSetupService()
+				.getProduct(this.getID(transaction_product.product))
+				.then(product => LegacyProduct.hybridFromProduct(product));
+			promises.push(promise);
 
 		}else{
 

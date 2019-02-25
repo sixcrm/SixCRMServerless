@@ -44,10 +44,19 @@ describe('controllers/FulfillmentProvider.js', () => {
 
 			let product = getValidProduct();
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Product.js'), class {
-				listByFulfillmentProvider({fulfillment_provider}) {
-					expect(fulfillment_provider).to.equal(a_fulfillment_provider_id);
-					return Promise.resolve({products: [product]});
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductSetupService() {
+					return {
+						findProducts({ fulfillment_provider_id }) {
+							expect(fulfillment_provider_id).to.equal(a_fulfillment_provider_id);
+							return Promise.resolve([product]);
+						}
+					};
+				},
+				LegacyProduct: class LegacyProduct {
+					static hybridFromProduct(product) {
+						return product;
+					}
 				}
 			});
 
@@ -72,10 +81,19 @@ describe('controllers/FulfillmentProvider.js', () => {
 
 			delete product.id;
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Product.js'), class {
-				listByFulfillmentProvider({fulfillment_provider}) {
-					expect(fulfillment_provider).to.equal(a_fulfillment_provider_id);
-					return Promise.resolve({products: [product]});
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductSetupService() {
+					return {
+						findProducts({ fulfillment_provider_id }) {
+							expect(fulfillment_provider_id).to.equal(a_fulfillment_provider_id);
+							return Promise.resolve([product]);
+						}
+					};
+				},
+				LegacyProduct: class LegacyProduct {
+					static hybridFromProduct(product) {
+						return product;
+					}
 				}
 			});
 

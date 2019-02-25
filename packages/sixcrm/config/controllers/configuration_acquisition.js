@@ -71,7 +71,7 @@ module.exports.getCloudsearchSearchEndpoint = () => {
 
 }
 
-module.exports.getAuroraClusterEndpoint = (force) => {
+module.exports.getAuroraClusterEndpoint = (config, force) => {
 
 	require('@6crm/sixcrmcore');
 

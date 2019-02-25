@@ -3,8 +3,8 @@ const _ = require('lodash');
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 const FulfillmentProviderController = global.SixCRM.routes.include('entities', 'FulfillmentProvider.js');
-const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const Parameters  = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
@@ -16,7 +16,6 @@ module.exports = class ShipmentUtilities {
 		this.fulfillmentProviderController = new FulfillmentProviderController();
 		this.fulfillmentProviderController.sanitize(false);
 
-		this.productController = new ProductController();
 		this.rebillController = new RebillController();
 		this.sessionController = new SessionController();
 
@@ -127,23 +126,18 @@ module.exports = class ShipmentUtilities {
 
 	}
 
-	hydrateProducts(){
+	async hydrateProducts(){
 		let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
 
 		let product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => augmented_transaction_product.product.id);
 
 		product_ids = arrayutilities.unique(product_ids);
 
-		return this.productController.getListByAccount({ids: product_ids})
-			.then(results => this.productController.getResult(results, 'products'))
-			.then(products => {
-
-				this.parameters.set('products', products);
-
-				return true;
-
-			});
-
+		const products = (await getProductSetupService().getProductsByIds(
+			product_ids
+		)).map(product => LegacyProduct.hybridFromProduct(product));
+		this.parameters.set('products', products);
+		return true;
 	}
 
 	acquireCustomer(){

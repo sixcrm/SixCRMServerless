@@ -3,9 +3,9 @@ const _ = require('lodash');
 
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
-const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
 module.exports = class InfoController extends transactionEndpointController{
@@ -33,18 +33,17 @@ module.exports = class InfoController extends transactionEndpointController{
 			'product_schedules':global.SixCRM.routes.path('model', 'entities/components/productschedules.json')
 		};
 
-		this.productController = new ProductController();
 		this.productScheduleController = new ProductScheduleController();
 
 		this.initialize();
 
 	}
 
-	execute(event){
-		return this.preamble(event)
-			.then(() => this.acquireInfoRequestProperties())
+	async execute(event, context) {
+		await this.preamble(event, context)
+		await this.acquireInfoRequestProperties();
 		//Note: filtering or validation here?
-			.then(() => this.respond());
+		return this.respond();
 
 	}
 
@@ -60,14 +59,15 @@ module.exports = class InfoController extends transactionEndpointController{
 
 	}
 
-	acquireProducts(){
+	async acquireProducts(){
 		let event = this.parameters.get('event');
 
 		if(!_.has(event, 'products') || !arrayutilities.nonEmpty(event.products)){ return null; }
 
-		return this.productController.getListByAccount({ids: event.products}).then(result => {
-			return this.parameters.set('products', result.products);
-		});
+		const products = (await getProductSetupService().getProductsByIds(
+			event.products
+		)).map(product => LegacyProduct.hybridFromProduct(product));
+		return this.parameters.set('products', products);
 
 	}
 

@@ -353,6 +353,7 @@ describe('acquireToken', () => {
 		it('successfully executes', () => {
 
 			let event = getValidEvent();
+			let context = {};
 			let campaign = getValidCampaign();
 			let jwt = getValidJWT();
 			let almost_updated_event = objectutilities.clone(getValidEventBody());
@@ -444,6 +445,12 @@ describe('acquireToken', () => {
 				}
 			});
 
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
+
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 			let AcquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
@@ -451,7 +458,7 @@ describe('acquireToken', () => {
 
 			acquireTokenController.createEventObject = () => { return getValidEventPrototype(); }
 
-			return acquireTokenController.execute(event).then(result => {
+			return acquireTokenController.execute(event, {}).then(result => {
 				expect(global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'definitions/jwt.json'))).to.equal(true);
 			});
 

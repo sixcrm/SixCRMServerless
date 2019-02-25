@@ -1,0 +1,9 @@
+version: '3'
+services:
+  node:
+    image: node:8.10
+    network_mode: host
+  aurora:
+    image: circleci/postgres:9.6
+    ports:
+      - 5440:5432
