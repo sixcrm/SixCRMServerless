@@ -83,7 +83,7 @@ module.exports.graphObj = new GraphQLObjectType({
 			}
 		},
 		image_urls: {
-			type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
+			type: new GraphQLList(GraphQLString),
 			description: 'The product images'
 		},
 		created_at: {
