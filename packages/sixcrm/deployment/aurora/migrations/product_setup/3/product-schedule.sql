@@ -1,0 +1,27 @@
+CREATE TABLE product_schedule (
+	id UUID NOT NULL PRIMARY KEY,
+	account_id UUID NOT NULL,
+	name VARCHAR(55) NOT NULL,
+	created_at TIMESTAMP NOT NULL,
+	updated_at TIMESTAMP NOT NULL
+);
+
+CREATE TABLE cycle (
+	id UUID NOT NULL PRIMARY KEY,
+	product_schedule_id NOT NULL REFERENCES product_schedule(id),
+	name VARCHAR(55) NOT NULL,
+	length INT NOT NULL CHECK (length IS NULL OR length > 0),
+	is_monthly BOOLEAN NOT NULL,
+	position INT NOT NULL CHECK (position > 0),
+	next_position INT CHECK (next_position IS NULL OR next_position > 0),
+	price NUMERIC(19,2) NOT NULL CHECK (price >= 0),
+	shipping_price NUMERIC(19,2) CHECK (shipping_price IS NULL OR shipping_price >= 0)
+);
+
+CREATE TABLE cycle_products (
+	cycle_id UUID NOT NULL REFERENCES cycle(id),
+	product_id UUID NOT NULL REFERENCES product(id),
+	PRIMARY KEY (cycle_id, product_id),
+	quantity INT NOT NULL CHECK (quantity > 0),
+	is_shipping BOOLEAN NOT NULL
+);
