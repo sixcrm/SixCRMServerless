@@ -3,13 +3,17 @@ CREATE TABLE product_schedule (
 	account_id UUID NOT NULL,
 	name VARCHAR(55) NOT NULL,
 	created_at TIMESTAMP NOT NULL,
-	updated_at TIMESTAMP NOT NULL
+	updated_at TIMESTAMP NOT NULL,
+	merchant_provider_group_id UUID NOT NULL,
+	requires_confirmation BOOLEAN NOT NULL
 );
 
 CREATE TABLE cycle (
 	id UUID NOT NULL PRIMARY KEY,
 	product_schedule_id NOT NULL REFERENCES product_schedule(id),
 	name VARCHAR(55) NOT NULL,
+	created_at TIMESTAMP NOT NULL,
+	updated_at TIMESTAMP NOT NULL,
 	length INT NOT NULL CHECK (length IS NULL OR length > 0),
 	is_monthly BOOLEAN NOT NULL,
 	position INT NOT NULL CHECK (position > 0),
@@ -22,6 +26,9 @@ CREATE TABLE cycle_products (
 	cycle_id UUID NOT NULL REFERENCES cycle(id),
 	product_id UUID NOT NULL REFERENCES product(id),
 	PRIMARY KEY (cycle_id, product_id),
+	created_at TIMESTAMP NOT NULL,
+	updated_at TIMESTAMP NOT NULL,
 	quantity INT NOT NULL CHECK (quantity > 0),
-	is_shipping BOOLEAN NOT NULL
+	is_shipping BOOLEAN NOT NULL,
+	position INT NOT NULL CHECK (position > 0)
 );
