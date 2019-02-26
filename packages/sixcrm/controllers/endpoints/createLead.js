@@ -30,7 +30,6 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 			'affiliate/create',
 			'notification/create',
 			'notificationsetting/read',
-			'tracker/read',
 			'emailtemplate/read',
 			'smtpprovider/read'
 		];

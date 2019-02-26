@@ -56,8 +56,7 @@ module.exports = class RestoreAccountController extends transactionEndpointContr
 			'rebill/update',
 			'product/read',
 			'affiliate/read',
-			'notification/create',
-			'tracker/read'
+			'notification/create'
 		];
 
 		this.parameter_definitions = {
