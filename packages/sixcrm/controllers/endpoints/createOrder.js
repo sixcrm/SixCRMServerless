@@ -45,8 +45,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			'rebill/update',
 			'product/read',
 			'affiliate/read',
-			'notification/create',
-			'tracker/read'
+			'notification/create'
 		];
 
 		this.parameter_definitions = {

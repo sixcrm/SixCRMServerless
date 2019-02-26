@@ -30,8 +30,7 @@ module.exports = class CheckoutController extends transactionEndpointController{
 			'rebill/update',
 			'product/read',
 			'affiliate/read',
-			'notification/create',
-			'tracker/read'
+			'notification/create'
 		];
 
 		this.parameter_definitions = {
