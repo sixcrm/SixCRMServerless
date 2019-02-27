@@ -32,8 +32,7 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 			'affiliate/read',
 			'transaction/read',
 			'rebill/read',
-			'notifications/create',
-			'tracker/read'
+			'notifications/create'
 		];
 
 		this.parameter_definitions = {
