@@ -1,6 +1,6 @@
 
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 const forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 

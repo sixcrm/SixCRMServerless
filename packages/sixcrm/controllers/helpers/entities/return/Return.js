@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const random = require('@6crm/sixcrmcore/util/random').default;
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const random = require('@6crm/sixcrmcore/lib/util/random').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 
 module.exports = class ReturnHelper {
 

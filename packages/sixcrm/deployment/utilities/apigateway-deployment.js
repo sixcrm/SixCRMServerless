@@ -1,4 +1,4 @@
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const APIGatewayProvider = global.SixCRM.routes.include('controllers', 'providers/apigateway-provider.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 

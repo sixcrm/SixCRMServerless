@@ -1,10 +1,13 @@
 const _ = require('lodash');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
+const ShippoTracker = require('../../../lib/controllers/vendors/ShippoTracker').default;
+const RebillController = require('../../entities/Rebill');
+const TrialConfirmationHelper = require('../../../lib/controllers/helpers/entities/trialconfirmation/TrialConfirmation').default;
 
 module.exports = class GetTrackingInformationController extends stepFunctionWorkerController {
 
@@ -15,6 +18,7 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 	}
 
 	async execute(event) {
+
 		this.validateEvent(event);
 
 		let shipping_receipt = await this.getShippingReceipt(event.guid);
@@ -25,14 +29,62 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 
 		await this.sendShipmentConfirmedNotification(shipping_receipt);
 
-		return this.codifyTrackingInformation(tracking);
+		return tracking.status;
 
 	}
 
-	async sendShipmentConfirmedNotification({shipping_receipt, tracking}){
-		if(_.includes(['delivered','intransit'], tracking.status)){
+	async getTrackingInformation(shipping_receipt) {
 
-			if(!_.has(shipping_receipt, 'history') || !arrayutilities.nonEmpty(shipping_receipt.history)){
+		const shippoTracker = new ShippoTracker(global.SixCRM.configuration.site_config.shippo.apiKey);
+
+		const result = await shippoTracker.track(shipping_receipt.tracking.carrier, shipping_receipt.tracking.id);
+
+		if (!_.has(result, 'tracking_status.status') || !_.has(result, 'tracking_status.status_details')) {
+
+			throw eu.getError('server', 'Unexpected tracker response', result);
+
+		}
+
+		return {
+			status: result.tracking_status.status,
+			detail: result.tracking_status.status_details
+		};
+
+	}
+
+	async updateShippingReceiptWithTrackingInformation({shipping_receipt, tracking}) {
+
+		if(!_.has(this, 'shippingReceiptHelperController')) {
+			const ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
+			this.shippingReceiptHelperController = new ShippingReceiptHelperController();
+		}
+
+		du.info(tracking);
+
+		await this.shippingReceiptHelperController.updateShippingReceipt({shipping_receipt: shipping_receipt, detail: tracking.detail, status: tracking.status});
+
+		return true;
+
+	}
+
+	async sendShipmentConfirmedNotification({shipping_receipt, tracking}) {
+
+		if(_.includes(['DELIVERED','TRANSIT'], tracking.status)) {
+
+			if (!_.has(shipping_receipt, 'rebill')) {
+
+				const rebillController = new RebillController();
+				const rebill = rebillController.get(rebill);
+				if (rebill) {
+
+					const trialConfirmationHelper = new TrialConfirmationHelper();
+					await trialConfirmationHelper.confirmTrialDelivery(rebill.parentsession);
+
+				}
+
+			}
+
+			if(!_.has(shipping_receipt, 'history') || !arrayutilities.nonEmpty(shipping_receipt.history)) {
 
 				await this.pushEvent({
 					event_type: 'shipping_confirmation',
@@ -46,7 +98,7 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 			}
 
 			let previous_shipment_record = arrayutilities.find(shipping_receipt.history, history_element => {
-				return(_.includes(['delivered','intransit'], history_element.status));
+				return(_.includes(['DELIVERED','TRANSIT'], history_element.status));
 			});
 
 			if(_.isNull(previous_shipment_record) || _.isUndefined(previous_shipment_record)){
@@ -63,46 +115,6 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 			}
 
 		}
-
-	}
-
-	async getTrackingInformation(shipping_receipt){
-		const TrackerController = global.SixCRM.routes.include('providers', 'tracker/Tracker.js');
-		let trackerController = new TrackerController();
-
-		let result = await trackerController.info({
-			shipping_receipt: shipping_receipt
-		});
-
-		let vendor_response = result.getVendorResponse();
-
-		if(!_.has(vendor_response, 'detail')){
-			throw eu.getError('server', 'Expected tracker response to have property "detail".', vendor_response);
-		}
-
-		if(!_.has(vendor_response, 'status')){
-			throw eu.getError('server', 'Expected tracker response to have property "status".', vendor_response);
-		}
-
-		return vendor_response;
-
-	}
-
-	async updateShippingReceiptWithTrackingInformation({shipping_receipt, tracking}){
-		if(!_.has(this, 'shippingReceiptHelperController')){
-			const ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
-			this.shippingReceiptHelperController = new ShippingReceiptHelperController();
-		}
-
-		du.info(tracking);
-		await this.shippingReceiptHelperController.updateShippingReceipt({shipping_receipt: shipping_receipt, detail: tracking.detail, status: tracking.status});
-
-		return true;
-
-	}
-
-	codifyTrackingInformation(tracking){
-		return tracking.status.toUpperCase();
 
 	}
 

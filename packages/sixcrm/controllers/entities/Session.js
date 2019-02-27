@@ -2,12 +2,12 @@
 const _ = require('lodash');
 const moment = require("moment");
 
-var timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-var du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-var eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-var arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-var objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const random = require('@6crm/sixcrmcore/util/random').default;
+var timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
+var du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+var eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+var arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+var objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const random = require('@6crm/sixcrmcore/lib/util/random').default;
 const RebillHelper = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 let rebillHelper = new RebillHelper();
 

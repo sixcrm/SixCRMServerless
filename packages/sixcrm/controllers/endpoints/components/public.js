@@ -1,7 +1,7 @@
 
 let _ = require('lodash');
-let encodeutilities = require('@6crm/sixcrmcore/util/encode').default;
-let eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+let encodeutilities = require('@6crm/sixcrmcore/lib/util/encode').default;
+let eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const endpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/endpoint.js');
 
 module.exports = class PublicController extends endpointController {

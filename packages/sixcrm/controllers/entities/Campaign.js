@@ -1,9 +1,9 @@
 
 const _ = require('lodash');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const entityController = require('./Entity');
 const AccountController = require('./Account');
 
@@ -171,20 +171,6 @@ module.exports = class CampaignController extends entityController {
 
 			return this.executeAssociatedEntityFunction('EmailTemplateController', 'listBy', {list_array: campaign.emailtemplates})
 				.then(emailtemplates => this.getResult(emailtemplates, 'emailtemplates'));
-
-		}else{
-
-			return Promise.resolve(null);
-
-		}
-
-	}
-
-	getProducts(campaign){
-		if(_.has(campaign, "products") && arrayutilities.nonEmpty(campaign.products)){
-
-			return this.executeAssociatedEntityFunction('ProductController', 'listBy', {list_array: campaign.products})
-				.then(products => this.getResult(products, 'products'));
 
 		}else{
 

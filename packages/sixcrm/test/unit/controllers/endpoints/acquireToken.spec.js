@@ -6,10 +6,10 @@ let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 
 const expect = chai.expect;
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const randomutilities = require('@6crm/sixcrmcore/util/random').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
+const randomutilities = require('@6crm/sixcrmcore/lib/util/random').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
@@ -353,6 +353,7 @@ describe('acquireToken', () => {
 		it('successfully executes', () => {
 
 			let event = getValidEvent();
+			let context = {};
 			let campaign = getValidCampaign();
 			let jwt = getValidJWT();
 			let almost_updated_event = objectutilities.clone(getValidEventBody());
@@ -444,6 +445,12 @@ describe('acquireToken', () => {
 				}
 			});
 
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
+
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 			let AcquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
@@ -451,7 +458,7 @@ describe('acquireToken', () => {
 
 			acquireTokenController.createEventObject = () => { return getValidEventPrototype(); }
 
-			return acquireTokenController.execute(event).then(result => {
+			return acquireTokenController.execute(event, {}).then(result => {
 				expect(global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'definitions/jwt.json'))).to.equal(true);
 			});
 

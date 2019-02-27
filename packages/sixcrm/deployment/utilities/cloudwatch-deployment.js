@@ -1,11 +1,9 @@
 const BBPromise = require('bluebird');
-//const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-//const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const parserutilities = require('@6crm/sixcrmcore/util/parser-utilities').default;
-const random = require('@6crm/sixcrmcore/util/random').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const parserutilities = require('@6crm/sixcrmcore/lib/util/parser-utilities').default;
+const random = require('@6crm/sixcrmcore/lib/util/random').default;
 const CloudwatchProvider = global.SixCRM.routes.include('controllers', 'providers/cloudwatch-provider.js');
 const LambdaProvider = global.SixCRM.routes.include('controllers', 'providers/lambda-provider.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
@@ -71,28 +69,19 @@ module.exports = class CloudwatchDeployment extends AWSDeploymentUtilities{
 	}
 
 	async deploySubscriptionFilter(lambda_name, subscription_filter_template) {
-		if(lambda_name == this.logger_lambda_name){
-			du.warning('Can not log the errors of the logger (recursive.)');
+
+		if (lambda_name === this.logger_lambda_name) {
+
+			du.info('Skipping logger to avoid infinite recursion.');
 			return;
+
 		}
 
 		let parameters = this.parseSubscriptionFilterTemplate(lambda_name, subscription_filter_template);
 
 		du.info(parameters);
 
-		if (await this.subscriptionFilterExists(parameters.logGroupName, parameters.filterName)) {
-			du.info("Filter exists");
-			return;
-		}
-
 		return this.cloudwatchprovider.putSubscriptionFilter(parameters);
-
-	}
-
-	async subscriptionFilterExists(logGroupName, filterName) {
-
-		const filters = (await this.cloudwatchprovider.getSubscriptionFilters(logGroupName, filterName)).subscriptionFilters;
-		return filters.length > 0 && filters[0].filterName === filterName;
 
 	}
 

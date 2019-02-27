@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 module.exports = class IPCheck {
 	constructor(){}
 	checkIP(){
-		const HTTPProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
+		const HTTPProvider = require('@6crm/sixcrmcore/lib/providers/http-provider').default;
 		let httpprovider = new HTTPProvider();
 
 		const parameters = {

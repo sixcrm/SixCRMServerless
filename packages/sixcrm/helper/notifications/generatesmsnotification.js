@@ -1,9 +1,9 @@
 require('@6crm/sixcrmcore');
 
 const SmsNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/channels/sms.js');
-const PermissionUtilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+const PermissionUtilities = require('@6crm/sixcrmcore/lib/util/permission-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 PermissionUtilities.disableACLs();
 

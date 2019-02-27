@@ -2,11 +2,26 @@
 const _ = require('lodash');
 const graphql = require('graphql').graphql;
 
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const { createProductSetupService } = require('@6crm/sixcrm-product-setup');
 
 const userAuthenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/userauthenticated.js');
 const resolveController = global.SixCRM.routes.include('providers', 'Resolve.js');
-const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
+const auroraContext = require('@6crm/sixcrmcore/lib/util/analytics/aurora-context').default;
+
+const getEnvironmentAuroraHost = () => global.SixCRM.configuration.getEnvironmentConfig(`aurora_host`);
+const getAuroraConfig = async () => {
+	const {
+		host = await getEnvironmentAuroraHost(),
+		user: username,
+		password
+	} = global.SixCRM.configuration.site_config.aurora;
+	return {
+		host,
+		username,
+		password
+	};
+};
 
 module.exports = class graphController extends userAuthenticatedController {
 
@@ -20,11 +35,21 @@ module.exports = class graphController extends userAuthenticatedController {
 
 	}
 
-	preamble() {
+	// Pull accountId off of the event to workaround a race condition
+	// where global.account has not been defined or is wrong
+	async preamble({ pathParameters: { account: accountId }}, context) {
+		context.callbackWaitsForEmptyEventLoop = false;
 		global.SixCRM.setResource('auroraContext', auroraContext);
 
-		return auroraContext.init();
-
+		const auroraConfig = await getAuroraConfig();
+		const productSetupServiceOptions = {
+			accountId,
+			...auroraConfig
+		};
+		return Promise.all([
+			createProductSetupService(productSetupServiceOptions),
+			auroraContext.init()
+		]);
 	}
 
 	body(event) {

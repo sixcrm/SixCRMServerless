@@ -12,17 +12,28 @@
 			"minLength": 3
 		},
 		"description": {
-			"type": "string"
+		  "anyOf": [
+			{
+			  "type": "null"
+			},
+			{
+			  "type": "string"
+			}
+		  ]
 		},
 		"sku": {
-			"type": "string",
-			"minLength": 3
+		  "anyOf": [
+			{
+			  "type": "null"
+			},
+			{
+			  "type": "string",
+			  "minLength": 3
+			}
+		  ]
 		},
 		"ship": {
 			"type": "boolean"
-		},
-		"shipping_delay": {
-			"$ref": "../../../definitions/nonnegativeinteger.json"
 		},
 		"merchantprovidergroup": {
 			"$ref": "../../../definitions/uuidv4.json"
@@ -38,12 +49,6 @@
 		},
 		"account": {
 			"$ref": "../../../definitions/sixcrmaccountidentifier.json"
-		},
-		"created_at": {
-			"$ref": "../../../definitions/iso8601.json"
-		},
-		"updated_at": {
-			"$ref": "../../../definitions/iso8601.json"
 		}
 	},
 	"required": [

@@ -5,10 +5,10 @@ let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 
 const expect = chai.expect;
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const randomutilities = require('@6crm/sixcrmcore/util/random').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
+const randomutilities = require('@6crm/sixcrmcore/lib/util/random').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
@@ -746,6 +746,7 @@ describe('checkout', function () {
 		it('successfully executes a checkout event', () => {
 
 			let event = getValidEvent();
+			const context = {};
 			let affiliates = getValidAffiliates();
 			let campaign = getValidCampaign();
 			let session = getSessionWithoutProductSchedules();
@@ -1004,12 +1005,18 @@ describe('checkout', function () {
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'AccountDetails.js'), mock_account_details);
 
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
+
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 			let CheckoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
 			const checkoutController = new CheckoutController();
 
-			return checkoutController.execute(event).then(()=> {
+			return checkoutController.execute(event, context).then(()=> {
 				expect(checkoutController.parameters.store['confirmation']).to.be.defined;
 			});
 

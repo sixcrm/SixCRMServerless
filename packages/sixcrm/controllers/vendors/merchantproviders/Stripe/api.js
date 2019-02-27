@@ -1,5 +1,5 @@
 const stripe = require('stripe');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 module.exports = class Stripe {
 

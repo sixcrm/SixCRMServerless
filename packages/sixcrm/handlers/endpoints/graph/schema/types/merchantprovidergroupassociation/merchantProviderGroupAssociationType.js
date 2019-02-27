@@ -8,7 +8,7 @@ let merchantprovidergroupType = require('../merchantprovidergroup/merchantProvid
 const MerchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
 const merchantProviderGroupAssociationController = new MerchantProviderGroupAssociationController();
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'MerchantProviderGroupAssociation',

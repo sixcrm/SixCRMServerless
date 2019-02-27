@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 require('@6crm/sixcrmcore');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
 const jwtprovider = new JWTProvider();
 

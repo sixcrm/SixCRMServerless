@@ -1,8 +1,8 @@
 const _ = require('lodash');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
@@ -17,13 +17,14 @@ module.exports = class GetFulfillmentRequiredController extends stepFunctionWork
 	async execute(event) {
 		this.validateEvent(event);
 
-		let rebill = await this.getRebill(event.guid);
+		const rebill = await this.getRebill(event.guid);
+		await this.createProductSetupService(rebill.account);
 
-		let transactions = await this.getRebillTransactions(rebill);
+		const transactions = await this.getRebillTransactions(rebill);
 
-		let products = await this.getTransactionProducts(transactions);
+		const products = await this.getTransactionProducts(transactions);
 
-		let noship = this.areProductsNoShip(products);
+		const noship = this.areProductsNoShip(products);
 
 		return this.respond(noship);
 

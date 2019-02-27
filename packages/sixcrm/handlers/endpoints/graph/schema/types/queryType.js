@@ -1,5 +1,6 @@
 require('module-alias/register');
 const _ = require('lodash');
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
@@ -105,11 +106,16 @@ let sessionType = require('./session/sessionType');
 let SMTPProviderListType = require('./smtpprovider/SMTPProviderListType');
 let SMTPProviderType = require('./smtpprovider/SMTPProviderType');
 
+let SMSProviderListType = require('./smsprovider/SMSProviderListType');
+let SMSProviderType = require('./smsprovider/SMSProviderType');
+
 let shippingReceiptType = require('./shippingreceipt/shippingReceiptType');
 let shippingReceiptListType = require('./shippingreceipt/shippingReceiptListType');
 
 let trackerType = require('./tracker/trackerType');
 let trackerListType = require('./tracker/trackerListType');
+
+let trialConfirmationType = require('./trialconfirmation/trialConfirmationType');
 
 let tokenListType = require('./token/tokenListType');
 
@@ -165,7 +171,6 @@ const UserACLController = global.SixCRM.routes.include('controllers', 'entities/
 const UserDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 const UserSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
-const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const ReturnController = global.SixCRM.routes.include('controllers', 'entities/Return.js');
@@ -174,8 +179,10 @@ const SessionController = global.SixCRM.routes.include('entities', 'Session.js')
 const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
 const ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
+const SMSProviderController = global.SixCRM.routes.include('entities', 'SMSProvider.js');
 const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
 const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+const TrialConfirmationController = global.SixCRM.routes.include('entities', 'TrialConfirmation.js');
 const AccountDetailsController = global.SixCRM.routes.include('controllers', 'entities/AccountDetails.js');
 
 
@@ -820,6 +827,39 @@ const fields = Object.assign({}, {
 			});
 		}
 	},
+	trialconfirmation: {
+		type: trialConfirmationType.graphObj,
+		args: {
+			id: {
+				description: 'id of the trial confirmation',
+				type: GraphQLString
+			}
+		},
+		resolve: function(root, trial_confirmation) {
+			const trialConfirmationController = new TrialConfirmationController();
+
+			return trialConfirmationController.get({
+				id: trial_confirmation,
+				fatal: get_fatal
+			});
+		}
+	},
+	trialconfirmationbycode: {
+		type: trialConfirmationType.graphObj,
+		args: {
+			code: {
+				description: 'code of the trial confirmation',
+				type: GraphQLString
+			}
+		},
+		resolve: function(root, trial_confirmation) {
+			const trialConfirmationController = new TrialConfirmationController();
+
+			return trialConfirmationController.getByCode({
+				code: trial_confirmation
+			});
+		}
+	},
 	customer: {
 		type: customerType.graphObj,
 		args: {
@@ -882,13 +922,9 @@ const fields = Object.assign({}, {
 				type: GraphQLString
 			}
 		},
-		resolve: function(root, product) {
-			const productController = new ProductController();
-
-			return productController.get({
-				id: product.id,
-				fatal: get_fatal
-			});
+		resolve: async (root, { id }) => {
+			const product = await getProductSetupService().getProduct(id);
+			return LegacyProduct.hybridFromProduct(product);
 		}
 	},
 	emailtemplate: {
@@ -970,6 +1006,23 @@ const fields = Object.assign({}, {
 			});
 		}
 	},
+	smsprovider: {
+		type: SMSProviderType.graphObj,
+		args: {
+			id: {
+				description: 'id of the SMS Provider',
+				type: GraphQLString
+			}
+		},
+		resolve: function(root, smsprovider) {
+			const smsProviderController = new SMSProviderController();
+
+			return smsProviderController.get({
+				id: smsprovider.id,
+				fatal: get_fatal
+			});
+		}
+	},
 	emailtemplatelist: {
 		type: emailTemplateListType.graphObj,
 		args: {
@@ -1047,6 +1100,26 @@ const fields = Object.assign({}, {
 			});
 		}
 	},
+	smsproviderlist: {
+		type: SMSProviderListType.graphObj,
+		args: {
+			pagination: {
+				type: paginationInputType.graphObj
+			},
+			search: {
+				type: entitySearchInputType.graphObj
+			}
+		},
+		resolve: function(root, smsproviders) {
+			const smsProviderController = new SMSProviderController();
+
+			return smsProviderController.listByAccount({
+				pagination: smsproviders.pagination,
+				fatal: list_fatal,
+				search: smsproviders.search
+			});
+		}
+	},
 	productlist: {
 		type: productListType.graphObj,
 		args: {
@@ -1057,14 +1130,23 @@ const fields = Object.assign({}, {
 				type: entitySearchInputType.graphObj
 			}
 		},
-		resolve: function(root, products) {
-			const productController = new ProductController();
+		resolve: async (root, params) => {
+			const limit = params && params.pagination && params.pagination.limit;
 
-			return productController.listByAccount({
-				pagination: products.pagination,
-				fatal: list_fatal,
-				search: products.search
-			});
+			const productSetupService = getProductSetupService();
+			const products = (await productSetupService.getAllProducts(limit)).map(product =>
+				LegacyProduct.hybridFromProduct(product)
+			);
+
+			return {
+				products,
+				pagination: {
+					count: products.length,
+					end_cursor: '',
+					has_next_page: 'false',
+					last_evaluated: ''
+				}
+			};
 		}
 	},
 	useracllist: {

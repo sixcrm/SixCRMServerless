@@ -1,5 +1,5 @@
 require('@6crm/sixcrmcore');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 module.exports.getVPCConfiguration = () => {
 
@@ -13,7 +13,7 @@ module.exports.getVPCConfiguration = () => {
 module.exports.getLambdaSubnets = () => {
 
 	require('@6crm/sixcrmcore');
-	const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+	const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
 	let ec2_deployment = new EC2Deployment();
 
@@ -71,7 +71,7 @@ module.exports.getCloudsearchSearchEndpoint = () => {
 
 }
 
-module.exports.getAuroraClusterEndpoint = (force) => {
+module.exports.getAuroraClusterEndpoint = (config, force) => {
 
 	require('@6crm/sixcrmcore');
 
@@ -160,7 +160,7 @@ module.exports.getSubnet1 = async () => {
 		return '';
 	}
 
-	const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+	const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
 	let ec2_deployment = new EC2Deployment();
 
@@ -179,7 +179,7 @@ module.exports.getSubnet2 = async () => {
 		return '';
 	}
 
-	const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+	const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
 	let ec2_deployment = new EC2Deployment();
 
@@ -198,7 +198,7 @@ module.exports.getSubnet3 = async () => {
 		return '';
 	}
 
-	const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+	const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
 	let ec2_deployment = new EC2Deployment();
 
@@ -217,7 +217,7 @@ module.exports.getSecurityGroup = async () => {
 		return '';
 	}
 
-	const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+	const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
 	let ec2_deployment = new EC2Deployment();
 

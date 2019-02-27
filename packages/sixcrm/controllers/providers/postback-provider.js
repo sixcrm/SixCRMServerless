@@ -1,5 +1,5 @@
 const request = require('request');
-const parserutilities = require('@6crm/sixcrmcore/util/parser-utilities').default;
+const parserutilities = require('@6crm/sixcrmcore/lib/util/parser-utilities').default;
 
 module.exports = class PostbackProvider {
 

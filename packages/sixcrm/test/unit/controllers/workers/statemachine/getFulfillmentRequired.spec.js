@@ -3,8 +3,8 @@ const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
 
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 describe('controllers/workers/statemachine/getFulfillmentRequired.js', () => {
@@ -281,6 +281,12 @@ describe('controllers/workers/statemachine/getFulfillmentRequired.js', () => {
         }
       });
 
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
+
       const GetFulfillmentRequiredController = global.SixCRM.routes.include('workers', 'statemachine/getFulfillmentRequired.js');
       let getFulfillmentRequiredController = new GetFulfillmentRequiredController();
 
@@ -322,6 +328,12 @@ describe('controllers/workers/statemachine/getFulfillmentRequired.js', () => {
           return Promise.resolve(products);
         }
       });
+
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
 
       const GetFulfillmentRequiredController = global.SixCRM.routes.include('workers', 'statemachine/getFulfillmentRequired.js');
       let getFulfillmentRequiredController = new GetFulfillmentRequiredController();

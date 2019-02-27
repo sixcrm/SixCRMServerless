@@ -12,9 +12,9 @@ production:
 priority:
   aws_account_id: '500031165490'
   branch_name: 'priority'
-local:
+offline:
   local: true
-local-docker:
+docker:
   local: true
 circle:
   local: true

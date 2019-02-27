@@ -3,8 +3,8 @@ const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 
-//const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-//const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+//const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+//const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 

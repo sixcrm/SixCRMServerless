@@ -1,7 +1,7 @@
 
 const _ = require('lodash');
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -84,5 +84,12 @@ module.exports = class SMTPProviderController extends entityController {
 		});
 
 	}
+
+	async update({entity}) {
+		await this.handleCensoredValues(entity);
+
+		return super.update({entity, ignore_updated_at: true});
+	}
+
 
 }

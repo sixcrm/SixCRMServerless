@@ -1,19 +1,18 @@
 const _ = require('lodash');
 const moment = require('moment');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const numberutilities = require('@6crm/sixcrmcore/util/number-utilities').default;
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const numberutilities = require('@6crm/sixcrmcore/lib/util/number-utilities').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 const Parameters = require('../../../providers/Parameters');
-const ProductController = require('../../../entities/Product');
 const ProductScheduleController = require('../../../entities/ProductSchedule');
 const ProductScheduleHelperController = require('../../entities/productschedule/ProductSchedule');
 const RebillController = require('../../../entities/Rebill');
 const SessionController = require('../../../entities/Session');
 
-const productController = new ProductController();
 const productScheduleController = new ProductScheduleController();
 const productScheduleHelperController = new ProductScheduleHelperController();
 const rebillController = new RebillController();
@@ -50,8 +49,17 @@ module.exports = class RebillCreatorHelper {
 		let {session, day, products, product_schedules} = argumentation;
 		let normalized_products, normalized_product_schedules;
 
+		if (session.trial_confirmation && !session.started_at) {
+			return 'CONFIRMATION_REQUIRED';
+		}
+
+		if (session.completed && !session.started_at) {
+			session.started_at = session.created_at;
+			await sessionController.updateProperties({id: session.id, properties: { started_at: session.created_at }});
+		}
+
 		if (day === undefined) {
-			day = timestamp.getDaysDifference(session.created_at);
+			day = timestamp.getDaysDifference(session.started_at);
 		}
 
 		if (product_schedules === undefined && day >= 0) {
@@ -89,7 +97,7 @@ module.exports = class RebillCreatorHelper {
 		return rebillController.create({entity: prototype_rebill});
 	}
 
-	createRebillPrototype({session, transaction_products = [], bill_at = timestamp.getISO8601(), cycle = 0, amount = 0.00, product_schedules = null, merchant_provider = null, merchant_provider_selections = null}){
+	createRebillPrototype({session, transaction_products = [], bill_at = timestamp.getISO8601(), cycle = 0, amount = 0.00, product_schedules = null, merchant_provider = null, merchant_provider_selections = null, processing = null}){
 		const rebill_prototype = {
 			account: session.account,
 			parentsession: session.id,
@@ -109,6 +117,10 @@ module.exports = class RebillCreatorHelper {
 
 		if (!_.isNull(product_schedules)) {
 			rebill_prototype.product_schedules = product_schedules;
+		}
+
+		if (!_.isNull(processing)) {
+			rebill_prototype.processing = processing;
 		}
 
 		return rebill_prototype;
@@ -137,13 +149,15 @@ module.exports = class RebillCreatorHelper {
 
 	async normalizeProducts(products) {
 		let normalized_products = arrayutilities.map(products, async product_group => {
-			if (productController.isUUID(product_group.product)) {
-				const result = await productController.get({id: product_group.product});
-				if (_.isNull(result)) {
-					throw eu.getError('not_found', 'Product does not exist: '+product_group.product);
+			if (rebillController.isUUID(product_group.product)) {
+				try {
+					const product = await getProductSetupService().getProduct(product_group.product);
+					product_group.product = LegacyProduct.hybridFromProduct(product);
+					return product_group;
+				} catch (e) {
+					du.error('Error retrieving product', e);
+					throw eu.getError('not_found', 'Product does not exist: ' +product_group.product);
 				}
-				product_group.product = result;
-				return product_group;
 			} else if (_.isObject(product_group.product)) {
 				return product_group;
 			}
@@ -209,11 +223,11 @@ module.exports = class RebillCreatorHelper {
 			if (!_.has(product_group, 'price')) {
 				return true;
 			}
-			return productController.validateDynamicPrice(product_group.product, product_group.price);
+			return product_group.price >= 0;
 		});
 
 		if (!valid) {
-			throw eu.getError('bad_request', 'Price must be within product\'s dynamic price range.');
+			throw eu.getError('bad_request', 'Price must be greater than or equal to zero.');
 		}
 
 		return valid;
@@ -226,12 +240,12 @@ module.exports = class RebillCreatorHelper {
 				if (!_.has(product_group, 'price')) {
 					return true;
 				}
-				return productController.validateDynamicPrice(product_group.product, product_group.price);
+				return product_group.price >= 0;
 			});
 		});
 
 		if (!valid) {
-			throw eu.getError('bad_request', 'Price must be within product\'s dynamic price range.');
+			throw eu.getError('bad_request', 'Price must be greater than or equal to zero.');
 		}
 
 		return valid;
@@ -307,7 +321,7 @@ module.exports = class RebillCreatorHelper {
 		}
 
 		arrayutilities.map(normalized_product_schedules, normalized_product_schedule => {
-			let sub_elements = productScheduleHelperController.getScheduleElementsOnDayInSchedule({start_date: session.created_at, day: bill_day, product_schedule: normalized_product_schedule.product_schedule})
+			let sub_elements = productScheduleHelperController.getScheduleElementsOnDayInSchedule({start_date: session.started_at, day: bill_day, product_schedule: normalized_product_schedule.product_schedule})
 			if (!_.isNull(sub_elements) && arrayutilities.nonEmpty(sub_elements)) {
 				arrayutilities.map(sub_elements, sub_element => {
 					schedule_elements.push({
@@ -375,7 +389,7 @@ module.exports = class RebillCreatorHelper {
 		const transaction_products = this.getTransactionProducts({session, bill_day, normalized_product_schedules, normalized_products});
 		const amount = this.calculateAmount(transaction_products);
 		const bill_at = this.calculateBillAt(session, bill_day);
-		const cycle = await this.calculateCycle(session, bill_at);
+		const cycle = await this.calculateCycle(session, bill_at, day);
 
 		const rebill_prototype = this.createRebillPrototype({
 			session,
@@ -388,7 +402,7 @@ module.exports = class RebillCreatorHelper {
 			cycle
 		});
 
-		if (bill_day == 0) {
+		if (bill_day <= 0) {
 			rebill_prototype.processing = true;
 		}
 
@@ -416,9 +430,12 @@ module.exports = class RebillCreatorHelper {
 		return product_schedules;
 	}
 
-	async calculateCycle(session, bill_at) {
+	async calculateCycle(session, bill_at, day) {
 		const rebills = await sessionController.listRebills(session);
 		let cycle = 0;
+		if (day === -1) {
+			return cycle;
+		}
 
 		if (rebills) {
 			cycle = rebills.filter(r => moment(r.bill_at).isBefore(bill_at)).length;
@@ -441,10 +458,10 @@ module.exports = class RebillCreatorHelper {
 	}
 
 	calculateBillAt(session, bill_day) {
-		let session_start = parseInt(timestamp.dateToTimestamp(session.created_at));
+		let session_start = parseInt(timestamp.dateToTimestamp(session.started_at));
 		let additional_seconds = timestamp.getDayInSeconds() * bill_day;
 		let bill_date = timestamp.toISO8601(session_start + additional_seconds);
-		du.warning(session.created_at+' plus '+bill_day+' days should equal '+bill_date);
+		du.warning(session.started_at+' plus '+bill_day+' days should equal '+bill_date);
 		return bill_date;
 	}
 };

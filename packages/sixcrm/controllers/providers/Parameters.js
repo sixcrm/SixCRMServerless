@@ -1,8 +1,8 @@
 
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 
 module.exports = class Parameters {
 
@@ -125,7 +125,12 @@ module.exports = class Parameters {
 
 		if(_.has(this.parameter_validation, key)){
 
-			return global.SixCRM.validate(value, this.parameter_validation[key], fatal);
+			try {
+				return global.SixCRM.validate(value, this.parameter_validation[key], fatal);
+			} catch (e) {
+				du.warning(`Failed to validate ${key}`, value);
+				throw e;
+			}
 
 		}else{
 

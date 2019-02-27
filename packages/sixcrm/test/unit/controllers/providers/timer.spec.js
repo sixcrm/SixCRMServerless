@@ -1,6 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 describe('controllers/providers/timer', () => {
 

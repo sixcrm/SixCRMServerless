@@ -4,9 +4,9 @@ const chai = require("chai");
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidVendorResponseClass(action) {
@@ -361,20 +361,17 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 			let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
 			let products = getValidProducts();
 
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
-				getListByAccount() {
-					return Promise.resolve({
-						products: products
-					});
-				}
-				getResult(result, field) {
-					if (_.isUndefined(field)) {
-						field = this.descriptive_name + 's';
-					}
-					if (_.has(result, field)) {
-						return Promise.resolve(result[field]);
-					} else {
-						return Promise.resolve(null);
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductSetupService() {
+					return {
+						getProductsByIds() {
+							return Promise.resolve(products);
+						}
+					};
+				},
+				LegacyProduct: class LegacyProduct {
+					static hybridFromProduct(product) {
+						return product;
 					}
 				}
 			});
@@ -981,7 +978,7 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 				body: response_body
 			}
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					post() {
 						return Promise.resolve({
@@ -1052,7 +1049,7 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 				body: response_body
 			}
 
-			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/providers/http-provider', {
 				default: class {
 					post() {
 						return Promise.resolve({
@@ -1255,20 +1252,17 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
-				getListByAccount() {
-					return Promise.resolve({
-						products: products
-					});
-				}
-				getResult(result, field) {
-					if (_.isUndefined(field)) {
-						field = this.descriptive_name + 's';
-					}
-					if (_.has(result, field)) {
-						return Promise.resolve(result[field]);
-					} else {
-						return Promise.resolve(null);
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductSetupService() {
+					return {
+						getProductsByIds() {
+							return Promise.resolve(products);
+						}
+					};
+				},
+				LegacyProduct: class LegacyProduct {
+					static hybridFromProduct(product) {
+						return product;
 					}
 				}
 			});

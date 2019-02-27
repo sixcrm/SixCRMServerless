@@ -4,9 +4,9 @@ const chai = require("chai");
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
-const randomutilities = require('@6crm/sixcrmcore/util/random').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const randomutilities = require('@6crm/sixcrmcore/lib/util/random').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidTransactionProducts(ids, extended){
@@ -304,19 +304,17 @@ describe('helpers/shipment/Fulfill.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
-				getListByAccount() {
-					return Promise.resolve({products: products});
-				}
-				getResult(result, field) {
-					if(_.isUndefined(field)){
-						field = this.descriptive_name+'s';
-					}
-
-					if(_.has(result, field)){
-						return Promise.resolve(result[field]);
-					}else{
-						return Promise.resolve(null);
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductSetupService() {
+					return {
+						getProductsByIds() {
+							return Promise.resolve(products);
+						}
+					};
+				},
+				LegacyProduct: class LegacyProduct {
+					static hybridFromProduct(product) {
+						return product;
 					}
 				}
 			});

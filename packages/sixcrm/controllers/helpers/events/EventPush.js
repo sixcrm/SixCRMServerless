@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const uuid = require('uuid');
 
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 
 const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 

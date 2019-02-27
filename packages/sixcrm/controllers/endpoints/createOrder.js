@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
@@ -20,7 +20,6 @@ const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('he
 const OrderHelperController = global.SixCRM.routes.include('helpers', 'order/Order.js');
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
-
 
 module.exports = class CreateOrderController extends transactionEndpointController {
 
@@ -97,11 +96,10 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 	}
 
-	execute(event) {
-		return this.preamble(event)
-			.then(() => this.validateParameters(this.parameters.get('event')))
-			.then(() => this.createOrder(this.parameters.get('event')));
-
+	async execute(event, context) {
+		await this.preamble(event, context);
+		await this.validateParameters(this.parameters.get('event'));
+		return this.createOrder(this.parameters.get('event'));
 	}
 
 	async validateParameters(event) {
@@ -488,5 +486,4 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		}
 
 	}
-
 }

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
@@ -62,10 +62,9 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 	}
 
-	execute(event) {
-		return this.preamble(event)
-			.then(() => this.createLead(this.parameters.get('event')));
-
+	async execute(event, context) {
+		await this.preamble(event, context);
+		return this.createLead(this.parameters.get('event'));
 	}
 
 	async createLead(event) {

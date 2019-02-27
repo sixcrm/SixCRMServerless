@@ -1,7 +1,7 @@
 
 const _ = require('lodash');
 const uuidV4 = require('uuid/v4');
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class fulfillmentProviderController {

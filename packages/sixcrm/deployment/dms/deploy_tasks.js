@@ -1,6 +1,6 @@
 require('@6crm/sixcrmcore');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const DMSDeployment = global.SixCRM.routes.include('deployment', 'utilities/dms-deployment.js');
 const dmsDeployment = new DMSDeployment();
 

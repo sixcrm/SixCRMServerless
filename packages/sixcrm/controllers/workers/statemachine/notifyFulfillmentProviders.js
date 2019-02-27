@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
 
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
@@ -16,6 +16,7 @@ module.exports = class NotifyFulfillmentProvidersController extends stepFunction
 		this.validateEvent(event);
 
 		let rebill = await this.getRebill(event.guid, true);
+		await this.createProductSetupService(rebill.account);
 
 		let fulfillment_request_result = await this.triggerFulfillment(rebill);
 

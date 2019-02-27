@@ -38,7 +38,7 @@ describe('controllers/Transaction.js', () => {
 
 			let random_string = 'a_random_string';
 
-			mockery.registerMock('@6crm/sixcrmcore/util/random', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/util/random', {
 				default: {
 					createRandomString: () => {
 						return random_string;
@@ -61,10 +61,19 @@ describe('controllers/Transaction.js', () => {
 				id: 'dummy_id'
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Product.js'), class {
-				get({id}) {
-					expect(id).to.equal(a_product.id);
-					return Promise.resolve('a_product_data');
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductSetupService() {
+					return {
+						getProduct(id) {
+							expect(id).to.equal(a_product.id);
+							return Promise.resolve({ name: 'a_product' });
+						}
+					};
+				},
+				LegacyProduct: class LegacyProduct {
+					static hybridFromProduct(product) {
+						return product;
+					}
 				}
 			});
 
@@ -72,7 +81,7 @@ describe('controllers/Transaction.js', () => {
 			const transactionController = new TransactionController();
 
 			return transactionController.getProduct(a_product).then((result) => {
-				expect(result).to.equal('a_product_data');
+				expect(result).to.deep.equal({ name: 'a_product' });
 			});
 		});
 	});

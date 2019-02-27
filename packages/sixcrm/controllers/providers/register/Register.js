@@ -1,14 +1,13 @@
-
 const _ = require('lodash');
 const moment = require('moment-timezone');
 const BBPromise = require('bluebird');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const mathutilities = require('@6crm/sixcrmcore/util/math-utilities').default;
-const numberutilities = require('@6crm/sixcrmcore/util/number-utilities').default;
-const currencyutil = require('@6crm/sixcrmcore/util/currency-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const mathutilities = require('@6crm/sixcrmcore/lib/util/math-utilities').default;
+const numberutilities = require('@6crm/sixcrmcore/lib/util/number-utilities').default;
+const currencyutil = require('@6crm/sixcrmcore/lib/util/currency-utilities').default;
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
 const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
@@ -17,7 +16,7 @@ const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js
 const RegisterUtilities = global.SixCRM.routes.include('providers', 'register/RegisterUtilities.js');
 const MerchantProviderController = global.SixCRM.routes.include('entities', 'MerchantProvider.js');
 const TransactionsController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js');
 
 module.exports = class Register extends RegisterUtilities {
 
@@ -137,12 +136,8 @@ module.exports = class Register extends RegisterUtilities {
 		await this.acquireRebillSubProperties();
 		await this.executeProcesses();
 		await this.pushTransactionEvents();
-
-		const response = await this.transformResponse();
-
-		await this.pushSubscriptionEvents(response);
-
-		return response;
+		await this.pushSubscriptionEvents();
+		return this.transformResponse();
 
 	}
 
@@ -174,7 +169,8 @@ module.exports = class Register extends RegisterUtilities {
 
 	}
 
-	async pushSubscriptionEvents(response) {
+	async pushSubscriptionEvents() {
+
 		const rebill = this.parameters.get('rebill');
 		const products = rebill && rebill.products;
 
@@ -187,8 +183,9 @@ module.exports = class Register extends RegisterUtilities {
 			return;
 		}
 
-		const product_ids = products.map(product => product.id);
-		const status = response.response_type === this.processor_response_map.success ? 'active' : 'error';
+		const product_ids = products.map(product => product.product.id);
+		const response_type = this.getProcessorResponseCategory();
+		const status = response_type === this.processor_response_map.success ? 'active' : 'error';
 
 		for (let i = 0; i < product_schedules.length; i++) {
 
@@ -200,8 +197,10 @@ module.exports = class Register extends RegisterUtilities {
 				const scheduleItem = product_schedule.schedule[j];
 				const product_id = scheduleItem.product.id;
 				if (_.includes(product_ids, product_id)) {
-
 					const cycle = this.computeCycle(session.created_at, rebill.bill_at, scheduleItem);
+					let nextBillingDay = moment(rebill.bill_at);
+					this.incrementBillingDay(nextBillingDay, scheduleItem);
+
 					await AnalyticsEvent.push('subscription', {
 						session_id: session.id,
 						product_schedule_id: product_schedule.id,
@@ -209,7 +208,7 @@ module.exports = class Register extends RegisterUtilities {
 						session_alias: session.alias,
 						product_schedule_name: product_schedule.name,
 						product_name: scheduleItem.product.name,
-						datetime: rebill.bill_at,
+						datetime: nextBillingDay.toISOString(),
 						status,
 						amount: scheduleItem.price * product_schedule_item.quantity,
 						item_count: product_schedule_item.quantity,
@@ -236,18 +235,23 @@ module.exports = class Register extends RegisterUtilities {
 		const bill_day = moment(bill_at).startOf('day');
 		while (current.isBefore(bill_day)) {
 
-			if (schedule.samedayofmonth) {
-				current.add(1, 'months');
-			}
-			else {
-				current.add(schedule.period, 'days')
-			}
-
+			this.incrementBillingDay(current, schedule);
 			cycle++;
 
 		}
 
 		return cycle;
+
+	}
+
+	incrementBillingDay(current, schedule) {
+
+		if (schedule.samedayofmonth) {
+			current.add(1, 'months');
+		}
+		else {
+			current.add(schedule.period, 'days')
+		}
 
 	}
 

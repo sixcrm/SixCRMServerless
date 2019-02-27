@@ -5,13 +5,12 @@ chai.use(chaiAsPromised);
 const {expect} = chai;
 
 let RebillCreator, rebillCreator;
-let AnalyticsEvent, MerchantProviderController, ProductController, ProductScheduleController, ProductScheduleHelperController, RebillController, SessionController;
+let AnalyticsEvent, MerchantProviderController, ProductScheduleController, ProductScheduleHelperController, RebillController, SessionController;
 
 describe('RebillCreator', () => {
 	beforeEach(() => {
 		AnalyticsEvent = td.replace('../../../../../../controllers/helpers/analytics/analytics-event');
 		MerchantProviderController = td.replace('../../../../../../controllers/entities/MerchantProvider');
-		ProductController = td.replace('../../../../../../controllers/entities/Product');
 		ProductScheduleController = td.replace('../../../../../../controllers/entities/ProductSchedule');
 		ProductScheduleHelperController = td.replace('../../../../../../controllers/helpers/entities/productschedule/ProductSchedule');
 		RebillController = td.replace('../../../../../../controllers/entities/Rebill');
@@ -87,8 +86,6 @@ describe('RebillCreator', () => {
 					updated_at: '2018-01-01T00:00:01.000Z'
 				});
 
-				td.when(ProductController.prototype.validateDynamicPrice(product_groups[0].product, product_groups[0].price)).thenReturn(true);
-				td.when(ProductController.prototype.validateDynamicPrice(product_groups[0].product, td.matchers.isA(Number))).thenReturn(false);
 				td.when(SessionController.prototype.listRebills(session)).thenResolve(null);
 			});
 
@@ -100,11 +97,6 @@ describe('RebillCreator', () => {
 
 			it('throws an error when no products provided', async () => {
 				expect(rebillCreator.createRebill({session, day: -1})).to.eventually.be.rejected;
-			});
-
-			it('throws an error if dynamic price is invalid', async () => {
-				product_groups[0].price = 0;
-				expect(rebillCreator.createRebill({session, day: -1, products: product_groups})).to.eventually.be.rejectedWith('Price must be within product\'s dynamic price range.');
 			});
 
 			it('does not create recurring rebill', async () => {
@@ -187,17 +179,11 @@ describe('RebillCreator', () => {
 					]
 				};
 
-				td.when(ProductController.prototype.validateDynamicPrice(schedule.product, schedule.price)).thenReturn(true);
 				td.when(ProductScheduleController.prototype.getProducts(td.matchers.anything())).thenResolve({products: []});
 				td.when(ProductScheduleHelperController.prototype.marryProductsToSchedule({product_schedule: td.matchers.anything(), products: []})).thenDo(({product_schedule}) => product_schedule);
 				td.when(ProductScheduleHelperController.prototype.getNextScheduleElementStartDayNumber({day: -1, product_schedule})).thenReturn(0);
 				td.when(ProductScheduleHelperController.prototype.getNextScheduleElementStartDayNumber({day: 0, product_schedule})).thenReturn(30);
 				td.when(ProductScheduleHelperController.prototype.getScheduleElementsOnDayInSchedule({start_date: '2018-01-01T00:00:01.000Z', day: td.matchers.isA(Number), product_schedule})).thenReturn(product_schedule.schedule);
-			});
-
-			it('throws an error if dynamic price is invalid', async () => {
-				schedule.price = 0;
-				expect(rebillCreator.createRebill({session, day: 0})).to.eventually.be.rejectedWith('Price must be within product\'s dynamic price range.');
 			});
 
 			it('does not rebill if session is concluded', async () => {

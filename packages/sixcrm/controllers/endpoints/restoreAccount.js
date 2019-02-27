@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-const permissionutilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const permissionutilities = require('@6crm/sixcrmcore/lib/util/permission-utilities').default;
+const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 const AccountController = require('../entities/Account');
 const AccountHelperController = require('../helpers/entities/account/Account');
@@ -80,8 +80,8 @@ module.exports = class RestoreAccountController extends transactionEndpointContr
 		return event;
 	}
 
-	async execute(event) {
-		await this.preamble(event)
+	async execute(event, context) {
+		await this.preamble(event, context);
 		const {creditcard: raw_creditcard, account: account_id} = this.parameters.get('event');
 		await this.useAccountingContext();
 

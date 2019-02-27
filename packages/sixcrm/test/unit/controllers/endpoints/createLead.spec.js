@@ -3,8 +3,8 @@ let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 
 const expect = chai.expect;
-const randomutilities = require('@6crm/sixcrmcore/util/random').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const randomutilities = require('@6crm/sixcrmcore/lib/util/random').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
@@ -227,6 +227,7 @@ describe('createLead', function () {
 		it('successfully executes', () => {
 
 			let event = getValidEvent();
+			const context = {};
 			let customer = getValidCustomer();
 			let affiliates = getValidAffiliates();
 			let campaign = getValidCampaign();
@@ -309,12 +310,18 @@ describe('createLead', function () {
 				}
 			});
 
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
+
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
-			return createLeadController.execute(event).then(result => {
+			return createLeadController.execute(event, context).then(result => {
 				expect(global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'endpoints/createLead/response.json'))).to.equal(true);
 			});
 
@@ -323,6 +330,7 @@ describe('createLead', function () {
 		it('successfully executes with local event', () => {
 
 			let event = getLocalEvent();
+			const context = {}
 			let customer = getValidCustomer();
 			let affiliates = getValidAffiliates();
 			let campaign = getValidCampaign();
@@ -404,12 +412,18 @@ describe('createLead', function () {
 					return false;
 				}
 			});
+
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
-			return createLeadController.execute(event).then(result => {
+			return createLeadController.execute(event, context).then(result => {
 				expect(global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'endpoints/createLead/response.json'))).to.equal(true);
 			});
 
@@ -780,6 +794,7 @@ describe('createLead', function () {
 			mockery.deregisterAll();
 
 			let event = getValidEvent();
+			const context = {};
 			let customer = getValidCustomer();
 			let affiliates = getValidAffiliates();
 			let campaign = getValidCampaign();
@@ -872,12 +887,18 @@ describe('createLead', function () {
 				}
 			});
 
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
+
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
-			return createLeadController.execute(event).then(result => {
+			return createLeadController.execute(event, context).then(result => {
 				expect(global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'endpoints/createLead/response.json'))).to.equal(true);
 			});
 

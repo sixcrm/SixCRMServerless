@@ -3,7 +3,7 @@ let chai = require('chai');
 const expect = chai.expect;
 const uuidV4 = require('uuid/v4');
 
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
@@ -365,6 +365,7 @@ describe('confirmOrder', function () {
 		it('successfully executes', () => {
 
 			let event = getValidEvent();
+			const context = {};
 			let session = getValidSession();
 			let transactions = getValidTransactions();
 			let products = getValidTransactionProducts(null, true);
@@ -454,10 +455,16 @@ describe('confirmOrder', function () {
 				}
 			});
 
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				createProductSetupService() {
+					return Promise.resolve();
+				}
+			});
+
 			let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 			const confirmOrderController = new ConfirmOrderController();
 
-			return confirmOrderController.execute(event).then(result => {
+			return confirmOrderController.execute(event, context).then(result => {
 				//expect(result).to.have.property('transactions');
 				expect(result).to.have.property('customer');
 				expect(result).to.have.property('session');
@@ -478,6 +485,7 @@ describe('confirmOrder', function () {
 		it('successfully executes', () => {
 
 			let event = getValidEventBody();
+			const context = {};
 			let session = getValidSession();
 			let rebill = MockEntities.getValidRebill();
 			rebill.parentsession = session.id;
@@ -557,7 +565,7 @@ describe('confirmOrder', function () {
 			let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 			const confirmOrderController = new ConfirmOrderController();
 
-			return confirmOrderController.confirmOrder(event).then(result => {
+			return confirmOrderController.confirmOrder(event, context).then(result => {
 				//expect(result).to.have.property('transactions');
 				expect(result).to.have.property('customer');
 				expect(result).to.have.property('session');

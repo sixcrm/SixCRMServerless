@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const MerchantProvider = global.SixCRM.routes.include('vendors', 'merchantproviders/MerchantProvider.js');
 const AuthorizeNetAPI = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/AuthorizeNet/api.js');
 const AuthorizeNetResponse = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/AuthorizeNet/Response.js');

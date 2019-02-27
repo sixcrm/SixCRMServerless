@@ -3,9 +3,9 @@ let chai = require('chai');
 let expect = chai.expect;
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 const uuidV4 = require('uuid/v4');
-const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
 describe('controllers/Entity.js', () => {
@@ -583,10 +583,10 @@ describe('controllers/Entity.js', () => {
 			let anEntity = {
 				"id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
 				"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-				"name": "Test Product",
-				"description":"This is a test description",
-				"sku":"123",
-				"ship":true,
+				"name": "Test campaign",
+				"allow_on_order_form": true,
+				"allow_prepaid": true,
+				"show_prepaid": false,
 				"created_at":"2017-04-06T18:40:41.405Z",
 				"updated_at":"2017-04-06T18:40:41.405Z"
 			};
@@ -611,15 +611,8 @@ describe('controllers/Entity.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
-			mockery.registerMock(global.SixCRM.routes.path('helpers', 'analytics/Activity.js'), class {
-				createActivity() {
-					return Promise.resolve();
-				}
-			});
-
-
 			const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
-			let entityController = new EC('product');
+			let entityController = new EC('campaign');
 
 			// when
 			return entityController.update({entity: anEntity}).then((updatedEntity) => {
@@ -2138,7 +2131,7 @@ describe('controllers/Entity.js', () => {
 
 	describe('encryptAttributes', () => {
 		it('runs encryption on attributes listed in encryptedAttributes', () => {
-			mockery.registerMock('@6crm/sixcrmcore/util/encryption-utilities', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/util/encryption-utilities', {
 				default: {
 					encryptAES256: (iv_key, input) => {
 						expect(iv_key).to.equal('entity_id');
@@ -2163,7 +2156,7 @@ describe('controllers/Entity.js', () => {
 		});
 
 		it('handles deep attribute paths', () => {
-			mockery.registerMock('@6crm/sixcrmcore/util/encryption-utilities', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/util/encryption-utilities', {
 				default: {
 					encryptAES256: (iv_key, input) => {
 						expect(iv_key).to.equal('entity_id');
@@ -2186,7 +2179,7 @@ describe('controllers/Entity.js', () => {
 
 	describe('decryptAttributes', () => {
 		it('runs decryption on attributes listed in encryptedAttributes', () => {
-			mockery.registerMock('@6crm/sixcrmcore/util/encryption-utilities', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/util/encryption-utilities', {
 				default: {
 					decryptAES256: (iv_key, input) => {
 						expect(iv_key).to.equal('entity_id');
@@ -2211,7 +2204,7 @@ describe('controllers/Entity.js', () => {
 		});
 
 		it('handles deep attribute paths', () => {
-			mockery.registerMock('@6crm/sixcrmcore/util/encryption-utilities', {
+			mockery.registerMock('@6crm/sixcrmcore/lib/util/encryption-utilities', {
 				default: {
 					decryptAES256: (iv_key, input) => {
 						expect(iv_key).to.equal('entity_id');

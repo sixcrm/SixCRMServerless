@@ -1,8 +1,8 @@
 
 const chai = require("chai");
 const expect = chai.expect;
-const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidFulfillmentProvider() {
