@@ -121,8 +121,7 @@ export default class Product {
 		this.id = id;
 		this.account_id = account_id;
 		this.name = name;
-		this.created_at = new Date();
-		this.updated_at = new Date();
+		this.created_at = this.updated_at = new Date();
 		this.price = price;
 		this.is_shippable = is_shippable;
 		this.image_urls = image_urls;
