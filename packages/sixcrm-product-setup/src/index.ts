@@ -2,8 +2,11 @@ import ProductSetupService from './ProductSetupService';
 import { connect, IDatabaseConfig } from './connect';
 import { logger } from './log';
 import ProductSetupServiceNotFoundError from './errors/ProductSetupServiceNotFoundError';
+import ProductScheduleService from "./ProductScheduleService";
+import ProductScheduleServiceNotFoundError from "./errors/ProductScheduleServiceNotFoundError";
 
 let productSetupService;
+let productScheduleService;
 
 const log = logger('ProductSetupService');
 
@@ -18,11 +21,28 @@ export const createProductSetupService = async ({
 	if (!accountId) {
 		throw new TypeError('Missing required accountId parameter');
 	}
-
 	try {
 		const connection = await connect(databaseConfig);
 		productSetupService = new ProductSetupService({ accountId, connection });
 		return productSetupService;
+	} catch (err) {
+		log.error('Error connecting to Aurora', err);
+		throw err;
+	}
+};
+
+export const createProductScheduleService = async ({
+	accountId,
+	...databaseConfig
+}: IConfig) => {
+	if (!accountId) {
+		throw new TypeError('Missing required accountId parameter');
+	}
+
+	try {
+		const connection = await connect(databaseConfig);
+		productScheduleService = new ProductScheduleService({ accountId, connection });
+		return productScheduleService;
 	} catch (err) {
 		log.error('Error connecting to Aurora', err);
 		throw err;
@@ -36,6 +56,15 @@ export const getProductSetupService = () => {
 
 	return productSetupService;
 };
+
+export const getProductScheduleService = () => {
+	if (!productScheduleService) {
+		throw new ProductScheduleServiceNotFoundError();
+	}
+
+	return productScheduleService;
+};
+
 
 export { default as Product } from './models/Product';
 export { default as LegacyProduct } from './models/legacy/LegacyProduct';
