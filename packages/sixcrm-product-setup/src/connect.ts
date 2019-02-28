@@ -51,6 +51,8 @@ export const connect = async (config: IDatabaseConfig) => {
 
 export const disconnect = async () => {
 	if (connection) {
-		return (await connection).close();
+		const closePromise = (await connection).close();
+		connection = null;
+		return closePromise;
 	}
 };
