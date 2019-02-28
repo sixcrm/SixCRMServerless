@@ -40,13 +40,13 @@ export default class ProductScheduleService {
 	async create(partialProductSchedule: Partial<ProductSchedule>): Promise<IProductScheduleEntityId> {
 		// shallow copy to avoid typeorm issues with objects without prototypes
 		// https://github.com/typeorm/typeorm/issues/2065
-		const ProductSchedule = this.productScheduleRepository.create({
+		const productSchedule = this.productScheduleRepository.create({
 			account_id: this.accountId,
 			...partialProductSchedule
 		});
-		await this.validateCreateProductSchedule(ProductSchedule);
+		await this.validateCreateProductSchedule(productSchedule);
 
-		const insertResult = await this.productScheduleRepository.insert(ProductSchedule);
+		const insertResult = await this.productScheduleRepository.insert(productSchedule);
 		return insertResult.identifiers[0] as IProductScheduleEntityId;
 	}
 
