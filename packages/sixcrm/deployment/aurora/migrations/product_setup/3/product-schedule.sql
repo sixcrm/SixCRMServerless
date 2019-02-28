@@ -1,4 +1,4 @@
-CREATE TABLE product_schedule (
+CREATE TABLE product_setup.product_schedule (
 	id UUID NOT NULL PRIMARY KEY,
 	account_id UUID NOT NULL,
 	name VARCHAR(55) NOT NULL,
@@ -10,9 +10,9 @@ CREATE TABLE product_schedule (
 
 CREATE INDEX ix_product_schedule_account_id ON product_setup.product_schedule(account_id);
 
-CREATE TABLE cycle (
+CREATE TABLE product_setup.cycle (
 	id UUID NOT NULL PRIMARY KEY,
-	product_schedule_id NOT NULL REFERENCES product_schedule(id),
+	product_schedule_id UUID NOT NULL REFERENCES product_setup.product_schedule(id),
 	name VARCHAR(55) NOT NULL,
 	created_at TIMESTAMP NOT NULL,
 	updated_at TIMESTAMP NOT NULL,
@@ -25,9 +25,9 @@ CREATE TABLE cycle (
 	CHECK (is_monthly = true OR length IS NOT NULL)
 );
 
-CREATE TABLE cycle_products (
-	cycle_id UUID NOT NULL REFERENCES cycle(id),
-	product_id UUID NOT NULL REFERENCES product(id),
+CREATE TABLE product_setup.cycle_product (
+	cycle_id UUID NOT NULL REFERENCES product_setup.cycle(id),
+	product_id UUID NOT NULL REFERENCES product_setup.product(id),
 	PRIMARY KEY (cycle_id, product_id),
 	created_at TIMESTAMP NOT NULL,
 	updated_at TIMESTAMP NOT NULL,
