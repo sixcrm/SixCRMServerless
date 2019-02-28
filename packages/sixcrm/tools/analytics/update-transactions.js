@@ -18,10 +18,10 @@ transactionController.disableACLs();
 
 const auroraContext = require('@6crm/sixcrmcore/lib/util/analytics/aurora-context').default;
 const configurationAcquistion = require('../../config/controllers/configuration_acquisition');
-configurationAcquistion.getAuroraClusterEndpoint().then(async (endpoint) => {
 
-	process.env.aurora_host = endpoint;
-	await auroraContext.init();
+process.env.aurora_host = configurationAcquistion.getAuroraClusterEndpoint();
+
+auroraContext.init().then(async () => {
 
 	await auroraContext.withConnection(async connection => {
 

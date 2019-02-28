@@ -100,22 +100,11 @@ describe('/config/controllers/configuration_acquisition.js', () => {
 	describe('getAuroraClusterEndpoint', () => {
 		it('gets the aurora cluster endpoint', () => {
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'rds-provider.js'),  class {
-				constructor(){}
-				describeClusters(){
-					return Promise.resolve({
-						DBClusters: [{
-							Endpoint: 'cluster-something'
-						}]
-					});
-				}
-			});
-
 			const acquisition_functions = global.SixCRM.routes.include('config', 'controllers/configuration_acquisition.js');
-			return acquisition_functions.getAuroraClusterEndpoint().then(result => {
-				expect(_.isString(result)).to.equal(true);
-				expect(result).to.have.string('cluster-');
-			});
+
+			const result = acquisition_functions.getAuroraClusterEndpoint();
+			expect(_.isString(result)).to.equal(true);
+			expect(result).to.have.string('aurora');
 
 		});
 	});

@@ -65,10 +65,10 @@ cloudsearch:
 #Technical Debt:  Username and Password combinations need to be encrypted...
 aurora:
   release: 10
-  default_cluster_identifier: 'sixcrm'
   user: 'root'
   database: 'postgres'
   password: 'Jagodica9'
+  host: production-aurora.sixcrm.com
   port: 5440
   max: 10
   idle_timeout: 30000

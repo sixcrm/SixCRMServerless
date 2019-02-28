@@ -27,7 +27,7 @@ dynamoClient.scan('customers').then(async result => {
 		customer.updated_at
 	]);
 
-	process.env.aurora_host = await configurationAcquistion.getAuroraClusterEndpoint();
+	process.env.aurora_host = configurationAcquistion.getAuroraClusterEndpoint();
 	await auroraContext.init();
 
 	let query = `INSERT INTO analytics.d_customer (id, account, firstname, lastname, email, phone, city, state, zip, created_at, updated_at) VALUES `;

@@ -5,14 +5,9 @@ const AuroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'auror
 const auroraSchemaDeployment = new AuroraSchemaDeployment();
 const configurationAcquistion = global.SixCRM.routes.include('config', 'controllers/configuration_acquisition.js');
 
-configurationAcquistion.getAuroraClusterEndpoint()
-	.then((endpoint) => {
+process.env.aurora_host = configurationAcquistion.getAuroraClusterEndpoint();
 
-		process.env.aurora_host = endpoint;
-		return;
-
-	})
-	.then(() => auroraSchemaDeployment.deploy())
+auroraSchemaDeployment.deploy()
 	.then(() => {
 
 		return du.info('Aurora schema deployment complete.');

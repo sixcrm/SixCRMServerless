@@ -23,10 +23,9 @@ const RESULT_MAP = {
 	harddecline: 'hard decline'
 };
 
-configurationAcquistion.getAuroraClusterEndpoint().then(async (endpoint) => {
+process.env.aurora_host = configurationAcquistion.getAuroraClusterEndpoint();
 
-	process.env.aurora_host = endpoint;
-	await auroraContext.init();
+auroraContext.init().then(async () => {
 
 	await auroraContext.withConnection(async connection => {
 
