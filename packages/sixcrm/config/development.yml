@@ -62,7 +62,6 @@ cloudsearch:
   domainname: 'sixcrm'
 
 aurora:
-  release: 10
   user: 'root'
   database: 'postgres'
   password: 'Jagodica9'

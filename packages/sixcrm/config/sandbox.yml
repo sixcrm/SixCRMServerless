@@ -62,7 +62,6 @@ cloudsearch:
   domainname: 'sixcrm'
 
 aurora:
-  release: 10
   region: 'localhost'
   user: 'postgres'
   database: 'postgres'

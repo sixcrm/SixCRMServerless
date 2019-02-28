@@ -66,7 +66,6 @@ cloudsearch:
 #Technical Debt:  Username and Password combinations need to be encrypted...
 
 aurora:
-  release: 10
   user: 'root'
   database: 'postgres'
   password: 'Jagodica9'

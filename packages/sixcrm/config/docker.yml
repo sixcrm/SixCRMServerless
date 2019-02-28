@@ -75,7 +75,6 @@ cloudsearch:
   domainendpoint: 'local-docker:15808'
 
 aurora:
-  release: 10
   region: 'localhost'
   user: 'postgres'
   database: 'postgres'
