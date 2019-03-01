@@ -40,6 +40,31 @@
     uuid "^3.3.2"
     xml2js "^0.4.19"
 
+"@6crm/sixcrmcore@0.0.56":
+  version "0.0.56"
+  resolved "https://registry.yarnpkg.com/@6crm/sixcrmcore/-/sixcrmcore-0.0.56.tgz#44a6b3327ce43464b3d1d562fb957aeb63827004"
+  integrity sha512-FSxHEAKqprPMrhD4t1VgsYqcCj5AYI7vSn8R7gfOF4FBDHlo5USIuW2RWwa2pT4QcMh/VFBHHTgZWUpqZNR6Ew==
+  dependencies:
+    "@adexchange/aeg-redshift" "0.0.84"
+    ajv "^6.5.0"
+    base-64 "^0.1.0"
+    chalk "^2.4.1"
+    config "^3.0.1"
+    jsonwebtoken "^8.2.2"
+    lodash "^4.17.10"
+    moment "^2.22.2"
+    moment-timezone "^0.5.17"
+    pg "^7.4.3"
+    querystring "^0.2.0"
+    randomstring "^1.1.5"
+    request "^2.87.0"
+    require-yaml "0.0.1"
+    serverless "^1.27.3"
+    source-map-support "^0.5.6"
+    striptags "^3.1.1"
+    uuid "^3.3.2"
+    xml2js "^0.4.19"
+
 "@adexchange/aeg-common@0.0.300":
   version "0.0.300"
   resolved "https://registry.yarnpkg.com/@adexchange/aeg-common/-/aeg-common-0.0.300.tgz#81db2d75d088e020ae401750619a592d67913728"
