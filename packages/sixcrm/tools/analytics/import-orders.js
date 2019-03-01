@@ -107,7 +107,7 @@ Promise.all(_.map(['201804', '201805', '201806', '201807', '201808', '201809'], 
 
 	});
 
-	process.env.aurora_host = await configurationAcquistion.getAuroraClusterEndpoint();
+	process.env.aurora_host = configurationAcquistion.getAuroraClusterEndpoint();
 	await auroraContext.init();
 
 	let query = `INSERT INTO analytics.f_rebill (id, alias, datetime, status, amount, item_count, type, account, session, session_alias, campaign, campaign_name, customer, customer_name) VALUES `;

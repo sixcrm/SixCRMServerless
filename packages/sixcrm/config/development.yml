@@ -62,11 +62,10 @@ cloudsearch:
   domainname: 'sixcrm'
 
 aurora:
-  release: 10
-  default_cluster_identifier: 'sixcrm'
   user: 'root'
   database: 'postgres'
   password: 'Jagodica9'
+  host: development-aurora.sixcrm.com
   port: 5440
   max: 10
   idle_timeout: 30000

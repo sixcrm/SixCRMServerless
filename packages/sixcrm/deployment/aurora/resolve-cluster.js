@@ -13,7 +13,7 @@ resolve().catch((ex) => {
 
 async function resolve() {
 
-	const auroraEndpoint = await configuration.getAuroraClusterEndpoint(null, true);
+	const auroraEndpoint = configuration.getAuroraClusterEndpoint(null, true);
 	const proxyEndpoint = await configuration.getProxyEndpoint();
 	const writeFile = util.promisify(fs.writeFile);
 	await writeFile('./aurora-env', `AURORA_HOST=${auroraEndpoint}\nPROXY_HOST=${proxyEndpoint}`);

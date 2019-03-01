@@ -15,10 +15,9 @@ const configurationAcquistion = require('../../config/controllers/configuration_
 
 const batchSize = 25;
 
-configurationAcquistion.getAuroraClusterEndpoint().then(async (endpoint) => {
+process.env.aurora_host = configurationAcquistion.getAuroraClusterEndpoint();
 
-	process.env.aurora_host = endpoint;
-	await auroraContext.init();
+auroraContext.init().then(async () => {
 
 	await auroraContext.withConnection(async connection => {
 

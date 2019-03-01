@@ -75,11 +75,14 @@ module.exports.getAuroraClusterEndpoint = (config, force) => {
 
 	require('@6crm/sixcrmcore');
 
+	const auroraConfig = global.SixCRM.configuration.site_config.aurora;
+	const host = auroraConfig && auroraConfig.host;
+
 	if (global.SixCRM.configuration.isLocal()) {
 
-		du.debug(`getAuroraClusterEndpoint: LOCAL = ${global.SixCRM.configuration.site_config.aurora.host}`);
+		du.debug(`getAuroraClusterEndpoint: LOCAL = ${host}`);
 
-		return Promise.resolve(global.SixCRM.configuration.site_config.aurora.host);
+		return host;
 
 	}
 
@@ -91,19 +94,11 @@ module.exports.getAuroraClusterEndpoint = (config, force) => {
 
 		du.debug(`getAuroraClusterEndpoint: POINTED AT PROXY`);
 
-		return Promise.resolve('127.0.0.1');
+		return '127.0.0.1';
 
 	}
 
-	const RDSUtilities = global.SixCRM.routes.include('deployment', 'utilities/rds-utilities.js');
-	let rdsutilities = new RDSUtilities();
-
-	return rdsutilities.clusterExists({
-		DBClusterIdentifier: global.SixCRM.configuration.site_config.aurora.default_cluster_identifier
-	}).then((result) => {
-		du.debug('Aurora: ' + result.Endpoint);
-		return result.Endpoint;
-	});
+	return host;
 
 }
 
