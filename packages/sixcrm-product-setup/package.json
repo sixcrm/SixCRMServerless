@@ -50,6 +50,7 @@
     "typescript": "^3.2.2"
   },
   "dependencies": {
+    "chai-exclude": "^1.0.12",
     "class-validator": "^0.9.1",
     "js-logger": "^1.6.0",
     "lodash": "^4.17.11",

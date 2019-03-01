@@ -13,7 +13,7 @@ interface IProductScheduleEntityId {
 export default class ProductScheduleService {
 	private readonly productScheduleRepository: Repository<ProductSchedule>;
 	private readonly accountId: string;
-	private readonly baseFindConditions: { account_id?: string };
+	private readonly baseFindConditions: any;
 
 	constructor({
 		accountId,
@@ -26,13 +26,16 @@ export default class ProductScheduleService {
 		this.accountId = accountId;
 		this.baseFindConditions =
 			accountId === MASTER_ACCOUNT_ID ? {} : { account_id: accountId };
+		this.baseFindConditions.relations = ['cycles'];
 	}
 
 	@LogMethod()
 	get(id: string): Promise<ProductSchedule> {
 		return this.productScheduleRepository.findOneOrFail({
 			...this.baseFindConditions,
-			id
+			where: {
+				id
+			}
 		});
 	}
 
@@ -44,10 +47,10 @@ export default class ProductScheduleService {
 			account_id: this.accountId,
 			...partialProductSchedule
 		});
+
 		await this.validateCreateProductSchedule(productSchedule);
 
-		const insertResult = await this.productScheduleRepository.insert(productSchedule);
-		return insertResult.identifiers[0] as IProductScheduleEntityId;
+		return this.productScheduleRepository.save(productSchedule);
 	}
 
 	@LogMethod()

@@ -2126,6 +2126,13 @@ chai-as-promised@^7.1.1:
   dependencies:
     check-error "^1.0.2"
 
+chai-exclude@^1.0.12:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/chai-exclude/-/chai-exclude-1.0.12.tgz#46fd69dc904ba06319f2d3f5b5060cfe179e2093"
+  integrity sha512-7xJgaLhigf51U+s7k23vOLnXk4w/rIffmlnUu/ueYJg21sLyrTqCn3BxvOjbGNGYgXTQNFwjFX3lUnbcai0oCA==
+  dependencies:
+    fclone "^1.0.11"
+
 chai-json-schema@^1.4.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/chai-json-schema/-/chai-json-schema-1.5.0.tgz#6960719e40f71fd5b377c9282e5c9a46799474f6"
@@ -3956,6 +3963,11 @@ fast-safe-stringify@^2.0.4:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/fast-safe-stringify/-/fast-safe-stringify-2.0.6.tgz#04b26106cc56681f51a044cfc0d76cf0008ac2c2"
   integrity sha512-q8BZ89jjc+mz08rSxROs8VsrBBcn1SIw1kq9NjolL509tkABRk9io01RAjSaEv1Xb2uFLt8VtRiZbGp5H8iDtg==
+
+fclone@^1.0.11:
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/fclone/-/fclone-1.0.11.tgz#10e85da38bfea7fc599341c296ee1d77266ee640"
+  integrity sha1-EOhdo4v+p/xZk0HClu4ddyZu5kA=
 
 fd-slicer@~1.1.0:
   version "1.1.0"

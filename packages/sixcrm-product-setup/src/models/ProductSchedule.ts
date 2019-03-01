@@ -18,7 +18,7 @@ export default class ProductSchedule {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
-	@OneToMany(type => Cycle, cycle => cycle.product_schedule)
+	@OneToMany(type => Cycle, cycle => cycle.product_schedule, { cascade: true })
 	cycles: Cycle[];
 
 	@Index()
