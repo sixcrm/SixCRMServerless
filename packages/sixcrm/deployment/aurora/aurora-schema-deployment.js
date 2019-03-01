@@ -26,8 +26,8 @@ module.exports = class AuroraSchemaDeployment {
 
 		du.info('Deploying schema ' + schema);
 
-		this._executeQuery(connection, `CREATE SCHEMA IF NOT EXISTS ${schema}`);
-		this._executeQuery(connection, `CREATE TABLE IF NOT EXISTS ${schema}.m_release (
+		await this._executeQuery(connection, `CREATE SCHEMA IF NOT EXISTS ${schema}`);
+		await this._executeQuery(connection, `CREATE TABLE IF NOT EXISTS ${schema}.m_release (
 			id INT NOT NULL PRIMARY KEY,
 			created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)`);
