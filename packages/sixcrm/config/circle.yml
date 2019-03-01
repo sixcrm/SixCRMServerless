@@ -77,7 +77,6 @@ aurora:
   user: 'postgres'
   database: 'postgres'
   password: ''
-  host: 'aurora'
   port: 5432
   max: 10
   idle_timeout: 3000
