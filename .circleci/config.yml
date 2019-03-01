@@ -166,7 +166,7 @@ jobs:
             ssh -i ./config/$CIRCLE_BRANCH/ssh-keys/six-crm/sixcrm.pem -o StrictHostKeyChecking=no -f -N -L5440:$AURORA_HOST:5440 ec2-user@$PROXY_HOST
       - run:
           name: Aurora Create Tables
-          command: cd packages/sixcrm && SIX_VERBOSE=2 AURORA_PROXY=true  node ./deployment/aurora/deploy-schema.js
+          command: cd packages/sixcrm && SIX_VERBOSE=3 AURORA_PROXY=true  node ./deployment/aurora/deploy-schema.js
   #Eh... not very useful currently
   environment_test:
     <<: *job-defaults
