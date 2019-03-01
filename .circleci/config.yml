@@ -154,7 +154,7 @@ jobs:
       - run:
           name: Set Proxy
           command: |
-            cd packages/sixcrm && SIX_VERBOSE=2 node ./deployment/aurora/resolve-cluster.js
+            cd packages/sixcrm && SIX_VERBOSE=3 node ./deployment/aurora/resolve-cluster.js
       - run:
           name: Setup SSH Tunnel
           command: |
