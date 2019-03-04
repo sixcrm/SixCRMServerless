@@ -121,5 +121,32 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			expect(productScheduleFromDb.name).to.equal(aProductSchedule.name);
 			expect(productScheduleFromDb.account_id).to.equal(aProductSchedule.account_id);
 		});
+
+		it('rejects objects with invalid account id', async () => {
+			// given
+			const aProductSchedule = getValidProductSchedule(accountId);
+			aProductSchedule.account_id = 'not-an-uuid';
+
+			// then
+			await expect(productScheduleService.create(aProductSchedule)).to.be.rejected;
+		});
+
+		it('rejects objects with empty string account id', async () => {
+			// given
+			const aProductSchedule = getValidProductSchedule(accountId);
+			aProductSchedule.account_id = '';
+
+			// then
+			await expect(productScheduleService.create(aProductSchedule)).to.be.rejected;
+		});
+
+		it('rejects objects with the master account id', async () => {
+			// given
+			const aProductSchedule = getValidProductSchedule(accountId);
+			aProductSchedule.account_id = '*';
+
+			// then
+			await expect(productScheduleService.create(aProductSchedule)).to.be.rejected;
+		});
 	});
 });
