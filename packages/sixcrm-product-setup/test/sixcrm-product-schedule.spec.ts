@@ -50,6 +50,7 @@ const getValidCycle = (productSchedule: ProductSchedule): Cycle => {
 
 describe('@6crm/sixcrm-product-schedule', () => {
 	let productScheduleService: ProductScheduleService;
+	let masterAccountProductScheduleService: ProductScheduleService;
 	let accountId = v4();
 
 	before(async () => {
@@ -59,6 +60,15 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			username: 'postgres',
 			password: '',
 			schema: 'public',
+		});
+
+		masterAccountProductScheduleService = await createProductScheduleService({
+			accountId: '*',
+			host: 'localhost',
+			username: 'postgres',
+			password: '',
+			schema: 'public',
+			logging: ['error']
 		});
 	});
 
@@ -70,7 +80,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 		it('creates a product schedule in the account', async () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
-			const id = (await productScheduleService.create(aProductSchedule)).id;
+			const { id } = (await productScheduleService.create(aProductSchedule));
 
 			// when
 			const productScheduleFromDb = await productScheduleService.get(id);
@@ -82,6 +92,34 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			// expect(productScheduleFromDb).excluding(['updated_at', 'cycles', 'created_at']).to.equal(aProductSchedule);
 		});
 
+		it('creates a product schedule using the ProductScheduleService account', async () => {
+			// given
+			const aProductSchedule = getValidProductSchedule(accountId);
+			delete aProductSchedule.account_id;
+			const { id } = (await productScheduleService.create(aProductSchedule));
 
+			// when
+			const productScheduleFromDb = await productScheduleService.get(id);
+
+			// then
+			expect(productScheduleFromDb.id).to.equal(aProductSchedule.id);
+			expect(productScheduleFromDb.name).to.equal(aProductSchedule.name);
+			expect(productScheduleFromDb.account_id).to.equal(accountId);
+		});
+
+		it('creates a product schedule in an account as the master account', async () => {
+			// given
+			const aProductSchedule = getValidProductSchedule(accountId);
+			const { id } = (await masterAccountProductScheduleService.create(aProductSchedule));
+
+			// when
+			const productScheduleFromDb = await productScheduleService.get(id);
+
+			// then
+			expect(productScheduleFromDb.cycles.length).to.equal(aProductSchedule.cycles.length);
+			expect(productScheduleFromDb.id).to.equal(aProductSchedule.id);
+			expect(productScheduleFromDb.name).to.equal(aProductSchedule.name);
+			expect(productScheduleFromDb.account_id).to.equal(aProductSchedule.account_id);
+		});
 	});
 });
