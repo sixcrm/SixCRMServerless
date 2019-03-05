@@ -8,12 +8,14 @@ import chaiExclude = require('chai-exclude');
 chai.use(chaiAsPromised);
 chai.use(chaiExclude);
 const expect = chai.expect;
+const assert = chai.assert;
 
 import {createProductScheduleService} from '../src';
 import {disconnect} from "../src/connect";
 import ProductScheduleService from "../src/ProductScheduleService";
 import ProductSchedule from "../src/models/ProductSchedule";
 import Cycle from "../src/models/Cycle";
+import NormalizedProductSchedule from "./models/NormalizedProductSchedule";
 
 const getValidProductSchedule = function(accountId): ProductSchedule {
 	const productSchedule: any = {
@@ -86,10 +88,8 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			const productScheduleFromDb = await productScheduleService.get(id);
 
 			// then
-			expect(productScheduleFromDb.cycles.length).to.equal(aProductSchedule.cycles.length);
-			expect(productScheduleFromDb.id).to.equal(aProductSchedule.id);
-			expect(productScheduleFromDb.name).to.equal(aProductSchedule.name);
-			// expect(productScheduleFromDb).excluding(['updated_at', 'cycles', 'created_at']).to.equal(aProductSchedule);
+			expect(NormalizedProductSchedule.of(productScheduleFromDb))
+				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
 		});
 
 		it('creates a product schedule using the ProductScheduleService account', async () => {
@@ -105,6 +105,12 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			expect(productScheduleFromDb.id).to.equal(aProductSchedule.id);
 			expect(productScheduleFromDb.name).to.equal(aProductSchedule.name);
 			expect(productScheduleFromDb.account_id).to.equal(accountId);
+
+			assert.deepEqualExcluding(
+				NormalizedProductSchedule.of(productScheduleFromDb),
+				NormalizedProductSchedule.of(aProductSchedule),
+				'account_id'
+			);
 		});
 
 		it('creates a product schedule in an account as the master account', async () => {
@@ -116,10 +122,8 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			const productScheduleFromDb = await productScheduleService.get(id);
 
 			// then
-			expect(productScheduleFromDb.cycles.length).to.equal(aProductSchedule.cycles.length);
-			expect(productScheduleFromDb.id).to.equal(aProductSchedule.id);
-			expect(productScheduleFromDb.name).to.equal(aProductSchedule.name);
-			expect(productScheduleFromDb.account_id).to.equal(aProductSchedule.account_id);
+			expect(NormalizedProductSchedule.of(productScheduleFromDb))
+				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
 		});
 
 		it('rejects objects with invalid account id', async () => {
