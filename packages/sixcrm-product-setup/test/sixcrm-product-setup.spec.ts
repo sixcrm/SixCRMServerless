@@ -88,6 +88,7 @@ describe('@6crm/sixcrm-product-setup', () => {
 				NormalizedProduct.of(aProduct),
 				'account_id'
 			);
+			expect(productFromDb.account_id).to.equal(accountId);
 		});
 
 		it('creates a product in an account as the master account', async () => {
@@ -191,6 +192,7 @@ describe('@6crm/sixcrm-product-setup', () => {
 				NormalizedProduct.of(aProduct),
 				'account_id'
 			);
+			expect(productFromDb.account_id).to.equal(accountId);
 		});
 
 		it('updates a product as the master account', async () => {
@@ -210,6 +212,8 @@ describe('@6crm/sixcrm-product-setup', () => {
 				NormalizedProduct.of(aProduct),
 				'account_id'
 			);
+			expect(productFromDb.account_id).to.equal(accountId);
+			expect(productFromDb.account_id).to.equal(accountId);
 		});
 
 		it('enforces same account', async () => {
