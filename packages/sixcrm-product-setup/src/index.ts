@@ -37,5 +37,6 @@ export const getProductSetupService = () => {
 	return productSetupService;
 };
 
+export { disconnect } from './connect'
 export { default as Product } from './models/Product';
 export { default as LegacyProduct } from './models/legacy/LegacyProduct';
