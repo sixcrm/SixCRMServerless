@@ -52,12 +52,15 @@ export default class ProductScheduleService {
 
 		await this.validateCreateProductSchedule(productSchedule);
 
-		const saved = await this.productScheduleRepository.save(productSchedule);
-		for (const cycle of productSchedule.cycles) {
-			for (const cycle_product of cycle.cycle_products) {
-				await this.connection.manager.save(cycle_product);
+		let saved;
+		await this.connection.transaction(async manager => {
+			saved = await this.productScheduleRepository.save(productSchedule);
+			for (const cycle of productSchedule.cycles) {
+				for (const cycle_product of cycle.cycle_products) {
+					await manager.save(cycle_product);
+				}
 			}
-		}
+		});
 
 		return saved;
 	}
