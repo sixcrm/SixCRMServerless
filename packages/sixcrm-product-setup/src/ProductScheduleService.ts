@@ -14,6 +14,7 @@ export default class ProductScheduleService {
 	private readonly productScheduleRepository: Repository<ProductSchedule>;
 	private readonly accountId: string;
 	private readonly baseFindConditions: any;
+	private readonly connection: Connection;
 
 	constructor({
 		accountId,
@@ -22,11 +23,12 @@ export default class ProductScheduleService {
 		accountId: string;
 		connection: Connection;
 	}) {
+		this.connection = connection;
 		this.productScheduleRepository = connection.getRepository(ProductSchedule);
 		this.accountId = accountId;
 		this.baseFindConditions =
 			accountId === MASTER_ACCOUNT_ID ? {} : { account_id: accountId };
-		this.baseFindConditions.relations = ['cycles'];
+		this.baseFindConditions.relations = ['cycles', 'cycles.cycle_products', 'cycles.cycle_products.product'];
 	}
 
 	@LogMethod()
@@ -50,7 +52,14 @@ export default class ProductScheduleService {
 
 		await this.validateCreateProductSchedule(productSchedule);
 
-		return this.productScheduleRepository.save(productSchedule);
+		const saved = await this.productScheduleRepository.save(productSchedule);
+		for (const cycle of productSchedule.cycles) {
+			for (const cycle_product of cycle.cycle_products) {
+				await this.connection.manager.save(cycle_product);
+			}
+		}
+
+		return saved;
 	}
 
 	@LogMethod()

@@ -10,12 +10,15 @@ chai.use(chaiExclude);
 const expect = chai.expect;
 const assert = chai.assert;
 
-import {createProductScheduleService} from '../src';
+import {createProductScheduleService, createProductSetupService} from '../src';
 import {disconnect} from "../src/connect";
 import ProductScheduleService from "../src/ProductScheduleService";
 import ProductSchedule from "../src/models/ProductSchedule";
 import Cycle from "../src/models/Cycle";
 import NormalizedProductSchedule from "./models/NormalizedProductSchedule";
+import CycleProduct from "../src/models/CycleProduct";
+import Product from "../src/models/Product";
+import ProductSetupService from "../src/ProductSetupService";
 
 const getValidProductSchedule = function(accountId): ProductSchedule {
 	const productSchedule: any = {
@@ -28,17 +31,16 @@ const getValidProductSchedule = function(accountId): ProductSchedule {
 		updated_at: new Date()
 	};
 
-	productSchedule.cycles = [ getValidCycle(productSchedule), getValidCycle(productSchedule) ];
+	productSchedule.cycles = [ getValidCycle(productSchedule, accountId), getValidCycle(productSchedule, accountId) ];
 
 	return productSchedule;
 };
 
-const getValidCycle = (productSchedule: ProductSchedule): Cycle => {
-	return {
+const getValidCycle = (productSchedule: ProductSchedule, account_id: string): Cycle => {
+	const cycle: any = {
 		id: v4(),
 		product_schedule: Object.assign({}, productSchedule),
 		created_at: new Date(),
-		cycle_products: [],
 		is_monthly: false,
 		length: 30,
 		name: 'A cycle',
@@ -47,12 +49,33 @@ const getValidCycle = (productSchedule: ProductSchedule): Cycle => {
 		price: 100,
 		shipping_price: 0,
 		updated_at: new Date()
+	};
+
+	cycle.cycle_products = [ getValidCycleProduct(cycle, getValidProduct(account_id)) ];
+
+	return cycle;
+};
+
+const getValidCycleProduct = (cycle: Cycle, product: Product): CycleProduct => {
+	return {
+		created_at: new Date(),
+		cycle: Object.assign({}, cycle),
+		is_shipping: false,
+		position: 0,
+		product,
+		quantity: 1,
+		updated_at: new Date()
 	}
+};
+
+const getValidProduct = (accountId) => {
+	return new Product(v4(), accountId, 'A product', 100, false, []);
 };
 
 describe('@6crm/sixcrm-product-schedule', () => {
 	let productScheduleService: ProductScheduleService;
 	let masterAccountProductScheduleService: ProductScheduleService;
+	let productSetupService: ProductSetupService;
 	let accountId = v4();
 
 	before(async () => {
@@ -72,6 +95,15 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			schema: 'public',
 			logging: ['error']
 		});
+
+		productSetupService = await createProductSetupService({
+			accountId,
+			host: 'localhost',
+			username: 'postgres',
+			password: '',
+			schema: 'public',
+			logging: ['error']
+		});
 	});
 
 	after(async () => {
@@ -82,6 +114,14 @@ describe('@6crm/sixcrm-product-schedule', () => {
 		it('creates a product schedule in the account', async () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
+
+			// assure all cycle point to existing product
+			for (const cycle of aProductSchedule.cycles) {
+				for (const cycle_product of cycle.cycle_products) {
+					await productSetupService.createProduct(cycle_product.product);
+				}
+			}
+
 			const { id } = (await productScheduleService.create(aProductSchedule));
 
 			// when
@@ -96,6 +136,14 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 			delete aProductSchedule.account_id;
+
+			// assure all cycle point to existing product
+			for (const cycle of aProductSchedule.cycles) {
+				for (const cycle_product of cycle.cycle_products) {
+					await productSetupService.createProduct(cycle_product.product);
+				}
+			}
+
 			const { id } = (await productScheduleService.create(aProductSchedule));
 
 			// when
@@ -116,6 +164,14 @@ describe('@6crm/sixcrm-product-schedule', () => {
 		it('creates a product schedule in an account as the master account', async () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
+
+			// assure all cycle point to existing product
+			for (const cycle of aProductSchedule.cycles) {
+				for (const cycle_product of cycle.cycle_products) {
+					await productSetupService.createProduct(cycle_product.product);
+				}
+			}
+
 			const { id } = (await masterAccountProductScheduleService.create(aProductSchedule));
 
 			// when

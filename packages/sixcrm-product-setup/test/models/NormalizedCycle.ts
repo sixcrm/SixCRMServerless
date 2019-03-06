@@ -1,4 +1,5 @@
 import Cycle from "../../src/models/Cycle";
+import NormalizedCycleProduct, {NormalizedCycleProductType} from "./NormalizedCycleProduct";
 
 export interface NormalizedCycleType {
 	id: string,
@@ -9,6 +10,7 @@ export interface NormalizedCycleType {
 	next_position: number,
 	price: number,
 	shipping_price: number,
+	cycle_products: NormalizedCycleProductType[]
 }
 
 export default class NormalizedCycle {
@@ -24,7 +26,8 @@ export default class NormalizedCycle {
 			position: entity.position,
 			next_position: entity.next_position,
 			price: parseInt(entity.price + ''),
-			shipping_price: parseInt(entity.shipping_price + '')
+			shipping_price: parseInt(entity.shipping_price + ''),
+			cycle_products: (entity.cycle_products || []).map(cycle_product => NormalizedCycleProduct.of(cycle_product))
 		}
 	}
 
