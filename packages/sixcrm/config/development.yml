@@ -14,11 +14,12 @@ aws:
   account: '068070110666'
 
 lambda:
-  security_group: 'SixCRM-PrivateSubnet'
+  security_groups:
+    - sg-d7fdaa9e
   subnets:
-    - sixcrm-private1
-    - sixcrm-private2
-    - sixcrm-private3
+    - subnet-db0ee887
+    - subnet-fdf4079a
+    - subnet-5b6c8c75
 
 elasticsearch:
   domain_name: 'sixcrm-logs'
