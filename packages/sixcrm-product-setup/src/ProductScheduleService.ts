@@ -1,5 +1,6 @@
 import { Connection, Repository } from 'typeorm';
 import { validate, ValidationError } from "class-validator";
+import { merge } from 'lodash';
 import {LogMethod} from "./log";
 import ProductSchedule from "./models/ProductSchedule";
 
@@ -26,19 +27,19 @@ export default class ProductScheduleService {
 		this.connection = connection;
 		this.productScheduleRepository = connection.getRepository(ProductSchedule);
 		this.accountId = accountId;
-		this.baseFindConditions =
-			accountId === MASTER_ACCOUNT_ID ? {} : { account_id: accountId };
-		this.baseFindConditions.relations = ['cycles', 'cycles.cycle_products', 'cycles.cycle_products.product'];
+
+		const whereCondition = accountId === MASTER_ACCOUNT_ID ? {} : { where: { account_id: accountId } };
+		this.baseFindConditions = {
+			...whereCondition,
+			relations: ['cycles', 'cycles.cycle_products', 'cycles.cycle_products.product']
+		};
 	}
 
 	@LogMethod()
 	get(id: string): Promise<ProductSchedule> {
-		return this.productScheduleRepository.findOneOrFail({
-			...this.baseFindConditions,
-			where: {
-				id
-			}
-		});
+		return this.productScheduleRepository.findOneOrFail(
+			merge({}, this.baseFindConditions, { where: { id } })
+		);
 	}
 
 	@LogMethod()
