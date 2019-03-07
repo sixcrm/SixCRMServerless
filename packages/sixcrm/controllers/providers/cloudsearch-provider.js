@@ -56,25 +56,8 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 	}
 
 	async setCloudsearchDomainEndpoint() {
-		let endpoint;
 
-		if (global.SixCRM.configuration.isLocal()) {
-
-			endpoint = global.SixCRM.configuration.serverless_config.cloudsearch_domainendpoint;
-
-		} else {
-
-			if(!_.has(process.env, 'cloudsearch_domainendpoint')){
-
-				endpoint = await global.SixCRM.routes.include('config', 'controllers/configuration_acquisition.js').getCloudsearchSearchEndpoint();
-
-			}else{
-
-				endpoint = await global.SixCRM.configuration.getEnvironmentConfig('cloudsearch_domainendpoint');
-
-			}
-
-		}
+		let endpoint = global.SixCRM.configuration.site_config.cloudsearch.endpoint;
 
 		if (endpoint) {
 
@@ -116,6 +99,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 			return true;
 		}
 
+		du.debug(global.SixCRM.configuration.site_config.cloudsearch);
 		if (_.has(global.SixCRM.configuration.site_config, 'cloudsearch') && _.has(global.SixCRM.configuration.site_config.cloudsearch, 'domainname')) {
 
 			this.domainname = global.SixCRM.configuration.site_config.cloudsearch.domainname;

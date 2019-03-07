@@ -33,9 +33,7 @@ provider:
     aws_region: ${opt:region, self:provider.region} #Technical Debt:  Eliminate
     aws_account: ${self:provider.account} #Technical Debt:  Eliminate
     SIX_VERBOSE: ${file(./config/${opt:stage}.yml):serverless.verbose}
-    cloudsearch_domainendpoint: ${file(./config/controllers/configuration_acquisition.js):getCloudsearchSearchEndpoint}
     aurora_host: ${file(./config/controllers/configuration_acquisition.js):getAuroraClusterEndpoint}
-    elasticsearch_endpoint: ${file(./config/controllers/configuration_acquisition.js):getElasticSearchEndpoint}
 
 plugins:
   - serverless-dynamodb-local

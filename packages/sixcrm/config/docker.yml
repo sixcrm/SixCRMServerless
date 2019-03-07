@@ -72,7 +72,7 @@ sns:
 
 cloudsearch:
   domainname: 'sixcrm'
-  domainendpoint: 'local-docker:15808'
+  endpoint: 'local-docker:15808'
 
 aurora:
   region: 'localhost'
