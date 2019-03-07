@@ -76,8 +76,9 @@ const getValidProduct = (accountId) => {
 describe('@6crm/sixcrm-product-schedule', () => {
 	let productScheduleService: ProductScheduleService;
 	let masterAccountProductScheduleService: ProductScheduleService;
-	let productSetupService: ProductSetupService;
+	let masterAccountProductSetupService: ProductSetupService;
 	let accountId = v4();
+	let anotherAccountId = v4();
 
 	before(async () => {
 		productScheduleService = await createProductScheduleService({
@@ -97,8 +98,8 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			logging: ['error']
 		});
 
-		productSetupService = await createProductSetupService({
-			accountId,
+		masterAccountProductSetupService = await createProductSetupService({
+			accountId: '*',
 			host: 'localhost',
 			username: 'postgres',
 			password: '',
@@ -111,13 +112,17 @@ describe('@6crm/sixcrm-product-schedule', () => {
 		await disconnect();
 	});
 
-	const createProductsForCycles = async function (aProductSchedule) {
-		for (const cycle of aProductSchedule.cycles) {
+	const createProductsForCycles = async ({ account_id, cycles }) => {
+		for (const cycle of cycles) {
 			for (const cycle_product of cycle.cycle_products) {
-				await productSetupService.createProduct(cycle_product.product);
+				await masterAccountProductSetupService.createProduct({
+					...cycle_product.product,
+					account_id
+				});
 			}
 		}
 	};
+
 	describe('create', () => {
 		it('creates a product schedule in the account', async () => {
 			// given
@@ -139,10 +144,10 @@ describe('@6crm/sixcrm-product-schedule', () => {
 		it('creates a product schedule using the ProductScheduleService account', async () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
-			delete aProductSchedule.account_id;
 
 			// assure all cycle point to existing product
 			await createProductsForCycles(aProductSchedule);
+			delete aProductSchedule.account_id;
 
 			const { id } = (await productScheduleService.create(aProductSchedule));
 
@@ -335,6 +340,44 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			);
 
 			expect(productScheduleFromDb.cycles[0].cycle_products[0].product.name).to.equal(originalName);
+		});
+	});
+
+	describe('getAll', () => {
+		it('lists products', async () => {
+			// given
+			const aProductSchedule = getValidProductSchedule(accountId);
+			const previousProductSchedules = await productScheduleService.getAll();
+
+			await createProductsForCycles(aProductSchedule);
+			await productScheduleService.create(aProductSchedule);
+
+			// when
+			const newProductSchedules = await productScheduleService.getAll();
+
+			// then
+			expect(newProductSchedules.length).to.equal(previousProductSchedules.length + 1);
+		});
+
+		it('does not list products from other accounts', async () => {
+			// given
+			const myProductSchedule = getValidProductSchedule(accountId);
+			const anotherAccountProductSchedule = getValidProductSchedule(anotherAccountId);
+
+			await createProductsForCycles(myProductSchedule);
+			await productScheduleService.create(myProductSchedule);
+
+			await createProductsForCycles(anotherAccountProductSchedule);
+			await masterAccountProductScheduleService.create(anotherAccountProductSchedule);
+
+			// when
+			const myProductSchedules = await productScheduleService.getAll();
+
+
+			// then
+			expect(
+				myProductSchedules.filter(productSchedule => productSchedule.account_id !== accountId)
+			).to.have.lengthOf(0);
 		});
 	});
 });

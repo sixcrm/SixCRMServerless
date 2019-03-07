@@ -43,6 +43,14 @@ export default class ProductScheduleService {
 	}
 
 	@LogMethod()
+	getAll(limit?: number): Promise<ProductSchedule[]> {
+		return this.productScheduleRepository.find({
+			...this.baseFindConditions,
+			take: limit
+		});
+	}
+
+	@LogMethod()
 	async create(partialProductSchedule: Partial<ProductSchedule>): Promise<IProductScheduleEntityId> {
 		// shallow copy to avoid typeorm issues with objects without prototypes
 		// https://github.com/typeorm/typeorm/issues/2065
