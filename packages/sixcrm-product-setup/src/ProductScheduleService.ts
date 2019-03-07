@@ -1,4 +1,4 @@
-import { Connection, Repository, FindConditions } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { validate, ValidationError } from "class-validator";
 import {LogMethod} from "./log";
 import ProductSchedule from "./models/ProductSchedule";
@@ -81,8 +81,21 @@ export default class ProductScheduleService {
 		await this.validateProductSchedule(productSchedule);
 
 		const { account_id, id } = productSchedule;
-		const updateCriteria = this.isMasterAccount ? { id } : { account_id, id };
-		await this.productScheduleRepository.update(updateCriteria, productSchedule);
+		// const updateCriteria = this.isMasterAccount ? { id } : { account_id, id };
+
+		// await this.productScheduleRepository.update(updateCriteria, productSchedule);
+
+		let saved;
+		await this.connection.transaction(async manager => {
+			saved = await this.productScheduleRepository.save(productSchedule);
+			for (const cycle of productSchedule.cycles) {
+				for (const cycle_product of cycle.cycle_products) {
+					await manager.save(cycle_product);
+				}
+			}
+		});
+
+		return saved;
 	}
 
 	@LogMethod()

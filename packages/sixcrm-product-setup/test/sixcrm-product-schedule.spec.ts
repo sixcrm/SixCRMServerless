@@ -19,6 +19,7 @@ import NormalizedProductSchedule from "./models/NormalizedProductSchedule";
 import CycleProduct from "../src/models/CycleProduct";
 import Product from "../src/models/Product";
 import ProductSetupService from "../src/ProductSetupService";
+import NormalizedProduct from "./models/NormalizedProduct";
 
 const getValidProductSchedule = function(accountId): ProductSchedule {
 	const productSchedule: any = {
@@ -110,17 +111,20 @@ describe('@6crm/sixcrm-product-schedule', () => {
 		await disconnect();
 	});
 
-	describe('createProductSchedule', () => {
+	const createProductsForCycles = async function (aProductSchedule) {
+		for (const cycle of aProductSchedule.cycles) {
+			for (const cycle_product of cycle.cycle_products) {
+				await productSetupService.createProduct(cycle_product.product);
+			}
+		}
+	};
+	describe('create', () => {
 		it('creates a product schedule in the account', async () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 
 			// assure all cycle point to existing product
-			for (const cycle of aProductSchedule.cycles) {
-				for (const cycle_product of cycle.cycle_products) {
-					await productSetupService.createProduct(cycle_product.product);
-				}
-			}
+			await createProductsForCycles(aProductSchedule);
 
 			const { id } = (await productScheduleService.create(aProductSchedule));
 
@@ -138,11 +142,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			delete aProductSchedule.account_id;
 
 			// assure all cycle point to existing product
-			for (const cycle of aProductSchedule.cycles) {
-				for (const cycle_product of cycle.cycle_products) {
-					await productSetupService.createProduct(cycle_product.product);
-				}
-			}
+			await createProductsForCycles(aProductSchedule);
 
 			const { id } = (await productScheduleService.create(aProductSchedule));
 
@@ -166,11 +166,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			const aProductSchedule = getValidProductSchedule(accountId);
 
 			// assure all cycle point to existing product
-			for (const cycle of aProductSchedule.cycles) {
-				for (const cycle_product of cycle.cycle_products) {
-					await productSetupService.createProduct(cycle_product.product);
-				}
-			}
+			await createProductsForCycles(aProductSchedule);
 
 			const { id } = (await masterAccountProductScheduleService.create(aProductSchedule));
 
@@ -207,6 +203,138 @@ describe('@6crm/sixcrm-product-schedule', () => {
 
 			// then
 			await expect(productScheduleService.create(aProductSchedule)).to.be.rejected;
+		});
+	});
+
+	describe('update', () => {
+		it('updates a product schedule in the account', async () => {
+			// given
+			const aProductSchedule = getValidProductSchedule(accountId);
+			await createProductsForCycles(aProductSchedule);
+			aProductSchedule.requires_confirmation = !aProductSchedule.requires_confirmation;
+
+			// when
+			await productScheduleService.update(aProductSchedule);
+			const productScheduleFromDb = await productScheduleService.get(aProductSchedule.id);
+
+			// then
+			expect(NormalizedProductSchedule.of(productScheduleFromDb))
+				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
+		});
+
+		it('removes a cycle from the schedule', async () => {
+			// given
+			const aProductSchedule = getValidProductSchedule(accountId);
+			await createProductsForCycles(aProductSchedule);
+
+			aProductSchedule.cycles.pop(); // remove one cycle;
+
+			// when
+			await productScheduleService.update(aProductSchedule);
+			const productScheduleFromDb = await productScheduleService.get(aProductSchedule.id);
+
+			// then
+			expect(NormalizedProductSchedule.of(productScheduleFromDb))
+				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
+		});
+
+		it('adds a new cycle to schedule', async () => {
+			// given
+			const aProductSchedule = getValidProductSchedule(accountId);
+			await createProductsForCycles(aProductSchedule);
+
+			// add one cycle
+			const newCycle = JSON.parse(JSON.stringify(aProductSchedule.cycles[0]));
+			newCycle.id = v4();
+			// unfortunately we need to update it from the both sides or relation
+			// it should be handled by the domain object anyway
+			newCycle.cycle_products[0].cycle.id = newCycle.id;
+			aProductSchedule.cycles.push(newCycle);
+
+			// when
+			await productScheduleService.update(aProductSchedule);
+			const productScheduleFromDb = await productScheduleService.get(aProductSchedule.id);
+
+			// then
+			expect(NormalizedProductSchedule.of(productScheduleFromDb))
+				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
+		});
+
+		it('updates a cycle in product schedule', async () => {
+			// given
+			const aProductSchedule = getValidProductSchedule(accountId);
+			await createProductsForCycles(aProductSchedule);
+			aProductSchedule.cycles[0].is_monthly = !aProductSchedule.cycles[0].is_monthly;
+
+			// when
+			await productScheduleService.update(aProductSchedule);
+			const productScheduleFromDb = await productScheduleService.get(aProductSchedule.id);
+
+			// then
+			expect(NormalizedProductSchedule.of(productScheduleFromDb))
+				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
+		});
+
+		it('updates a cycle_product in cycle schedule', async () => {
+			// given
+			const aProductSchedule = getValidProductSchedule(accountId);
+			await createProductsForCycles(aProductSchedule);
+			aProductSchedule.cycles[0].cycle_products[0].is_shipping = !aProductSchedule.cycles[0].cycle_products[0].is_shipping;
+
+			// when
+			await productScheduleService.update(aProductSchedule);
+			const productScheduleFromDb = await productScheduleService.get(aProductSchedule.id);
+
+			// then
+			expect(NormalizedProductSchedule.of(productScheduleFromDb))
+				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
+		});
+
+		it('adds a new product to cycle', async () => {
+			// given
+			const aProductSchedule = getValidProductSchedule(accountId);
+
+			// create a new cycle product
+			const newCp = JSON.parse(JSON.stringify(aProductSchedule.cycles[0].cycle_products[0]));
+			newCp.product = getValidProduct(accountId);
+			aProductSchedule.cycles[0].cycle_products.push(newCp);
+
+			await createProductsForCycles(aProductSchedule);
+
+			// when
+			await productScheduleService.update(aProductSchedule);
+			const productScheduleFromDb = await productScheduleService.get(aProductSchedule.id);
+
+			// then
+			expect(NormalizedProductSchedule.of(productScheduleFromDb))
+				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
+		});
+
+		it('does not persist changes to product in cycle_product', async () => {
+			// given
+			const aProductSchedule = getValidProductSchedule(accountId);
+			await createProductsForCycles(aProductSchedule);
+			const originalName = aProductSchedule.cycles[0].cycle_products[0].product.name;
+			aProductSchedule.cycles[0].cycle_products[0].product.name = 'potato';
+
+			// when
+			await productScheduleService.update(aProductSchedule);
+			const productScheduleFromDb = await productScheduleService.get(aProductSchedule.id);
+
+			// then
+			assert.deepEqualExcluding(
+				NormalizedProductSchedule.of(productScheduleFromDb),
+				NormalizedProductSchedule.of(aProductSchedule),
+				'cycles'
+			);
+
+			assert.deepEqualExcluding(
+				NormalizedProduct.of(aProductSchedule.cycles[0].cycle_products[0].product),
+				NormalizedProduct.of(productScheduleFromDb.cycles[0].cycle_products[0].product),
+				'name'
+			);
+
+			expect(productScheduleFromDb.cycles[0].cycle_products[0].product.name).to.equal(originalName);
 		});
 	});
 });
