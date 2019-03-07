@@ -70,7 +70,7 @@ sns:
 
 cloudsearch:
   domainname: 'sixcrm'
-  domainendpoint: 'cloudsearch'
+  endpoint: 'cloudsearch'
 
 aurora:
   region: 'localhost'

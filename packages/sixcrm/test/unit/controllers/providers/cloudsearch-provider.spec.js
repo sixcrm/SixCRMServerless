@@ -6,8 +6,6 @@ const AWSTestUtils = require('./aws-test-utils');
 
 describe('controllers/providers/cloudsearch-provider', () => {
 
-	let process_env;
-
 	before(() => {
 		mockery.resetCache();
 		mockery.deregisterAll();
@@ -27,15 +25,6 @@ describe('controllers/providers/cloudsearch-provider', () => {
 			}
 		});
 
-	});
-
-	beforeEach(() => {
-		process_env = process.env;
-		process.env['cloudsearch_domainendpoint'] = 'doc-somethingsomethingsomething';
-	});
-
-	afterEach(() => {
-		process.env = process_env;
 	});
 
 	after(() => {

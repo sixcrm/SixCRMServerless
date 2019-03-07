@@ -1,28 +1,6 @@
 require('@6crm/sixcrmcore');
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
-module.exports.getCloudsearchSearchEndpoint = () => {
-
-	require('@6crm/sixcrmcore');
-
-	if (global.SixCRM.configuration.isLocal()) {
-
-		return Promise.resolve(global.SixCRM.configuration.site_config.cloudsearch.domainendpoint);
-
-	}
-
-	const CloudsearchUtilities = global.SixCRM.routes.include('deployment', 'utilities/cloudsearch-deployment.js');
-	let cloudsearchutilities = new CloudsearchUtilities(false);
-
-	return cloudsearchutilities.domainExists({
-		DomainName: global.SixCRM.configuration.site_config.cloudsearch.domainname
-	}).then(result => {
-		du.debug('CloudSearch: ' + result.DocService.Endpoint);
-		return result.DocService.Endpoint;
-	});
-
-}
-
 module.exports.getAuroraClusterEndpoint = (config, force) => {
 
 	require('@6crm/sixcrmcore');
@@ -51,31 +29,6 @@ module.exports.getAuroraClusterEndpoint = (config, force) => {
 	}
 
 	return host;
-
-}
-
-module.exports.getElasticSearchEndpoint = () => {
-
-	require('@6crm/sixcrmcore');
-
-	// probably need to add this to docker compose???
-	if (global.SixCRM.configuration.isLocal()) {
-
-		return Promise.resolve({
-			Endpoint: '????'
-		});
-
-	}
-
-	const ElasticSearchUtilities = global.SixCRM.routes.include('deployment', 'utilities/elasticsearch-deployment.js');
-	let elasticsearchutilities = new ElasticSearchUtilities();
-
-	return elasticsearchutilities.domainExists({
-		DomainName: global.SixCRM.configuration.site_config.elasticsearch.domain_name
-	}).then(result => {
-		du.debug('ElasticSearch: ' + result.DomainStatus.Endpoint);
-		return result.DomainStatus.Endpoint;
-	});
 
 }
 

@@ -62,6 +62,7 @@ sqs:
 
 cloudsearch:
   domainname: 'sixcrm'
+  endpoint: 'doc-sixcrm-3axts477serm3d4bq6dqj5ixzu.us-east-1.cloudsearch.amazonaws.com'
 
 #Technical Debt:  Username and Password combinations need to be encrypted...
 aurora:

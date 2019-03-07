@@ -91,23 +91,12 @@ function getValidCloudsearchDomainResponses(){
 
 describe('controllers/workers/indexEntities', () => {
 
-	let process_env;
-
 	before(() => {
 		mockery.enable({
 			useCleanCache: true,
 			warnOnReplace: false,
 			warnOnUnregistered: false
 		});
-	});
-
-	beforeEach(() => {
-		process_env = process.env;
-		process.env['cloudsearch_domainendpoint'] = 'doc-somethingsomething';
-	});
-	afterEach(() => {
-		mockery.resetCache();
-		process.env = process_env;
 	});
 
 	after(() => {
