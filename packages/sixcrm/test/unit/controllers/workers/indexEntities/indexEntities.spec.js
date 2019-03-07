@@ -104,6 +104,10 @@ describe('controllers/workers/indexEntities', () => {
 		mockery.disable();
 	});
 
+	afterEach(() => {
+		mockery.resetCache();
+	});
+
 	describe('constructor', () => {
 
 		it('successfully constructs', () => {
