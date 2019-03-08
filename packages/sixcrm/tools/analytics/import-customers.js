@@ -7,7 +7,6 @@ const DynamoClient = require('./dynamo');
 const dynamoClient = new DynamoClient();
 
 const auroraContext = require('@6crm/sixcrmcore/lib/util/analytics/aurora-context').default;
-const configurationAcquistion = require('../../config/controllers/configuration_acquisition');
 
 dynamoClient.scan('customers').then(async result => {
 
@@ -27,7 +26,6 @@ dynamoClient.scan('customers').then(async result => {
 		customer.updated_at
 	]);
 
-	process.env.aurora_host = configurationAcquistion.getAuroraClusterEndpoint();
 	await auroraContext.init();
 
 	let query = `INSERT INTO analytics.d_customer (id, account, firstname, lastname, email, phone, city, state, zip, created_at, updated_at) VALUES `;

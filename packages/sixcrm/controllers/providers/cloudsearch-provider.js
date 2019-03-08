@@ -99,7 +99,6 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 			return true;
 		}
 
-		du.debug(global.SixCRM.configuration.site_config.cloudsearch);
 		if (_.has(global.SixCRM.configuration.site_config, 'cloudsearch') && _.has(global.SixCRM.configuration.site_config.cloudsearch, 'domainname')) {
 
 			this.domainname = global.SixCRM.configuration.site_config.cloudsearch.domainname;

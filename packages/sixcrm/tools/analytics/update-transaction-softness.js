@@ -11,7 +11,6 @@ const transactionController = new TransactionController();
 transactionController.disableACLs();
 
 const auroraContext = require('@6crm/sixcrmcore/lib/util/analytics/aurora-context').default;
-const configurationAcquistion = require('../../config/controllers/configuration_acquisition');
 
 const batchSize = 25;
 
@@ -22,8 +21,6 @@ const RESULT_MAP = {
 	soft: 'soft decline',
 	harddecline: 'hard decline'
 };
-
-process.env.aurora_host = configurationAcquistion.getAuroraClusterEndpoint();
 
 auroraContext.init().then(async () => {
 
