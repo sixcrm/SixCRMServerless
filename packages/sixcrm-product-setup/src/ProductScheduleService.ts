@@ -1,10 +1,12 @@
 import { Connection, Repository } from 'typeorm';
 import { validate, ValidationError } from "class-validator";
 import { merge } from 'lodash';
-import {LogMethod} from "./log";
+import { LogMethod, logger } from "./log";
 import ProductSchedule from "./models/ProductSchedule";
 
 const MASTER_ACCOUNT_ID = '*';
+
+const log = logger('ProductScheduleService');
 
 
 interface IProductScheduleEntityId {
@@ -87,12 +89,16 @@ export default class ProductScheduleService {
 		}
 		// remove updated_at to workaround https://github.com/typeorm/typeorm/issues/2651
 		delete productSchedule.updated_at;
-		await this.validateProductSchedule(productSchedule);
 
-		const { account_id, id } = productSchedule;
-		// const updateCriteria = this.isMasterAccount ? { id } : { account_id, id };
-
-		// await this.productScheduleRepository.update(updateCriteria, productSchedule);
+		const { id } = productSchedule;
+		let previous: ProductSchedule;
+		try {
+			previous = await this.get(id);
+		} catch (e) {
+			log.error('No product schedule found in account', e);
+			throw new Error('No product schedule found in account');
+		}
+		await this.validateProductSchedule(productSchedule, previous);
 
 		let saved;
 		await this.connection.transaction(async manager => {
@@ -112,15 +118,20 @@ export default class ProductScheduleService {
 		const deleteResult = await this.productScheduleRepository.delete({ id, ...this.baseFindConditions });
 		const [, rowsAffected] = deleteResult.raw;
 		if (rowsAffected === 0) {
-			throw new Error('No product found in account');
+			throw new Error('No product schedule found in account');
 		}
 
 		return { id };
 	}
 
 	@LogMethod('debug')
-	private canUpdate(productAccountId: string): boolean {
-		return this.isMasterAccount() || !!productAccountId && productAccountId === this.accountId;
+	private canUpdate(productAccountId: string, previousAccountId: string | null): boolean {
+		return (
+			this.isMasterAccount() ||
+			(!!productAccountId &&
+				productAccountId === this.accountId &&
+				(!previousAccountId || previousAccountId === this.accountId))
+		);
 	}
 
 	@LogMethod('debug')
@@ -137,9 +148,10 @@ export default class ProductScheduleService {
 	}
 
 	@LogMethod('debug')
-	private async validateProductSchedule(productSchedule: ProductSchedule): Promise<void> {
+	private async validateProductSchedule(productSchedule: ProductSchedule, previous?: ProductSchedule): Promise<void> {
 		const { account_id } = productSchedule;
-		if (!this.canUpdate(account_id)) {
+		const previousAccountId = previous ? previous.account_id : null;
+		if (!this.canUpdate(account_id, previousAccountId)) {
 			throw new Error('Not authorized to save product schedule');
 		}
 		const errors: ValidationError[] = await validate(productSchedule);

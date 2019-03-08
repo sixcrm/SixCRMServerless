@@ -1,5 +1,6 @@
 'use strict';
 
+import { sortBy } from 'lodash';
 import { v4 } from 'uuid';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
@@ -32,12 +33,35 @@ const getValidProductSchedule = function(accountId): ProductSchedule {
 		updated_at: new Date()
 	};
 
-	productSchedule.cycles = [ getValidCycle(productSchedule, accountId), getValidCycle(productSchedule, accountId) ];
+	productSchedule.cycles = [
+		getValidCycle({
+			productSchedule,
+			accountId,
+			position: 1,
+			next_position: 2
+		}),
+		getValidCycle({
+			productSchedule,
+			accountId,
+			position: 2,
+			next_position: 1
+		})
+	];
 
 	return productSchedule;
 };
 
-const getValidCycle = (productSchedule: ProductSchedule, account_id: string): Cycle => {
+const getValidCycle = ({
+	productSchedule,
+	accountId,
+	position,
+	next_position
+}: {
+	productSchedule: ProductSchedule,
+	accountId: string,
+	position: number,
+	next_position: number
+}): Cycle => {
 	const cycle: any = {
 		id: v4(),
 		product_schedule: Object.assign({}, productSchedule),
@@ -45,14 +69,14 @@ const getValidCycle = (productSchedule: ProductSchedule, account_id: string): Cy
 		is_monthly: false,
 		length: 30,
 		name: 'A cycle',
-		next_position: 1,
-		position: 1,
+		next_position,
+		position,
 		price: 100,
 		shipping_price: 0,
 		updated_at: new Date()
 	};
 
-	cycle.cycle_products = [ getValidCycleProduct(cycle, getValidProduct(account_id)) ];
+	cycle.cycle_products = [ getValidCycleProduct(cycle, getValidProduct(accountId)) ];
 
 	return cycle;
 };
@@ -75,6 +99,7 @@ const getValidProduct = (accountId) => {
 
 describe('@6crm/sixcrm-product-schedule', () => {
 	let productScheduleService: ProductScheduleService;
+	let anotherAccountProductScheduleService: ProductScheduleService;
 	let masterAccountProductScheduleService: ProductScheduleService;
 	let masterAccountProductSetupService: ProductSetupService;
 	let accountId = v4();
@@ -83,6 +108,14 @@ describe('@6crm/sixcrm-product-schedule', () => {
 	before(async () => {
 		productScheduleService = await createProductScheduleService({
 			accountId,
+			host: 'localhost',
+			username: 'postgres',
+			password: '',
+			schema: 'public',
+		});
+
+		anotherAccountProductScheduleService = await createProductScheduleService({
+			accountId: anotherAccountId,
 			host: 'localhost',
 			username: 'postgres',
 			password: '',
@@ -216,6 +249,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 			await createProductsForCycles(aProductSchedule);
+			await productScheduleService.create(aProductSchedule);
 			aProductSchedule.requires_confirmation = !aProductSchedule.requires_confirmation;
 
 			// when
@@ -227,10 +261,33 @@ describe('@6crm/sixcrm-product-schedule', () => {
 				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
 		});
 
+		it('enforces product schedule must exist', async () => {
+			// given
+			const aProductSchedule = getValidProductSchedule(accountId);
+			await createProductsForCycles(aProductSchedule);
+
+			// then
+			await expect(anotherAccountProductScheduleService.update(aProductSchedule)).to.be.rejected;
+		});
+
+		it('enforces same account', async () => {
+			// given
+			const aProductSchedule = getValidProductSchedule(accountId);
+			await createProductsForCycles(aProductSchedule);
+			await productScheduleService.create(aProductSchedule);
+
+			delete aProductSchedule.account_id;
+			aProductSchedule.name = 'Random name';
+
+			// then
+			await expect(anotherAccountProductScheduleService.update(aProductSchedule)).to.be.rejected;
+		});
+
 		it('removes a cycle from the schedule', async () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 			await createProductsForCycles(aProductSchedule);
+			await productScheduleService.create(aProductSchedule);
 
 			aProductSchedule.cycles.pop(); // remove one cycle;
 
@@ -247,10 +304,12 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 			await createProductsForCycles(aProductSchedule);
+			await productScheduleService.create(aProductSchedule);
 
 			// add one cycle
-			const newCycle = JSON.parse(JSON.stringify(aProductSchedule.cycles[0]));
+			const newCycle = JSON.parse(JSON.stringify(aProductSchedule.cycles[1]));
 			newCycle.id = v4();
+			newCycle.position = aProductSchedule.cycles[1].next_position = 3;
 			// unfortunately we need to update it from the both sides or relation
 			// it should be handled by the domain object anyway
 			newCycle.cycle_products[0].cycle.id = newCycle.id;
@@ -258,7 +317,9 @@ describe('@6crm/sixcrm-product-schedule', () => {
 
 			// when
 			await productScheduleService.update(aProductSchedule);
+			aProductSchedule.cycles = sortBy(aProductSchedule.cycles, 'position');
 			const productScheduleFromDb = await productScheduleService.get(aProductSchedule.id);
+			productScheduleFromDb.cycles = sortBy(productScheduleFromDb.cycles, 'position');
 
 			// then
 			expect(NormalizedProductSchedule.of(productScheduleFromDb))
@@ -269,6 +330,8 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 			await createProductsForCycles(aProductSchedule);
+			await productScheduleService.create(aProductSchedule);
+
 			aProductSchedule.cycles[0].is_monthly = !aProductSchedule.cycles[0].is_monthly;
 
 			// when
@@ -284,6 +347,8 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 			await createProductsForCycles(aProductSchedule);
+			await productScheduleService.create(aProductSchedule);
+
 			aProductSchedule.cycles[0].cycle_products[0].is_shipping = !aProductSchedule.cycles[0].cycle_products[0].is_shipping;
 
 			// when
@@ -298,13 +363,17 @@ describe('@6crm/sixcrm-product-schedule', () => {
 		it('adds a new product to cycle', async () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
+			await createProductsForCycles(aProductSchedule);
+			await productScheduleService.create(aProductSchedule);
 
 			// create a new cycle product
 			const newCp = JSON.parse(JSON.stringify(aProductSchedule.cycles[0].cycle_products[0]));
 			newCp.product = getValidProduct(accountId);
 			aProductSchedule.cycles[0].cycle_products.push(newCp);
-
-			await createProductsForCycles(aProductSchedule);
+			await masterAccountProductSetupService.createProduct({
+				...newCp.product,
+				account_id: accountId
+			});
 
 			// when
 			await productScheduleService.update(aProductSchedule);
@@ -319,6 +388,8 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 			await createProductsForCycles(aProductSchedule);
+			await productScheduleService.create(aProductSchedule);
+
 			const originalName = aProductSchedule.cycles[0].cycle_products[0].product.name;
 			aProductSchedule.cycles[0].cycle_products[0].product.name = 'potato';
 
