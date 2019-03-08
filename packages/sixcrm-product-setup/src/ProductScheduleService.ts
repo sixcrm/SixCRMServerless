@@ -54,7 +54,7 @@ export default class ProductScheduleService {
 	async create(partialProductSchedule: Partial<ProductSchedule>): Promise<IProductScheduleEntityId> {
 		// shallow copy to avoid typeorm issues with objects without prototypes
 		// https://github.com/typeorm/typeorm/issues/2065
-		const productSchedule = this.productScheduleRepository.create({
+		const productSchedule: ProductSchedule = this.productScheduleRepository.create({
 			account_id: this.accountId,
 			...partialProductSchedule
 		});
@@ -128,21 +128,21 @@ export default class ProductScheduleService {
 		return this.accountId === MASTER_ACCOUNT_ID;
 	}
 
-	private async validateCreateProductSchedule(product: ProductSchedule): Promise<void> {
-		const { account_id } = product;
+	private async validateCreateProductSchedule(productSchedule: ProductSchedule): Promise<void> {
+		const { account_id } = productSchedule;
 		if (account_id === MASTER_ACCOUNT_ID) {
-			throw new Error('ProductSchedules cannot be created on the Master account');
+			throw new Error('Product schedules cannot be created on the Master account');
 		}
-		return this.validateProductSchedule(product);
+		return this.validateProductSchedule(productSchedule);
 	}
 
 	@LogMethod('debug')
-	private async validateProductSchedule(product: ProductSchedule): Promise<void> {
-		const { account_id } = product;
+	private async validateProductSchedule(productSchedule: ProductSchedule): Promise<void> {
+		const { account_id } = productSchedule;
 		if (!this.canUpdate(account_id)) {
-			throw new Error('Not authorized to save product');
+			throw new Error('Not authorized to save product schedule');
 		}
-		const errors: ValidationError[] = await validate(product);
+		const errors: ValidationError[] = await validate(productSchedule);
 		const valid: boolean = !errors.length;
 		if (!valid) {
 			throw new Error(errors[0].toString());
