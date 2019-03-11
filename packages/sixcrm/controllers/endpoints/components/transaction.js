@@ -14,10 +14,9 @@ const authenticatedController = global.SixCRM.routes.include('controllers', 'end
 const accountController = new AccountController();
 const accountHelperController = new AccountHelperController();
 
-const getEnvironmentAuroraHost = () => global.SixCRM.configuration.getEnvironmentConfig(`aurora_host`);
 const getAuroraConfig = async () => {
 	const {
-		host = await getEnvironmentAuroraHost(),
+		host,
 		user: username,
 		password
 	} = global.SixCRM.configuration.site_config.aurora;

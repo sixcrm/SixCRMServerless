@@ -33,7 +33,6 @@ provider:
     aws_region: ${opt:region, self:provider.region} #Technical Debt:  Eliminate
     aws_account: ${self:provider.account} #Technical Debt:  Eliminate
     SIX_VERBOSE: ${file(./config/${opt:stage}.yml):serverless.verbose}
-    aurora_host: ${file(./config/controllers/configuration_acquisition.js):getAuroraClusterEndpoint}
 
 plugins:
   - serverless-dynamodb-local
