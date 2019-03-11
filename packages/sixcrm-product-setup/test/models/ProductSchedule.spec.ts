@@ -11,7 +11,7 @@ const expect = chai.expect;
 
 
 
-xdescribe('@6crm/sixcrm-product-setup/models/ProductSchedule', () => {
+describe('@6crm/sixcrm-product-setup/models/ProductSchedule', () => {
 
 	describe('validate', () => {
 		it('ProductSchedule requires a name', async () => {
