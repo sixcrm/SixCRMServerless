@@ -13,6 +13,7 @@ import { IsUUID, IsNotEmpty, IsOptional } from "class-validator";
 import Cycle from './Cycle';
 import EntityValidationError from "../errors/EntityValidationError";
 import DomainEntity from "./DomainEntity";
+import ProductScheduleValidator from "./validators/ProductScheduleValidator";
 
 @Entity()
 export default class ProductSchedule extends DomainEntity {
@@ -51,35 +52,8 @@ export default class ProductSchedule extends DomainEntity {
 	@IsNotEmpty()
 	requires_confirmation: boolean;
 
-	public validate() {
-		if (!this.name) {
-			this.fail('name');
-		}
-
-		if (!this.merchant_provider_group_id) {
-			this.fail('merchant_provider_group_id');
-		}
-
-		this.cycles.sort((a,b) => a.position - b.position).forEach((cycle, i) => {
-			cycle.validate();
-			const nextCycle = this.nextCycle(cycle);
-			if (nextCycle === null && !this.isLast(i, this.cycles)) {
-				this.fail('next_position', cycle, 'Only last cycle can have next position === -1');
-			}
-
-			if (cycle.position === 1 && i !== 0) {
-				this.fail('next_position', cycle, 'Only first cycle can have position === 1');
-			}
-
-			if (this.isLast(i, this.cycles) && cycle.position !== this.cycles.length - 1) {
-				this.fail('next_position', cycle, `Last cycle should have position ${this.cycles.length - 1}`);
-			}
-
-
-
-		});
-
-		return this;
+	public validate(): boolean {
+		return new ProductScheduleValidator(this).validate();
 	}
 
 	public nextCycle(current: Cycle): Cycle | null {
@@ -98,12 +72,6 @@ export default class ProductSchedule extends DomainEntity {
 		return nextCycle;
 	}
 
-	private fail(propertyName, object: any = this, message?: string) {
-		throw new EntityValidationError<ProductSchedule>(propertyName, object, message);
-	}
 
-	private isLast(index: number, array: any[]) {
-		return index === array.length - 1;
-	}
 
 }

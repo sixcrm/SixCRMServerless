@@ -14,7 +14,7 @@ import { IsNotEmpty, Min, IsOptional } from "class-validator";
 import CycleProduct from './CycleProduct';
 import ProductSchedule from './ProductSchedule';
 import DomainEntity from "./DomainEntity";
-import EntityValidationError from "../errors/EntityValidationError";
+import CycleValidator from "./validators/CycleValidator";
 
 @Entity()
 @Check(`"is_monthly" = true OR "length" IS NOT NULL`)
@@ -77,28 +77,8 @@ export default class Cycle extends DomainEntity {
 	@IsOptional()
 	shipping_price: number | string | null;
 
-	validate(): Cycle {
-		if (!this.cycle_products) {
-			throw new EntityValidationError<Cycle>('cycle_products', this);
-		}
-
-		if (!this.cycle_products.length) {
-			throw new EntityValidationError<Cycle>('cycle_products', this, 'Cycle needs at least one product');
-		}
-
-		if (new Set(this.cycle_products.map(cp => cp.product.id)).size < this.cycle_products.length) {
-			throw new EntityValidationError<Cycle>('cycle_products', this, 'Products in cycle have to be unique.');
-		}
-
-		if (this.position < 1) {
-			throw new EntityValidationError<Cycle>('cycle_products', this, 'Position can\'t be zero or negative');
-		}
-
-		if (this.next_position < 1) {
-			throw new EntityValidationError<Cycle>('cycle_products', this, 'Next position can\'t be zero or negative');
-		}
-
-		return this;
+	validate(): boolean {
+		return new CycleValidator(this).validate();
 	}
 
 }
