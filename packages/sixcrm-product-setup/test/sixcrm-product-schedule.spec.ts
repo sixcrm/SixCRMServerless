@@ -1,6 +1,5 @@
 'use strict';
 
-import { sortBy } from 'lodash';
 import { v4 } from 'uuid';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
@@ -317,9 +316,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 
 			// when
 			await productScheduleService.update(aProductSchedule);
-			aProductSchedule.cycles = sortBy(aProductSchedule.cycles, 'position');
 			const productScheduleFromDb = await productScheduleService.get(aProductSchedule.id);
-			productScheduleFromDb.cycles = sortBy(productScheduleFromDb.cycles, 'position');
 
 			// then
 			expect(NormalizedProductSchedule.of(productScheduleFromDb))

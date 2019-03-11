@@ -27,7 +27,9 @@ export default class NormalizedCycle {
 			next_position: entity.next_position,
 			price: parseInt(entity.price + ''),
 			shipping_price: parseInt(entity.shipping_price + ''),
-			cycle_products: (entity.cycle_products || []).map(cycle_product => NormalizedCycleProduct.of(cycle_product))
+			cycle_products: (entity.cycle_products || [])
+				.sort((a, b) => a.product.id < b.product.id ? -1 : 1)
+				.map(cycle_product => NormalizedCycleProduct.of(cycle_product))
 		}
 	}
 

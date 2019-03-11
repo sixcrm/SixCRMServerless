@@ -17,7 +17,9 @@ export default class NormalizedProductSchedule {
 		this.normalizedEntity = {
 			id: entity.id,
 			account_id: entity.account_id,
-			cycles: (entity.cycles || []).map(cycle => NormalizedCycle.of(cycle)),
+			cycles: (entity.cycles || [])
+				.sort((a, b) => a.position - b.position)
+				.map(cycle => NormalizedCycle.of(cycle)),
 			name: entity.name,
 			merchant_provider_group_id: entity.merchant_provider_group_id,
 			requires_confirmation: entity.requires_confirmation
