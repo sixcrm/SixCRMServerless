@@ -18,6 +18,10 @@ export default class ProductScheduleValidator implements EntityValidator<Product
 			this.fail('merchant_provider_group_id');
 		}
 
+		if (!this.entity.cycles || !this.entity.cycles.length) {
+			this.fail('cycles', this.entity, 'Needs at least one cycle');
+		}
+
 		this.entity.cycles.sort((a,b) => a.position - b.position).forEach((cycle, i) => {
 			this.validateCycle(cycle);
 			this.validatePositionOfNextCycle(cycle, i);

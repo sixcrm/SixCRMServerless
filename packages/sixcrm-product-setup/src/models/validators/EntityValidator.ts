@@ -1,3 +1,3 @@
-export default interface EntityValidator<T> {
+export default interface IEntityValidator<T> {
 	validate(): boolean;
 }
