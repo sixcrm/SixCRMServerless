@@ -1,9 +1,8 @@
 import Cycle, { IProductScheduleInterval } from "../../src/models/Cycle";
 import NormalizedCycleProduct, {NormalizedCycleProductType} from "./NormalizedCycleProduct";
-import ProductSchedule from "../../src/models/ProductSchedule";
+import { Product } from "../../src";
 
 export interface NormalizedCycleType {
-	id: string,
 	name: string,
 	length: string,
 	position: number,
@@ -29,7 +28,6 @@ export default class NormalizedCycle {
 
 	constructor(entity: Cycle) {
 		this.normalizedEntity = {
-			id: entity.id,
 			name: entity.name,
 			length: normalizeLength(entity.length),
 			position: entity.position,
@@ -37,7 +35,7 @@ export default class NormalizedCycle {
 			price: parseInt(entity.price + ''),
 			shipping_price: parseInt(entity.shipping_price + ''),
 			cycle_products: (entity.cycle_products || [])
-				.sort((a, b) => a.product.id < b.product.id ? -1 : 1)
+				.sort((a, b) => (a.product as Product).id < (b.product as Product).id ? -1 : 1)
 				.map(cycle_product => NormalizedCycleProduct.of(cycle_product))
 		}
 	}

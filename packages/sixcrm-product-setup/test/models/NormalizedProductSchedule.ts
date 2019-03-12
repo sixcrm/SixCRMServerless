@@ -2,7 +2,6 @@ import ProductSchedule from "../../src/models/ProductSchedule";
 import NormalizedCycle, {NormalizedCycleType} from "./NormalizedCycle";
 
 export interface NormalizedProductScheduleType {
-	id: string,
 	account_id: string,
 	cycles: NormalizedCycleType[],
 	name: string,
@@ -15,7 +14,6 @@ export default class NormalizedProductSchedule {
 
 	constructor(entity: ProductSchedule) {
 		this.normalizedEntity = {
-			id: entity.id,
 			account_id: entity.account_id,
 			cycles: (entity.cycles || [])
 				.sort((a, b) => a.position - b.position)

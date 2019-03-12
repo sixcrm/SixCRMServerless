@@ -1,6 +1,7 @@
 'use strict';
 
 import { v4 } from 'uuid';
+import { cloneDeep } from 'lodash';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import chaiExclude = require('chai-exclude');
@@ -23,7 +24,6 @@ import NormalizedProduct from "./models/NormalizedProduct";
 
 const getValidProductSchedule = function(accountId): ProductSchedule {
 	const productSchedule: any = {
-		id: v4(),
 		account_id: accountId,
 		name: 'Test Product Schedule',
 		merchant_provider_group_id: v4(),
@@ -34,13 +34,11 @@ const getValidProductSchedule = function(accountId): ProductSchedule {
 
 	productSchedule.cycles = [
 		getValidCycle({
-			productSchedule,
 			accountId,
 			position: 1,
 			next_position: 2
 		}),
 		getValidCycle({
-			productSchedule,
 			accountId,
 			position: 2,
 			next_position: 1
@@ -51,19 +49,15 @@ const getValidProductSchedule = function(accountId): ProductSchedule {
 };
 
 const getValidCycle = ({
-	productSchedule,
 	accountId,
 	position,
 	next_position
 }: {
-	productSchedule: ProductSchedule,
 	accountId: string,
 	position: number,
 	next_position: number
 }): Cycle => {
 	const cycle: any = {
-		id: v4(),
-		product_schedule: Object.assign({}, productSchedule),
 		created_at: new Date(),
 		length: '30 days',
 		name: 'A cycle',
@@ -79,16 +73,15 @@ const getValidCycle = ({
 	return cycle;
 };
 
-const getValidCycleProduct = (cycle: Cycle, product: Product): CycleProduct => {
+const getValidCycleProduct = (cycle: Cycle, product: Product) => {
 	return {
 		created_at: new Date(),
-		cycle: Object.assign({}, cycle),
 		is_shipping: false,
 		position: 0,
 		product,
 		quantity: 1,
 		updated_at: new Date()
-	}
+	};
 };
 
 const getValidProduct = (accountId) => {
@@ -155,7 +148,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 	};
 
 	describe('create', () => {
-		it('creates a product schedule in the account', async () => {
+		it('creates a product schedule with hydrated product in the account', async () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 
@@ -172,6 +165,31 @@ describe('@6crm/sixcrm-product-schedule', () => {
 				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
 		});
 
+		it('creates a product schedule with cycle product IDs in the account', async () => {
+			// given
+			const aProductSchedule = getValidProductSchedule(accountId);
+
+			// assure all cycle point to existing product
+			await createProductsForCycles(aProductSchedule);
+
+			const cycles = cloneDeep(aProductSchedule.cycles);
+			for (const cycle of aProductSchedule.cycles) {
+				for (const cycleProduct of cycle.cycle_products) {
+					cycleProduct.product = (cycleProduct.product as Product).id;
+				}
+			}
+
+			const { id } = (await productScheduleService.create(aProductSchedule));
+
+			// when
+			const productScheduleFromDb = await productScheduleService.get(id);
+			aProductSchedule.cycles = cycles;
+
+			// then
+			expect(NormalizedProductSchedule.of(productScheduleFromDb))
+				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule));
+		});
+
 		it('creates a product schedule using the ProductScheduleService account', async () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
@@ -186,10 +204,6 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			const productScheduleFromDb = await productScheduleService.get(id);
 
 			// then
-			expect(productScheduleFromDb.id).to.equal(aProductSchedule.id);
-			expect(productScheduleFromDb.name).to.equal(aProductSchedule.name);
-			expect(productScheduleFromDb.account_id).to.equal(accountId);
-
 			assert.deepEqualExcluding(
 				NormalizedProductSchedule.of(productScheduleFromDb),
 				NormalizedProductSchedule.of(aProductSchedule),
@@ -247,16 +261,16 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 			await createProductsForCycles(aProductSchedule);
-			await productScheduleService.create(aProductSchedule);
-			aProductSchedule.requires_confirmation = !aProductSchedule.requires_confirmation;
+			const savedProductSchedule = await productScheduleService.create(aProductSchedule);
+			savedProductSchedule.requires_confirmation = !savedProductSchedule.requires_confirmation;
 
 			// when
-			await productScheduleService.update(aProductSchedule);
-			const productScheduleFromDb = await productScheduleService.get(aProductSchedule.id);
+			await productScheduleService.update(savedProductSchedule);
+			const productScheduleFromDb = await productScheduleService.get(savedProductSchedule.id);
 
 			// then
 			expect(NormalizedProductSchedule.of(productScheduleFromDb))
-				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
+				.to.deep.equal(NormalizedProductSchedule.of(savedProductSchedule))
 		});
 
 		it('enforces product schedule must exist', async () => {
@@ -285,130 +299,129 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 			await createProductsForCycles(aProductSchedule);
-			await productScheduleService.create(aProductSchedule);
+			const savedProductSchedule = await productScheduleService.create(aProductSchedule);
 
-			aProductSchedule.cycles.pop(); // remove one cycle;
-			aProductSchedule.cycles[0].next_position = 1;
-			// TODO: cycle management should be centralized via ProductSchedule object
+			savedProductSchedule.cycles.pop(); // remove one cycle;
+			savedProductSchedule.cycles[0].next_position = 1;
 
 			// when
-			await productScheduleService.update(aProductSchedule);
-			const productScheduleFromDb = await productScheduleService.get(aProductSchedule.id);
+			await productScheduleService.update(savedProductSchedule);
+			const productScheduleFromDb = await productScheduleService.get(savedProductSchedule.id);
 
 			// then
 			expect(NormalizedProductSchedule.of(productScheduleFromDb))
-				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
+				.to.deep.equal(NormalizedProductSchedule.of(savedProductSchedule));
+			expect(productScheduleFromDb.cycles.length).to.equal(aProductSchedule.cycles.length - 1);
 		});
 
 		it('adds a new cycle to schedule', async () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 			await createProductsForCycles(aProductSchedule);
-			await productScheduleService.create(aProductSchedule);
+			const savedProductSchedule = await productScheduleService.create(aProductSchedule);
 
 			// add one cycle
-			const newCycle = JSON.parse(JSON.stringify(aProductSchedule.cycles[1]));
+			const newCycle = cloneDeep(savedProductSchedule.cycles[1]);
 			newCycle.id = v4();
-			newCycle.position = aProductSchedule.cycles[1].next_position = 3;
-			// unfortunately we need to update it from the both sides or relation
-			// it should be handled by the domain object anyway
-			newCycle.cycle_products[0].cycle.id = newCycle.id;
-			aProductSchedule.cycles.push(newCycle);
+			newCycle.position = savedProductSchedule.cycles[1].next_position = 3;
+			savedProductSchedule.cycles.push(newCycle);
 
 			// when
-			await productScheduleService.update(aProductSchedule);
-			const productScheduleFromDb = await productScheduleService.get(aProductSchedule.id);
+			await productScheduleService.update(savedProductSchedule);
+			const productScheduleFromDb = await productScheduleService.get(savedProductSchedule.id);
 
 			// then
 			expect(NormalizedProductSchedule.of(productScheduleFromDb))
-				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
+				.to.deep.equal(NormalizedProductSchedule.of(savedProductSchedule));
+			expect(productScheduleFromDb.cycles.length).to.equal(aProductSchedule.cycles.length + 1);
 		});
 
 		it('updates a cycle in product schedule', async () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 			await createProductsForCycles(aProductSchedule);
-			await productScheduleService.create(aProductSchedule);
+			const savedProductSchedule = await productScheduleService.create(aProductSchedule);
 
-			aProductSchedule.cycles[0].length = '1 months';
+			savedProductSchedule.cycles[0].length = '1 months';
 
 			// when
-			await productScheduleService.update(aProductSchedule);
-			const productScheduleFromDb = await productScheduleService.get(aProductSchedule.id);
+			await productScheduleService.update(savedProductSchedule);
+			const productScheduleFromDb = await productScheduleService.get(savedProductSchedule.id);
 
 			// then
 			expect(NormalizedProductSchedule.of(productScheduleFromDb))
-				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
+				.to.deep.equal(NormalizedProductSchedule.of(savedProductSchedule));
 		});
 
 		it('updates a cycle_product in cycle schedule', async () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 			await createProductsForCycles(aProductSchedule);
-			await productScheduleService.create(aProductSchedule);
+			const savedProductSchedule = await productScheduleService.create(aProductSchedule);
 
-			aProductSchedule.cycles[0].cycle_products[0].is_shipping = !aProductSchedule.cycles[0].cycle_products[0].is_shipping;
+			savedProductSchedule.cycles[0].cycle_products[0].is_shipping = !savedProductSchedule.cycles[0].cycle_products[0].is_shipping;
 
 			// when
-			await productScheduleService.update(aProductSchedule);
-			const productScheduleFromDb = await productScheduleService.get(aProductSchedule.id);
+			await productScheduleService.update(savedProductSchedule);
+			const productScheduleFromDb = await productScheduleService.get(savedProductSchedule.id);
 
 			// then
 			expect(NormalizedProductSchedule.of(productScheduleFromDb))
-				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
+				.to.deep.equal(NormalizedProductSchedule.of(savedProductSchedule));
 		});
 
 		it('adds a new product to cycle', async () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 			await createProductsForCycles(aProductSchedule);
-			await productScheduleService.create(aProductSchedule);
+			const savedProductSchedule = await productScheduleService.create(aProductSchedule);
 
 			// create a new cycle product
-			const newCp = JSON.parse(JSON.stringify(aProductSchedule.cycles[0].cycle_products[0]));
+			const newCp = cloneDeep(savedProductSchedule.cycles[0].cycle_products[0]);
 			newCp.product = getValidProduct(accountId);
-			aProductSchedule.cycles[0].cycle_products.push(newCp);
+			savedProductSchedule.cycles[0].cycle_products.push(newCp);
 			await masterAccountProductSetupService.createProduct({
 				...newCp.product,
 				account_id: accountId
 			});
 
 			// when
-			await productScheduleService.update(aProductSchedule);
-			const productScheduleFromDb = await productScheduleService.get(aProductSchedule.id);
+			await productScheduleService.update(savedProductSchedule);
+			const productScheduleFromDb = await productScheduleService.get(savedProductSchedule.id);
 
 			// then
 			expect(NormalizedProductSchedule.of(productScheduleFromDb))
-				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
+				.to.deep.equal(NormalizedProductSchedule.of(savedProductSchedule));
 		});
 
 		it('does not persist changes to product in cycle_product', async () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 			await createProductsForCycles(aProductSchedule);
-			await productScheduleService.create(aProductSchedule);
+			const savedProductSchedule = await productScheduleService.create(aProductSchedule);
 
-			const originalName = aProductSchedule.cycles[0].cycle_products[0].product.name;
-			aProductSchedule.cycles[0].cycle_products[0].product.name = 'potato';
+			const product = savedProductSchedule.cycles[0].cycle_products[0].product as Product;
+			const originalName = product.name;
+			product.name = 'potato';
 
 			// when
-			await productScheduleService.update(aProductSchedule);
-			const productScheduleFromDb = await productScheduleService.get(aProductSchedule.id);
+			await productScheduleService.update(savedProductSchedule);
+			const productScheduleFromDb = await productScheduleService.get(savedProductSchedule.id);
 
 			// then
 			assert.deepEqualExcluding(
 				NormalizedProductSchedule.of(productScheduleFromDb),
-				NormalizedProductSchedule.of(aProductSchedule),
+				NormalizedProductSchedule.of(savedProductSchedule),
 				'cycles'
 			);
 
 			assert.deepEqualExcluding(
-				NormalizedProduct.of(aProductSchedule.cycles[0].cycle_products[0].product),
-				NormalizedProduct.of(productScheduleFromDb.cycles[0].cycle_products[0].product),
+				NormalizedProduct.of(product),
+				NormalizedProduct.of(productScheduleFromDb.cycles[0].cycle_products[0].product as Product),
 				'name'
 			);
 
-			expect(productScheduleFromDb.cycles[0].cycle_products[0].product.name).to.equal(originalName);
+			expect((productScheduleFromDb.cycles[0].cycle_products[0].product as Product).name).to.equal(originalName);
 		});
 	});
 

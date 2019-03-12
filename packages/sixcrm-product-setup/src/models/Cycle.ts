@@ -6,7 +6,8 @@ import {
 	UpdateDateColumn,
 	Check,
 	ManyToOne,
-	OneToMany
+	OneToMany,
+	JoinColumn
 } from 'typeorm';
 
 import { IsNotEmpty, Min, IsOptional } from "class-validator";
@@ -28,16 +29,18 @@ export default class Cycle extends DomainEntity {
 	id: string;
 
 	@ManyToOne(type => ProductSchedule, product_schedule => product_schedule.cycles)
+	@JoinColumn({ name: 'product_schedule_id' })
 	product_schedule: ProductSchedule;
 
 	// I wanted to call this products, but products[0].product drove me nuts before, so let's not.  :)
-	@OneToMany(type => CycleProduct, cycle_product => cycle_product.cycle)
+	@OneToMany(type => CycleProduct, cycle_product => cycle_product.cycle, { cascade: true })
 	cycle_products: CycleProduct[];
 
 	@Column({
 		length: 55
 	})
 	@IsNotEmpty()
+	@IsOptional()
 	name: string;
 
 	@CreateDateColumn()

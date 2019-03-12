@@ -46,6 +46,7 @@ export default class ProductSchedule extends DomainEntity {
 	@Column('uuid')
 	@IsUUID()
 	@IsNotEmpty()
+	@IsOptional()
 	merchant_provider_group_id: string;
 
 	@Column()

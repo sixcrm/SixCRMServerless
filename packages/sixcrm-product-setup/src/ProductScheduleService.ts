@@ -3,6 +3,7 @@ import { validate, ValidationError } from "class-validator";
 import { merge } from 'lodash';
 import { LogMethod, logger } from "./log";
 import ProductSchedule from "./models/ProductSchedule";
+import Cycle from './models/Cycle';
 
 const MASTER_ACCOUNT_ID = '*';
 
@@ -53,7 +54,7 @@ export default class ProductScheduleService {
 	}
 
 	@LogMethod()
-	async create(partialProductSchedule: Partial<ProductSchedule>): Promise<IProductScheduleEntityId> {
+	async create(partialProductSchedule: Partial<ProductSchedule>): Promise<ProductSchedule> {
 		// shallow copy to avoid typeorm issues with objects without prototypes
 		// https://github.com/typeorm/typeorm/issues/2065
 		const productSchedule: ProductSchedule = this.productScheduleRepository.create({
@@ -65,10 +66,14 @@ export default class ProductScheduleService {
 
 		let saved;
 		await this.connection.transaction(async manager => {
-			saved = await this.productScheduleRepository.save(productSchedule);
+			saved = await manager.save(productSchedule);
 			for (const cycle of productSchedule.cycles) {
 				for (const cycle_product of cycle.cycle_products) {
-					await manager.save(cycle_product);
+					await manager
+						.createQueryBuilder()
+						.relation(Cycle, 'cycle_products')
+						.of(cycle)
+						.add({ cycle, product: cycle_product });
 				}
 			}
 		});
@@ -102,10 +107,14 @@ export default class ProductScheduleService {
 
 		let saved;
 		await this.connection.transaction(async manager => {
-			saved = await this.productScheduleRepository.save(productSchedule);
+			saved = await manager.save(productSchedule);
 			for (const cycle of productSchedule.cycles) {
 				for (const cycle_product of cycle.cycle_products) {
-					await manager.save(cycle_product);
+					await manager
+						.createQueryBuilder()
+						.relation(Cycle, 'cycle_products')
+						.of(cycle)
+						.add({ cycle, product: cycle_product });
 				}
 			}
 		});

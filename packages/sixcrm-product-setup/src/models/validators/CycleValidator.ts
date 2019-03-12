@@ -1,4 +1,5 @@
 import Cycle from "../Cycle";
+import Product from '../Product';
 import EntityValidator from "./EntityValidator";
 import EntityValidationError from "../../errors/EntityValidationError";
 
@@ -18,7 +19,13 @@ export default class CycleValidator implements EntityValidator<Cycle> {
 			throw new EntityValidationError<Cycle>('cycle_products', this.entity, 'Cycle needs at least one product');
 		}
 
-		if (new Set(this.entity.cycle_products.map(cp => cp.product.id)).size < this.entity.cycle_products.length) {
+		if (
+			new Set(
+				this.entity.cycle_products.map(cp =>
+					(cp.product as Product).id ? (cp.product as Product).id : cp.product
+				)
+			).size < this.entity.cycle_products.length
+		) {
 			throw new EntityValidationError<Cycle>('cycle_products', this.entity, 'Products in cycle have to be unique.');
 		}
 
