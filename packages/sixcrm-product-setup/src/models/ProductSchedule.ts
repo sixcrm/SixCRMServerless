@@ -43,7 +43,10 @@ export default class ProductSchedule extends DomainEntity {
 	@UpdateDateColumn()
 	updated_at: Date;
 
-	@Column('uuid')
+	@Column({
+		type: 'uuid',
+		nullable: true
+	})
 	@IsUUID()
 	@IsNotEmpty()
 	@IsOptional()

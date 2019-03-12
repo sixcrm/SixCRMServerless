@@ -37,6 +37,7 @@ export default class Cycle extends DomainEntity {
 	cycle_products: CycleProduct[];
 
 	@Column({
+		nullable: true,
 		length: 55
 	})
 	@IsNotEmpty()
@@ -58,7 +59,9 @@ export default class Cycle extends DomainEntity {
 	@IsNotEmpty()
 	position: number;
 
-	@Column()
+	@Column({
+		nullable: true
+	})
 	@IsOptional()
 	next_position: number;
 

@@ -13,13 +13,14 @@ module.exports.graphObj = new GraphQLInputObjectType({
 		name:           { type: GraphQLString },
 		schedule:			  { type: new GraphQLList(productScheduleProductConfigurationInputType.graphObj) },
 		merchantprovidergroup:  { type: GraphQLString },
-		trial_required: { type: GraphQLBoolean },
+		trial_required: { type: GraphQLBoolean, deprecationReason: 'The `trial_required` field is deprecated and will be removed soon.' },
+		requires_confirmation: { type: GraphQLBoolean },
 		trial_sms_provider:  { type: GraphQLString },
 		updated_at:     { type: GraphQLString }
 	})
 });
 
-const nextCycleReducer = ({ schedules, position, end }) => {
+const nextPositionReducer = ({ schedules, position, end }) => {
 	if (!end) {
 		return position;
 	}
@@ -30,26 +31,40 @@ const nextCycleReducer = ({ schedules, position, end }) => {
 	return null;
 }
 
+const lengthReducer = ({ samedayofmonth, period, start, end }) => {
+	if (samedayofmonth) {
+		return '1 month';
+	}
+
+	const days = end ? end - start : period;
+	return `${days} days`;
+}
+
+const cycleProductsReducer = ({ product }) => [{
+	product,
+	quantity: 1,
+	is_shipping: true,
+	position: 1
+}];
+
 const sortedScheduleReducer = (
 	cycles,
-	{ start, end, price, product, samedayofmonth },
+	{ start, end, period, price, product, samedayofmonth },
 	index,
 	schedules
 ) => {
 	const position = index + 1;
-	const nextCycle = nextCycleReducer({ schedules, position, end });
+	const next_position = nextPositionReducer({ schedules, position, end });
 
 	return [
 		...cycles,
 		{
-			length: {
-				[samedayofmonth ? "months" : "days"]: samedayofmonth ? 1 : end - start
-			},
+			length: lengthReducer({ samedayofmonth, period, start, end }),
 			position,
-			nextCycle,
+			next_position,
 			price,
-			shippingPrice: 0,
-			products: [product]
+			shipping_price: 0,
+			cycle_products: cycleProductsReducer({ product })
 		}
 	];
 };
@@ -57,8 +72,11 @@ const sortedScheduleReducer = (
 module.exports.toProductScheduleInput = ({
 	cycles,
 	schedule,
+	requires_confirmation,
+	trial_required,
 	...productScheduleInput
 }) => ({
 	...productScheduleInput,
+	requires_confirmation: !!(requires_confirmation || trial_required),
 	cycles: cycles ? cycles : sortBy(schedule, 'start').reduce(sortedScheduleReducer, [])
 });
