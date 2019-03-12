@@ -16,8 +16,12 @@ import ProductSchedule from './ProductSchedule';
 import DomainEntity from "./DomainEntity";
 import CycleValidator from "./validators/CycleValidator";
 
+export interface IProductScheduleInterval {
+	months?: number;
+	days?: number;
+}
+
 @Entity()
-@Check(`"is_monthly" = true OR "length" IS NOT NULL`)
 export default class Cycle extends DomainEntity {
 
 	@PrimaryGeneratedColumn('uuid')
@@ -42,13 +46,10 @@ export default class Cycle extends DomainEntity {
 	@UpdateDateColumn()
 	updated_at: Date;
 
-	@Column()
-	@IsNotEmpty()
-	is_monthly: boolean;
-
-	@Column()
-	@IsOptional()
-	length: number;
+	@Column({
+		type: 'interval'
+	})
+	length: IProductScheduleInterval | string;
 
 	@Column()
 	@IsNotEmpty()

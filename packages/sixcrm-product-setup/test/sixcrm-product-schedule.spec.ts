@@ -65,8 +65,7 @@ const getValidCycle = ({
 		id: v4(),
 		product_schedule: Object.assign({}, productSchedule),
 		created_at: new Date(),
-		is_monthly: false,
-		length: 30,
+		length: '30 days',
 		name: 'A cycle',
 		next_position,
 		position,
@@ -329,7 +328,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			await createProductsForCycles(aProductSchedule);
 			await productScheduleService.create(aProductSchedule);
 
-			aProductSchedule.cycles[0].is_monthly = !aProductSchedule.cycles[0].is_monthly;
+			aProductSchedule.cycles[0].length = '1 months';
 
 			// when
 			await productScheduleService.update(aProductSchedule);

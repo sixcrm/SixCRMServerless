@@ -1,17 +1,27 @@
-import Cycle from "../../src/models/Cycle";
+import Cycle, { IProductScheduleInterval } from "../../src/models/Cycle";
 import NormalizedCycleProduct, {NormalizedCycleProductType} from "./NormalizedCycleProduct";
+import ProductSchedule from "../../src/models/ProductSchedule";
 
 export interface NormalizedCycleType {
 	id: string,
 	name: string,
-	is_monthly: boolean,
-	length: number,
+	length: string,
 	position: number,
 	next_position: number,
 	price: number,
 	shipping_price: number,
 	cycle_products: NormalizedCycleProductType[]
 }
+
+const normalizeLength = (length: IProductScheduleInterval | string) => {
+	if ((length as IProductScheduleInterval).months) {
+		return `${(length as IProductScheduleInterval).months} months`;
+	}
+	if ((length as IProductScheduleInterval).days) {
+		return `${(length as IProductScheduleInterval).days} days`;
+	}
+	return (length as string);
+};
 
 export default class NormalizedCycle {
 
@@ -21,8 +31,7 @@ export default class NormalizedCycle {
 		this.normalizedEntity = {
 			id: entity.id,
 			name: entity.name,
-			is_monthly: entity.is_monthly,
-			length: entity.length,
+			length: normalizeLength(entity.length),
 			position: entity.position,
 			next_position: entity.next_position,
 			price: parseInt(entity.price + ''),
