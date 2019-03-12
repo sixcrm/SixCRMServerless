@@ -39,6 +39,7 @@ const toConnectionOptions = (config: IDatabaseConfig) => {
 export const connect = async (config: IDatabaseConfig) => {
 	if (connection) {
 		try {
+			await connection;
 			return getConnection(connectionName);
 		} catch (e) {
 			log.warn('Replacing connection due to error', e);
