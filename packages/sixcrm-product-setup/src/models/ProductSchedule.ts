@@ -66,7 +66,7 @@ export default class ProductSchedule extends DomainEntity {
 
 		const nextCycle = this.cycles.find(c => c.position === next);
 		if (!nextCycle) {
-			throw new EntityValidationError('next_position', current, `There is no cycle with position ${next}`);
+			throw new EntityValidationError('next_position', current, `There is no cycle with position ${next}, possible positions: ${this.cycles.map(c => c.position).join(',')}`);
 		}
 
 		return nextCycle;

@@ -1,6 +1,7 @@
 import ProductSchedule from "../ProductSchedule";
 import EntityValidator from "./EntityValidator";
 import EntityValidationError from "../../errors/EntityValidationError";
+import Cycle from "../Cycle";
 
 export default class ProductScheduleValidator implements EntityValidator<ProductSchedule> {
 	private readonly entity: ProductSchedule;
@@ -34,8 +35,9 @@ export default class ProductScheduleValidator implements EntityValidator<Product
 	}
 
 	private validatePositionOfLastCycle(i, cycle) {
-		if (this.isLast(i, this.entity.cycles) && cycle.position !== this.entity.cycles.length - 1) {
-			this.fail('next_position', cycle, `Last cycle should have position ${this.entity.cycles.length - 1}`);
+		const expectedPosition = this.entity.cycles.length;
+		if (this.isLast(i, this.entity.cycles) && cycle.position !== expectedPosition) {
+			this.fail('next_position', cycle, `Last cycle should have position ${expectedPosition} instead of ${cycle.position}`);
 		}
 	}
 
@@ -52,7 +54,7 @@ export default class ProductScheduleValidator implements EntityValidator<Product
 		}
 	}
 
-	private validateCycle(cycle) {
+	private validateCycle(cycle: Cycle) {
 		cycle.validate();
 	}
 
@@ -61,6 +63,6 @@ export default class ProductScheduleValidator implements EntityValidator<Product
 	}
 
 	private isLast(index: number, array: any[]) {
-		return index === array.length - 1;
+		return index === array.length;
 	}
 }

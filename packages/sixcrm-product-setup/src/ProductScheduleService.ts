@@ -59,7 +59,7 @@ export default class ProductScheduleService {
 		const productSchedule: ProductSchedule = this.productScheduleRepository.create({
 			account_id: this.accountId,
 			...partialProductSchedule
-		});
+		}).validated();
 
 		await this.validateCreateProductSchedule(productSchedule);
 
@@ -83,7 +83,7 @@ export default class ProductScheduleService {
 		const productSchedule = this.productScheduleRepository.create({
 			account_id: this.accountId,
 			...partialProductSchedule
-		});
+		}).validated();
 		if (this.isMasterAccount()) {
 			delete productSchedule.account_id;
 		}

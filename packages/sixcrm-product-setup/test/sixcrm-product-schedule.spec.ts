@@ -288,6 +288,8 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			await productScheduleService.create(aProductSchedule);
 
 			aProductSchedule.cycles.pop(); // remove one cycle;
+			aProductSchedule.cycles[0].next_position = 1;
+			// TODO: cycle management should be centralized via ProductSchedule object
 
 			// when
 			await productScheduleService.update(aProductSchedule);
