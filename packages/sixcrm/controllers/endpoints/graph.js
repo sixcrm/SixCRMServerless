@@ -3,7 +3,7 @@ const _ = require('lodash');
 const graphql = require('graphql').graphql;
 
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
-const { createProductSetupService } = require('@6crm/sixcrm-product-setup');
+const { createProductSetupService, createProductScheduleService } = require('@6crm/sixcrm-product-setup');
 
 const userAuthenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/userauthenticated.js');
 const resolveController = global.SixCRM.routes.include('providers', 'Resolve.js');
@@ -42,12 +42,13 @@ module.exports = class graphController extends userAuthenticatedController {
 		global.SixCRM.setResource('auroraContext', auroraContext);
 
 		const auroraConfig = await getAuroraConfig();
-		const productSetupServiceOptions = {
+		const productServiceOptions = {
 			accountId,
 			...auroraConfig
 		};
 		return Promise.all([
-			createProductSetupService(productSetupServiceOptions),
+			createProductSetupService(productServiceOptions),
+			createProductScheduleService(productServiceOptions),
 			auroraContext.init()
 		]);
 	}

@@ -1,5 +1,10 @@
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
-const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
+const {
+	getProductSetupService,
+	getProductScheduleService,
+	LegacyProduct,
+	LegacyProductSchedule
+} = require("@6crm/sixcrm-product-setup");
 let SMTPProviderInputType = require('./smtpprovider/SMTPProviderInputType');
 let SMTPProviderType = require('./smtpprovider/SMTPProviderType');
 
@@ -1502,13 +1507,13 @@ module.exports.graphObj = new GraphQLObjectType({
 					type: productScheduleInputType.graphObj
 				}
 			},
-			resolve: (value, productschedule) => {
-				const productScheduleController = new ProductScheduleController();
-
-				return productScheduleController.create({
-					entity: productschedule.productschedule
-				});
-			}
+			resolve: async (value, { productschedule: productSchedule }) => {
+				productSchedule = productScheduleInputType.toProductScheduleInput(productSchedule);
+				const productScheduleService = getProductScheduleService();
+				const { id } = await productScheduleService.create(productSchedule);
+				return LegacyProductSchedule.hybridFromProductSchedule(
+					await productScheduleService.get(id)
+				);
 		},
 		updateproductschedule: {
 			type: productScheduleType.graphObj,
