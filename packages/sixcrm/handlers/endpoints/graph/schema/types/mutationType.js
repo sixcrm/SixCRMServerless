@@ -1510,10 +1510,11 @@ module.exports.graphObj = new GraphQLObjectType({
 			resolve: async (value, { productschedule: productSchedule }) => {
 				productSchedule = productScheduleInputType.toProductScheduleInput(productSchedule);
 				const productScheduleService = getProductScheduleService();
-				const { id } = await productScheduleService.create(productSchedule);
+				const {id} = await productScheduleService.create(productSchedule);
 				return LegacyProductSchedule.hybridFromProductSchedule(
 					await productScheduleService.get(id)
 				);
+			}
 		},
 		updateproductschedule: {
 			type: productScheduleType.graphObj,
