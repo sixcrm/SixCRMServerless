@@ -77,7 +77,6 @@ module.exports.toProductScheduleInput = ({
 	...productScheduleInput
 }) => ({
 	...productScheduleInput,
-	merchant_provider_group_id: productScheduleInput.merchantprovidergroup,
 	requires_confirmation: !!(requires_confirmation || trial_required),
 	cycles: cycles ? cycles : sortBy(schedule, 'start').reduce(sortedScheduleReducer, [])
 });
