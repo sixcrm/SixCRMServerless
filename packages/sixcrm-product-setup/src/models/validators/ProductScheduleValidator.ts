@@ -58,7 +58,7 @@ export default class ProductScheduleValidator implements EntityValidator<Product
 		cycle.validate();
 	}
 
-	private fail(propertyName, object: any = this, message?: string) {
+	private fail(propertyName, object: any = this.entity, message?: string) {
 		throw new EntityValidationError<ProductSchedule>(propertyName, object, message);
 	}
 
