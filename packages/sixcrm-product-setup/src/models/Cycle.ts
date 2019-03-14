@@ -88,4 +88,16 @@ export default class Cycle extends DomainEntity {
 		return new CycleValidator(this).validate();
 	}
 
+	constructor(
+		id: string,
+		length: IProductScheduleInterval,
+		position: number,
+		price: number
+	) {
+		super();
+		this.id = id;
+		this.length = length;
+		this.position = position;
+		this.price = price;
+	}
 }

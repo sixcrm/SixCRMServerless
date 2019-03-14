@@ -68,3 +68,4 @@ export const getProductScheduleService = () => {
 
 export { default as Product } from './models/Product';
 export { default as LegacyProduct } from './models/legacy/LegacyProduct';
+export { default as LegacyProductSchedule } from './models/legacy/LegacyProductSchedule';

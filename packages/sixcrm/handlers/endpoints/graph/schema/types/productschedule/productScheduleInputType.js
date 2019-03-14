@@ -4,14 +4,16 @@ const GraphQLString = require('graphql').GraphQLString;
 const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 
-let productScheduleProductConfigurationInputType = require('./productScheduleProductConfigurationInputType');
+const productScheduleProductConfigurationInputType = require('./productScheduleProductConfigurationInputType');
+const cycleInputType = require('./cycleInputType');
 
 module.exports.graphObj = new GraphQLInputObjectType({
 	name: 'ProductScheduleInputType',
 	fields: () => ({
 		id:					    { type: GraphQLString },
 		name:           { type: GraphQLString },
-		schedule:			  { type: new GraphQLList(productScheduleProductConfigurationInputType.graphObj) },
+		schedule:			  { type: new GraphQLList(productScheduleProductConfigurationInputType.graphObj), deprecationReason: 'The `schedule` field is deprecated and will be removed soon.' },
+		cycles:			  { type: new GraphQLList(cycleInputType.graphObj) },
 		merchantprovidergroup:  { type: GraphQLString },
 		trial_required: { type: GraphQLBoolean, deprecationReason: 'The `trial_required` field is deprecated and will be removed soon.' },
 		requires_confirmation: { type: GraphQLBoolean },

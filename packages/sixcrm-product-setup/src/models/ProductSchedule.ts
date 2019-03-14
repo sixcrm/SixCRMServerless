@@ -76,6 +76,17 @@ export default class ProductSchedule extends DomainEntity {
 		return nextCycle;
 	}
 
-
+	constructor(
+		id: string,
+		account_id: string,
+		name: string,
+		requires_confirmation: boolean
+	) {
+		super();
+		this.id = id;
+		this.account_id = account_id;
+		this.name = name;
+		this.requires_confirmation = requires_confirmation;
+	}
 
 }

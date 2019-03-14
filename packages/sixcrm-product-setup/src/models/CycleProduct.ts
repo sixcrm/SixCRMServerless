@@ -46,4 +46,15 @@ export default class CycleProduct {
 	@Min(0)
 	position: number;
 
+	constructor(
+		product: Product | string,
+		is_shipping: boolean,
+		position: number,
+		quantity: number
+	) {
+		this.product = product;
+		this.is_shipping = is_shipping;
+		this.position = position;
+		this.quantity = quantity;
+	}
 }

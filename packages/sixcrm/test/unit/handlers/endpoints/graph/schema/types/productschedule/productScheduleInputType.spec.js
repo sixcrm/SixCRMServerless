@@ -25,7 +25,7 @@ describe('handlers/endpoints/graph/schema/types/productschedule/productScheduleI
 						quantity: 1
 					}]
 				}, {
-					id: '0e5cc5dc-738d-4c1f-bd87-a27ad7cc5b17',
+					id: 'ce6dcd14-b54c-46ea-a1cb-0f4ac8f9db8b',
 					length: { days: 30 },
 					position: 2,
 					next_position: null,
@@ -45,7 +45,7 @@ describe('handlers/endpoints/graph/schema/types/productschedule/productScheduleI
 			expect(productScheduleInput).to.deep.equal(queryProductScheduleInput);
 		});
 
-		it('should transform a ProductScheuldeInput with a two schedules, no repeat', () => {
+		it('should transform a ProductScheduleInput with a two schedules, no repeat', () => {
 			const queryProductScheduleInput = {
 				id: 'd527ca52-b2fb-4510-a9e1-7b50e55c64a7',
 				name: 'Intelligent Plastic Table Schedule',
