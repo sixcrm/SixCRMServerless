@@ -1,6 +1,6 @@
 require('module-alias/register');
 const _ = require('lodash');
-const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService, getProductScheduleService, LegacyProduct, LegacyProductSchedule } = require('@6crm/sixcrm-product-setup');
 
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
@@ -1705,12 +1705,9 @@ const fields = Object.assign({}, {
 			}
 		},
 		resolve: function(root, productschedule) {
-			const productScheduleController = new ProductScheduleController();
+			const service = getProductScheduleService();
 
-			return productScheduleController.get({
-				id: productschedule.id,
-				fatal: get_fatal
-			});
+			return service.get(productschedule.id).then(ps => LegacyProductSchedule.hybridFromProductSchedule(ps));
 		}
 	},
 	merchantprovider: {
