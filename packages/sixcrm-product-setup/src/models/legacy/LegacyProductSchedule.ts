@@ -1,6 +1,7 @@
 import { merge, sortBy } from 'lodash';
 import ProductSchedule from "../ProductSchedule";
 import Cycle, { IProductScheduleInterval } from '../Cycle';
+import Product from "../Product";
 
 export default class LegacyProductSchedule {
 	public account;
@@ -59,6 +60,9 @@ const sortedCyclesReducer = (
 			: start + (lengthInterval.months ? 30 : lengthInterval.days);
 	const period = lengthInterval.months ? 30 : lengthInterval.days;
 
+	const product = cycle_products[0].product;
+	const productId = product instanceof Product ? product.id : product;
+
 	return [
 		...schedules,
 		{
@@ -66,7 +70,7 @@ const sortedCyclesReducer = (
 			end,
 			period,
 			price,
-			product: cycle_products[0].product,
+			product: productId,
 			samedayofmonth: !!lengthInterval.months
 		}
 	];

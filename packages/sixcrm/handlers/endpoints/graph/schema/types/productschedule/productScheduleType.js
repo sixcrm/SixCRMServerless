@@ -5,6 +5,7 @@ const GraphQLString = require('graphql').GraphQLString;
 const GraphQLBoolean = require('graphql').GraphQLBoolean;
 
 let scheduleType = require('./scheduleType');
+let cycleType = require('./cycleType');
 let merchantProviderGroupType = require('../merchantprovidergroup/merchantProviderGroupType');
 let ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule');
 const SMSProviderController = global.SixCRM.routes.include('controllers', 'entities/SMSProvider');
@@ -38,6 +39,10 @@ module.exports.graphObj = new GraphQLObjectType({
 					product_schedule: product_schedule
 				});
 			}
+		},
+		cycles: {
+			type: new GraphQLList(cycleType.graphObj),
+			description: 'Cycles',
 		},
 		merchantprovidergroup: {
 			type: merchantProviderGroupType.graphObj,
