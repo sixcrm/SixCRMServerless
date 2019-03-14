@@ -64,7 +64,7 @@ export default class ProductSchedule extends DomainEntity {
 		let next: number;
 		next = current.next_position;
 
-		if (next === -1) {
+		if (next === -1 || next === null || next === undefined) {
 			return null;
 		}
 

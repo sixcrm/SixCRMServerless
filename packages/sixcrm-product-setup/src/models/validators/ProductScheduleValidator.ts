@@ -59,6 +59,6 @@ export default class ProductScheduleValidator implements EntityValidator<Product
 	}
 
 	private isLast(index: number, array: any[]) {
-		return index === array.length;
+		return index === array.length - 1;
 	}
 }

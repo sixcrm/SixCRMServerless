@@ -29,12 +29,16 @@ export default class CycleValidator implements EntityValidator<Cycle> {
 			throw new EntityValidationError<Cycle>('cycle_products', this.entity, 'Products in cycle have to be unique.');
 		}
 
-		if (this.entity.position < 1) {
-			throw new EntityValidationError<Cycle>('cycle_products', this.entity, 'Position can\'t be zero or negative');
+		if (this.entity.position === null || this.entity.position === undefined) {
+			throw new EntityValidationError<Cycle>('position', this.entity);
 		}
 
-		if (this.entity.next_position < 1) {
-			throw new EntityValidationError<Cycle>('cycle_products', this.entity, 'Next position can\'t be zero or negative');
+		if (this.entity.position < 1) {
+			throw new EntityValidationError<Cycle>('position', this.entity, 'Position can\'t be zero or negative');
+		}
+
+		if (this.entity.next_position && this.entity.next_position < 1 && this.entity.next_position !== -1) {
+			throw new EntityValidationError<Cycle>('next_position', this.entity, 'Next position can\'t only be positive or -1');
 		}
 
 		return true;
