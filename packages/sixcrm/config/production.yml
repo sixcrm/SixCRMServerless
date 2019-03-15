@@ -14,11 +14,12 @@ aws:
   account: '181111172466'
 
 lambda:
-  security_group: 'SixCRM-PrivateSubnet'
+  security_groups:
+    - sg-8cb0b1c5
   subnets:
-    - sixcrm-private1
-    - sixcrm-private2
-    - sixcrm-private3
+    - subnet-21f4187d
+    - subnet-07fd0260
+    - subnet-e20ce2cc
 
 elasticsearch:
   domain_name: 'sixcrm-logs'
@@ -61,14 +62,14 @@ sqs:
 
 cloudsearch:
   domainname: 'sixcrm'
+  endpoint: 'doc-sixcrm-rl5yyjlfnghqtgvz5re6ig5xnq.us-east-1.cloudsearch.amazonaws.com'
 
 #Technical Debt:  Username and Password combinations need to be encrypted...
 aurora:
-  release: 10
-  default_cluster_identifier: 'sixcrm'
   user: 'root'
   database: 'postgres'
   password: 'Jagodica9'
+  host: production-aurora.sixcrm.com
   port: 5440
   max: 10
   idle_timeout: 30000

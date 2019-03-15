@@ -11,7 +11,6 @@ const transactionController = new TransactionController();
 transactionController.disableACLs();
 
 const auroraContext = require('@6crm/sixcrmcore/lib/util/analytics/aurora-context').default;
-const configurationAcquistion = require('../../config/controllers/configuration_acquisition');
 
 const batchSize = 25;
 
@@ -23,10 +22,7 @@ const RESULT_MAP = {
 	harddecline: 'hard decline'
 };
 
-configurationAcquistion.getAuroraClusterEndpoint().then(async (endpoint) => {
-
-	process.env.aurora_host = endpoint;
-	await auroraContext.init();
+auroraContext.init().then(async () => {
 
 	await auroraContext.withConnection(async connection => {
 

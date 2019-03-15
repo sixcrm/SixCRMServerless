@@ -21,6 +21,11 @@ export const createProductSetupService = async ({
 	if (!accountId) {
 		throw new TypeError('Missing required accountId parameter');
 	}
+
+	if (process.env.AURORA_PROXY === 'true') {
+		databaseConfig.host = '127.0.0.1';
+	}
+
 	try {
 		const connection = await connect(databaseConfig);
 		productSetupService = new ProductSetupService({ accountId, connection });

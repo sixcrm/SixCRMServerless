@@ -9,10 +9,9 @@ const userAuthenticatedController = global.SixCRM.routes.include('controllers', 
 const resolveController = global.SixCRM.routes.include('providers', 'Resolve.js');
 const auroraContext = require('@6crm/sixcrmcore/lib/util/analytics/aurora-context').default;
 
-const getEnvironmentAuroraHost = () => global.SixCRM.configuration.getEnvironmentConfig(`aurora_host`);
 const getAuroraConfig = async () => {
 	const {
-		host = await getEnvironmentAuroraHost(),
+		host,
 		user: username,
 		password
 	} = global.SixCRM.configuration.site_config.aurora;

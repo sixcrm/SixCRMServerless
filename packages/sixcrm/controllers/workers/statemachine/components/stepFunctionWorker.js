@@ -8,10 +8,9 @@ const StateMachineHelperController = global.SixCRM.routes.include('helpers', 'st
 
 const WorkerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
-const getEnvironmentAuroraHost = () => global.SixCRM.configuration.getEnvironmentConfig(`aurora_host`);
 const getAuroraConfig = async () => {
 	const {
-		host = await getEnvironmentAuroraHost(),
+		host,
 		user: username,
 		password
 	} = global.SixCRM.configuration.site_config.aurora;

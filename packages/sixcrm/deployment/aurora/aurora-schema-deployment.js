@@ -26,8 +26,8 @@ module.exports = class AuroraSchemaDeployment {
 
 		du.info('Deploying schema ' + schema);
 
-		this._executeQuery(connection, `CREATE SCHEMA IF NOT EXISTS ${schema}`);
-		this._executeQuery(connection, `CREATE TABLE IF NOT EXISTS ${schema}.m_release (
+		await this._executeQuery(connection, `CREATE SCHEMA IF NOT EXISTS ${schema}`);
+		await this._executeQuery(connection, `CREATE TABLE IF NOT EXISTS ${schema}.m_release (
 			id INT NOT NULL PRIMARY KEY,
 			created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)`);
@@ -61,8 +61,6 @@ module.exports = class AuroraSchemaDeployment {
 	*/
 	async _getNewMigrations(schema, fromRevision) {
 
-		const release = global.SixCRM.configuration.site_config.aurora.release;
-
 		const results = await fileutilities.getDirectories(path.join(global.SixCRM.routes.path('deployment', 'aurora/migrations'), schema));
 
 		const migrations = results.map((r) => {
@@ -72,7 +70,7 @@ module.exports = class AuroraSchemaDeployment {
 			};
 		});
 
-		return _.sortBy(_.filter(migrations, (f) => f.version <= Number(release) && f.version > fromRevision), 'version');
+		return _.sortBy(_.filter(migrations, (f) => f.version > fromRevision), 'version');
 
 	}
 

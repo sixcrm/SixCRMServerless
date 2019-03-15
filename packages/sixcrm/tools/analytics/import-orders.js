@@ -19,7 +19,6 @@ rebillController.disableACLs();
 const now = moment();
 
 const auroraContext = require('@6crm/sixcrmcore/lib/util/analytics/aurora-context').default;
-const configurationAcquistion = require('../../config/controllers/configuration_acquisition');
 
 // This is somewhat more complicated than the transaction update.  We're basically going to process all existing rebills.
 // If this needs to be run in the future, might need to add more values here beyond 2019-09.
@@ -107,7 +106,6 @@ Promise.all(_.map(['201804', '201805', '201806', '201807', '201808', '201809'], 
 
 	});
 
-	process.env.aurora_host = await configurationAcquistion.getAuroraClusterEndpoint();
 	await auroraContext.init();
 
 	let query = `INSERT INTO analytics.f_rebill (id, alias, datetime, status, amount, item_count, type, account, session, session_alias, campaign, campaign_name, customer, customer_name) VALUES `;

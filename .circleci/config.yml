@@ -143,30 +143,15 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Deploy Subnet Groups
-          command: cd packages/sixcrm && SIX_VERBOSE=2 node ./deployment/aurora/deploy-subnetgroups.js
-      - run:
-          name: Aurora Create Cluster
-          command: cd packages/sixcrm && SIX_VERBOSE=2 node ./deployment/aurora/deploy-cluster.js
-      - run:
-          name: Set Proxy
-          command: |
-            cd packages/sixcrm && SIX_VERBOSE=2 node ./deployment/aurora/resolve-cluster.js
-      - run:
           name: Setup SSH Tunnel
           command: |
             cd packages/sixcrm
-            source ./aurora-env
             echo "Host *" >> ~/.ssh/config
             echo "   AddressFamily inet" >> ~/.ssh/config
-            chmod 600 ./config/$CIRCLE_BRANCH/ssh-keys/six-crm/sixcrm.pem
-            ssh -i ./config/$CIRCLE_BRANCH/ssh-keys/six-crm/sixcrm.pem -o StrictHostKeyChecking=no -f -N -L5440:$AURORA_HOST:5440 ec2-user@$PROXY_HOST
+            ssh -o StrictHostKeyChecking=no -f -N -L5440:$CIRCLE_BRANCH-aurora.sixcrm.com:5440 ec2-user@$CIRCLE_BRANCH-bastion.sixcrm.com
       - run:
           name: Aurora Create Tables
-          command: cd packages/sixcrm && SIX_VERBOSE=2 AURORA_PROXY=true  node ./deployment/aurora/deploy-schema.js
+          command: cd packages/sixcrm && SIX_VERBOSE=2 AURORA_PROXY=true node ./deployment/aurora/deploy-schema.js
   #Eh... not very useful currently
   environment_test:
     <<: *job-defaults

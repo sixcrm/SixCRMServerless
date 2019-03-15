@@ -16,12 +16,8 @@ package:
 provider:
   name: aws
   vpc:
-    securityGroupIds:
-      - ${self:provider.environment.vpc_security_group}
-    subnetIds:
-      - ${self:provider.environment.vpc_subnet1}
-      - ${self:provider.environment.vpc_subnet2}
-      - ${self:provider.environment.vpc_subnet3}
+    securityGroupIds: ${file(./config/${opt:stage}.yml):lambda.security_groups}
+    subnetIds: ${file(./config/${opt:stage}.yml):lambda.subnets}
   runtime: nodejs8.10
   timeout: 90
   stage: ${opt:stage, 'development'} #Technical Debt:  Eliminate
@@ -37,13 +33,6 @@ provider:
     aws_region: ${opt:region, self:provider.region} #Technical Debt:  Eliminate
     aws_account: ${self:provider.account} #Technical Debt:  Eliminate
     SIX_VERBOSE: ${file(./config/${opt:stage}.yml):serverless.verbose}
-    cloudsearch_domainendpoint: ${file(./config/controllers/configuration_acquisition.js):getCloudsearchSearchEndpoint}
-    aurora_host: ${file(./config/controllers/configuration_acquisition.js):getAuroraClusterEndpoint}
-    elasticsearch_endpoint: ${file(./config/controllers/configuration_acquisition.js):getElasticSearchEndpoint}
-    vpc_subnet1: ${file(./config/controllers/configuration_acquisition.js):getSubnet1}
-    vpc_subnet2: ${file(./config/controllers/configuration_acquisition.js):getSubnet2}
-    vpc_subnet3: ${file(./config/controllers/configuration_acquisition.js):getSubnet3}
-    vpc_security_group: ${file(./config/controllers/configuration_acquisition.js):getSecurityGroup}
 
 plugins:
   - serverless-dynamodb-local

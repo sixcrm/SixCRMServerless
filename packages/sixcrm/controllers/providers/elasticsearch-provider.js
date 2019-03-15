@@ -87,7 +87,7 @@ module.exports = class ElasticSearchProvider extends AWSProvider {
 		let httpprovider = new HTTPProvider();
 
 		return httpprovider.getJSON({
-			endpoint: 'https://' + process.env.elasticsearch_endpoint
+			endpoint: 'https://' + global.SixCRM.configuration.site_config.elasticsearch.endpoint
 		}).then(results => {
 			if (results.response.statusCode === 200) {
 				return {

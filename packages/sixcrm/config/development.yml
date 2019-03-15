@@ -14,11 +14,12 @@ aws:
   account: '068070110666'
 
 lambda:
-  security_group: 'SixCRM-PrivateSubnet'
+  security_groups:
+    - sg-d7fdaa9e
   subnets:
-    - sixcrm-private1
-    - sixcrm-private2
-    - sixcrm-private3
+    - subnet-db0ee887
+    - subnet-fdf4079a
+    - subnet-5b6c8c75
 
 elasticsearch:
   domain_name: 'sixcrm-logs'
@@ -60,13 +61,13 @@ sqs:
 
 cloudsearch:
   domainname: 'sixcrm'
+  endpoint: 'doc-sixcrm-x5xewjrr254yjyrln4mlvxvfm4.us-east-1.cloudsearch.amazonaws.com'
 
 aurora:
-  release: 10
-  default_cluster_identifier: 'sixcrm'
   user: 'root'
   database: 'postgres'
   password: 'Jagodica9'
+  host: development-aurora.sixcrm.com
   port: 5440
   max: 10
   idle_timeout: 30000

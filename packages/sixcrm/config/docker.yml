@@ -72,12 +72,10 @@ sns:
 
 cloudsearch:
   domainname: 'sixcrm'
-  domainendpoint: 'local-docker:15808'
+  endpoint: 'local-docker:15808'
 
 aurora:
-  release: 10
   region: 'localhost'
-  default_cluster_identifier: 'sixcrm'
   user: 'postgres'
   database: 'postgres'
   password: ''
