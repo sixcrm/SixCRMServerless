@@ -158,7 +158,6 @@ const UserACLController = global.SixCRM.routes.include('controllers', 'entities/
 const UserDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 const UserSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
-const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const ReturnController = global.SixCRM.routes.include('controllers', 'entities/Return.js');
 const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
