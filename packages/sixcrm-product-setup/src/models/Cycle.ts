@@ -6,32 +6,42 @@ import {
 	UpdateDateColumn,
 	Check,
 	ManyToOne,
-	OneToMany
+	OneToMany,
+	JoinColumn
 } from 'typeorm';
 
 import { IsNotEmpty, Min, IsOptional } from "class-validator";
 
 import CycleProduct from './CycleProduct';
 import ProductSchedule from './ProductSchedule';
+import DomainEntity from "./DomainEntity";
+import CycleValidator from "./validators/CycleValidator";
+
+export interface IProductScheduleInterval {
+	months?: number;
+	days?: number;
+}
 
 @Entity()
-@Check(`"is_monthly" = true OR "length" IS NOT NULL`)
-export default class Cycle {
+export default class Cycle extends DomainEntity {
 
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
 	@ManyToOne(type => ProductSchedule, product_schedule => product_schedule.cycles)
+	@JoinColumn({ name: 'product_schedule_id' })
 	product_schedule: ProductSchedule;
 
 	// I wanted to call this products, but products[0].product drove me nuts before, so let's not.  :)
-	@OneToMany(type => CycleProduct, cycle_product => cycle_product.cycle)
+	@OneToMany(type => CycleProduct, cycle_product => cycle_product.cycle, { cascade: true })
 	cycle_products: CycleProduct[];
 
 	@Column({
+		nullable: true,
 		length: 55
 	})
 	@IsNotEmpty()
+	@IsOptional()
 	name: string;
 
 	@CreateDateColumn()
@@ -40,19 +50,18 @@ export default class Cycle {
 	@UpdateDateColumn()
 	updated_at: Date;
 
-	@Column()
-	@IsNotEmpty()
-	is_monthly: boolean;
-
-	@Column()
-	@IsOptional()
-	length: number;
+	@Column({
+		type: 'interval'
+	})
+	length: IProductScheduleInterval | string;
 
 	@Column()
 	@IsNotEmpty()
 	position: number;
 
-	@Column()
+	@Column({
+		nullable: true
+	})
 	@IsOptional()
 	next_position: number;
 
@@ -75,4 +84,20 @@ export default class Cycle {
 	@IsOptional()
 	shipping_price: number | string | null;
 
+	validate(): boolean {
+		return new CycleValidator(this).validate();
+	}
+
+	constructor(
+		id: string,
+		length: IProductScheduleInterval,
+		position: number,
+		price: number
+	) {
+		super();
+		this.id = id;
+		this.length = length;
+		this.position = position;
+		this.price = price;
+	}
 }

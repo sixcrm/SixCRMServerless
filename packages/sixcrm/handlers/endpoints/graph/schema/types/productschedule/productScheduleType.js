@@ -5,6 +5,7 @@ const GraphQLString = require('graphql').GraphQLString;
 const GraphQLBoolean = require('graphql').GraphQLBoolean;
 
 let scheduleType = require('./scheduleType');
+let cycleType = require('./cycleType');
 let merchantProviderGroupType = require('../merchantprovidergroup/merchantProviderGroupType');
 let ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule');
 const SMSProviderController = global.SixCRM.routes.include('controllers', 'entities/SMSProvider');
@@ -29,15 +30,12 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		schedule: {
 			type: new GraphQLList(scheduleType.graphObj),
-			description: 'The schedules associated with the product schedule',
-			resolve: (product_schedule) => {
-				const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
-				let productScheduleHelperController = new ProductScheduleHelperController();
-
-				return productScheduleHelperController.getSchedule({
-					product_schedule: product_schedule
-				});
-			}
+			description: '`schedule` will be removed. Use `ProductSchedule.cycles` instead.',
+			deprecationReason: 'The `schedule` field is deprecated and will be removed soon.'
+		},
+		cycles: {
+			type: new GraphQLList(cycleType.graphObj),
+			description: 'The cycles associated with the product schedule',
 		},
 		merchantprovidergroup: {
 			type: merchantProviderGroupType.graphObj,
@@ -53,7 +51,15 @@ module.exports.graphObj = new GraphQLObjectType({
 			description: 'Email templates associated with this product schedule.',
 			resolve: (productschedule) => emailTemplateController.listByProductSchedule(productschedule)
 		},
-		trial_required: { type: GraphQLBoolean },
+		trial_required: {
+			type: GraphQLBoolean,
+			description: '`trial_required` will be removed. Use `ProductSchedule.trial_required` instead.',
+			deprecationReason: 'The `trial_required` field is deprecated and will be removed soon.'
+		},
+		requires_confirmation: {
+			type: GraphQLBoolean,
+			description: 'Confirmation required after the initial purchase before the next cycle is billed'
+		},
 		trial_sms_provider:  {
 			type: smsProviderType.graphObj,
 			resolve: (productschedule) => {

@@ -4,7 +4,8 @@ import {
 	CreateDateColumn,
 	UpdateDateColumn,
 	Check,
-	ManyToOne
+	ManyToOne,
+	JoinColumn
 } from 'typeorm';
 
 import { IsNotEmpty, Min } from "class-validator";
@@ -18,10 +19,12 @@ import Product from './Product';
 export default class CycleProduct {
 
 	@ManyToOne(type => Cycle, cycle => cycle.cycle_products, { primary: true })
+	@JoinColumn({ name: 'cycle_id' })
 	cycle: Cycle;
 
 	@ManyToOne(type => Product, { primary: true })
-	product: Product;
+	@JoinColumn({ name: 'product_id' })
+	product: Partial<Product>;
 
 	@CreateDateColumn()
 	created_at: Date;
@@ -43,4 +46,15 @@ export default class CycleProduct {
 	@Min(0)
 	position: number;
 
+	constructor(
+		product: Partial<Product>,
+		is_shipping: boolean,
+		position: number,
+		quantity: number
+	) {
+		this.product = product;
+		this.is_shipping = is_shipping;
+		this.position = position;
+		this.quantity = quantity;
+	}
 }
