@@ -462,4 +462,28 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			).to.have.lengthOf(0);
 		});
 	});
+
+	describe('delete', () => {
+		it('deletes a product schedule', async () => {
+			const aProductSchedule = getValidProductSchedule(accountId);
+
+			// assure all cycle point to existing product
+			await createProductsForCycles(aProductSchedule);
+
+			const { id } = (await productScheduleService.create(aProductSchedule));
+			const productScheduleFromDb = await productScheduleService.get(id);
+
+			expect(NormalizedProductSchedule.of(productScheduleFromDb))
+				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule));
+
+
+			// when
+			await productScheduleService.delete(id);
+
+
+			// then
+			expect(() => productScheduleService.get(id)).to.throw;
+		});
+
+	});
 });

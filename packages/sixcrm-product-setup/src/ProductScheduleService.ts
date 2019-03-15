@@ -4,6 +4,7 @@ import { merge } from 'lodash';
 import { LogMethod, logger } from "./log";
 import ProductSchedule from "./models/ProductSchedule";
 import Cycle from './models/Cycle';
+import CycleProduct from "./models/CycleProduct";
 
 const MASTER_ACCOUNT_ID = '*';
 
@@ -124,13 +125,19 @@ export default class ProductScheduleService {
 
 	@LogMethod()
 	async delete(id: string): Promise<IProductScheduleEntityId> {
-		const deleteResult = await this.productScheduleRepository.delete({ id, ...this.baseFindConditions });
-		const [, rowsAffected] = deleteResult.raw;
-		if (rowsAffected === 0) {
-			throw new Error('No product schedule found in account');
-		}
+		const productSchedule = await this.get(id);
 
-		return { id };
+		await this.connection.transaction(async manager => {
+			for (const cycle of productSchedule.cycles) {
+				for (const cycle_product of cycle.cycle_products) {
+					await manager.delete(CycleProduct, {cycle, product: cycle_product.product});
+				}
+				await manager.delete(Cycle, cycle.id);
+			}
+			await manager.delete(ProductSchedule, id);
+		});
+
+		return  { id };
 	}
 
 	@LogMethod('debug')
