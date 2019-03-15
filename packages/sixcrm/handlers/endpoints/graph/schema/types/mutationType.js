@@ -1543,12 +1543,10 @@ module.exports.graphObj = new GraphQLObjectType({
 				}
 			},
 			resolve: (value, productschedule) => {
-				var id = productschedule.id;
-				const productScheduleController = new ProductScheduleController();
+				const id = productschedule.id;
+				const productScheduleController = getProductScheduleService();
 
-				return productScheduleController.delete({
-					id: id
-				});
+				return productScheduleController.delete(id);
 			}
 		},
 		createreturn: {
