@@ -6,7 +6,7 @@ const expect = chai.expect;
 describe('handlers/endpoints/graph/schema/types/productschedule/productScheduleInputType', () => {
 	describe('toProductScheduleInput', () => {
 		it('should transform a current ProductScheduleInput', () => {
-			const queryProductScheduleInput = {
+			const cycleProductScheduleInput = {
 				id: 'd527ca52-b2fb-4510-a9e1-7b50e55c64a7',
 				name: 'Intelligent Plastic Table Schedule',
 				updated_at: '2018-08-19T05:05:02.349Z',
@@ -40,9 +40,14 @@ describe('handlers/endpoints/graph/schema/types/productschedule/productScheduleI
 				}]
 			};
 
-			const productScheduleInput = productScheduleInputType.toProductScheduleInput(queryProductScheduleInput);
+			const productScheduleInput = productScheduleInputType.toProductScheduleInput(cycleProductScheduleInput);
+			for (const cycle of cycleProductScheduleInput.cycles) {
+				for (const cycleProduct of cycle.cycle_products) {
+					cycleProduct.product = { id: cycleProduct.product };
+				}
+			}
 
-			expect(productScheduleInput).to.deep.equal(queryProductScheduleInput);
+			expect(productScheduleInput).to.deep.equal(cycleProductScheduleInput);
 		});
 
 		it('should transform a ProductScheduleInput with a two schedules, no repeat', () => {
@@ -82,7 +87,7 @@ describe('handlers/endpoints/graph/schema/types/productschedule/productScheduleI
 					price: 5,
 					shipping_price: 0,
 					cycle_products: [{
-						product: '89de701b-562e-4482-a685-83f539be9843',
+						product: { id: '89de701b-562e-4482-a685-83f539be9843' },
 						is_shipping: true,
 						position: 1,
 						quantity: 1
@@ -94,7 +99,7 @@ describe('handlers/endpoints/graph/schema/types/productschedule/productScheduleI
 					price: 30,
 					shipping_price: 0,
 					cycle_products: [{
-						product: '89de701b-562e-4482-a685-83f539be9843',
+						product: { id: '89de701b-562e-4482-a685-83f539be9843' },
 						is_shipping: true,
 						position: 1,
 						quantity: 1
@@ -132,7 +137,7 @@ describe('handlers/endpoints/graph/schema/types/productschedule/productScheduleI
 					price: 30,
 					shipping_price: 0,
 					cycle_products: [{
-						product: '89de701b-562e-4482-a685-83f539be9843',
+						product: { id: '89de701b-562e-4482-a685-83f539be9843' },
 						is_shipping: true,
 						position: 1,
 						quantity: 1
@@ -170,7 +175,7 @@ describe('handlers/endpoints/graph/schema/types/productschedule/productScheduleI
 					price: 30,
 					shipping_price: 0,
 					cycle_products: [{
-						product: '89de701b-562e-4482-a685-83f539be9843',
+						product: { id: '89de701b-562e-4482-a685-83f539be9843' },
 						is_shipping: true,
 						position: 1,
 						quantity: 1

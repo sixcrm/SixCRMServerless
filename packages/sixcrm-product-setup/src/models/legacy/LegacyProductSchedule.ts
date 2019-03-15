@@ -61,7 +61,7 @@ const sortedCyclesReducer = (
 	const period = lengthInterval.months ? 30 : lengthInterval.days;
 
 	const product = cycle_products[0].product;
-	const productId = product instanceof Product ? product.id : product;
+	const productId = (product as Product).id ? product.id : product;
 
 	return [
 		...schedules,

@@ -11,6 +11,7 @@ const cycleProductInputType = require('./cycleProductInputType');
 module.exports.graphObj = new GraphQLInputObjectType({
 	name: 'ProductScheduleCycleInputType',
 	fields: () => ({
+		id:					{ type: GraphQLString },
 		cycle_products:	{ type: new GraphQLList(cycleProductInputType.graphObj) },
 		price:				{ type: new GraphQLNonNull(GraphQLFloat) },
 		shipping_price:				{ type: new GraphQLNonNull(GraphQLFloat) },

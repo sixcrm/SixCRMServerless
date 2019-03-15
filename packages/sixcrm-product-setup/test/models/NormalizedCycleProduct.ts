@@ -2,7 +2,7 @@ import CycleProduct from "../../src/models/CycleProduct";
 import NormalizedProduct, {NormalizedProductType} from "./NormalizedProduct";
 
 export interface NormalizedCycleProductType {
-	product: NormalizedProductType,
+	product: Partial<NormalizedProductType>,
 	quantity: number,
 	is_shipping: boolean,
 	position: number

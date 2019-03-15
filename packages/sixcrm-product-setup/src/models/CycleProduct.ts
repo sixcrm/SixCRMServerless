@@ -24,7 +24,7 @@ export default class CycleProduct {
 
 	@ManyToOne(type => Product, { primary: true })
 	@JoinColumn({ name: 'product_id' })
-	product: Product | string;
+	product: Partial<Product>;
 
 	@CreateDateColumn()
 	created_at: Date;
@@ -47,7 +47,7 @@ export default class CycleProduct {
 	position: number;
 
 	constructor(
-		product: Product | string,
+		product: Partial<Product>,
 		is_shipping: boolean,
 		position: number,
 		quantity: number

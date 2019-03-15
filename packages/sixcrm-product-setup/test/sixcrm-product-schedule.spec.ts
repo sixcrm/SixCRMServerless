@@ -175,7 +175,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			const cycles = cloneDeep(aProductSchedule.cycles);
 			for (const cycle of aProductSchedule.cycles) {
 				for (const cycleProduct of cycle.cycle_products) {
-					cycleProduct.product = (cycleProduct.product as Product).id;
+					cycleProduct.product = { id: (cycleProduct.product as Product).id };
 				}
 			}
 

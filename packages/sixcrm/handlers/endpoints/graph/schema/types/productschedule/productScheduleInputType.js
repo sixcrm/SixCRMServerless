@@ -77,8 +77,19 @@ module.exports.toProductScheduleInput = ({
 	requires_confirmation,
 	trial_required,
 	...productScheduleInput
-}) => ({
-	...productScheduleInput,
-	requires_confirmation: !!(requires_confirmation || trial_required),
-	cycles: cycles ? cycles : sortBy(schedule, 'start').reduce(sortedScheduleReducer, [])
-});
+}) => {
+	cycles = cycles ? cycles : sortBy(schedule, 'start').reduce(sortedScheduleReducer, []);
+	cycles = cycles.map(({ cycle_products, ...cycle}) => ({
+		...cycle,
+		cycle_products: cycle_products.map(({ product, ...cycleProduct }) => ({
+			...cycleProduct,
+			product: { id: product }
+		}))
+	}));
+
+	return {
+		...productScheduleInput,
+		requires_confirmation: !!(requires_confirmation || trial_required),
+		cycles
+	};
+};

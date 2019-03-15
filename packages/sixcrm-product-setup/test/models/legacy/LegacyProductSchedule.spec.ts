@@ -41,7 +41,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProductSchedule', () =>
 			const updated_at = new Date();
 
 			const productId = '89de701b-562e-4482-a685-83f539be9843';
-			const cycleProduct = new CycleProduct(productId, true, 1, 1);
+			const cycleProduct = new CycleProduct({ id: productId }, true, 1, 1);
 
 			const productSchedule = new ProductSchedule(id, accountId, name, requiresConfirmation);
 			productSchedule.created_at = created_at;
@@ -90,7 +90,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProductSchedule', () =>
 			const updated_at = new Date();
 
 			const productId = '89de701b-562e-4482-a685-83f539be9843';
-			const cycleProduct = new CycleProduct(productId, true, 1, 1);
+			const cycleProduct = new CycleProduct({ id: productId }, true, 1, 1);
 
 			const productSchedule = new ProductSchedule(id, accountId, name, requiresConfirmation);
 			productSchedule.created_at = created_at;
@@ -130,7 +130,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProductSchedule', () =>
 			const updated_at = new Date();
 
 			const productId = '89de701b-562e-4482-a685-83f539be9843';
-			const cycleProduct = new CycleProduct(productId, true, 1, 1);
+			const cycleProduct = new CycleProduct({ id: productId }, true, 1, 1);
 
 			const productSchedule = new ProductSchedule(id, accountId, name, requiresConfirmation);
 			productSchedule.created_at = created_at;

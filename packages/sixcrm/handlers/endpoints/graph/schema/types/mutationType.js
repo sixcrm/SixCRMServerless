@@ -1524,12 +1524,13 @@ module.exports.graphObj = new GraphQLObjectType({
 					type: productScheduleInputType.graphObj
 				}
 			},
-			resolve: (value, productschedule) => {
-				const productScheduleController = new ProductScheduleController();
-
-				return productScheduleController.update({
-					entity: productschedule.productschedule
-				});
+			resolve: async (value, { productschedule: productSchedule }) => {
+				productSchedule = productScheduleInputType.toProductScheduleInput(productSchedule);
+				const productScheduleService = getProductScheduleService();
+				const {id} = await productScheduleService.update(productSchedule);
+				return LegacyProductSchedule.hybridFromProductSchedule(
+					await productScheduleService.get(id)
+				);
 			}
 		},
 		deleteproductschedule: {

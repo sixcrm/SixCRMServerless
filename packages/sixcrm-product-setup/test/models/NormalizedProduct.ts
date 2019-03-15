@@ -16,9 +16,9 @@ export interface NormalizedProductType {
 }
 
 export default class NormalizedProduct {
-	private readonly normalizedEntity: NormalizedProductType;
+	private readonly normalizedEntity: Partial<NormalizedProductType>;
 
-	constructor(entity: Product) {
+	constructor(entity: Partial<Product>) {
 		this.normalizedEntity = {
 			id: entity.id,
 			account_id: entity.account_id,
@@ -36,11 +36,11 @@ export default class NormalizedProduct {
 
 	}
 
-	static of(entity: Product) {
+	static of(entity: Partial<Product>) {
 		return new NormalizedProduct(entity).valueOf();
 	}
 
-	valueOf(): NormalizedProductType {
+	valueOf(): Partial<NormalizedProductType> {
 		return this.normalizedEntity;
 	}
 }
