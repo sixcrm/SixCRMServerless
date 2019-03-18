@@ -17,11 +17,11 @@ module.exports.graphObj = new GraphQLObjectType({
 		shipping_price:				{ type: new GraphQLNonNull(GraphQLFloat) },
 		length:				{
 			type: new GraphQLNonNull(GraphQLJSON),
-			resolve: (string) => {
+			resolve: (cycle) => {
 				try {
-					return JSON.parse(string);
+					return JSON.parse(cycle.length);
 				} catch (error) {
-					return string;
+					return cycle.length;
 				}
 			}
 		},
