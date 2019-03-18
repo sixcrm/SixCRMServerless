@@ -7,7 +7,6 @@ const GraphQLBoolean = require('graphql').GraphQLBoolean;
 let scheduleType = require('./scheduleType');
 let cycleType = require('./cycleType');
 let merchantProviderGroupType = require('../merchantprovidergroup/merchantProviderGroupType');
-let ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule');
 const SMSProviderController = global.SixCRM.routes.include('controllers', 'entities/SMSProvider');
 const smsProviderController = new SMSProviderController();
 
