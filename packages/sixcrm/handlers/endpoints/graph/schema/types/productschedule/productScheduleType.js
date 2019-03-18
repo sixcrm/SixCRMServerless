@@ -7,7 +7,6 @@ const GraphQLBoolean = require('graphql').GraphQLBoolean;
 let scheduleType = require('./scheduleType');
 let cycleType = require('./cycleType');
 let merchantProviderGroupType = require('../merchantprovidergroup/merchantProviderGroupType');
-let ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule');
 const SMSProviderController = global.SixCRM.routes.include('controllers', 'entities/SMSProvider');
 const smsProviderController = new SMSProviderController();
 
@@ -15,6 +14,9 @@ let emailTemplateType = require('../emailtemplate/emailTemplateType');
 const smsProviderType = require('../smsprovider/SMSProviderType');
 const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 const emailTemplateController = new EmailTemplateController();
+
+const MerchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
+const merchantProviderGroupController = new MerchantProviderGroupController();
 
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'ProductSchedule',
@@ -41,9 +43,11 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: merchantProviderGroupType.graphObj,
 			description: 'The merchant provider group associated with the product schedule.',
 			resolve: (productschedule) => {
-				const productScheduleController = new ProductScheduleController();
+				if (!productschedule.merchant_provider_group_id) {
+					return null;
+				}
 
-				return productScheduleController.getMerchantProviderGroup(productschedule);
+				return merchantProviderGroupController.get({id: productschedule.merchant_provider_group_id});
 			}
 		},
 		emailtemplates: {
