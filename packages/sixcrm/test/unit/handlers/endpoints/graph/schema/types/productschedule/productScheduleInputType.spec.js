@@ -9,6 +9,7 @@ describe('handlers/endpoints/graph/schema/types/productschedule/productScheduleI
 			const cycleProductScheduleInput = {
 				id: 'd527ca52-b2fb-4510-a9e1-7b50e55c64a7',
 				name: 'Intelligent Plastic Table Schedule',
+				merchantprovidergroup: '7e65e86c-be9a-4b03-ba9f-dd7419e35b62',
 				updated_at: '2018-08-19T05:05:02.349Z',
 				requires_confirmation: false,
 				cycles: [{
@@ -46,6 +47,8 @@ describe('handlers/endpoints/graph/schema/types/productschedule/productScheduleI
 					cycleProduct.product = { id: cycleProduct.product };
 				}
 			}
+			delete cycleProductScheduleInput.merchantprovidergroup;
+			cycleProductScheduleInput.merchant_provider_group_id = '7e65e86c-be9a-4b03-ba9f-dd7419e35b62';
 
 			expect(productScheduleInput).to.deep.equal(cycleProductScheduleInput);
 		});
@@ -55,6 +58,7 @@ describe('handlers/endpoints/graph/schema/types/productschedule/productScheduleI
 				id: 'd527ca52-b2fb-4510-a9e1-7b50e55c64a7',
 				name: 'Intelligent Plastic Table Schedule',
 				updated_at: '2018-08-19T05:05:02.349Z',
+				merchantprovidergroup: '7e65e86c-be9a-4b03-ba9f-dd7419e35b62',
 				requires_confirmation: false,
 				schedule: [{
 					end: 14,
@@ -78,6 +82,7 @@ describe('handlers/endpoints/graph/schema/types/productschedule/productScheduleI
 			expect(productScheduleInput).to.deep.equal({
 				id: 'd527ca52-b2fb-4510-a9e1-7b50e55c64a7',
 				name: 'Intelligent Plastic Table Schedule',
+				merchant_provider_group_id: '7e65e86c-be9a-4b03-ba9f-dd7419e35b62',
 				updated_at: '2018-08-19T05:05:02.349Z',
 				requires_confirmation: false,
 				cycles: [{
@@ -112,6 +117,7 @@ describe('handlers/endpoints/graph/schema/types/productschedule/productScheduleI
 			const queryProductScheduleInput = {
 				id: 'd527ca52-b2fb-4510-a9e1-7b50e55c64a7',
 				name: 'Intelligent Plastic Table Schedule',
+				merchantprovidergroup: '7e65e86c-be9a-4b03-ba9f-dd7419e35b62',
 				updated_at: '2018-08-19T05:05:02.349Z',
 				requires_confirmation: false,
 				schedule: [{
@@ -128,6 +134,7 @@ describe('handlers/endpoints/graph/schema/types/productschedule/productScheduleI
 			expect(productInput).to.deep.equal({
 				id: 'd527ca52-b2fb-4510-a9e1-7b50e55c64a7',
 				name: 'Intelligent Plastic Table Schedule',
+				merchant_provider_group_id: '7e65e86c-be9a-4b03-ba9f-dd7419e35b62',
 				updated_at: '2018-08-19T05:05:02.349Z',
 				requires_confirmation: false,
 				cycles: [{
@@ -150,6 +157,7 @@ describe('handlers/endpoints/graph/schema/types/productschedule/productScheduleI
 			const queryProductScheduleInput = {
 				id: 'd527ca52-b2fb-4510-a9e1-7b50e55c64a7',
 				name: 'Intelligent Plastic Table Schedule',
+				merchantprovidergroup: '7e65e86c-be9a-4b03-ba9f-dd7419e35b62',
 				updated_at: '2018-08-19T05:05:02.349Z',
 				requires_confirmation: false,
 				schedule: [{
@@ -166,6 +174,7 @@ describe('handlers/endpoints/graph/schema/types/productschedule/productScheduleI
 			expect(productInput).to.deep.equal({
 				id: 'd527ca52-b2fb-4510-a9e1-7b50e55c64a7',
 				name: 'Intelligent Plastic Table Schedule',
+				merchant_provider_group_id: '7e65e86c-be9a-4b03-ba9f-dd7419e35b62',
 				updated_at: '2018-08-19T05:05:02.349Z',
 				requires_confirmation: false,
 				cycles: [{
