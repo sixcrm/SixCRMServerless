@@ -3,8 +3,9 @@ import { validate, ValidationError } from "class-validator";
 import { merge } from 'lodash';
 import { LogMethod, logger } from "./log";
 import ProductSchedule from "./models/ProductSchedule";
-import Cycle from './models/Cycle';
-import CycleProduct from "./models/CycleProduct";
+import ProductScheduleDbo from "./models/dbo/ProductScheduleDbo";
+import CycleProductDbo from "./models/dbo/CycleProductDbo";
+import CycleDbo from "./models/dbo/CycleDbo";
 
 const MASTER_ACCOUNT_ID = '*';
 
@@ -16,7 +17,7 @@ interface IProductScheduleEntityId {
 }
 
 export default class ProductScheduleService {
-	private readonly productScheduleRepository: Repository<ProductSchedule>;
+	private readonly productScheduleRepository: Repository<ProductScheduleDbo>;
 	private readonly accountId: string;
 	private readonly baseFindConditions: any;
 	private readonly connection: Connection;
@@ -29,7 +30,7 @@ export default class ProductScheduleService {
 		connection: Connection;
 	}) {
 		this.connection = connection;
-		this.productScheduleRepository = connection.getRepository(ProductSchedule);
+		this.productScheduleRepository = connection.getRepository(ProductScheduleDbo);
 		this.accountId = accountId;
 
 		const whereCondition = accountId === MASTER_ACCOUNT_ID ? {} : { where: { account_id: accountId } };
@@ -43,7 +44,7 @@ export default class ProductScheduleService {
 	get(id: string): Promise<ProductSchedule> {
 		return this.productScheduleRepository.findOneOrFail(
 			merge({}, this.baseFindConditions, { where: { id } })
-		);
+		).then(dbo => dbo.toEntity())
 	}
 
 	@LogMethod()
@@ -51,28 +52,25 @@ export default class ProductScheduleService {
 		return this.productScheduleRepository.find({
 			...this.baseFindConditions,
 			take: limit
-		});
+		}).then((dbos) => dbos.map(dbo => dbo.toEntity()));
 	}
 
 	@LogMethod()
-	async create(partialProductSchedule: Partial<ProductSchedule>): Promise<ProductSchedule> {
-		// shallow copy to avoid typeorm issues with objects without prototypes
-		// https://github.com/typeorm/typeorm/issues/2065
-		const productSchedule: ProductSchedule = this.productScheduleRepository.create({
-			account_id: this.accountId,
-			...partialProductSchedule
-		}).validated();
+	async create(productSchedule: ProductSchedule): Promise<ProductSchedule> {
+		if (productSchedule.account_id === undefined) {
+			productSchedule.account_id = this.accountId;
+		}
 
 		await this.validateCreateProductSchedule(productSchedule);
 
 		let saved;
 		await this.connection.transaction(async manager => {
-			saved = await manager.save(productSchedule);
+			saved = await manager.save(ProductScheduleDbo.fromEntity(productSchedule));
 			for (const cycle of productSchedule.cycles) {
 				for (const cycle_product of cycle.cycle_products) {
 					await manager
 						.createQueryBuilder()
-						.relation(Cycle, 'cycle_products')
+						.relation(CycleDbo, 'cycle_products')
 						.of(cycle)
 						.add({ cycle, product: cycle_product });
 				}
@@ -89,7 +87,7 @@ export default class ProductScheduleService {
 		const productSchedule = this.productScheduleRepository.create({
 			account_id: this.accountId,
 			...partialProductSchedule
-		}).validated();
+		});
 		if (this.isMasterAccount()) {
 			delete productSchedule.account_id;
 		}
@@ -104,7 +102,7 @@ export default class ProductScheduleService {
 			log.error('No product schedule found in account', e);
 			throw new Error('No product schedule found in account');
 		}
-		await this.validateProductSchedule(productSchedule, previous);
+		await this.validateProductSchedule(productSchedule.toEntity(), previous);
 
 		let saved;
 		await this.connection.transaction(async manager => {
@@ -113,7 +111,7 @@ export default class ProductScheduleService {
 				for (const cycle_product of cycle.cycle_products) {
 					await manager
 						.createQueryBuilder()
-						.relation(Cycle, 'cycle_products')
+						.relation(CycleDbo, 'cycle_products')
 						.of(cycle)
 						.add({ cycle, product: cycle_product });
 				}
@@ -130,11 +128,11 @@ export default class ProductScheduleService {
 		await this.connection.transaction(async manager => {
 			for (const cycle of productSchedule.cycles) {
 				for (const cycle_product of cycle.cycle_products) {
-					await manager.delete(CycleProduct, {cycle, product: cycle_product.product});
+					await manager.delete(CycleProductDbo, {cycle: cycle_product.cycle_id, product: cycle_product.product});
 				}
-				await manager.delete(Cycle, cycle.id);
+				await manager.delete(CycleDbo, cycle.id);
 			}
-			await manager.delete(ProductSchedule, id);
+			await manager.delete(ProductScheduleDbo, id);
 		});
 
 		return  { id };

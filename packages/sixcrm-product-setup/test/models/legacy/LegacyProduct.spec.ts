@@ -10,7 +10,7 @@ const expect = chai.expect;
 describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 	describe('fromProduct', () => {
 		it('should transform all required fields', () => {
-			const product = new Product(v4(), v4(), 'A product', 100, false, []);
+			const product = new Product({id:v4(), account_id:v4(), name:'A product', price:100, is_shippable:false, image_urls:[]});
 			const {
 				account_id,
 				created_at,
@@ -45,7 +45,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 		});
 
 		it('should transform nullable fields', () => {
-			const product = new Product(v4(), v4(), 'A product', 100, false, []);
+			const product = new Product({id:v4(), account_id:v4(), name:'A product', price:100, is_shippable:false, image_urls:[]});
 			product.description = product.sku = product.shipping_price = product.shipping_delay = null;
 			const {
 				account_id,
@@ -81,7 +81,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 		});
 
 		it('should transform a product with images', () => {
-			const product = new Product(v4(), v4(), 'A product', 100, false, ['http://default/image', 'http//image2']);
+			const product = new Product({id:v4(), account_id:v4(), name:'A product', price:100, is_shippable:false, image_urls:['http://default/image', 'http//image2']});
 			const {
 				account_id,
 				created_at,
@@ -121,7 +121,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 		});
 
 		it('should transform a product with a shipping price', () => {
-			const product = new Product(v4(), v4(), 'A product', 100, false, []);
+			const product = new Product({id:v4(), account_id:v4(), name:'A product', price:100, is_shippable:false, image_urls:[]});
 			product.shipping_price = 2;
 			const {
 				account_id,
@@ -156,7 +156,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 		});
 
 		it('should transform a product with a shipping delay', () => {
-			const product = new Product(v4(), v4(), 'A product', 100, false, []);
+			const product = new Product({id:v4(), account_id:v4(), name:'A product', price:100, is_shippable:false, image_urls:[]});
 			product.shipping_delay = { hours: 1, minutes: 1, seconds: 1 };
 			const {
 				account_id,
@@ -192,7 +192,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 		});
 
 		it('should transform a product with a merchant provider group ID', () => {
-			const product = new Product(v4(), v4(), 'A product', 100, false, []);
+			const product = new Product({id:v4(), account_id:v4(), name:'A product', price:100, is_shippable:false, image_urls:[]});
 			product.merchant_provider_group_id = v4();
 			const {
 				account_id,
@@ -229,7 +229,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 		});
 
 		it('should transform a product with a fulfillment provider ID', () => {
-			const product = new Product(v4(), v4(), 'A product', 100, false, []);
+			const product = new Product({id:v4(), account_id:v4(), name:'A product', price:100, is_shippable:false, image_urls:[]});
 			product.fulfillment_provider_id = v4();
 			const {
 				account_id,
@@ -268,7 +268,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProduct', () => {
 
 	describe('hybridFromProduct', () => {
 		it('should transform to an intersection of LegacyProduct and Product', () => {
-			const product = new Product(v4(), v4(), 'A product', 100, false, ['http://default/image', 'http//image2']);
+			const product = new Product({id:v4(), account_id:v4(), name:'A product', price:100, is_shippable:false, image_urls:['http://default/image', 'http//image2']});
 			const {
 				account_id,
 				created_at,

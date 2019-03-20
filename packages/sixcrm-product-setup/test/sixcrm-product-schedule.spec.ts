@@ -17,7 +17,6 @@ import ProductScheduleService from "../src/ProductScheduleService";
 import ProductSchedule from "../src/models/ProductSchedule";
 import Cycle from "../src/models/Cycle";
 import NormalizedProductSchedule from "./models/NormalizedProductSchedule";
-import CycleProduct from "../src/models/CycleProduct";
 import Product from "../src/models/Product";
 import ProductSetupService from "../src/ProductSetupService";
 import NormalizedProduct from "./models/NormalizedProduct";
@@ -85,7 +84,7 @@ const getValidCycleProduct = (cycle: Cycle, product: Product) => {
 };
 
 const getValidProduct = (accountId) => {
-	return new Product(v4(), accountId, 'A product', 100, false, []);
+	return new Product({id: v4(), account_id: accountId, name: 'A product', price: 100, is_shippable: true, image_urls: []});
 };
 
 describe('@6crm/sixcrm-product-schedule', () => {
@@ -380,10 +379,10 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			const newCp = cloneDeep(savedProductSchedule.cycles[0].cycle_products[0]);
 			newCp.product = getValidProduct(accountId);
 			savedProductSchedule.cycles[0].cycle_products.push(newCp);
-			await masterAccountProductSetupService.createProduct({
-				...newCp.product,
-				account_id: accountId
-			});
+
+			newCp.product.account_id = accountId;
+
+			await masterAccountProductSetupService.createProduct(<Product> newCp.product);
 
 			// when
 			await productScheduleService.update(savedProductSchedule);

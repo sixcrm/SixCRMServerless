@@ -15,7 +15,7 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProductSchedule', () =>
 			const requiresConfirmation = false;
 			const created_at = new Date();
 			const updated_at = new Date();
-			const productSchedule = new ProductSchedule(id, accountId, name, requiresConfirmation);
+			const productSchedule = new ProductSchedule({id: id, account_id: accountId, name: name, requires_confirmation: requiresConfirmation});
 			productSchedule.created_at = created_at;
 			productSchedule.updated_at = updated_at;
 
@@ -41,16 +41,16 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProductSchedule', () =>
 			const updated_at = new Date();
 
 			const productId = '89de701b-562e-4482-a685-83f539be9843';
-			const cycleProduct = new CycleProduct({ id: productId }, true, 1, 1);
+			const cycleProduct = new CycleProduct({product: { id: productId }, is_shipping: true, position: 1, quantity: 1});
 
-			const productSchedule = new ProductSchedule(id, accountId, name, requiresConfirmation);
+			const productSchedule = new ProductSchedule({id: id, account_id: accountId, name: name, requires_confirmation: requiresConfirmation});
 			productSchedule.created_at = created_at;
 			productSchedule.updated_at = updated_at;
 
-			const cycle1 = new Cycle('0e5cc5dc-738d-4c1f-bd87-a27ad7cc5b17', { days: 14 }, 1, 5);
+			const cycle1 = new Cycle({id: '0e5cc5dc-738d-4c1f-bd87-a27ad7cc5b17', length: { days: 14 }, position: 1, price: 5});
 			cycle1.next_position = 2;
 			cycle1.cycle_products = [cycleProduct];
-			const cycle2 = new Cycle('ce6dcd14-b54c-46ea-a1cb-0f4ac8f9db8b', { days: 30 }, 2, 30);
+			const cycle2 = new Cycle({id: 'ce6dcd14-b54c-46ea-a1cb-0f4ac8f9db8b', length: { days: 30 }, position: 2, price: 30});
 			cycle2.cycle_products = [cycleProduct];
 			productSchedule.cycles = [cycle1, cycle2];
 
@@ -90,13 +90,13 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProductSchedule', () =>
 			const updated_at = new Date();
 
 			const productId = '89de701b-562e-4482-a685-83f539be9843';
-			const cycleProduct = new CycleProduct({ id: productId }, true, 1, 1);
+			const cycleProduct = new CycleProduct({product: { id: productId }, is_shipping: true, position: 1, quantity: 1});
 
-			const productSchedule = new ProductSchedule(id, accountId, name, requiresConfirmation);
+			const productSchedule = new ProductSchedule({id: id, account_id: accountId, name: name, requires_confirmation: requiresConfirmation});
 			productSchedule.created_at = created_at;
 			productSchedule.updated_at = updated_at;
 
-			const cycle = new Cycle('0e5cc5dc-738d-4c1f-bd87-a27ad7cc5b17', { days: 30 }, 1, 30);
+			const cycle = new Cycle({id: '0e5cc5dc-738d-4c1f-bd87-a27ad7cc5b17', length: { days: 30 }, position: 1, price: 30});
 			cycle.next_position = 1;
 			cycle.cycle_products = [cycleProduct];
 			productSchedule.cycles = [cycle];
@@ -130,13 +130,13 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProductSchedule', () =>
 			const updated_at = new Date();
 
 			const productId = '89de701b-562e-4482-a685-83f539be9843';
-			const cycleProduct = new CycleProduct({ id: productId }, true, 1, 1);
+			const cycleProduct = new CycleProduct({product: { id: productId }, is_shipping: true, position: 1, quantity: 1});
 
-			const productSchedule = new ProductSchedule(id, accountId, name, requiresConfirmation);
+			const productSchedule = new ProductSchedule({id: id, account_id: accountId, name: name, requires_confirmation: requiresConfirmation});
 			productSchedule.created_at = created_at;
 			productSchedule.updated_at = updated_at;
 
-			const cycle = new Cycle('0e5cc5dc-738d-4c1f-bd87-a27ad7cc5b17', { months: 1 }, 1, 30);
+			const cycle = new Cycle({ id: '0e5cc5dc-738d-4c1f-bd87-a27ad7cc5b17', length: { months: 1 }, position: 1, price:30});
 			cycle.next_position = 1;
 			cycle.cycle_products = [cycleProduct];
 			productSchedule.cycles = [cycle];

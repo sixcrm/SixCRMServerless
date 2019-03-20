@@ -85,7 +85,7 @@ export default class LegacyProduct {
 	}
 
 	public toProduct(): Product {
-		return {
+		return new Product({
 			account_id: this.account,
 			created_at: new Date(this.created_at),
 			description: this.description,
@@ -100,7 +100,7 @@ export default class LegacyProduct {
 			shipping_price: 0,
 			sku: this.sku,
 			updated_at: new Date(this.updated_at)
-		};
+		});
 	}
 
 	private getImageUrls() {

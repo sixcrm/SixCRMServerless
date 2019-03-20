@@ -1,11 +1,11 @@
 import { randomBytes } from 'crypto';
 import 'reflect-metadata';
-import { createConnection, getConnection, getConnectionOptions, ConnectionOptions } from 'typeorm';
-import Product from './models/Product';
+import { createConnection, getConnection, ConnectionOptions } from 'typeorm';
 import { logger } from './log';
-import ProductSchedule from "./models/ProductSchedule";
-import CycleProduct from "./models/CycleProduct";
-import Cycle from "./models/Cycle";
+import ProductDbo from "./models/dbo/ProductDbo";
+import ProductScheduleDbo from "./models/dbo/ProductScheduleDbo";
+import CycleDbo from "./models/dbo/CycleDbo";
+import CycleProductDbo from "./models/dbo/CycleProductDbo";
 
 const connectionName = randomBytes(5).toString('hex');
 let connection;
@@ -29,7 +29,7 @@ const toConnectionOptions = (config: IDatabaseConfig) => {
 		port: 5440,
 		database: 'postgres',
 		schema: 'product_setup',
-		entities: [ Product, ProductSchedule, Cycle, CycleProduct ],
+		entities: [ ProductDbo, ProductScheduleDbo, CycleDbo, CycleProductDbo ],
 		synchronize: true,
 		logging: true,
 		...config

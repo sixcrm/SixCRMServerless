@@ -17,7 +17,7 @@ import {disconnect} from "../src/connect";
 import NormalizedProduct from "./models/NormalizedProduct";
 
 let getValidProduct = function(accountId) {
-	return new Product(v4(), accountId, 'A product', 100, false, []);
+	return new Product({id: v4(), account_id: accountId, name: 'A product', price: 100, is_shippable: false, image_urls: []});
 };
 
 describe('@6crm/sixcrm-product-setup', () => {
