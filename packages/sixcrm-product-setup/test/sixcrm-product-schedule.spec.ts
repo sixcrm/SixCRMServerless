@@ -486,4 +486,59 @@ describe('@6crm/sixcrm-product-schedule', () => {
 		});
 
 	});
+
+	describe('getByIds', () => {
+		it('retrieves product schedules', async () => {
+			// given
+			const firstProductSchedule = getValidProductSchedule(accountId);
+			const secondProductSchedule = getValidProductSchedule(accountId);
+
+			await Promise.all([
+				createProductsForCycles(firstProductSchedule),
+				createProductsForCycles(secondProductSchedule)
+			]);
+
+			const [{ id: firstProductScheduleId }, { id: secondProductScheduleId }] = await Promise.all([
+				productScheduleService.create(firstProductSchedule),
+				productScheduleService.create(secondProductSchedule)
+			]);
+
+			// when
+			const productSchedulesFromDb = await productScheduleService.getByIds([
+				firstProductScheduleId,
+				secondProductScheduleId
+			]);
+
+			// then
+			expect(productSchedulesFromDb.map(p => p.id)).to.have.members([
+				firstProductScheduleId,
+				secondProductScheduleId
+			]);
+		});
+
+		it('retrieves only product schedules from the same account', async () => {
+			// given
+			const firstProductSchedule = getValidProductSchedule(accountId);
+			const secondProductSchedule = getValidProductSchedule(anotherAccountId);
+
+			await Promise.all([
+				createProductsForCycles(firstProductSchedule),
+				createProductsForCycles(secondProductSchedule)
+			]);
+
+			const [{ id: firstProductScheduleId }, { id: secondProductScheduleId }] = await Promise.all([
+				productScheduleService.create(firstProductSchedule),
+				anotherAccountProductScheduleService.create(secondProductSchedule)
+			]);
+
+			// when
+			const productSchedulesFromDb = await productScheduleService.getByIds([
+				firstProductScheduleId,
+				secondProductScheduleId
+			]);
+
+			// then
+			expect(productSchedulesFromDb.map(p => p.id)).to.deep.equal([firstProductScheduleId]);
+		});
+	});
 });
