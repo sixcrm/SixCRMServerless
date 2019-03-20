@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
-	"$id": "model/entities/components/watermark/watermarkproductschedule.json",
+	"$id": "model/entities/components/watermark/legacywatermarkproductschedule.json",
 	"title": "A session watermark products schedule",
 	"type": "object",
 	"properties": {
