@@ -55,6 +55,11 @@ export default class ProductScheduleService {
 	}
 
 	@LogMethod()
+	getByIds(ids: string[]): Promise<ProductSchedule[]> {
+		return this.productScheduleRepository.findByIds(ids, this.baseFindConditions);
+	}
+
+	@LogMethod()
 	async create(partialProductSchedule: Partial<ProductSchedule>): Promise<ProductSchedule> {
 		// shallow copy to avoid typeorm issues with objects without prototypes
 		// https://github.com/typeorm/typeorm/issues/2065
