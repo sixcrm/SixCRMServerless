@@ -541,4 +541,31 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			expect(productSchedulesFromDb.map(p => p.id)).to.deep.equal([firstProductScheduleId]);
 		});
 	});
+
+	describe('getByProductId', () => {
+		it('retrieves product schedules', async () => {
+			// given
+			const firstProductSchedule = getValidProductSchedule(accountId);
+			const secondProductSchedule = getValidProductSchedule(accountId);
+
+			const productId = firstProductSchedule.cycles[0].cycle_products[0].product.id;
+
+			await Promise.all([
+				createProductsForCycles(firstProductSchedule),
+				createProductsForCycles(secondProductSchedule)
+			]);
+
+			const [{ id: firstProductScheduleId }, { id: secondProductScheduleId }] = await Promise.all([
+				productScheduleService.create(firstProductSchedule),
+				productScheduleService.create(secondProductSchedule)
+			]);
+
+			// when
+			const [productScheduleFromDb] = await productScheduleService.getByProductId(productId as string);
+
+			// then
+			expect(NormalizedProductSchedule.of(productScheduleFromDb))
+				.to.deep.equal(NormalizedProductSchedule.of(firstProductSchedule));
+		});
+	});
 });
