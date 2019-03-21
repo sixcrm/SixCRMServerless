@@ -17,6 +17,8 @@
     "test-integration-analytics": "lerna run test-integration-analytics --stream",
     "test-transactions": "lerna run test-transactions --stream",
     "test-productsetup": "lerna run test-productsetup --stream",
+    "test-subscriptions": "lerna run test-subscriptions --stream",
+    "test-orders": "lerna run test-orders --stream",
     "ts-test": "lerna run ts-test",
     "test": "lerna run test"
   },
