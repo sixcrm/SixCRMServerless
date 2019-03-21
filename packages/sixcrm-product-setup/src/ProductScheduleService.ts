@@ -60,6 +60,18 @@ export default class ProductScheduleService {
 	}
 
 	@LogMethod()
+	async getByProductId(productId: string): Promise<ProductSchedule[]> {
+		const productScheduleIds = (await this.productScheduleRepository.createQueryBuilder('product_schedule')
+			.innerJoin('product_schedule.cycles', 'cycle')
+			.innerJoin('cycle.cycle_products', 'cycle_product')
+			.innerJoin('cycle_product.product', 'product')
+			.where('cycle_product.product_id = :productId', { productId })
+			.getMany()).map(p => p.id);
+
+		return this.getByIds(productScheduleIds);
+	}
+
+	@LogMethod()
 	async create(partialProductSchedule: Partial<ProductSchedule>): Promise<ProductSchedule> {
 		// shallow copy to avoid typeorm issues with objects without prototypes
 		// https://github.com/typeorm/typeorm/issues/2065
