@@ -487,6 +487,63 @@ describe('@6crm/sixcrm-product-schedule', () => {
 
 	});
 
+	describe('find', () => {
+		it('finds product schedules', async () => {
+			// given
+			const firstProductSchedule = getValidProductSchedule(accountId);
+			const secondProductSchedule = getValidProductSchedule(accountId);
+
+			await Promise.all([
+				createProductsForCycles(firstProductSchedule),
+				createProductsForCycles(secondProductSchedule)
+			]);
+
+			await Promise.all([
+				productScheduleService.create(firstProductSchedule),
+				productScheduleService.create(secondProductSchedule)
+			]);
+
+			// when
+			const productSchedulesFromDb = await productScheduleService.find({
+				merchant_provider_group_id: firstProductSchedule.merchant_provider_group_id
+			});
+			const [productScheduleFromDb] = productSchedulesFromDb;
+
+			// then
+			expect(productSchedulesFromDb).to.have.length(1);
+			expect(NormalizedProductSchedule.of(productScheduleFromDb))
+				.to.deep.equal(NormalizedProductSchedule.of(firstProductSchedule));
+		});
+
+		it('retrieves only products from same account', async () => {
+			// given
+			const firstProductSchedule = getValidProductSchedule(accountId);
+			const secondProductSchedule = getValidProductSchedule(anotherAccountId);
+			const name = firstProductSchedule.name = secondProductSchedule.name = 'Practical Cotton Bike';
+
+			await Promise.all([
+				createProductsForCycles(firstProductSchedule),
+				createProductsForCycles(secondProductSchedule)
+			]);
+
+			await Promise.all([
+				productScheduleService.create(firstProductSchedule),
+				anotherAccountProductScheduleService.create(secondProductSchedule)
+			]);
+
+			// when
+			const productSchedulesFromDb = await productScheduleService.find({
+				name
+			});
+			const [productScheduleFromDb] = productSchedulesFromDb;
+
+			// then
+			expect(productSchedulesFromDb).to.have.length(1);
+			expect(NormalizedProductSchedule.of(productScheduleFromDb))
+				.to.deep.equal(NormalizedProductSchedule.of(firstProductSchedule));
+		});
+	});
+
 	describe('getByIds', () => {
 		it('retrieves product schedules', async () => {
 			// given
@@ -561,9 +618,11 @@ describe('@6crm/sixcrm-product-schedule', () => {
 			]);
 
 			// when
-			const [productScheduleFromDb] = await productScheduleService.getByProductId(productId as string);
+			const productSchedulesFromDb = await productScheduleService.getByProductId(productId as string);
+			const [productScheduleFromDb] = productSchedulesFromDb;
 
 			// then
+			expect(productSchedulesFromDb).to.have.length(1);
 			expect(NormalizedProductSchedule.of(productScheduleFromDb))
 				.to.deep.equal(NormalizedProductSchedule.of(firstProductSchedule));
 		});
