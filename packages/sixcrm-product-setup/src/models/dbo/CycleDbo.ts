@@ -90,7 +90,19 @@ export default class CycleDbo {
 	}
 
 	static fromEntity(entity: Cycle): CycleDbo {
-		// todo
+		return new CycleDbo({
+			cycle_products: entity.cycle_products.map(cp => CycleProductDbo.fromEntity(cp)),
+			created_at: entity.created_at,
+			id: entity.id,
+			length: entity.id,
+			name: entity.name,
+			next_position: entity.next_position,
+			position: entity.position,
+			price: entity.price,
+			product_schedule: <ProductScheduleDbo>{ id: entity.product_schedule_id },
+			shipping_price: entity.shipping_price,
+			updated_at: entity.updated_at
+		})
 	}
 
 	toEntity(): Cycle {

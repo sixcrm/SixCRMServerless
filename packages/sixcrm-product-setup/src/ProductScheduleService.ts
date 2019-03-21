@@ -62,11 +62,12 @@ export default class ProductScheduleService {
 		}
 
 		await this.validateCreateProductSchedule(productSchedule);
+		const productScheduleDbo = ProductScheduleDbo.fromEntity(productSchedule);
 
 		let saved;
 		await this.connection.transaction(async manager => {
-			saved = await manager.save(ProductScheduleDbo.fromEntity(productSchedule));
-			for (const cycle of productSchedule.cycles) {
+			saved = await manager.save(productScheduleDbo);
+			for (const cycle of productScheduleDbo.cycles) {
 				for (const cycle_product of cycle.cycle_products) {
 					await manager
 						.createQueryBuilder()
@@ -81,18 +82,13 @@ export default class ProductScheduleService {
 	}
 
 	@LogMethod()
-	async update(partialProductSchedule: Partial<ProductSchedule>): Promise<void> {
-		// shallow copy to avoid typeorm issues with objects without prototypes
-		// https://github.com/typeorm/typeorm/issues/2065
-		const productSchedule = this.productScheduleRepository.create({
-			account_id: this.accountId,
-			...partialProductSchedule
-		});
+	async update(productSchedule: ProductSchedule): Promise<void> {
+		if (productSchedule.account_id === undefined) {
+			productSchedule.account_id = this.accountId;
+		}
 		if (this.isMasterAccount()) {
 			delete productSchedule.account_id;
 		}
-		// remove updated_at to workaround https://github.com/typeorm/typeorm/issues/2651
-		delete productSchedule.updated_at;
 
 		const { id } = productSchedule;
 		let previous: ProductSchedule;
@@ -102,12 +98,13 @@ export default class ProductScheduleService {
 			log.error('No product schedule found in account', e);
 			throw new Error('No product schedule found in account');
 		}
-		await this.validateProductSchedule(productSchedule.toEntity(), previous);
+		await this.validateProductSchedule(productSchedule, previous);
 
-		let saved;
+		const productScheduleDbo = ProductScheduleDbo.fromEntity(productSchedule);
+
 		await this.connection.transaction(async manager => {
-			saved = await manager.save(productSchedule);
-			for (const cycle of productSchedule.cycles) {
+			await manager.save(productScheduleDbo);
+			for (const cycle of productScheduleDbo.cycles) {
 				for (const cycle_product of cycle.cycle_products) {
 					await manager
 						.createQueryBuilder()
@@ -117,18 +114,17 @@ export default class ProductScheduleService {
 				}
 			}
 		});
-
-		return saved;
 	}
 
 	@LogMethod()
 	async delete(id: string): Promise<IProductScheduleEntityId> {
 		const productSchedule = await this.get(id);
+		const productScheduleDbo = ProductScheduleDbo.fromEntity(productSchedule);
 
 		await this.connection.transaction(async manager => {
-			for (const cycle of productSchedule.cycles) {
+			for (const cycle of productScheduleDbo.cycles) {
 				for (const cycle_product of cycle.cycle_products) {
-					await manager.delete(CycleProductDbo, {cycle: cycle_product.cycle_id, product: cycle_product.product});
+					await manager.delete(CycleProductDbo, {cycle: cycle_product.cycle, product: cycle_product.product});
 				}
 				await manager.delete(CycleDbo, cycle.id);
 			}

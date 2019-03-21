@@ -44,7 +44,7 @@ export default class ProductSetupService {
 	}
 
 	@LogMethod()
-	findProducts(conditions: FindConditions<Product>): Promise<Product[]> {
+	findProducts(conditions: FindConditions<ProductDbo>): Promise<Product[]> {
 		return this.productRepository.find({ ...conditions, ...this.baseFindConditions })
 			.then((dbos) => dbos.map(dbo => dbo.toEntity()));
 	}

@@ -39,7 +39,7 @@ export class DynamoProduct {
 	}
 
 	toProduct() : Product {
-		return {
+		return new Product({
 			id: this.id,
 			name: this.name.substring(0, 55).trim(),
 			account_id: this.account,
@@ -54,7 +54,7 @@ export class DynamoProduct {
 			fulfillment_provider_id: this.fulfillment_provider,
 			merchant_provider_group_id: this.merchantprovidergroup,
 			image_urls: this.getImages()
-		};
+		});
 	}
 
 	private get(object: any, path: string): any {

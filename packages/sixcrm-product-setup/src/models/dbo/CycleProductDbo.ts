@@ -49,6 +49,22 @@ export default class CycleProductDbo {
 	@Min(0)
 	position: number;
 
+	public constructor(obj?:Partial<CycleProductDbo>) {
+		Object.assign(this, obj);
+	}
+
+	static fromEntity(entity: CycleProduct): CycleProductDbo {
+		return new CycleProductDbo({
+			product: ProductDbo.fromEntity(<Product>entity.product),
+			position: entity.position,
+			is_shipping: entity.is_shipping,
+			quantity: entity.quantity,
+			updated_at: entity.updated_at,
+			created_at: entity.created_at,
+			cycle: <CycleDbo>{ id: entity.cycle_id }
+		})
+	}
+
 	toEntity(): CycleProduct {
 		return new CycleProduct({
 			cycle_id: get(this, 'cycle.id', null),
