@@ -1,4 +1,4 @@
-import { Connection, Repository } from 'typeorm';
+import { Connection, Repository, FindConditions } from 'typeorm';
 import { validate, ValidationError } from "class-validator";
 import { merge } from 'lodash';
 import { LogMethod, logger } from "./log";
@@ -52,6 +52,13 @@ export default class ProductScheduleService {
 			...this.baseFindConditions,
 			take: limit
 		});
+	}
+
+	@LogMethod()
+	find(conditions: FindConditions<ProductSchedule>): Promise<ProductSchedule[]> {
+		return this.productScheduleRepository.find(
+			merge({}, this.baseFindConditions, { where: conditions })
+		);
 	}
 
 	@LogMethod()
