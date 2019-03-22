@@ -345,6 +345,7 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 			return {
 				"sku": product.sku,
 				"name": product.name,
+				unitPrice: product.price,
 				"quantity": quantity,
 				"fulfillmentSku": null,
 			}

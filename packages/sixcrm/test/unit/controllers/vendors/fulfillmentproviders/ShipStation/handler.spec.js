@@ -529,6 +529,7 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () => {
 					name: product.name,
 					quantity: 1,
 					sku: product.sku,
+					unitPrice: product.price
 				});
 			});
 		});
