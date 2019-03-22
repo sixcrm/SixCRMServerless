@@ -16,10 +16,6 @@ module.exports = class RegisterUtilities extends PermissionedController {
 		const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 
 		this.rebillHelperController = new RebillHelperController();
-
-		//const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
-		//this.productScheduleHelperController = new ProductScheduleHelperController();
-
 	}
 
 	acquireRebillProperties(){

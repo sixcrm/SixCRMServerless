@@ -1541,12 +1541,7 @@ module.exports.graphObj = new GraphQLObjectType({
 					type: new GraphQLNonNull(GraphQLString)
 				}
 			},
-			resolve: (value, productschedule) => {
-				const id = productschedule.id;
-				const productScheduleController = getProductScheduleService();
-
-				return productScheduleController.delete(id);
-			}
+			resolve: async (value, { id }) => getProductScheduleService().delete(id)
 		},
 		createreturn: {
 			type: returnType.graphObj,

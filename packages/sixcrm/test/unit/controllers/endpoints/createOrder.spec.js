@@ -8,6 +8,7 @@ const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').de
 const random = require('@6crm/sixcrmcore/lib/util/random').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+const { toProductScheduleInput } = require('../../../../handlers/endpoints/graph/schema/types/productschedule/productScheduleInputType');
 
 function getValidResponseType(){
 	return 'success';
@@ -265,7 +266,7 @@ describe('createOrder', function () {
 
 			let body = JSON.parse(event.body);
 			body.product_schedules = [body.product_schedules[0]];
-			body.product_schedules[0].product_schedule.schedule = [body.product_schedules[0].product_schedule.schedule[0]];
+			const productSchedule = body.product_schedules[0].product_schedule.schedule = [body.product_schedules[0].product_schedule.schedule[0]];
 			event.body = JSON.stringify(body);
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
@@ -434,6 +435,23 @@ describe('createOrder', function () {
 			mockery.registerMock('@6crm/sixcrm-product-setup', {
 				createProductSetupService() {
 					return Promise.resolve();
+				},
+				createProductScheduleService() {
+					return Promise.resolve();
+				},
+				getProductScheduleService() {
+					return {
+						get() {
+							return Promise.resolve(
+								toProductScheduleInput(productSchedule)
+							);
+						}
+					};
+				},
+				LegacyProductSchedule: class LegacyProductSchedule {
+					static hybridFromProductSchedule(productSchedule) {
+						return productSchedule;
+					}
 				}
 			});
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
@@ -474,7 +492,7 @@ describe('createOrder', function () {
 
 			let body = JSON.parse(event.body);
 			body.product_schedules = [body.product_schedules[0]];
-			body.product_schedules[0].product_schedule.schedule = [body.product_schedules[0].product_schedule.schedule[0]];
+			const productSchedule = body.product_schedules[0].product_schedule.schedule = [body.product_schedules[0].product_schedule.schedule[0]];
 			event.body = JSON.stringify(body);
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
@@ -649,6 +667,23 @@ describe('createOrder', function () {
 			mockery.registerMock('@6crm/sixcrm-product-setup', {
 				createProductSetupService() {
 					return Promise.resolve();
+				},
+				createProductScheduleService() {
+					return Promise.resolve();
+				},
+				getProductScheduleService() {
+					return {
+						get() {
+							return Promise.resolve(
+								toProductScheduleInput(productSchedule)
+							);
+						}
+					};
+				},
+				LegacyProductSchedule: class LegacyProductSchedule {
+					static hybridFromProductSchedule(productSchedule) {
+						return productSchedule;
+					}
 				}
 			});
 
@@ -690,7 +725,7 @@ describe('createOrder', function () {
 
 			let body = JSON.parse(event.body);
 			body.product_schedules = [body.product_schedules[0]];
-			body.product_schedules[0].product_schedule.schedule = [body.product_schedules[0].product_schedule.schedule[0]];
+			const productSchedule = body.product_schedules[0].product_schedule.schedule = [body.product_schedules[0].product_schedule.schedule[0]];
 			event.body = JSON.stringify(body);
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
@@ -863,6 +898,23 @@ describe('createOrder', function () {
 			mockery.registerMock('@6crm/sixcrm-product-setup', {
 				createProductSetupService() {
 					return Promise.resolve();
+				},
+				createProductScheduleService() {
+					return Promise.resolve();
+				},
+				getProductScheduleService() {
+					return {
+						get() {
+							return Promise.resolve(
+								toProductScheduleInput(productSchedule)
+							);
+						}
+					};
+				},
+				LegacyProductSchedule: class LegacyProductSchedule {
+					static hybridFromProductSchedule(productSchedule) {
+						return productSchedule;
+					}
 				}
 			});
 
@@ -1647,19 +1699,6 @@ describe('createOrder', function () {
 			let account_details = getValidAccountDetails();
 
 			session.completed = false;
-
-			mockery.registerMock(global.SixCRM.routes.path('helpers','entities/productschedule/ProductSchedule.js'), class {
-				constructor(){}
-				getHydrated({id}){
-					return Promise.resolve(arrayutilities.find(product_schedules, product_schedule => { return product_schedule.id == id }));
-				}
-				getNextScheduleElementStartDayNumber(){
-					return 0;
-				}
-				getScheduleElementOnDayInSchedule(){
-					return 0;
-				}
-			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
 				update({entity}) {

@@ -7,16 +7,13 @@ const {
 	GraphQLList,
 	GraphQLBoolean
 } = require('graphql');
-const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService, getProductScheduleService, LegacyProduct, LegacyProductSchedule } = require('@6crm/sixcrm-product-setup');
 
 const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 const SMTPProviderType = require('../smtpprovider/SMTPProviderType');
 const productType = require('../product/productType');
 const productScheduleType = require('../productschedule/productScheduleType');
 const campaignType = require('../campaign/campaignType');
-
-const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
-const productScheduleController = new ProductScheduleController();
 
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 const campaignController = new CampaignController();
@@ -76,11 +73,15 @@ module.exports.graphObj = new GraphQLObjectType({
 		product_schedules: {
 			type: new GraphQLList(productScheduleType.graphObj),
 			description: 'Product schedules associated with email template.',
-			resolve: (emailtemplate) => {
+			resolve: async (emailtemplate) => {
 				if (!emailtemplate.product_schedules) {
 					return [];
 				}
-				return productScheduleController.batchGet({ids: emailtemplate.product_schedules});
+
+				const productScheduleService = getProductScheduleService();
+				return (await productScheduleService.getByIds(emailtemplate.product_schedules)).map(productSchedule =>
+					LegacyProductSchedule.hybridFromProductSchedule(productSchedule)
+				);
 			}
 		},
 		campaigns: {

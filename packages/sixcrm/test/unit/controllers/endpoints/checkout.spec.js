@@ -9,6 +9,7 @@ const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 const randomutilities = require('@6crm/sixcrmcore/lib/util/random').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
+const { toProductScheduleInput } = require('../../../../handlers/endpoints/graph/schema/types/productschedule/productScheduleInputType');
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
@@ -408,18 +409,6 @@ describe('checkout', function () {
 			let processor_response = getValidProcessorResponse();
 			let response_type = 'success';
 
-			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
-				getHydrated(){
-					return Promise.resolve(product_schedule);
-				}
-				getNextScheduleElementStartDayNumber(){
-					return 0;
-				}
-				getScheduleElementOnDayInSchedule({product_schedule}){
-					return product_schedule[0];
-				}
-			});
-
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
 				publish() {
 					return Promise.resolve({});
@@ -780,18 +769,6 @@ describe('checkout', function () {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
-				getHydrated(){
-					return Promise.resolve(product_schedules);
-				}
-				getNextScheduleElementStartDayNumber(){
-					return 0;
-				}
-				getScheduleElementOnDayInSchedule({product_schedule}){
-					return product_schedule[0];
-				}
-			});
-
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
 				get() {
 					return Promise.resolve(session)
@@ -1008,6 +985,23 @@ describe('checkout', function () {
 			mockery.registerMock('@6crm/sixcrm-product-setup', {
 				createProductSetupService() {
 					return Promise.resolve();
+				},
+				createProductScheduleService() {
+					return Promise.resolve();
+				},
+				getProductScheduleService() {
+					return {
+						get() {
+							return Promise.resolve(
+								toProductScheduleInput(product_schedules[0])
+							);
+						}
+					};
+				},
+				LegacyProductSchedule: class LegacyProductSchedule {
+					static hybridFromProductSchedule(productSchedule) {
+						return productSchedule;
+					}
 				}
 			});
 

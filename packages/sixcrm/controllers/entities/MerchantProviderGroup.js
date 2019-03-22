@@ -1,6 +1,7 @@
 
 const _ = require('lodash');
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const { getProductScheduleService, LegacyProductSchedule } = require('@6crm/sixcrm-product-setup');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -14,27 +15,17 @@ module.exports = class MerchantProviderGroupController extends entityController 
 
 	}
 
-	associatedEntitiesCheck({id}){
-		let return_array = [];
+	async associatedEntitiesCheck({id}){
+		const productSchedules = (await getProductScheduleService().find({
+			merchant_provider_group_id: id
+		})).map(product => LegacyProductSchedule.hybridFromProductSchedule(product));
 
-		let data_acquisition_promises = [
-			this.executeAssociatedEntityFunction('ProductScheduleController', 'listByMerchantProviderGroup', {merchantprovidergroup:id})
-		];
-
-		return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
-
-			let productschedules = data_acquisition_promises[0];
-
-			if(_.has(productschedules, 'productschedules') && arrayutilities.nonEmpty(productschedules.productschedules)){
-				arrayutilities.map(productschedules.productschedules, (productschedule) => {
-					return_array.push(this.createAssociatedEntitiesObject({name:'Product Schedule', object: productschedule}));
-				});
-			}
-
-			return return_array;
-
-		});
-
+		return productSchedules.map(productSchedule =>
+			this.createAssociatedEntitiesObject({
+				name: "Product Schedule",
+				object: productSchedule
+			})
+		);
 	}
 
 

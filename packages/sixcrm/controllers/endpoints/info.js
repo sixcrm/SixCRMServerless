@@ -1,12 +1,10 @@
 
 const _ = require('lodash');
 
-const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
-const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService, getProductScheduleService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
-const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
 module.exports = class InfoController extends transactionEndpointController{
 
@@ -32,8 +30,6 @@ module.exports = class InfoController extends transactionEndpointController{
 			'products':global.SixCRM.routes.path('model', 'entities/components/products.json'),
 			'product_schedules':global.SixCRM.routes.path('model', 'entities/components/productschedules.json')
 		};
-
-		this.productScheduleController = new ProductScheduleController();
 
 		this.initialize();
 
@@ -71,32 +67,13 @@ module.exports = class InfoController extends transactionEndpointController{
 
 	}
 
-	acquireProductSchedules(){
+	async acquireProductSchedules(){
 		let event = this.parameters.get('event');
 
 		if(!_.has(event, 'productschedules') || !arrayutilities.nonEmpty(event.productschedules)){ return null; }
 
-		const ProductScheduleHelper = global.SixCRM.routes.include('helpers','entities/productschedule/ProductSchedule.js');
-		let productScheduleHelper = new ProductScheduleHelper();
-
-		return this.productScheduleController.getListByAccount({ids: event.productschedules}).then(product_schedules_result => {
-
-			let hydrated_product_schedules_promises = arrayutilities.map(product_schedules_result.productschedules, product_schedule => {
-
-				return this.productScheduleController.getProducts(product_schedule).then(products_result => {
-					du.info(products_result);
-					return productScheduleHelper.marryProductsToSchedule({product_schedule: product_schedule, products: products_result.products});
-				});
-			});
-
-			return Promise.all(hydrated_product_schedules_promises).then(hydrated_product_schedules_promises => {
-
-				return this.parameters.set('productschedules', hydrated_product_schedules_promises);
-
-			})
-
-		});
-
+		const productSchedules = await getProductScheduleService().getByIds(event.productschedules);
+		return this.parameters.set('productschedules', productSchedules);
 	}
 
 	respond(){

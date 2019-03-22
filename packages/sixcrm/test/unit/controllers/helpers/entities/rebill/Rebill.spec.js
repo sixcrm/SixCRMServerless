@@ -1074,28 +1074,6 @@ describe('/helpers/entities/Rebill.js', () => {
 		});
 	});
 
-	describe('assureProductScheduleHelperController', () => {
-
-		it('returns true when product schedule controller is assured', () => {
-
-			let RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-			let rebillHelperController = new RebillHelperController();
-
-			expect(rebillHelperController.assureProductScheduleHelperController()).to.equal(true);
-			expect(rebillHelperController.productScheduleHelperController).to.be.defined;
-		});
-
-		it('returns true when product schedule controller is already set', () => {
-
-			let RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-			let rebillHelperController = new RebillHelperController();
-
-			rebillHelperController.productScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
-
-			expect(rebillHelperController.assureProductScheduleHelperController()).to.equal(true);
-		});
-	});
-
 	describe('isAvailable', () => {
 
 		it('returns true when rebill is available for billing', () => {

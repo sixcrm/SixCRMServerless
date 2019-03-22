@@ -187,6 +187,8 @@ describe('RebillCreator', () => {
 				expect(result).to.equal('CANCELLED');
 			});
 
+			// TODO confirmation required test? probably wait
+
 			context('initial order', () => {
 				beforeEach(() => {
 					Object.assign(rebill_prototype, {

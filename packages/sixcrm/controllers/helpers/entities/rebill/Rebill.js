@@ -633,17 +633,6 @@ module.exports = class RebillHelper {
 		return Promise.resolve();
 	}
 
-	assureProductScheduleHelperController() {
-		if (!_.has(this, 'productScheduleHelperController')) {
-			const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
-
-			this.productScheduleHelperController = new ProductScheduleHelperController();
-		}
-
-		return true;
-
-	}
-
 	isAvailable({
 		rebill
 	}) {
