@@ -14,12 +14,13 @@ CREATE TABLE orders.line_item (
 	order_id UUID NOT NULL REFERENCES orders.order(id),
 	name VARCHAR(55) NOT NULL,
 	amount NUMERIC(19,2) NOT NULL CHECK (amount >= 0),
-	merchant_provider_group_id UUID
+	merchant_provider_group_id UUID,
+	campaign_id UUID
 );
 
 CREATE TABLE orders.subscription_line_item (
 	line_item_id UUID NOT NULL REFERENCES orders.line_item(id),
-	subscription_cycle_id UUID NOT NULL REFERENCES subscriptions.subscription_cycle(id)
+	subscription_cycle_id UUID NOT NULL REFERENCES subscriptions.subscription_cycle(id),
 );
 
 CREATE TABLE orders.line_item_product (

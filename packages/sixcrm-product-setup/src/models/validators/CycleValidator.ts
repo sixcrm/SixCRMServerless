@@ -1,7 +1,7 @@
 import Cycle from "../Cycle";
 import Product from '../Product';
-import EntityValidator from "./EntityValidator";
-import EntityValidationError from "../../errors/EntityValidationError";
+import EntityValidator from '@6crm/sixcrm-data/lib/EntityValidator';
+import EntityValidationError from "@6crm/sixcrm-data/lib/EntityValidationError";
 
 export default class CycleValidator implements EntityValidator<Cycle> {
 	private readonly entity: Cycle;

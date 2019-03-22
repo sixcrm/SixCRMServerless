@@ -50,6 +50,7 @@
     "typescript": "^3.2.2"
   },
   "dependencies": {
+    "@6crm/sixcrm-data": "^1.0.0",
     "chai-exclude": "^1.0.12",
     "class-validator": "^0.9.1",
     "js-logger": "^1.6.0",
