@@ -1,4 +1,5 @@
-const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const { range } = require('lodash');
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const ShipmentUtilities = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
 
 module.exports = class FulfillController extends ShipmentUtilities {
@@ -75,14 +76,23 @@ module.exports = class FulfillController extends ShipmentUtilities {
 	}
 
 	executeFulfillment(){
+		du.debug('executeFulfillment');
 		let instantiated_fulfillment_provider = this.parameters.get('instantiatedfulfillmentprovider');
 		let hydrated_augmented_transaction_products = this.parameters.get('hydratedaugmentedtransactionproducts');
 		let customer = this.parameters.get('customer');
+		du.debug('executeFulfillment hydrated_augmented_transaction_products', hydrated_augmented_transaction_products);
 
 		//Technical Debt:  So why all the work to create these things?
-		let products = arrayutilities.map(hydrated_augmented_transaction_products, hydrated_augmented_transaction_product => {
-			return hydrated_augmented_transaction_product.product;
-		});
+		const products = hydrated_augmented_transaction_products.reduce((products, hydrated_augmented_transaction_product) => {
+			return [
+				...products,
+				...range(hydrated_augmented_transaction_product.quantity).map(() =>
+					hydrated_augmented_transaction_product.product
+				)
+			];
+		}, []);
+
+		du.debug('executeFulfillment fulfill with products', products);
 
 		return instantiated_fulfillment_provider.fulfill({customer: customer, products: products}).then(vendor_response_class =>{
 
