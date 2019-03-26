@@ -13,7 +13,7 @@ CREATE TABLE orders.line_item (
 	id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
 	order_id UUID NOT NULL REFERENCES orders.order(id),
 	name VARCHAR(55) NOT NULL,
-	amount NUMERIC(19,2) NOT NULL CHECK (amount >= 0),
+	amount NUMERIC(19,2) NOT NULL,
 	merchant_provider_group_id UUID,
 	campaign_id UUID
 );
