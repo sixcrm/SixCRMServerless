@@ -21,6 +21,7 @@ CREATE TABLE orders.line_item (
 CREATE TABLE orders.subscription_line_item (
 	line_item_id UUID NOT NULL REFERENCES orders.line_item(id),
 	subscription_cycle_id UUID NOT NULL REFERENCES subscriptions.subscription_cycle(id),
+	PRIMARY KEY (line_item_id, subscription_cycle_id)
 );
 
 CREATE TABLE orders.line_item_product (
@@ -32,7 +33,8 @@ CREATE TABLE orders.line_item_product (
 	is_shippable BOOLEAN NOT NULL,
 	shipping_price NUMERIC(19,2) CHECK (shipping_price IS NULL OR shipping_price >= 0),
 	shipping_delay INTERVAL,
-	fulfillment_provider_id UUID
+	fulfillment_provider_id UUID,
+	PRIMARY KEY (line_item_id, product_id)
 );
 
 CREATE TABLE orders.transaction (
@@ -46,4 +48,10 @@ CREATE TABLE orders.transaction (
 	type VARCHAR(20) NOT NULL,
 	processor_response TEXT,
 	result VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE orders.transaction_line_item (
+	transaction_id UUID NOT NULL REFERENCES orders.transaction(id),
+	line_item_id UUID NOT NULL REFERENCES orders.line_item(id),
+	PRIMARY KEY (transaction_id, line_item_id)
 );
