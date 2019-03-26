@@ -9,16 +9,17 @@
 			"items": {
 				"type": "object",
 				"properties": {
+					"id": {
+						"$ref": "../../../definitions/uuidv4.json"
+					},
 					"quantity": {
 						"$ref": "../../../definitions/nonnegativeinteger.json"
 					},
 					"product_schedule": {
-						"$ref": "./watermarkproductschedule.json"
+						"$ref": "./legacywatermarkproductschedule.json"
 					}
 				},
 				"required": [
-					"quantity",
-					"product_schedule"
 				]
 			}
 		},

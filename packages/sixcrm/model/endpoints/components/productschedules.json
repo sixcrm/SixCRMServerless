@@ -15,7 +15,7 @@
 						"$ref": "../../definitions/uuidv4.json"
 					},
 					{
-						"$ref": "../../entities/components/watermark/watermarkproductschedule.json"
+						"$ref": "../../entities/components/watermark/legacywatermarkproductschedule.json"
 					}
 				]
 			}

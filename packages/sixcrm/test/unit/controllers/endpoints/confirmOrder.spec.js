@@ -458,6 +458,9 @@ describe('confirmOrder', function () {
 			mockery.registerMock('@6crm/sixcrm-product-setup', {
 				createProductSetupService() {
 					return Promise.resolve();
+				},
+				createProductScheduleService() {
+					return Promise.resolve();
 				}
 			});
 

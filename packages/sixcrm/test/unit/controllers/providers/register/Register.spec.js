@@ -2458,21 +2458,21 @@ describe('controllers/providers/Register.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), class {
-				getID(object) {
+			// mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), class {
+			// 	getID(object) {
 
-					if (_.isString(object)) {
-						return object;
-					} else if (_.isObject(object)) {
-						if (_.has(object, 'id')) {
-							return object['id'];
-						}
-					} else if (_.isNull(object)) {
-						return null;
-					}
+			// 		if (_.isString(object)) {
+			// 			return object;
+			// 		} else if (_.isObject(object)) {
+			// 			if (_.has(object, 'id')) {
+			// 				return object['id'];
+			// 			}
+			// 		} else if (_.isNull(object)) {
+			// 			return null;
+			// 		}
 
-				}
-			});
+			// 	}
+			// });
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'analytics/Activity.js'), class {
 				createActivity() {
@@ -2616,12 +2616,12 @@ describe('controllers/providers/Register.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
-				constructor() {}
-				getTransactionProducts() {
-					return Promise.resolve([]);
-				}
-			});
+			// mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
+			// 	constructor() {}
+			// 	getTransactionProducts() {
+			// 		return Promise.resolve([]);
+			// 	}
+			// });
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
 				constructor() {}
@@ -2757,12 +2757,12 @@ describe('controllers/providers/Register.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
-				constructor() {}
-				getTransactionProducts() {
-					return Promise.resolve([]);
-				}
-			});
+			// mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
+			// 	constructor() {}
+			// 	getTransactionProducts() {
+			// 		return Promise.resolve([]);
+			// 	}
+			// });
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
 				constructor() {}

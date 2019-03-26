@@ -169,6 +169,7 @@ module.exports = class Register extends RegisterUtilities {
 
 	}
 
+	// TODO use cycles
 	async pushSubscriptionEvents() {
 
 		const rebill = this.parameters.get('rebill');

@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
-const { createProductSetupService } = require('@6crm/sixcrm-product-setup');
+const { createProductSetupService, createProductScheduleService } = require('@6crm/sixcrm-product-setup');
 
 const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
@@ -54,11 +54,14 @@ module.exports = class transactionEndpointController extends authenticatedContro
 		const { pathParameters: { account: accountId }} = preprocessedEvent;
 
 		const auroraConfig = await getAuroraConfig();
-		const productSetupServiceOptions = {
+		const productServiceOptions = {
 			accountId,
 			...auroraConfig
 		};
-		await createProductSetupService(productSetupServiceOptions);
+		await Promise.all([
+			createProductSetupService(productServiceOptions),
+			createProductScheduleService(productServiceOptions)
+		]);
 
 		const eventBody = this.acquireRequestProperties(preprocessedEvent);
 		return this.parameters.setParameters({

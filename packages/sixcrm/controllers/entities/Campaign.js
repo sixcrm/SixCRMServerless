@@ -4,6 +4,7 @@ const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
+const { getProductScheduleService, LegacyProductSchedule } = require('@6crm/sixcrm-product-setup');
 const entityController = require('./Entity');
 const AccountController = require('./Account');
 
@@ -180,18 +181,16 @@ module.exports = class CampaignController extends entityController {
 
 	}
 
-	getProductSchedules(campaign){
+	async getProductSchedules(campaign) {
 		if(_.has(campaign, "productschedules") && arrayutilities.nonEmpty(campaign.productschedules)){
-
-			return this.executeAssociatedEntityFunction('ProductScheduleController', 'listBy', {list_array: campaign.productschedules})
-				.then(productschedules => this.getResult(productschedules, 'productschedules'));
-
-		}else{
-
-			return Promise.resolve(null);
-
+			return (await getProductScheduleService().getByIds(
+				campaign.productschedules
+			)).map(productSchedule =>
+				LegacyProductSchedule.hybridFromProductSchedule(productSchedule)
+			);
 		}
 
+		return null;
 	}
 
 	listByAffiliateAllow({affiliate, pagination}){
@@ -223,8 +222,7 @@ module.exports = class CampaignController extends entityController {
 	//Technical Debt:  Replace with listBy()
 	//Technical Debt:  Use a better query method instead of iterating over "listCampaignsByProductSchedule()"
 	listCampaignsByProduct({product, pagination}){
-		return this.executeAssociatedEntityFunction('ProductScheduleController', 'listByProduct', {product: this.getID(product)})
-			.then((productschedules) => this.getResult(productschedules, 'productschedules'))
+		return getProductScheduleService().getByProductId(this.getID(product))
 			.then((productschedules) => {
 
 				du.warning('Product Schedules:', productschedules);
@@ -305,15 +303,7 @@ module.exports = class CampaignController extends entityController {
 	//Technical Debt: Gross
 	//Technical Debt:  Replace with listBy()
 	getProductSchedulesHydrated(campaign){
-		if(_.has(campaign, "productschedules") && arrayutilities.nonEmpty(campaign.productschedules)){
-
-			return Promise.all(arrayutilities.map(campaign.productschedules, (id) => {
-				return this.executeAssociatedEntityFunction('ProductScheduleController', 'getProductScheduleHydrated', {id: id});
-			}));
-
-		}else{
-			return null;
-		}
+		return this.getProductSchedules(campaign);
 	}
 
 	//Technical Debt: Gross

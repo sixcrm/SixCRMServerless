@@ -8,6 +8,7 @@ var eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 var arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 var objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const random = require('@6crm/sixcrmcore/lib/util/random').default;
+const { getProductScheduleService, LegacyProductSchedule } = require('@6crm/sixcrm-product-setup');
 const RebillHelper = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 let rebillHelper = new RebillHelper();
 
@@ -267,15 +268,16 @@ module.exports = class SessionController extends entityController {
 
 	}
 
-	listProductSchedules(session){
+	async listProductSchedules(session){
 		if(!arrayutilities.nonEmpty(session.product_schedules)){
 			return Promise.resolve(null);
 		}
 
-		let query_parameters = this.createINQueryParameters({field: 'id', list_array: session.product_schedules});
-
-		return this.executeAssociatedEntityFunction('ProductScheduleController', 'listByAccount', {query_parameters: query_parameters});
-
+		return (await getProductScheduleService().getByIds(
+			session.product_schedules
+		)).map(productSchedule =>
+			LegacyProductSchedule.hybridFromProductSchedule(productSchedule)
+		);
 	}
 
 	//Technical Debt:  This needs to go to a helper...

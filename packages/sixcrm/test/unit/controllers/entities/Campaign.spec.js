@@ -151,10 +151,18 @@ describe('controllers/Campaign.js', () => {
 				productschedules: ['a_product_schedule_id']
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), class {
-				listBy({list_array}) {
-					expect(list_array).to.deep.equal(campaign.productschedules);
-					return Promise.resolve({productschedules: ['a_product_schedule']})
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductScheduleService() {
+					return {
+						getByIds() {
+							return Promise.resolve(['a_product_schedule']);
+						}
+					};
+				},
+				LegacyProductSchedule: class LegacyProductSchedule {
+					static hybridFromProductSchedule(productSchedule) {
+						return productSchedule;
+					}
 				}
 			});
 
