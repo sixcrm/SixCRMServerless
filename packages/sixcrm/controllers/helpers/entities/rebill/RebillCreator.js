@@ -156,6 +156,7 @@ const buildRebillEntity = async ({
 	products = [],
 	productSchedule
 }) => {
+	du.debug(`Build rebill entity: ${JSON.stringify({ session, day, products, productSchedule })}`);
 	const previousRebill = day >= 0 ? await getMostRecentRebill(session) : null;
 	const position = previousRebill ? previousRebill.cycle + 2 : 1;
 	const cycle = productSchedule ? getCurrentCycle({ cycles: productSchedule.cycles, position }) : null;
