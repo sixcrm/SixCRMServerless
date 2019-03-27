@@ -27,13 +27,19 @@ jobs:
             - node_modules
             - packages/sixcrm/node_modules
             - packages/sixcrm-platform/node_modules
+            - packages/sixcrm-data/node_modules
             - packages/sixcrm-product-setup/node_modules
+            - packages/sixcrm-subscriptions/node_modules
+            - packages/sixcrm-orders/node_modules
       - persist_to_workspace:
           root: .
           paths:
             - packages/sixcrm/lib
             - packages/sixcrm-platform/lib
+            - packages/sixcrm-data/lib
             - packages/sixcrm-product-setup/lib
+            - packages/sixcrm-subscriptions/lib
+            - packages/sixcrm-orders/lib
   lint:
     <<: *job-defaults
     steps:
