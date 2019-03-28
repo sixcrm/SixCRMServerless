@@ -113,12 +113,15 @@ module.exports = class RebillCreatorHelper {
 };
 
 const normalizeProductSchedule = async (productSchedule) => {
-	const id = stringutilities.isUUID(productSchedule) ? productSchedule : productSchedule.id;
+	if (!stringutilities.isUUID(productSchedule)) {
+		return productSchedule;
+	}
+
 	try {
-		return getProductScheduleService().get(id);
+		return getProductScheduleService().get(productSchedule);
 	} catch (e) {
 		du.error('Error retrieving product schedule', e);
-		throw eu.getError('not_found', `Product schedule does not exist: ${id}`);
+		throw eu.getError('not_found', `Product schedule does not exist: ${productSchedule}`);
 	}
 };
 
