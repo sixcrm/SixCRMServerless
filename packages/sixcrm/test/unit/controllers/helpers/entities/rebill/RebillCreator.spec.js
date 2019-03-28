@@ -117,8 +117,8 @@ describe('RebillCreator', () => {
 						length: { days: 30 },
 						position: 1,
 						next_position: 1,
-						price: 9.99,
-						shipping_price: 0, // TODO
+						price: 30,
+						shipping_price: 0,
 						cycle_products: [{
 							product: {
 								id: 'd3294914-42ed-40fd-9abe-a4bfbc57d970',
@@ -162,7 +162,7 @@ describe('RebillCreator', () => {
 							quantity: 1
 						}
 					],
-					amount: 9.99,
+					amount: 30,
 					product_schedules: [
 						'c3a5d4d2-10f2-44a8-adff-00ca81eb8433'
 					]
@@ -238,7 +238,14 @@ describe('RebillCreator', () => {
 					).thenResolve(rebill);
 					td.when(getProductScheduleService()).thenReturn({
 						get() {
-							return productSchedule;
+							return {
+								...productSchedule,
+								cycles: productSchedule.cycles.map(cycle => ({
+									...cycle,
+									price: '30.00',
+									shipping_price: '0.00'
+								}))
+							};
 						}
 					});
 					const product_schedules = session.watermark.product_schedules.map(({ id }) => ({
