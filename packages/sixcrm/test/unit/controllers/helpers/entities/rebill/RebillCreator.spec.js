@@ -241,7 +241,10 @@ describe('RebillCreator', () => {
 							return productSchedule;
 						}
 					});
-					const product_schedules = session.watermark.product_schedules.map(({ id }) => id);
+					const product_schedules = session.watermark.product_schedules.map(({ id }) => ({
+						quantity: 1,
+						product_schedule: id
+					}));
 
 					const result = await rebillCreator.createRebill({
 						session,
