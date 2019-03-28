@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
@@ -20,6 +21,15 @@ const TransactionHelperController = global.SixCRM.routes.include('helpers', 'ent
 const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
 const OrderHelperController = global.SixCRM.routes.include('helpers', 'order/Order.js');
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js');
+
+const loadProductSchedule = async (id) => {
+	try {
+		return await getProductScheduleService().get(id);
+	} catch (e) {
+		du.error('Error retrieving product schedule', e);
+		throw eu.getError('not_found', `Product schedule does not exist: ${id}`);
+	}
+}
 
 module.exports = class CreateOrderController extends transactionEndpointController {
 
@@ -112,7 +122,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 					throw eu.getError('bad_request', 'Missing product schedule ID');
 				}
 
-				const productSchedule = await getProductScheduleService().get(id);
+				const productSchedule = await loadProductSchedule(id);
 				for (const cycle of productSchedule.cycles) {
 					if (cycle.cycle_products.length > 1) {
 						throw eu.getError('bad_request', 'Product schedule can only have one product')
