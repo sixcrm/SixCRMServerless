@@ -5,8 +5,9 @@ const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const numberutilities = require('@6crm/sixcrmcore/lib/util/number-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
-const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService, getProductScheduleService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 const Parameters = require('../../../providers/Parameters');
 const RebillController = require('../../../entities/Rebill');
 const SessionController = require('../../../entities/Session');
@@ -67,11 +68,9 @@ module.exports = class RebillCreatorHelper {
 			normalizedProducts = await this.normalizeProducts(products);
 		}
 
-		if (product_schedules !== undefined) {
-			[productSchedule] = product_schedules;
+		if (product_schedules) {
+			productSchedule = await normalizeProductSchedule(product_schedules[0]);
 		}
-
-		// this.validateArguments({normalized_products, normalized_product_schedules});
 
 		try {
 			const rebill = await buildRebill({ session, day, products: normalizedProducts, productSchedule });
@@ -94,7 +93,7 @@ module.exports = class RebillCreatorHelper {
 
 	async normalizeProducts(products) {
 		let normalized_products = arrayutilities.map(products, async product_group => {
-			if (rebillController.isUUID(product_group.product)) {
+			if (stringutilities.isUUID(product_group.product)) {
 				try {
 					const product = await getProductSetupService().getProduct(product_group.product);
 					product_group.product = LegacyProduct.hybridFromProduct(product);
@@ -109,6 +108,16 @@ module.exports = class RebillCreatorHelper {
 		});
 
 		return Promise.all(normalized_products);
+	}
+};
+
+const normalizeProductSchedule = async (productSchedule) => {
+	const id = stringutilities.isUUID(productSchedule) ? productSchedule : productSchedule.id;
+	try {
+		return getProductScheduleService().get(id);
+	} catch (e) {
+		du.error('Error retrieving product schedule', e);
+		throw eu.getError('not_found', `Product schedule does not exist: ${id}`);
 	}
 };
 

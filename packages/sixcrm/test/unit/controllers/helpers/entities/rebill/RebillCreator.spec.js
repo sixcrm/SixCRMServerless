@@ -5,12 +5,13 @@ chai.use(chaiAsPromised);
 const {expect} = chai;
 
 let RebillCreator, rebillCreator;
-let RebillController, SessionController;
+let RebillController, SessionController, getProductScheduleService;
 
 describe('RebillCreator', () => {
 	beforeEach(() => {
 		RebillController = td.replace('../../../../../../controllers/entities/Rebill');
 		SessionController = td.replace('../../../../../../controllers/entities/Session');
+		({ getProductScheduleService } = td.replace('@6crm/sixcrm-product-setup'));
 
 		RebillCreator = require('../../../../../../controllers/helpers/entities/rebill/RebillCreator');
 		rebillCreator = new RebillCreator();
@@ -101,8 +102,35 @@ describe('RebillCreator', () => {
 		});
 
 		context('subscription session', () => {
-			let rebill_prototype, rebill, session;
+			let productSchedule, rebill_prototype, rebill, session;
 			beforeEach(() => {
+				productSchedule = {
+					id: 'c3a5d4d2-10f2-44a8-adff-00ca81eb8433',
+					name: 'Intelligent Plastic Table Schedule',
+					account_id: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+					created_at: '2018-01-01T00:00:01.000Z',
+					updated_at: '2018-01-01T00:00:01.000Z',
+					merchant_provider_group_id: '27e90ee3-651d-4b1b-8989-0826c91f38bc',
+					requires_confirmation: false,
+					cycles: [{
+						id: '0e5cc5dc-738d-4c1f-bd87-a27ad7cc5b17',
+						length: { days: 30 },
+						position: 1,
+						next_position: 1,
+						price: 9.99,
+						shipping_price: 0, // TODO
+						cycle_products: [{
+							product: {
+								id: 'd3294914-42ed-40fd-9abe-a4bfbc57d970',
+								name: 'Intelligent Plastic Table'
+							},
+							is_shipping: true,
+							position: 1,
+							quantity: 1
+						}]
+					}]
+				};
+
 				session = {
 					id: 'c6e9661d-9fb3-4b77-bb8e-78bbf447a599',
 					account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
@@ -113,34 +141,7 @@ describe('RebillCreator', () => {
 						'c3a5d4d2-10f2-44a8-adff-00ca81eb8433'
 					],
 					watermark: {
-						product_schedules: [
-							{
-								id: 'c3a5d4d2-10f2-44a8-adff-00ca81eb8433',
-								name: 'Intelligent Plastic Table Schedule',
-								account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
-								created_at: '2018-01-01T00:00:01.000Z',
-								updated_at: '2018-01-01T00:00:01.000Z',
-								merchant_provider_group_id: '27e90ee3-651d-4b1b-8989-0826c91f38bc',
-								requires_confirmation: false,
-								cycles: [{
-									id: '0e5cc5dc-738d-4c1f-bd87-a27ad7cc5b17',
-									length: { days: 30 },
-									position: 1,
-									next_position: 1,
-									price: 9.99,
-									shipping_price: 0, // TODO
-									cycle_products: [{
-										product: {
-											id: 'd3294914-42ed-40fd-9abe-a4bfbc57d970',
-											name: 'Intelligent Plastic Table'
-										},
-										is_shipping: true,
-										position: 1,
-										quantity: 1
-									}]
-								}]
-							}
-						]
+						product_schedules: [productSchedule]
 					},
 					completed: true,
 					created_at: '2018-01-01T00:00:01.000Z',
@@ -171,6 +172,11 @@ describe('RebillCreator', () => {
 
 			it('does not rebill if session is concluded', async () => {
 				session.concluded = true;
+				td.when(getProductScheduleService()).thenReturn({
+					get() {
+						return productSchedule;
+					}
+				});
 				const result = await rebillCreator.createRebill({session, day: 0});
 				td.verify(RebillController.prototype.create(td.matchers.anything()), {times: 0});
 				expect(result).to.equal('CONCLUDED');
@@ -182,6 +188,11 @@ describe('RebillCreator', () => {
 					cancelled_by: 'foo@sixcrm.com',
 					cancelled_at: '2018-01-01T00:00:01.000Z'
 				};
+				td.when(getProductScheduleService()).thenReturn({
+					get() {
+						return productSchedule;
+					}
+				});
 				const result = await rebillCreator.createRebill({session, day: 0});
 				td.verify(RebillController.prototype.create(td.matchers.anything()), {times: 0});
 				expect(result).to.equal('CANCELLED');
@@ -204,14 +215,38 @@ describe('RebillCreator', () => {
 					td.when(SessionController.prototype.listRebills(session)).thenResolve(null);
 				});
 
-				it('creates rebill', async () => {
+				it('creates rebill from a hydrated product schedule', async () => {
 					td.when(
 						RebillController.prototype.create({ entity: rebill_prototype })
 					).thenResolve(rebill);
+					td.when(getProductScheduleService()).thenReturn({
+						get() {
+							return productSchedule;
+						}
+					});
 					const result = await rebillCreator.createRebill({
 						session,
 						day: -1,
 						product_schedules: session.watermark.product_schedules
+					});
+					expect(result).to.deep.equal(rebill);
+				});
+
+				it('creates rebill from a product schedule ID', async () => {
+					td.when(
+						RebillController.prototype.create({ entity: rebill_prototype })
+					).thenResolve(rebill);
+					td.when(getProductScheduleService()).thenReturn({
+						get() {
+							return productSchedule;
+						}
+					});
+					const product_schedules = session.watermark.product_schedules.map(({ id }) => id);
+
+					const result = await rebillCreator.createRebill({
+						session,
+						day: -1,
+						product_schedules
 					});
 					expect(result).to.deep.equal(rebill);
 				});
@@ -222,6 +257,11 @@ describe('RebillCreator', () => {
 
 				it('does not rebill if session is incomplete', async () => {
 					session.completed = false;
+					td.when(getProductScheduleService()).thenReturn({
+						get() {
+							return productSchedule;
+						}
+					});
 					const result = await rebillCreator.createRebill({session, day: 0});
 					td.verify(RebillController.prototype.create(td.matchers.anything()), {times: 0});
 					expect(result).to.equal('INCOMPLETE');
@@ -272,14 +312,24 @@ describe('RebillCreator', () => {
 
 				it('creates rebill', async () => {
 					td.when(RebillController.prototype.create({entity: rebill_prototype})).thenResolve(rebill);
+					td.when(getProductScheduleService()).thenReturn({
+						get() {
+							return productSchedule;
+						}
+					});
 					const result = await rebillCreator.createRebill({session, day: 0});
 					expect(result).to.deep.equal(rebill);
 				});
 
 				it('creates a monthly rebill', async () => {
-					session.watermark.product_schedules[0].cycles[0].length = { months: 1 };
+					productSchedule.cycles[0].length = { months: 1 };
 					rebill_prototype.bill_at = '2018-02-01T00:00:01.000Z';
 					td.when(RebillController.prototype.create({entity: rebill_prototype})).thenResolve(rebill);
+					td.when(getProductScheduleService()).thenReturn({
+						get() {
+							return productSchedule;
+						}
+					});
 					const result = await rebillCreator.createRebill({session, day: 0});
 					expect(result).to.deep.equal(rebill);
 				});
