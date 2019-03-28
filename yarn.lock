@@ -40,10 +40,10 @@
     uuid "^3.3.2"
     xml2js "^0.4.19"
 
-"@6crm/sixcrmcore@0.0.65":
-  version "0.0.65"
-  resolved "https://registry.yarnpkg.com/@6crm/sixcrmcore/-/sixcrmcore-0.0.65.tgz#0329e6efe8edf68abe5b5d2a0fcd1d0be2315e34"
-  integrity sha512-+RBBDEngL0xcABJJJtvWgtmfFKnS/c+8+hpqUa9vV3WvpZ9PhzV0lfpBBH41+vEiYVz2yVLAoumCvcc33iaNXw==
+"@6crm/sixcrmcore@0.0.67":
+  version "0.0.67"
+  resolved "https://registry.yarnpkg.com/@6crm/sixcrmcore/-/sixcrmcore-0.0.67.tgz#d42aa88b7cddac9387f5cb5037f3fd098363fbe9"
+  integrity sha512-9wnnpsJ22RT/1yP6zAYzpQhlepphz2aWXGuoZlU7ZG1NkzuWwBMFJ4BM+vwNF79N2vWSkpFFJF3odNRFWDyAYw==
   dependencies:
     "@adexchange/aeg-redshift" "0.0.84"
     ajv "^6.5.0"
@@ -1454,9 +1454,9 @@ assign-symbols@^1.0.0:
   integrity sha1-WWZ/QfrdTyDMvCu5a41Pf3jsA2c=
 
 ast-types@0.x.x:
-  version "0.11.7"
-  resolved "https://registry.yarnpkg.com/ast-types/-/ast-types-0.11.7.tgz#f318bf44e339db6a320be0009ded64ec1471f46c"
-  integrity sha512-2mP3TwtkY/aTv5X3ZsMpNAbOnyoC/aMJwJSoaELPkHId0nSQgFcnU4dRW3isxiz7+zBexk0ym3WNVjMiQBnJSw==
+  version "0.12.3"
+  resolved "https://registry.yarnpkg.com/ast-types/-/ast-types-0.12.3.tgz#2299c6201d34b2a749a2dd9f2de7ef5f0e84f423"
+  integrity sha512-wJUcAfrdW+IgDoMGNz5MmcvahKgB7BwIbLupdKVVHxHNYt+HVR2k35swdYNv9aZpF8nvlkjbnkp2rrNwxGckZA==
 
 async-listener@^0.6.0:
   version "0.6.10"
@@ -1501,25 +1501,10 @@ authorizenet@^1.0.5:
     request "^2.72.0"
     winston "^2.2.0"
 
-aws-sdk@^2.29.0, aws-sdk@^2.338.0, aws-sdk@^2.4.0, aws-sdk@^2.6.3, aws-sdk@^2.7.0, aws-sdk@^2.75.0:
-  version "2.380.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.380.0.tgz#80d10447e111edcb1644dbede41f9d20ad4bebb3"
-  integrity sha512-V0en7O9cCOY4Vb99SFzT51YQ0gn3MhWK2T7SzRGKMjETQo4/PVlflEaBIkaJJlhDXrVzgZ+Fmft/tHEetTk44w==
-  dependencies:
-    buffer "4.9.1"
-    events "1.1.1"
-    ieee754 "1.1.8"
-    jmespath "0.15.0"
-    querystring "0.2.0"
-    sax "1.2.1"
-    url "0.10.3"
-    uuid "3.1.0"
-    xml2js "0.4.19"
-
-aws-sdk@^2.394.0:
-  version "2.394.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.394.0.tgz#ef18e5f110e0c8d1dd2808b2a89e58f13d94c6c4"
-  integrity sha512-Vn9BsY7gkmVcJAvhKfRi9ukxNiHiJfThwkrXCNCm3aPc4NH5wcc0ZjXvYuAqx7OzAyYn3xrEFMMVV0aqFuxxmw==
+aws-sdk@^2.29.0, aws-sdk@^2.338.0, aws-sdk@^2.394.0, aws-sdk@^2.4.0, aws-sdk@^2.6.3, aws-sdk@^2.7.0, aws-sdk@^2.75.0:
+  version "2.430.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.430.0.tgz#40ff492c6315084b91c85ddf618f961bca0f3862"
+  integrity sha512-xJC1Sd6pjiIUg0W6v189QFWaY/jo+dVdQEJpplzqqBWmdUhZrBVmuWBVjC/wf5r6+Tj2KCc0G1fvjZqVutYnMw==
   dependencies:
     buffer "4.9.1"
     events "1.1.1"
@@ -2108,7 +2093,7 @@ chai-exclude@^1.0.12:
   dependencies:
     fclone "^1.0.11"
 
-chai-json-schema@^1.4.0:
+chai-json-schema@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/chai-json-schema/-/chai-json-schema-1.5.0.tgz#6960719e40f71fd5b377c9282e5c9a46799474f6"
   integrity sha1-aWBxnkD3H9Wzd8koLlyaRnmUdPY=
@@ -5246,9 +5231,9 @@ is-glob@^3.1.0:
     is-extglob "^2.1.0"
 
 is-glob@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/is-glob/-/is-glob-4.0.0.tgz#9521c76845cc2610a85203ddf080a958c2ffabc0"
-  integrity sha1-lSHHaEXMJhCoUgPd8ICpWML/q8A=
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/is-glob/-/is-glob-4.0.1.tgz#7567dbe9f2f5e2467bc77ab83c4a29482407a5dc"
+  integrity sha512-5G0tKtBTFImOqDnLB2hG6Bp2qcKEFduo4tZu9MT/H6NQv/ghhy30o55ufafxJ/LdH79LLs2Kfrn85TLKyA7BUg==
   dependencies:
     is-extglob "^2.1.1"
 
