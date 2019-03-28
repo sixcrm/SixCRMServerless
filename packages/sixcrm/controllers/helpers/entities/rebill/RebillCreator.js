@@ -70,7 +70,7 @@ module.exports = class RebillCreatorHelper {
 
 		if (product_schedules) {
 			du.debug(`normalize product schedules: ${JSON.stringify(product_schedules)}`);
-			productSchedule = await normalizeProductSchedule(product_schedules[0]);
+			productSchedule = await normalizeProductSchedule(product_schedules[0].product_schedule) || product_schedules[0];
 		}
 
 		try {
