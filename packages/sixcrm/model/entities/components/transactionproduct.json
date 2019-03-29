@@ -14,6 +14,9 @@
 		"amount": {
 			"$ref": "../../definitions/currency.json"
 		},
+		"price": {
+			"$ref": "../../definitions/currency.json"
+		},
 		"shipping_receipt": {
 			"$ref": "../../definitions/uuidv4.json"
 		},
@@ -33,7 +36,6 @@
 	},
 	"required": [
 		"product",
-		"amount",
 		"quantity"
 	]
 }
