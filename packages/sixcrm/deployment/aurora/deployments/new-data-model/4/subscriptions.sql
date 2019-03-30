@@ -1,3 +1,5 @@
+CREATE SCHEMA subscriptions;
+
 CREATE TABLE subscriptions.subscription (
 	id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
 	account_id UUID NOT NULL,
