@@ -1,3 +1,5 @@
+CREATE SCHEMA product_setup;
+
 CREATE TABLE product_setup.product (
 	id UUID NOT NULL PRIMARY KEY,
 	account_id UUID NOT NULL,
