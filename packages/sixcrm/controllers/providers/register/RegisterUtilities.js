@@ -118,7 +118,11 @@ module.exports = class RegisterUtilities extends PermissionedController {
 		const merchant_provider_groups = this.parameters.get('merchantprovidergroups');
 		rebill.merchant_provider_selections = Object.entries(merchant_provider_groups).reduce((result, [merchant_provider, product_groups]) => {
 			const rebill_products = _.flatten(product_groups);
-			const selections = rebill_products.map(rebill_product => ({ product: rebill_product.product.id, merchant_provider }));
+			const selections = rebill_products.map(({ product, cycleId }) => ({
+				...(product ? { product: product.id } : {}),
+				...(cycleId ? { cycleId } : {}),
+				merchant_provider
+			}));
 			return result.concat(selections);
 		}, []);
 		return this.rebillController.update({ entity: rebill });
