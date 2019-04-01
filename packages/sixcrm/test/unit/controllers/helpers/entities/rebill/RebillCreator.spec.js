@@ -161,7 +161,8 @@ describe('RebillCreator', () => {
 					products: [
 						{
 							product: {
-								id: 'd3294914-42ed-40fd-9abe-a4bfbc57d970'
+								id: 'd3294914-42ed-40fd-9abe-a4bfbc57d970',
+								name: 'Intelligent Plastic Table',
 							},
 							is_shipping: true,
 							position: 1,

@@ -129,7 +129,8 @@ const normalizeProductSchedule = async (productSchedule) => {
 			cycle_products: cycle.cycle_products.map(cycleProduct => ({
 				...cycleProduct,
 				product: {
-					id: cycleProduct.product.id
+					id: cycleProduct.product.id,
+					name: cycleProduct.product.name
 				}
 			}))
 		}))
