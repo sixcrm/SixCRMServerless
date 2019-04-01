@@ -324,28 +324,28 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
 	async acquireStraightSaleProductMerchantProviderGroupAssociations() {
 		const straightSaleProducts = this.parameters.get('rebill').products.filter(product => product.amount);
-		const campaign_id = this.parameters.get('session').campaign;
-		const product_ids = arrayutilities.map(straightSaleProducts, product_group => product_group.product.id);
+		if (straightSaleProducts.length) {
+			const campaign_id = this.parameters.get('session').campaign;
+			const product_ids = arrayutilities.map(straightSaleProducts, product_group => product_group.product.id);
 
-		const merchantProviderGroupAssociations = await Promise.all([
-			this.getMerchantProviderGroupsByEntityAndCampaign({
-				entities: product_ids,
-				campaign: campaign_id
-			}),
-			this.getMerchantProviderGroupsByCampaign({
-				campaign: campaign_id
-			})
-		]);
+			const merchantProviderGroupAssociations = await Promise.all([
+				this.getMerchantProviderGroupsByEntityAndCampaign({
+					entities: product_ids,
+					campaign: campaign_id
+				}),
+				this.getMerchantProviderGroupsByCampaign({
+					campaign: campaign_id
+				})
+			]);
 
-		merchantProviderGroupAssociations.forEach(association => {
-			if (arrayutilities.nonEmpty(association)) {
-				association.forEach(merchantprovidergroup => {
-					this.parameters.push('merchantprovidergroupassociations', merchantprovidergroup);
-				});
-			}
-		});
-
-		return true;
+			merchantProviderGroupAssociations.forEach(association => {
+				if (arrayutilities.nonEmpty(association)) {
+					association.forEach(merchantprovidergroup => {
+						this.parameters.push('merchantprovidergroupassociations', merchantprovidergroup);
+					});
+				}
+			});
+		}
 	}
 
 	async acquireInitialProductScheduleCycle(productScheduleId) {
