@@ -471,22 +471,33 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	getTransactionProductsFromMerchantProviderGroup({merchant_provider}){
-		let merchant_provider_groups = this.parameters.get('merchantprovidergroups');
-
-		let return_object = [];
+		const merchant_provider_groups = this.parameters.get('merchantprovidergroups');
+		const transactionProducts = [];
 
 		if(_.has(merchant_provider_groups, merchant_provider)){
 
 			arrayutilities.map(merchant_provider_groups[merchant_provider], merchant_provider_group => {
 
 				arrayutilities.map(merchant_provider_group, product_group => {
-					return_object.push(product_group);
+					if (product_group.product) {
+						return transactionProducts.push(product_group);
+					}
+
+					product_group.productSchedule.cycles.forEach(cycle => {
+						cycle.cycle_products.forEach(cycleProduct => {
+							transactionProducts.push({
+								quantity: cycleProduct.quantity,
+								product: cycleProduct,
+								no_ship: cycleProduct.is_shipping
+							});
+						});
+					});
 				});
 			});
 
 		}
 
-		return return_object;
+		return transactionProducts;
 
 	}
 

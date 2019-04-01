@@ -67,15 +67,15 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 			action: 'buildMerchantProviderGroups'
 		});
 		const rebill = this.parameters.get('rebill');
-		let initialProductScheduleCycle;
+		let productSchedule;
 
 		await this.acquireRebillProperties(rebill);
 		const associatedMerchantProviderGroups = await this.acquireStraightSaleProductMerchantProviderGroupAssociations();
 		if (rebill.product_schedules.length) {
-			initialProductScheduleCycle = await this.acquireInitialProductScheduleCycle(rebill.product_schedules[0]);
+			productSchedule = await this.acquireProductSchedule(rebill.product_schedules[0]);
 		}
 		await this.acquireCreditCardProperties();
-		await this.sortRebillProductsByMerchantProviderGroupAssociations({ initialProductScheduleCycle, associatedMerchantProviderGroups });
+		await this.sortRebillProductsByMerchantProviderGroupAssociations({ productSchedule, associatedMerchantProviderGroups });
 		return this.transformMerchantProviderGroupsToMerchantProviders();
 	}
 
@@ -88,7 +88,6 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	async transformMerchantProviderGroupsToMerchantProviders() {
 		let creditcard = this.parameters.get('creditcard');
 		let sorted_married_product_groups = this.parameters.get('sortedmarriedproductgroups');
-		du.debug(`sorted_married_product_groups: ${JSON.stringify(sorted_married_product_groups)}`);
 
 		let transformed_married_product_groups_promises = objectutilities.map(sorted_married_product_groups, async merchantprovidergroup => {
 			let amount = this.calculateAmount(sorted_married_product_groups[merchantprovidergroup]);
@@ -99,7 +98,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 				creditcard: creditcard
 			})
 
-			du.debug(`${merchantprovidergroup} selection for amount ${amount}: ${JSON.stringify(selected_merchant_provider)}`);
+			du.debug(`Selected ${selected_merchant_provider.id} for amount ${amount} from group ${merchantprovidergroup}`);
 
 			return {
 				merchant_provider: selected_merchant_provider.id,
@@ -269,7 +268,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
 	}
 
-	sortRebillProductsByMerchantProviderGroupAssociations({ initialProductScheduleCycle, associatedMerchantProviderGroups }) {
+	sortRebillProductsByMerchantProviderGroupAssociations({ productSchedule, associatedMerchantProviderGroups }) {
 		const straightSaleProducts = this.parameters.get('rebill').products.filter(product => product.amount);
 		let campaign_id = this.parameters.get('session').campaign;
 
@@ -297,14 +296,14 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
 		});
 
-		if (initialProductScheduleCycle) {
-			const { cycle, merchantProviderGroupId } = initialProductScheduleCycle;
+		if (productSchedule) {
+			const initialCycle = productSchedule.cycles.find(cycle => cycle.position === 1);
 			married_product_groups.push({
-				cycleId: cycle.id,
-				amount: numberutilities.formatFloat(parseFloat(cycle.price) + parseFloat(cycle.shipping_price), 2),
+				productSchedule,
+				amount: numberutilities.formatFloat(parseFloat(initialCycle.price) + parseFloat(initialCycle.shipping_price), 2),
 				quantity: 1,
 				merchantprovidergroupassociation: {
-					merchantprovidergroup: merchantProviderGroupId
+					merchantprovidergroup: productSchedule.merchant_provider_group_id
 				}
 			});
 		}
@@ -355,14 +354,8 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 		return associatedMerchantProviderGroups;
 	}
 
-	async acquireInitialProductScheduleCycle(productScheduleId) {
-		const productSchedule = await getProductScheduleService().get(productScheduleId);
-		const initialCycle = productSchedule.cycles.find(cycle => cycle.position === 1);
-
-		return {
-			merchantProviderGroupId: productSchedule.merchant_provider_group_id,
-			cycle: initialCycle
-		};
+	acquireProductSchedule(productScheduleId) {
+		return getProductScheduleService().get(productScheduleId);
 	}
 
 	getMerchantProviderGroupsByEntityAndCampaign({
