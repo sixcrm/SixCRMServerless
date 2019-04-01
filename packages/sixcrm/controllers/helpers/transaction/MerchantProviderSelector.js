@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
@@ -87,6 +88,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	async transformMerchantProviderGroupsToMerchantProviders() {
 		let creditcard = this.parameters.get('creditcard');
 		let sorted_married_product_groups = this.parameters.get('sortedmarriedproductgroups');
+		du.debug(`sorted_married_product_groups: ${JSON.stringify(sorted_married_product_groups)}`);
 
 		let transformed_married_product_groups_promises = objectutilities.map(sorted_married_product_groups, async merchantprovidergroup => {
 			let amount = this.calculateAmount(sorted_married_product_groups[merchantprovidergroup]);
@@ -96,6 +98,8 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 				amount: amount,
 				creditcard: creditcard
 			})
+
+			du.debug(`${merchantprovidergroup} selection for amount ${amount}: ${JSON.stringify(selected_merchant_provider)}`);
 
 			return {
 				merchant_provider: selected_merchant_provider.id,
