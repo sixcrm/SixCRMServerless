@@ -164,6 +164,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
 			return merchantProviderSelectorHelperController.buildMerchantProviderGroups({rebill: rebill, creditcard: creditcard})
 				.then((merchant_provider_groups) => {
+					du.debug(`Merchant provide groups: ${JSON.stringify(merchant_provider_groups)}`);
 					this.parameters.set('merchantprovidergroups', merchant_provider_groups);
 					return this.updateRebillMerchantProviderSelections();
 				})
