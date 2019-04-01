@@ -104,6 +104,16 @@ describe('RebillCreator', () => {
 		context('subscription session', () => {
 			let productSchedule, rebill_prototype, rebill, session;
 			beforeEach(() => {
+				const product = {
+					id: 'd3294914-42ed-40fd-9abe-a4bfbc57d970',
+					name: 'Intelligent Plastic Table',
+					price: 30,
+					shipping_price: 0,
+					account_id: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+					created_at: '2018-01-01T00:00:01.000Z',
+					updated_at: '2018-01-01T00:00:01.000Z'
+				};
+
 				productSchedule = {
 					id: 'c3a5d4d2-10f2-44a8-adff-00ca81eb8433',
 					name: 'Intelligent Plastic Table Schedule',
@@ -120,10 +130,7 @@ describe('RebillCreator', () => {
 						price: 30,
 						shipping_price: 0,
 						cycle_products: [{
-							product: {
-								id: 'd3294914-42ed-40fd-9abe-a4bfbc57d970',
-								name: 'Intelligent Plastic Table'
-							},
+							product,
 							is_shipping: true,
 							position: 1,
 							quantity: 1
@@ -154,8 +161,7 @@ describe('RebillCreator', () => {
 					products: [
 						{
 							product: {
-								id: 'd3294914-42ed-40fd-9abe-a4bfbc57d970',
-								name: 'Intelligent Plastic Table'
+								id: 'd3294914-42ed-40fd-9abe-a4bfbc57d970'
 							},
 							is_shipping: true,
 							position: 1,

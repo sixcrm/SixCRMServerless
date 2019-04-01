@@ -70,7 +70,7 @@ module.exports = class RebillCreatorHelper {
 
 		if (product_schedules) {
 			du.debug(`normalize product schedules: ${JSON.stringify(product_schedules)}`);
-			productSchedule = await normalizeProductSchedule(product_schedules[0].product_schedule) || product_schedules[0];
+			productSchedule = await normalizeProductSchedule(product_schedules[0].product_schedule || product_schedules[0]);
 		}
 
 		try {
@@ -113,15 +113,26 @@ module.exports = class RebillCreatorHelper {
 };
 
 const normalizeProductSchedule = async (productSchedule) => {
-	if (!stringutilities.isUUID(productSchedule)) {
-		return productSchedule;
+	if (stringutilities.isUUID(productSchedule)) {
+		try {
+			productSchedule = await getProductScheduleService().get(productSchedule);
+		} catch (e) {
+			du.error('Error retrieving product schedule', e);
+			throw eu.getError('not_found', `Product schedule does not exist: ${productSchedule}`);
+		}
 	}
 
-	try {
-		return getProductScheduleService().get(productSchedule);
-	} catch (e) {
-		du.error('Error retrieving product schedule', e);
-		throw eu.getError('not_found', `Product schedule does not exist: ${productSchedule}`);
+	return {
+		...productSchedule,
+		cycles: productSchedule.cycles.map(cycle => ({
+			...cycle,
+			cycle_products: cycle.cycle_products.map(cycleProduct => ({
+				...cycleProduct,
+				product: {
+					id: cycleProduct.product.id
+				}
+			}))
+		}))
 	}
 };
 
