@@ -30,12 +30,6 @@
 		}
 	},
 	"required": [
-		"account",
-		"entity",
-		"entity_type",
-		"merchantprovidergroup",
-		"campaign",
-		"created_at",
-		"updated_at"
+		"merchantprovidergroup"
 	]
 }

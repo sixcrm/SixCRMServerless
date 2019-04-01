@@ -12,6 +12,9 @@
 					"product": {
 						"$ref": "../../../entities/components/watermark/watermarkproduct.json"
 					},
+					"cycleId": {
+						"$ref": "../../../definitions/uuidv4.json"
+					},
 					"amount": {
 						"$ref": "../../../definitions/currency.json"
 					},
@@ -23,7 +26,6 @@
 					}
 				},
 				"required": [
-					"product",
 					"amount",
 					"quantity",
 					"merchantprovidergroupassociation"
