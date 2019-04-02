@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { isArray, orderBy, sortBy } = require('lodash');
+const { isArray, orderBy, sortBy, isObject } = require('lodash');
 const moment = require('moment');
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
@@ -70,7 +70,7 @@ module.exports = class RebillCreatorHelper {
 
 		if (product_schedules) {
 			du.debug(`normalize product schedules: ${JSON.stringify(product_schedules)}`);
-			productSchedule = await normalizeProductSchedule(product_schedules[0].product_schedule || product_schedules[0]);
+			productSchedule = await normalizeProductSchedule(product_schedules[0]);
 		}
 
 		try {
@@ -113,18 +113,23 @@ module.exports = class RebillCreatorHelper {
 };
 
 const normalizeProductSchedule = async (productSchedule) => {
-	if (stringutilities.isUUID(productSchedule)) {
+	const { product_schedule } = productSchedule;
+	let productScheduleResult;
+	if (stringutilities.isUUID(product_schedule)) {
 		try {
-			productSchedule = await getProductScheduleService().get(productSchedule);
+			productScheduleResult = await getProductScheduleService().get(productSchedule);
 		} catch (e) {
 			du.error('Error retrieving product schedule', e);
 			throw eu.getError('not_found', `Product schedule does not exist: ${productSchedule}`);
 		}
+	} else if (isObject(productSchedule)) {
+		du.warning('Todo: reimplement marry products to schedule?');
+		productScheduleResult = productSchedule;
 	}
 
-	return {
-		...productSchedule,
-		cycles: productSchedule.cycles.map(cycle => ({
+	productSchedule.product_schedule = {
+		...productScheduleResult,
+		cycles: productScheduleResult.cycles.map(cycle => ({
 			...cycle,
 			cycle_products: cycle.cycle_products.map(cycleProduct => ({
 				...cycleProduct,
@@ -134,7 +139,8 @@ const normalizeProductSchedule = async (productSchedule) => {
 				}
 			}))
 		}))
-	}
+	};
+	return productSchedule;
 };
 
 const buildRebill = async ({
@@ -179,22 +185,22 @@ const buildRebillEntity = async ({
 	session,
 	day,
 	products = [],
-	productSchedule
+	productSchedule: { product_schedule } = {}
 }) => {
-	du.debug(`Build rebill entity: ${JSON.stringify({ session, day, products, productSchedule })}`);
+	du.debug(`Build rebill entity: ${JSON.stringify({ session, day, products, product_schedule })}`);
 	const previousRebill = day >= 0 ? await getMostRecentRebill(session) : null;
 	const position = previousRebill ? previousRebill.cycle + 2 : 1;
-	const cycle = productSchedule ? getCurrentCycle({ cycles: productSchedule.cycles, position }) : null;
+	const cycle = product_schedule ? getCurrentCycle({ cycles: product_schedule.cycles, position }) : null;
 	const amount = calculateAmount({ products, cycle });
 	const transaction_products = cycle ? [...products, ...cycle.cycle_products] : products;
-	const billDay = getNextProductScheduleBillDayNumber({ day, productSchedule, position: position - 1, previousRebill });
+	const billDay = getNextProductScheduleBillDayNumber({ day, product_schedule, position: position - 1, previousRebill });
 	const bill_at = calculateBillAt(session, billDay);
 
 	return {
 		...createRebillPrototype({
 			session,
 			transaction_products,
-			product_schedules: productSchedule ? [productSchedule.id] : null,
+			product_schedules: product_schedule ? [product_schedule.id] : null,
 			bill_at,
 			cycle: position - 1,
 			amount,
@@ -264,12 +270,12 @@ const calculateAmount = ({ products, cycle }) => {
 // TODO use a real currency library
 const calculateCycleAmount = ({ price, shipping_price = 0 }) => numberutilities.formatFloat(parseFloat(price) + parseFloat(shipping_price), 2);
 
-const getNextProductScheduleBillDayNumber = ({ day, productSchedule, position, previousRebill }) => {
-	if (position <= 0 || !productSchedule) {
+const getNextProductScheduleBillDayNumber = ({ day, product_schedule, position, previousRebill }) => {
+	if (position <= 0 || !product_schedule) {
 		return 0;
 	}
 
-	const { length } = productSchedule.cycles.find(cycle => cycle.position === position);
+	const { length } = product_schedule.cycles.find(cycle => cycle.position === position);
 
 	if (length.days) {
 		return day + length.days;

@@ -14,9 +14,6 @@
 					},
 					"quantity": {
 						"$ref": "../../../definitions/nonnegativeinteger.json"
-					},
-					"product_schedule": {
-						"$ref": "./legacywatermarkproductschedule.json"
 					}
 				},
 				"required": [
