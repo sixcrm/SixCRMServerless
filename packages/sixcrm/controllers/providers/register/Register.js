@@ -487,8 +487,10 @@ module.exports = class Register extends RegisterUtilities {
 						cycle.cycle_products.forEach(cycleProduct => {
 							transactionProducts.push({
 								quantity: cycleProduct.quantity,
-								product: cycleProduct,
-								no_ship: cycleProduct.is_shipping
+								product: {
+									...cycleProduct.product,
+									no_ship: cycleProduct.is_shipping
+								}
 							});
 						});
 					});
