@@ -11,29 +11,24 @@ import {
 
 import { IsNotEmpty, Min, IsOptional } from "class-validator";
 
-import CycleProduct from './CycleProduct';
-import ProductSchedule from './ProductSchedule';
+import SubscriptionCycleProduct from './SubscriptionCycleProduct';
+import Subscription from './Subscription';
 import DomainEntity from "@6crm/sixcrm-data/lib/DomainEntity";
-import CycleValidator from "./validators/CycleValidator";
-
-export interface IProductScheduleInterval {
-	months?: number;
-	days?: number;
-}
+import SubscriptionCycleValidator from "./validators/SubscriptionCycleValidator";
+import { IProductScheduleInterval } from "@6crm/sixcrm-product-setup/lib/models/Cycle";
 
 @Entity()
-export default class Cycle extends DomainEntity {
+export default class SubscriptionCycle extends DomainEntity {
 
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
-	@ManyToOne(type => ProductSchedule, product_schedule => product_schedule.cycles)
-	@JoinColumn({ name: 'product_schedule_id' })
-	product_schedule: ProductSchedule;
+	@ManyToOne(type => Subscription, subscription => subscription.cycles)
+	@JoinColumn({ name: 'subscription_id' })
+	subscription: Subscription;
 
-	// I wanted to call this products, but products[0].product drove me nuts before, so let's not.  :)
-	@OneToMany(type => CycleProduct, cycle_product => cycle_product.cycle, { cascade: true })
-	cycle_products: CycleProduct[];
+	@OneToMany(type => SubscriptionCycleProduct, cycle_product => cycle_product.cycle, { cascade: true })
+	cycle_products: SubscriptionCycleProduct[];
 
 	@Column({
 		nullable: true,
@@ -84,7 +79,7 @@ export default class Cycle extends DomainEntity {
 	shipping_price: number | string | null;
 
 	validate(): boolean {
-		return new CycleValidator(this).validate();
+		return new SubscriptionCycleValidator(this).validate();
 	}
 
 	constructor(

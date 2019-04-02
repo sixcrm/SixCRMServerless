@@ -1,12 +1,12 @@
-import ProductSchedule from "../ProductSchedule";
+import Subscription from "../Subscription";
 import EntityValidator from "@6crm/sixcrm-data/lib/EntityValidator";
 import EntityValidationError from "@6crm/sixcrm-data/lib/EntityValidationError";
-import Cycle from "../Cycle";
+import SubscriptionCycle from "../SubscriptionCycle";
 
-export default class ProductScheduleValidator implements EntityValidator<ProductSchedule> {
-	private readonly entity: ProductSchedule;
+export default class SubscriptionValidator implements EntityValidator<Subscription> {
+	private readonly entity: Subscription;
 
-	constructor(entity: ProductSchedule) {
+	constructor(entity: Subscription) {
 		this.entity = entity;
 	}
 
@@ -50,12 +50,12 @@ export default class ProductScheduleValidator implements EntityValidator<Product
 		}
 	}
 
-	private validateCycle(cycle: Cycle) {
+	private validateCycle(cycle: SubscriptionCycle) {
 		cycle.validate();
 	}
 
 	private fail(propertyName, object: any = this.entity, message?: string) {
-		throw new EntityValidationError<ProductSchedule>(propertyName, object, message);
+		throw new EntityValidationError<Subscription>(propertyName, object, message);
 	}
 
 	private isLast(index: number, array: any[]) {

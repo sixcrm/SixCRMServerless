@@ -10,19 +10,19 @@ import {
 
 import { IsUUID, IsNotEmpty, IsOptional } from "class-validator";
 
-import Cycle from './Cycle';
+import SubscriptionCycle from './SubscriptionCycle';
 import EntityValidationError from "@6crm/sixcrm-data/lib/EntityValidationError";
 import DomainEntity from "@6crm/sixcrm-data/lib/DomainEntity";
-import ProductScheduleValidator from "./validators/ProductScheduleValidator";
+import SubscriptionValidator from "./validators/SubscriptionValidator";
 
 @Entity()
-export default class ProductSchedule extends DomainEntity {
+export default class Subscription extends DomainEntity {
 
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
-	@OneToMany(type => Cycle, cycle => cycle.product_schedule, { cascade: true })
-	cycles: Cycle[];
+	@OneToMany(type => SubscriptionCycle, cycle => cycle.subscription, { cascade: true })
+	cycles: SubscriptionCycle[];
 
 	@Index()
 	@Column('uuid')
@@ -30,6 +30,13 @@ export default class ProductSchedule extends DomainEntity {
 	@IsNotEmpty()
 	@IsOptional()
 	account_id: string;
+
+	@Index()
+	@Column('uuid')
+	@IsUUID()
+	@IsNotEmpty()
+	@IsOptional()
+	product_schedule_id: string;
 
 	@Column({
 		length: 55
@@ -57,10 +64,10 @@ export default class ProductSchedule extends DomainEntity {
 	requires_confirmation: boolean;
 
 	public validate(): boolean {
-		return new ProductScheduleValidator(this).validate();
+		return new SubscriptionValidator(this).validate();
 	}
 
-	public nextCycle(current: Cycle): Cycle | null {
+	public nextCycle(current: SubscriptionCycle): SubscriptionCycle | null {
 		let next: number;
 		next = current.next_position;
 
@@ -79,12 +86,14 @@ export default class ProductSchedule extends DomainEntity {
 	constructor(
 		id: string,
 		account_id: string,
+		product_schedule_id: string,
 		name: string,
 		requires_confirmation: boolean
 	) {
 		super();
 		this.id = id;
 		this.account_id = account_id;
+		this.product_schedule_id = product_schedule_id;
 		this.name = name;
 		this.requires_confirmation = requires_confirmation;
 	}

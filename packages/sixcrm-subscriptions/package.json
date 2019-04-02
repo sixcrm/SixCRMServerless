@@ -1,8 +1,8 @@
 {
-  "name": "@6crm/sixcrm-product-setup",
+  "name": "@6crm/sixcrm-subscriptions",
   "version": "1.0.0",
   "private": true,
-  "description": "Bounded context for product and product schedule setup ",
+  "description": "Bounded context for subscriptions",
   "author": "Evan Oxfeld <evan@adexchangegrp.com>",
   "homepage": "https://github.com/sixcrm/SixCRMServerless#readme",
   "license": "UNLICENSED",
@@ -27,7 +27,7 @@
     "compile": "tsc --pretty",
     "prettier": "prettier --write \"src/**/*.{ts,json}\"",
     "test": "mocha --colors --require ts-node/register 'test/*.spec.ts' 'test/**/*.spec.ts'",
-    "test-productsetup": "yarn run test",
+    "test-subscriptions": "yarn run test",
     "precommit": "pretty-quick --staged"
   },
   "bugs": {
@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "@6crm/sixcrm-data": "^1.0.0",
+    "@6crm/sixcrm-product-setup": "^1.0.0",
     "chai-exclude": "^1.0.12",
     "class-validator": "^0.9.1",
     "js-logger": "^1.6.0",
