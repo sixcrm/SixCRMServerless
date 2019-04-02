@@ -240,19 +240,33 @@ describe('RebillCreator', () => {
 				});
 
 				it('creates rebill from a product schedule ID', async () => {
+					const hydratedProductSchedule = {
+						...productSchedule,
+						cycles: productSchedule.cycles.map(cycle => ({
+							...cycle,
+							price: '30.00',
+							shipping_price: '0.00'
+						}))
+					};
+					productSchedule = {
+						...hydratedProductSchedule,
+						cycles: hydratedProductSchedule.cycles.map(cycle => ({
+							...cycle,
+							cycle_products: cycle.cycle_products.map(cycle_product => ({
+								...cycle_product,
+								product: {
+									id: 'd3294914-42ed-40fd-9abe-a4bfbc57d970',
+									name: 'Intelligent Plastic Table'
+								}
+							}))
+						}))
+					};
 					td.when(
 						RebillController.prototype.create({ entity: rebill_prototype })
 					).thenResolve(rebill);
 					td.when(getProductScheduleService()).thenReturn({
 						get() {
-							return {
-								...productSchedule,
-								cycles: productSchedule.cycles.map(cycle => ({
-									...cycle,
-									price: '30.00',
-									shipping_price: '0.00'
-								}))
-							};
+							return hydratedProductSchedule;
 						}
 					});
 					const product_schedules = session.watermark.product_schedules.map(({ id }) => ({
@@ -266,6 +280,10 @@ describe('RebillCreator', () => {
 						product_schedules
 					});
 					expect(result).to.deep.equal(rebill);
+					expect(product_schedules[0]).to.deep.equal({
+						quantity: 1,
+						product_schedule: productSchedule
+					});
 				});
 
 				it('throws an error when no schedules provided', async () => {
