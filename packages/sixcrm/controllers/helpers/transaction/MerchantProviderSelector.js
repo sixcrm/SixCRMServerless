@@ -71,7 +71,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
 		await this.acquireRebillProperties(rebill);
 		const associatedMerchantProviderGroups = await this.acquireStraightSaleProductMerchantProviderGroupAssociations();
-		if (rebill.product_schedules.length) {
+		if (rebill.product_schedules && rebill.product_schedules.length) {
 			productSchedule = await this.acquireProductSchedule(rebill.product_schedules[0]);
 		}
 		await this.acquireCreditCardProperties();
