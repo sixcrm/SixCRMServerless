@@ -118,9 +118,9 @@ module.exports = class RegisterUtilities extends PermissionedController {
 		const merchant_provider_groups = this.parameters.get('merchantprovidergroups');
 		rebill.merchant_provider_selections = Object.entries(merchant_provider_groups).reduce((result, [merchant_provider, product_groups]) => {
 			const rebill_products = _.flatten(product_groups);
-			const selections = rebill_products.map(({ product, cycleId }) => ({
+			const selections = rebill_products.map(({ product, productSchedule }) => ({
 				...(product ? { product: product.id } : {}),
-				...(cycleId ? { cycleId } : {}),
+				...(productSchedule ? { productScheduleId: productSchedule.id } : {}),
 				merchant_provider
 			}));
 			return result.concat(selections);
@@ -168,7 +168,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
 			return merchantProviderSelectorHelperController.buildMerchantProviderGroups({rebill: rebill, creditcard: creditcard})
 				.then((merchant_provider_groups) => {
-					du.debug(`Merchant provide groups: ${JSON.stringify(merchant_provider_groups)}`);
+					du.debug(`Merchant provider groups: ${JSON.stringify(merchant_provider_groups)}`);
 					this.parameters.set('merchantprovidergroups', merchant_provider_groups);
 					return this.updateRebillMerchantProviderSelections();
 				})
