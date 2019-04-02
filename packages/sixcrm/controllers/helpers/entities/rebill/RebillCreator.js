@@ -117,7 +117,7 @@ const normalizeProductSchedule = async (productSchedule) => {
 	let productScheduleResult;
 	if (stringutilities.isUUID(product_schedule)) {
 		try {
-			productScheduleResult = await getProductScheduleService().get(productSchedule);
+			productScheduleResult = await getProductScheduleService().get(product_schedule);
 		} catch (e) {
 			du.error('Error retrieving product schedule', e);
 			throw eu.getError('not_found', `Product schedule does not exist: ${productSchedule}`);
