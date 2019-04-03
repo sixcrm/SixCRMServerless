@@ -148,7 +148,10 @@ describe('RebillCreator', () => {
 						'c3a5d4d2-10f2-44a8-adff-00ca81eb8433'
 					],
 					watermark: {
-						product_schedules: [productSchedule]
+						product_schedules: [{
+							product_schedule: productSchedule,
+							quantity: 1
+						}]
 					},
 					completed: true,
 					created_at: '2018-01-01T00:00:01.000Z',
@@ -269,10 +272,15 @@ describe('RebillCreator', () => {
 							return hydratedProductSchedule;
 						}
 					});
-					const product_schedules = session.watermark.product_schedules.map(({ id }) => ({
-						quantity: 1,
-						product_schedule: id
-					}));
+					const product_schedules = session.watermark.product_schedules.map(
+						({
+							quantity,
+							product_schedule: { id }
+						}) => ({
+							quantity,
+							product_schedule: id
+						})
+					);
 
 					const result = await rebillCreator.createRebill({
 						session,
@@ -325,23 +333,6 @@ describe('RebillCreator', () => {
 						created_at: '2018-01-01T00:00:01.000Z',
 						updated_at: '2018-01-01T00:00:01.000Z',
 					});
-					merchant_provider = {
-						'id': '4e0142df-3f91-47ab-9a86-b7de1fd5ec58',
-						'account': 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
-						'name': 'My Merchant',
-						'merchantproviders': [
-							{
-								'id': 'bacf41cc-30c0-4327-a085-b77be9c2105b',
-								'distribution': 0.12
-							},
-							{
-								'id': '48302fb6-c764-4dd1-b6b2-1dce747a0809',
-								'distribution': 0.21
-							}
-						],
-						'created_at': '2018-10-09T22:33:28.523Z',
-						'updated_at': '2018-10-09T22:33:28.523Z'
-					};
 					td.when(SessionController.prototype.listRebills(session)).thenResolve([previous_rebill]);
 				});
 

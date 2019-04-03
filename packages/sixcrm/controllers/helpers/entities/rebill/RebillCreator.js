@@ -122,9 +122,9 @@ const normalizeProductSchedule = async (productSchedule) => {
 			du.error('Error retrieving product schedule', e);
 			throw eu.getError('not_found', `Product schedule does not exist: ${productSchedule}`);
 		}
-	} else if (isObject(productSchedule)) {
+	} else if (isObject(product_schedule)) {
 		du.warning('Todo: reimplement marry products to schedule?');
-		productScheduleResult = productSchedule;
+		productScheduleResult = product_schedule;
 	}
 
 	productSchedule.product_schedule = {
