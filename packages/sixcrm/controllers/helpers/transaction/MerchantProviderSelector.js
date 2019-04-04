@@ -300,6 +300,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 			const initialCycle = productSchedule.cycles.find(cycle => cycle.position === 1);
 			married_product_groups.push({
 				productSchedule,
+				product: initialCycle.cycle_products[0],
 				amount: numberutilities.formatFloat(parseFloat(initialCycle.price) + parseFloat(initialCycle.shipping_price), 2),
 				quantity: 1,
 				merchantprovidergroupassociation: {
