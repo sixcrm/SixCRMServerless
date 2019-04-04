@@ -478,23 +478,9 @@ module.exports = class Register extends RegisterUtilities {
 
 			arrayutilities.map(merchant_provider_groups[merchant_provider], merchant_provider_group => {
 
-				arrayutilities.map(merchant_provider_group, product_group => {
-					if (product_group.product) {
-						return transactionProducts.push(product_group);
-					}
-
-					product_group.productSchedule.cycles.forEach(cycle => {
-						cycle.cycle_products.forEach(cycleProduct => {
-							transactionProducts.push({
-								quantity: cycleProduct.quantity,
-								product: {
-									...cycleProduct.product,
-									no_ship: cycleProduct.is_shipping
-								}
-							});
-						});
-					});
-				});
+				arrayutilities.map(merchant_provider_group, product_group =>
+					transactionProducts.push(product_group)
+				);
 			});
 
 		}

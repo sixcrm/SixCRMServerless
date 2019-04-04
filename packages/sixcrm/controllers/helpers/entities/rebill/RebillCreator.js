@@ -75,7 +75,7 @@ module.exports = class RebillCreatorHelper {
 
 		try {
 			const rebill = await buildRebill({ session, day, products: normalizedProducts, productSchedule });
-			du.debug(`Creating rebill for session ${session.id} with amount ${rebill.amount}: ${JSON.stringify(rebill)}`);
+			du.debug(`Creating rebill for session ${session.id} with amount ${rebill.amount}`);
 			return rebillController.create({ entity: rebill });
 		} catch(error) {
 			if (_.has(error, 'code') && error.code == '520') {
@@ -193,7 +193,6 @@ const buildRebillEntity = async ({
 	const cycle = product_schedule ? getCurrentCycle({ cycles: product_schedule.cycles, position }) : null;
 	const amount = calculateAmount({ products, cycle });
 	const transaction_products = getTransactionProducts({ products, cycle });
-	du.debug(`Calculated transaction products: ${JSON.stringify(transaction_products)}`);
 	const billDay = getNextProductScheduleBillDayNumber({ day, product_schedule, position: position - 1, previousRebill });
 	const bill_at = calculateBillAt(session, billDay);
 
