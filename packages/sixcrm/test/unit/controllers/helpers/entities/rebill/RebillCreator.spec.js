@@ -68,7 +68,8 @@ describe('RebillCreator', () => {
 								updated_at: '2018-01-01T00:00:01.000Z'
 							},
 							amount: 9.99,
-							quantity: 1
+							quantity: 1,
+							is_cycle_product: false
 						}
 					],
 					amount: 9.99,
@@ -167,7 +168,9 @@ describe('RebillCreator', () => {
 								id: 'd3294914-42ed-40fd-9abe-a4bfbc57d970',
 								name: 'Intelligent Plastic Table',
 							},
+							amount: 30,
 							is_shipping: true,
+							is_cycle_product: true,
 							position: 1,
 							quantity: 1
 						}
