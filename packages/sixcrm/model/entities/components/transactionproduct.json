@@ -32,10 +32,14 @@
 			"enum": [
 				true
 			]
+		},
+		"is_cycle_product": {
+			"type": "boolean"
 		}
 	},
 	"required": [
 		"product",
+		"amount",
 		"quantity"
 	]
 }

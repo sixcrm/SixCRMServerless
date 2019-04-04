@@ -269,7 +269,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	}
 
 	sortRebillProductsByMerchantProviderGroupAssociations({ productSchedule, associatedMerchantProviderGroups }) {
-		const straightSaleProducts = this.parameters.get('rebill').products.filter(product => product.amount);
+		const straightSaleProducts = this.parameters.get('rebill').products.filter(productGroup => !productGroup.is_cycle_product);
 		let campaign_id = this.parameters.get('session').campaign;
 
 		let married_product_groups = arrayutilities.map(straightSaleProducts, product_group => {
@@ -325,7 +325,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	}
 
 	async acquireStraightSaleProductMerchantProviderGroupAssociations() {
-		const straightSaleProducts = this.parameters.get('rebill').products.filter(product => product.amount);
+		const straightSaleProducts = this.parameters.get('rebill').products.filter(productGroup => !productGroup.is_cycle_product);
 		const associatedMerchantProviderGroups = [];
 
 		if (straightSaleProducts.length) {

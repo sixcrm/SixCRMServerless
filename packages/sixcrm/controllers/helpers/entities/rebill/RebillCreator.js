@@ -192,7 +192,7 @@ const buildRebillEntity = async ({
 	const position = previousRebill ? previousRebill.cycle + 2 : 1;
 	const cycle = product_schedule ? getCurrentCycle({ cycles: product_schedule.cycles, position }) : null;
 	const amount = calculateAmount({ products, cycle });
-	const transaction_products = cycle ? [...products, ...cycle.cycle_products] : products;
+	const transaction_products = getTransactionProducts({ products, cycle });
 	const billDay = getNextProductScheduleBillDayNumber({ day, product_schedule, position: position - 1, previousRebill });
 	const bill_at = calculateBillAt(session, billDay);
 
@@ -265,6 +265,21 @@ const calculateAmount = ({ products, cycle }) => {
 		cycleAmount
 	);
 	return numberutilities.formatFloat(totalAmount, 2);
+};
+
+const getTransactionProducts = ({ products = [], cycle }) => {
+	const cycle_products = cycle ? cycle.cycle_products : [];
+	const productGroups = products.map(productGroup => ({
+		...productGroup,
+		is_cycle_product: false
+	}));
+	const cycleProductGroups = cycle_products.map(cycleProduct => ({
+		...cycleProduct,
+		amount: calculateCycleAmount(cycle),
+		is_cycle_product: true
+	}));
+
+	return [...productGroups, ...cycleProductGroups];
 };
 
 // TODO use a real currency library
