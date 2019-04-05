@@ -6,7 +6,7 @@ import ProductSchedule from "./models/ProductSchedule";
 import Cycle from './models/Cycle';
 import CycleProduct from "./models/CycleProduct";
 
-const MASTER_ACCOUNT_ID = '*';
+import { MASTER_ACCOUNT_ID } from '@6crm/sixcrm-data/lib/constants';
 
 const log = logger('ProductScheduleService');
 

@@ -36,6 +36,13 @@ export default class Subscription extends DomainEntity {
 	@IsUUID()
 	@IsNotEmpty()
 	@IsOptional()
+	customer_id: string;
+
+	@Index()
+	@Column('uuid')
+	@IsUUID()
+	@IsNotEmpty()
+	@IsOptional()
 	product_schedule_id: string;
 
 	@Column({
@@ -86,6 +93,7 @@ export default class Subscription extends DomainEntity {
 	constructor(
 		id: string,
 		account_id: string,
+		customer_id: string,
 		product_schedule_id: string,
 		name: string,
 		requires_confirmation: boolean
@@ -93,6 +101,7 @@ export default class Subscription extends DomainEntity {
 		super();
 		this.id = id;
 		this.account_id = account_id;
+		this.customer_id = customer_id;
 		this.product_schedule_id = product_schedule_id;
 		this.name = name;
 		this.requires_confirmation = requires_confirmation;

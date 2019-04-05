@@ -3,7 +3,7 @@ import Product from './models/Product';
 import { validate, ValidationError } from "class-validator";
 import {LogMethod} from "./log";
 
-const MASTER_ACCOUNT_ID = '*';
+import { MASTER_ACCOUNT_ID } from '@6crm/sixcrm-data/lib/constants';
 
 
 interface IProductEntityId {
