@@ -30,7 +30,7 @@ const toConnectionOptions = (config: IDatabaseConfig) => {
 		database: 'postgres',
 		schema: 'product_setup',
 		entities: [ Product, ProductSchedule, Cycle, CycleProduct ],
-		synchronize: true,
+		synchronize: false,
 		logging: true,
 		...config
 	} as ConnectionOptions;

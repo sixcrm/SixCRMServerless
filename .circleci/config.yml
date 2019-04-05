@@ -73,6 +73,9 @@ jobs:
             set -x
             cd packages/sixcrm-product-setup && docker-compose up -d
       - run:
+          name: Aurora Create Tables
+          command: cd packages/sixcrm && SIX_VERBOSE=2 stage=circle node ./deployment/aurora/deploy-schema.js
+      - run:
           name: Product Setup Tests
           command: cd packages/sixcrm-product-setup && docker-compose run -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless/packages/sixcrm-product-setup node yarn run test-productsetup
   pre_deploy:
