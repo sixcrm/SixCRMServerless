@@ -2,7 +2,7 @@ const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
-const { createProductSetupService } = require('@6crm/sixcrm-product-setup');
+const { createProductSetupService, createProductScheduleService } = require('@6crm/sixcrm-product-setup');
 
 const StateMachineHelperController = global.SixCRM.routes.include('helpers', 'statemachine/StateMachine.js');
 
@@ -71,5 +71,14 @@ module.exports = class StepFunctionWorkerController extends WorkerController {
 			...auroraConfig
 		};
 		return createProductSetupService(productSetupServiceOptions);
+	}
+
+	async createProductScheduleService(accountId) {
+		const auroraConfig = await getAuroraConfig();
+		const productScheduleServiceOptions = {
+			accountId,
+			...auroraConfig
+		};
+		return createProductScheduleService(productScheduleServiceOptions);
 	}
 }

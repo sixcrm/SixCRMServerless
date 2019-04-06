@@ -4,8 +4,18 @@ const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
+const { getProductScheduleService } = require('@6crm/sixcrm-product-setup');
 
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
+
+const loadProductSchedule = async (id) => {
+	try {
+		return await getProductScheduleService().get(id);
+	} catch (e) {
+		du.error('Error retrieving product schedule', e);
+		throw eu.getError('not_found', `Product schedule does not exist: ${id}`);
+	}
+}
 
 module.exports = class RegisterUtilities extends PermissionedController {
 
@@ -104,17 +114,32 @@ module.exports = class RegisterUtilities extends PermissionedController {
 	}
 
 	async acquireRebillSubProperties(){
+		const rebill = this.parameters.get('rebill');
+		const { watermark } = this.parameters.get('parentsession');
 		const customer = await this.acquireCustomer();
 		const creditcards = await this.acquireCustomerCreditCards(customer);
 		const selected_creditcard = this.selectCustomerCreditCard();
 		const hydrated_selected_creditcard = await this.hydrateSelectedCreditCard(selected_creditcard);
 		const merchant_provider_groups = await this.acquireMerchantProviderGroups();
 
+		let watermark_product_schedule;
+		if (rebill.product_schedules && rebill.product_schedules.length) {
+			watermark_product_schedule = watermark
+				? watermark.product_schedules[0]
+				: {
+					product_schedule: await loadProductSchedule(
+						rebill.product_schedules[0]
+					),
+					quantity: 1
+				  };
+		}
+
 		return {
 			customer,
 			creditcards,
 			selected_creditcard: hydrated_selected_creditcard,
-			merchant_provider_groups
+			merchant_provider_groups,
+			...(watermark_product_schedule ? { watermark_product_schedule} : {})
 		};
 	}
 

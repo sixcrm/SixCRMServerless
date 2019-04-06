@@ -314,7 +314,13 @@ describe('controllers/workers/statemachine/bill.js', () => {
 		sendMessage() {
 			return Promise.resolve(true);
 		}
-	  });
+    });
+
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				async createProductScheduleService() {
+					return;
+				}
+			});
 
       const BillController = global.SixCRM.routes.include('workers', 'statemachine/bill.js');
       let billController = new BillController();
@@ -385,7 +391,13 @@ describe('controllers/workers/statemachine/bill.js', () => {
 		sendMessage() {
 			return Promise.resolve(true);
 		}
-	  });
+    });
+
+    mockery.registerMock('@6crm/sixcrm-product-setup', {
+      async createProductScheduleService() {
+        return;
+      }
+    });
 
 	  const BillController = global.SixCRM.routes.include('workers', 'statemachine/bill.js');
       let billController = new BillController();
@@ -456,7 +468,13 @@ describe('controllers/workers/statemachine/bill.js', () => {
 		sendMessage() {
 			return Promise.resolve(true);
 		}
-	  });
+    });
+
+      mockery.registerMock('@6crm/sixcrm-product-setup', {
+        async createProductScheduleService() {
+          return;
+        }
+      });
 
       const BillController = global.SixCRM.routes.include('workers', 'statemachine/bill.js');
       let billController = new BillController();
