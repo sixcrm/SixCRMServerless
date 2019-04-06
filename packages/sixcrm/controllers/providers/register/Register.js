@@ -133,10 +133,10 @@ module.exports = class Register extends RegisterUtilities {
 		await this.setParameters({argumentation: arguments[0], action: 'process'});
 		await this.acquireRebillProperties();
 		await this.validateRebillForProcessing();
-		await this.acquireRebillSubProperties();
+		const { watermark_product_schedule } = await this.acquireRebillSubProperties();
 		await this.executeProcesses();
 		await this.pushTransactionEvents();
-		await this.pushSubscriptionEvents();
+		await this.pushSubscriptionEvents({ watermark_product_schedule });
 		return this.transformResponse();
 
 	}
@@ -169,91 +169,50 @@ module.exports = class Register extends RegisterUtilities {
 
 	}
 
-	// TODO use cycles
-	async pushSubscriptionEvents() {
-
-		const rebill = this.parameters.get('rebill');
-		const products = rebill && rebill.products;
-
-		const session = this.parameters.get('parentsession');
-		const product_schedules = session && session.watermark && session.watermark.product_schedules;
-
+	async pushSubscriptionEvents({ watermark_product_schedule }) {
 		// Nothing to do here if we didn't buy any subscriptions.
-		if (!(products && products.length > 0 && product_schedules && product_schedules.length > 0))
-		{
+		if (!watermark_product_schedule) {
 			return;
 		}
 
-		const product_ids = products.map(product => product.product.id);
+		const rebill = this.parameters.get('rebill');
+		const session = this.parameters.get('parentsession');
+		const { product_schedule, quantity } = watermark_product_schedule;
+		const cycle = product_schedule.cycles.find(cycle => cycle.position === rebill.cycle || 0 + 1);
+		const cycleProduct = cycle.cycle_products[0];
+
 		const response_type = this.getProcessorResponseCategory();
 		const status = response_type === this.processor_response_map.success ? 'active' : 'error';
+		const nextBillingDay = this.incrementBillingDay(moment(rebill.bill_at), cycle.length);
 
-		for (let i = 0; i < product_schedules.length; i++) {
-
-			const product_schedule_item = product_schedules[i];
-			const product_schedule = product_schedule_item.product_schedule;
-
-			for (let j = 0; j < product_schedule.schedule.length; j++) {
-
-				const scheduleItem = product_schedule.schedule[j];
-				const product_id = scheduleItem.product.id;
-				if (_.includes(product_ids, product_id)) {
-					const cycle = this.computeCycle(session.created_at, rebill.bill_at, scheduleItem);
-					let nextBillingDay = moment(rebill.bill_at);
-					this.incrementBillingDay(nextBillingDay, scheduleItem);
-
-					await AnalyticsEvent.push('subscription', {
-						session_id: session.id,
-						product_schedule_id: product_schedule.id,
-						product_id: scheduleItem.product.id,
-						session_alias: session.alias,
-						product_schedule_name: product_schedule.name,
-						product_name: scheduleItem.product.name,
-						datetime: nextBillingDay.toISOString(),
-						status,
-						amount: scheduleItem.price * product_schedule_item.quantity,
-						item_count: product_schedule_item.quantity,
-						cycle,
-						interval: scheduleItem.samedayofmonth ? 'monthly' : `${scheduleItem.period} days`,
-						account: session.account,
-						campaign: session.campaign,
-						merchant_provider: rebill.merchant_provider,
-						customer: session.customer
-					});
-
-				}
-
-			}
-
-		}
-
+		await AnalyticsEvent.push('subscription', {
+			session_id: session.id,
+			product_schedule_id: product_schedule.id,
+			product_id: cycleProduct.product.id,
+			session_alias: session.alias,
+			product_schedule_name: product_schedule.name,
+			product_name: cycleProduct.product.name,
+			datetime: nextBillingDay.toISOString(),
+			status,
+			amount: cycle.price,
+			item_count: quantity,
+			cycle,
+			interval: cycle.length.months ? 'monthly' : `${cycle.length.days} days`,
+			account: session.account,
+			campaign: session.campaign,
+			merchant_provider: rebill.merchant_provider,
+			customer: session.customer
+		});
 	}
 
-	computeCycle(session_start, bill_at, schedule) {
-
-		let cycle = 0;
-		let current = moment(session_start).startOf('day').add(schedule.start, 'days');
-		const bill_day = moment(bill_at).startOf('day');
-		while (current.isBefore(bill_day)) {
-
-			this.incrementBillingDay(current, schedule);
-			cycle++;
-
-		}
-
-		return cycle;
-
-	}
-
-	incrementBillingDay(current, schedule) {
-
-		if (schedule.samedayofmonth) {
+	incrementBillingDay(current, cycleLength) {
+		if (cycleLength.months) {
 			current.add(1, 'months');
 		}
 		else {
-			current.add(schedule.period, 'days')
+			current.add(cycleLength.days, 'days')
 		}
-
+		return current;
 	}
 
 	getAssociatedTransactions(){

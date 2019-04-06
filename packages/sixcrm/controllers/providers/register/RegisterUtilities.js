@@ -4,8 +4,18 @@ const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
+const { getProductScheduleService } = require('@6crm/sixcrm-product-setup');
 
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
+
+const loadProductSchedule = async (id) => {
+	try {
+		return await getProductScheduleService().get(id);
+	} catch (e) {
+		du.error('Error retrieving product schedule', e);
+		throw eu.getError('not_found', `Product schedule does not exist: ${id}`);
+	}
+}
 
 module.exports = class RegisterUtilities extends PermissionedController {
 
@@ -18,14 +28,12 @@ module.exports = class RegisterUtilities extends PermissionedController {
 		this.rebillHelperController = new RebillHelperController();
 	}
 
-	acquireRebillProperties(){
-		let rebill = this.parameters.get('rebill');
+	async acquireRebillProperties(){
+		const rebill = this.parameters.get('rebill');
 
-		return this.rebillController.getParentSession(rebill).then(result => {
-			this.parameters.set('parentsession', result);
-			return true;
-		})
-
+		const parentSession = await this.rebillController.getParentSession(rebill);
+		this.parameters.set('parentsession', parentSession);
+		return true;
 	}
 
 	acquireRebill(){
@@ -105,12 +113,34 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
 	}
 
-	acquireRebillSubProperties(){
-		return this.acquireCustomer()
-			.then(() => this.acquireCustomerCreditCards())
-			.then(() => this.selectCustomerCreditCard())
-			.then(() => this.hydrateSelectedCreditCard())
-			.then(() => this.acquireMerchantProviderGroups());
+	async acquireRebillSubProperties(){
+		const rebill = this.parameters.get('rebill');
+		const { watermark } = this.parameters.get('parentsession');
+		const customer = await this.acquireCustomer();
+		const creditcards = await this.acquireCustomerCreditCards(customer);
+		const selected_creditcard = this.selectCustomerCreditCard();
+		const hydrated_selected_creditcard = await this.hydrateSelectedCreditCard(selected_creditcard);
+		const merchant_provider_groups = await this.acquireMerchantProviderGroups();
+
+		let watermark_product_schedule;
+		if (rebill.product_schedules && rebill.product_schedules.length) {
+			watermark_product_schedule = watermark
+				? watermark.product_schedules[0]
+				: {
+					product_schedule: await loadProductSchedule(
+						rebill.product_schedules[0]
+					),
+					quantity: 1
+				  };
+		}
+
+		return {
+			customer,
+			creditcards,
+			selected_creditcard: hydrated_selected_creditcard,
+			merchant_provider_groups,
+			...(watermark_product_schedule ? { watermark_product_schedule} : {})
+		};
 	}
 
 	async updateRebillMerchantProviderSelections() {
@@ -128,12 +158,11 @@ module.exports = class RegisterUtilities extends PermissionedController {
 		return this.rebillController.update({ entity: rebill });
 	}
 
-	acquireMerchantProviderGroups(){
-		let rebill =  this.parameters.get('rebill');
-		let creditcard = this.parameters.get('selectedcreditcard');
+	async acquireMerchantProviderGroups(){
+		const rebill =  this.parameters.get('rebill');
+		const creditcard = this.parameters.get('selectedcreditcard');
 
 		if (_.has(rebill, 'merchant_provider_selections')) {
-
 			const selections = rebill.merchant_provider_selections;
 
 			const merchant_provider_groups = selections.reduce((result, { merchant_provider, product: product_id, productScheduleId }) => {
@@ -150,31 +179,23 @@ module.exports = class RegisterUtilities extends PermissionedController {
 			}, {});
 
 			this.parameters.set('merchantprovidergroups', merchant_provider_groups);
-			return Promise.resolve(true);
-
-		} else if (_.has(rebill, 'merchant_provider')){
-
-			let merchant_provider_groups = {};
+			return merchant_provider_groups;
+		} else if (_.has(rebill, 'merchant_provider')) {
+			const merchant_provider_groups = {};
 
 			merchant_provider_groups[rebill.merchant_provider] = [rebill.products];
 
 			this.parameters.set('merchantprovidergroups', merchant_provider_groups);
-
-			return Promise.resolve(true);
-
+			return merchant_provider_groups;
 		} else {
-
 			const MerchantProviderSelectorHelperController = global.SixCRM.routes.include('helpers','transaction/MerchantProviderSelector.js');
-			let merchantProviderSelectorHelperController = new MerchantProviderSelectorHelperController();
+			const merchantProviderSelectorHelperController = new MerchantProviderSelectorHelperController();
 
-			return merchantProviderSelectorHelperController.buildMerchantProviderGroups({rebill: rebill, creditcard: creditcard})
-				.then((merchant_provider_groups) => {
-					du.debug(`Merchant provider groups: ${JSON.stringify(merchant_provider_groups)}`);
-					this.parameters.set('merchantprovidergroups', merchant_provider_groups);
-					return this.updateRebillMerchantProviderSelections();
-				})
-				.then(() => true);
-
+			const merchant_provider_groups = await merchantProviderSelectorHelperController.buildMerchantProviderGroups({rebill: rebill, creditcard: creditcard})
+			du.debug(`Merchant provider groups: ${JSON.stringify(merchant_provider_groups)}`);
+			this.parameters.set('merchantprovidergroups', merchant_provider_groups);
+			await this.updateRebillMerchantProviderSelections();
+			return merchant_provider_groups;
 		}
 
 	}
@@ -192,32 +213,23 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
 	}
 
-	hydrateSelectedCreditCard(){
-		let selected_creditcard = this.parameters.get('selectedcreditcard');
-
+	async hydrateSelectedCreditCard(selected_creditcard) {
 		if(_.has(selected_creditcard, 'number')){
-			return true;
+			return selected_creditcard;
 		}
 
-		if(_.has(selected_creditcard, 'token')){
+		if(_.has(selected_creditcard, 'token')) {
+			const hydratedCard = await this.creditCardController.get({id: selected_creditcard.id, hydrate_token: true});
+			if(_.isNull(hydratedCard) || !_.has(hydratedCard, 'number')){
+				throw eu.getError('server', 'Unable to hydrate the selected creditcard');
+			}
 
-			return this.creditCardController.get({id: selected_creditcard.id, hydrate_token: true}).then(result => {
-
-				if(_.isNull(result) || !_.has(result, 'number')){
-					throw eu.getError('server', 'Unable to hydrate the selected creditcard');
-				}
-
-				this.appendCVV(result);
-				this.parameters.set('selectedcreditcard', result);
-
-				return true;
-
-			});
-
+			this.appendCVV(hydratedCard);
+			this.parameters.set('selectedcreditcard', hydratedCard);
+			return hydratedCard;
 		}
 
 		throw eu.getError('server', 'Selected CreditCard must have either a number or a token.');
-
 	}
 
 	selectCustomerCreditCard(){
@@ -258,9 +270,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 		this.appendCVV(selected_creditcard);
 
 		this.parameters.set('selectedcreditcard', selected_creditcard);
-
-		return Promise.resolve(true);
-
+		return selected_creditcard;
 	}
 
 	appendCVV(selected_creditcard){
@@ -272,35 +282,28 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
 	}
 
-	acquireCustomer(){
-		let parentsession  = this.parameters.get('parentsession');
+	async acquireCustomer(){
+		const parentsession  = this.parameters.get('parentsession');
 
-		return this.customerController.get({id: parentsession.customer}).then(customer => {
-
-			return this.parameters.set('customer', customer);
-
-		});
-
+		const customer = await this.customerController.get({id: parentsession.customer});
+		this.parameters.set('customer', customer);
+		return customer;
 	}
 
-	acquireCustomerCreditCards(){
-		let selected_creditcard = this.parameters.get('selectedcreditcard', {fatal: false});
+	async acquireCustomerCreditCards(customer) {
+		const selected_creditcard = this.parameters.get('selectedcreditcard', {fatal: false});
 
 		if(!_.isNull(selected_creditcard) && _.has(selected_creditcard, 'id')){
-			return Promise.resolve(true);
+			return;
 		}
 
-		let customer = this.parameters.get('customer');
+		const creditcards = await this.customerController.getCreditCards(customer);
+		if (creditcards === null) {
+			throw eu.getError('server', 'Unable to find creditcards for customer');
+		}
 
-		return this.customerController.getCreditCards(customer).then(creditcards => {
-			if (creditcards === null) {
-				throw eu.getError('server', 'Unable to find creditcards for customer');
-			}
-
-			return this.parameters.set('creditcards', creditcards);
-
-		});
-
+		this.parameters.set('creditcards', creditcards);
+		return creditcards;
 	}
 
 	acquireMerchantProvider({id}){
