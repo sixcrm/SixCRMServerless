@@ -165,16 +165,15 @@ module.exports = class RegisterUtilities extends PermissionedController {
 		if (_.has(rebill, 'merchant_provider_selections')) {
 			const selections = rebill.merchant_provider_selections;
 
-			const merchant_provider_groups = selections.reduce((result, { merchant_provider, product: product_id, productScheduleId }) => {
-				const rebill_product_schedule = rebill.product_schedules.find(rebillProductScheduleId => rebillProductScheduleId === productScheduleId);
+			const merchant_provider_groups = selections.reduce((result, { merchant_provider, product: product_id }) => {
 				const rebill_product = rebill.products.find(rebill_product => rebill_product.product.id === product_id);
-				if (!rebill_product_schedule && !rebill_product) {
+				if (!rebill_product) {
 					return result;
 				}
 				if (!_.has(result, merchant_provider)) {
 					result[merchant_provider] = [[]];
 				}
-				result[merchant_provider][0].push(rebill_product_schedule || rebill_product);
+				result[merchant_provider][0].push(rebill_product);
 				return result;
 			}, {});
 
