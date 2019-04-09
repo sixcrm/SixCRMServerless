@@ -448,7 +448,7 @@ module.exports = class Register extends RegisterUtilities {
 
 	}
 
-	executeProcesses(){
+	executeProcesses() {
 		du.debug('Execute Processes');
 		let merchant_provider_groups = this.parameters.get('merchantprovidergroups');
 		du.warning('mpg', merchant_provider_groups);
@@ -470,6 +470,7 @@ module.exports = class Register extends RegisterUtilities {
 			return true;
 
 		});
+	}
 
 	executeProcess({merchant_provider: merchant_provider, amount: amount}){
 		let customer = this.parameters.get('customer');
