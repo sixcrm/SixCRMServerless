@@ -290,6 +290,8 @@ const getNextProductScheduleBillDayNumber = ({ day, product_schedule, position, 
 		return 0;
 	}
 
+	du.debug(`Next bill day`, day, product_schedule, position, previousRebill);
+
 	const { length } = product_schedule.cycles.find(cycle => cycle.position === position);
 
 	if (length.days) {
