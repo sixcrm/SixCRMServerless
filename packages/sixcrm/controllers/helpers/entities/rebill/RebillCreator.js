@@ -193,7 +193,7 @@ const buildRebillEntity = async ({
 	const cycle = product_schedule ? getCurrentCycle({ cycles: product_schedule.cycles, position }) : null;
 	const amount = calculateAmount({ products, cycle });
 	const transaction_products = getTransactionProducts({ products, cycle });
-	const billDay = getNextProductScheduleBillDayNumber({ day, product_schedule, position: position - 1, previousRebill });
+	const billDay = getNextProductScheduleBillDayNumber({ day, cycle, previousRebill });
 	const bill_at = calculateBillAt(session, billDay);
 
 	return {
@@ -285,14 +285,14 @@ const getTransactionProducts = ({ products = [], cycle }) => {
 // TODO use a real currency library
 const calculateCycleAmount = ({ price, shipping_price = 0 }) => numberutilities.formatFloat(parseFloat(price) + parseFloat(shipping_price), 2);
 
-const getNextProductScheduleBillDayNumber = ({ day, product_schedule, position, previousRebill }) => {
-	if (position <= 0 || !product_schedule) {
+const getNextProductScheduleBillDayNumber = ({ day, cycle, previousRebill }) => {
+	if (!cycle) {
 		return 0;
 	}
 
-	du.debug(`Next bill day`, day, product_schedule, position, previousRebill);
+	du.debug(`Next bill day`, day, cycle, previousRebill);
 
-	const { length } = product_schedule.cycles.find(cycle => cycle.position === position);
+	const { length } = cycle;
 
 	if (length.days) {
 		return day + length.days;
