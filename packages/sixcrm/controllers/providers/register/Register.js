@@ -448,12 +448,18 @@ module.exports = class Register extends RegisterUtilities {
 
 	}
 
-	executeProcesses(){
+	executeProcesses() {
+		du.debug('Execute Processes');
 		let merchant_provider_groups = this.parameters.get('merchantprovidergroups');
+		du.warning('mpg', merchant_provider_groups);
 
 		let process_promises = objectutilities.map(merchant_provider_groups, merchant_provider => {
+			du.warning('mp', merchant_provider);
+			du.warning('mpg[mp]', merchant_provider_groups[merchant_provider]);
 
 			let amount = this.calculateAmountFromProductGroups(merchant_provider_groups[merchant_provider]);
+
+			du.warning('amount', amount);
 
 			return this.executeProcess({merchant_provider: merchant_provider, amount: amount});
 
@@ -464,7 +470,6 @@ module.exports = class Register extends RegisterUtilities {
 			return true;
 
 		});
-
 	}
 
 	executeProcess({merchant_provider: merchant_provider, amount: amount}){
