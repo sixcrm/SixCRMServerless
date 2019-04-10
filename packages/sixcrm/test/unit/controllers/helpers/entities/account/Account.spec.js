@@ -1,6 +1,7 @@
 const mockery = require('mockery');
 let chai = require('chai');
 const expect = chai.expect;
+const assert = chai.assert;
 
 const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
@@ -177,33 +178,48 @@ describe('constrollers/helpers/entities/account/Account.js', () => {
   });
 
   describe('activateAccount', () => {
-    it('successfully activates a account', () => {
+    let account;
+    let session;
+    let customer;
+    let owner_acl;
+    let rebill;
+    let rebills;
+    let transaction;
+    let transactions;
+    let user_acls;
 
-      let account  = MockEntities.getValidAccount();
-      let session = MockEntities.getValidSession();
-      let customer = MockEntities.getValidCustomer();
-      let owner_acl = MockEntities.getValidUserACL();
-      let rebill = MockEntities.getValidRebill();
-      let rebills = [rebill];
-      let transaction = MockEntities.getValidTransaction();
+    beforeEach(() => {
+      account  = MockEntities.getValidAccount();
+      session = MockEntities.getValidSession();
+      customer = MockEntities.getValidCustomer();
+      owner_acl = MockEntities.getValidUserACL();
+      rebill = MockEntities.getValidRebill();
+      rebills = [rebill];
+      transaction = MockEntities.getValidTransaction();
       rebill.amount = transaction.amount;
-      let transactions = {transactions: [transaction]};
+      transactions = {transactions: [transaction]};
 
       owner_acl.role = 'cae614de-ce8a-40b9-8137-3d3bdff78039'
       owner_acl.user = customer.email;
-      let user_acls = [owner_acl];
+      user_acls = [owner_acl];
 
       session.account = '3f4abaf6-52ac-40c6-b155-d04caeb0391f';
       session.watermark = {
         product_schedules: [
           {
             product_schedule: {
-              schedule: [
+              cycles: [
                 {
-                  quantity: 1,
-                  product: {
-                    id: '3ac1a59a-6e41-4074-9712-3c80ef3f3e95'
-                  }
+                  length: {
+                    months: 1
+                  },
+                  cycle_products: [
+                    {
+                      product: {
+                        id: '3ac1a59a-6e41-4074-9712-3c80ef3f3e95'
+                      }
+                    }
+                  ]
                 }
               ]
             },
@@ -265,6 +281,9 @@ describe('constrollers/helpers/entities/account/Account.js', () => {
           return Promise.resolve(transactions);
         }
       });
+    });
+
+    it('successfully activates an account', () => {
 
       const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
       let accountHelperController = new AccountHelperController();
@@ -275,6 +294,40 @@ describe('constrollers/helpers/entities/account/Account.js', () => {
         expect(result.activated).to.equal(true);
       });
 
+    });
+
+    it('rejects account activation if session has bad product', () => {
+
+      session.watermark = {
+        product_schedules: [
+          {
+            product_schedule: {
+              cycles: [
+                {
+                  length: {
+                    months: 1
+                  },
+                  cycle_products: [
+                    {
+                      product: {
+                        id: '3ac1a59a-6e41-4074-9712-3c80ef3f3e92'
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            quantity: 1
+          }
+        ]
+      };
+
+      const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
+      let accountHelperController = new AccountHelperController();
+
+      return accountHelperController.activateAccount({account: account.id, session: session.id})
+        .then(() => assert.fail('This should not happen'))
+        .catch((e) => expect(e.message).to.equal('[400] The session does not contain appropriate subscription products.'));
     });
   });
 
