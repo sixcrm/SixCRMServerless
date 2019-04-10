@@ -193,7 +193,10 @@ const buildRebillEntity = async ({
 	const cycle = product_schedule ? getCurrentCycle({ cycles: product_schedule.cycles, position }) : null;
 	const amount = calculateAmount({ products, cycle });
 	const transaction_products = getTransactionProducts({ products, cycle });
-	const billDay = getNextProductScheduleBillDayNumber({ day, product_schedule, position: position - 1, previousRebill });
+	const billDay = getNextProductScheduleBillDayNumber(
+		{ day, product_schedule, position: position - 1, previousRebill, current_cycle: cycle }
+	);
+
 	const bill_at = calculateBillAt(session, billDay);
 
 	return {
@@ -285,14 +288,12 @@ const getTransactionProducts = ({ products = [], cycle }) => {
 // TODO use a real currency library
 const calculateCycleAmount = ({ price, shipping_price = 0 }) => numberutilities.formatFloat(parseFloat(price) + parseFloat(shipping_price), 2);
 
-const getNextProductScheduleBillDayNumber = ({ day, product_schedule, position, previousRebill }) => {
+const getNextProductScheduleBillDayNumber = ({ day, product_schedule, position, previousRebill, current_cycle }) => {
 	if (position <= 0 || !product_schedule) {
 		return 0;
 	}
 
-	du.debug(`Next bill day`, day, product_schedule, position, previousRebill);
-
-	const { length } = product_schedule.cycles.find(cycle => cycle.position === position);
+	const { length } = current_cycle || product_schedule.cycles.find(cycle => cycle.position === position);
 
 	if (length.days) {
 		return day + length.days;
@@ -300,7 +301,7 @@ const getNextProductScheduleBillDayNumber = ({ day, product_schedule, position, 
 
 	const previousBillAt = moment.utc(previousRebill.bill_at);
 	const billAt = previousBillAt.clone().add(1, 'months');
-	return moment.duration(billAt.diff(previousBillAt)).asDays();
+	return day + moment.duration(billAt.diff(previousBillAt)).asDays();
 }
 
 const calculateBillAt = (session, bill_day) => {
