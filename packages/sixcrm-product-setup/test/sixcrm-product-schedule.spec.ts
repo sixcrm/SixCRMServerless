@@ -11,6 +11,9 @@ chai.use(chaiExclude);
 const expect = chai.expect;
 const assert = chai.assert;
 
+import Configuration from '@6crm/sixcrm-platform/lib/config/Configuration';
+import IAuroraConfig from '@6crm/sixcrm-platform/lib/config/Aurora';
+
 import {createProductScheduleService, createProductSetupService} from '../src';
 import {disconnect} from "../src/connect";
 import ProductScheduleService from "../src/ProductScheduleService";
@@ -93,41 +96,43 @@ describe('@6crm/sixcrm-product-schedule', () => {
 	let anotherAccountProductScheduleService: ProductScheduleService;
 	let masterAccountProductScheduleService: ProductScheduleService;
 	let masterAccountProductSetupService: ProductSetupService;
-	let accountId = v4();
-	let anotherAccountId = v4();
+	const accountId = v4();
+	const anotherAccountId = v4();
 
 	before(async () => {
+		const auroraConfig = await Configuration.get<IAuroraConfig>('aurora');
+
 		productScheduleService = await createProductScheduleService({
 			accountId,
-			host: 'localhost',
-			username: 'postgres',
-			password: '',
-			schema: 'public',
+			host: auroraConfig.host,
+			username: auroraConfig.user,
+			password: auroraConfig.password,
+			schema: 'product_setup'
 		});
 
 		anotherAccountProductScheduleService = await createProductScheduleService({
 			accountId: anotherAccountId,
-			host: 'localhost',
-			username: 'postgres',
-			password: '',
-			schema: 'public',
+			host: auroraConfig.host,
+			username: auroraConfig.user,
+			password: auroraConfig.password,
+			schema: 'product_setup'
 		});
 
 		masterAccountProductScheduleService = await createProductScheduleService({
 			accountId: '*',
-			host: 'localhost',
-			username: 'postgres',
-			password: '',
-			schema: 'public',
+			host: auroraConfig.host,
+			username: auroraConfig.user,
+			password: auroraConfig.password,
+			schema: 'product_setup',
 			logging: ['error']
 		});
 
 		masterAccountProductSetupService = await createProductSetupService({
 			accountId: '*',
-			host: 'localhost',
-			username: 'postgres',
-			password: '',
-			schema: 'public',
+			host: auroraConfig.host,
+			username: auroraConfig.user,
+			password: auroraConfig.password,
+			schema: 'product_setup',
 			logging: ['error']
 		});
 	});
@@ -148,7 +153,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 	};
 
 	describe('create', () => {
-		it('creates a product schedule with hydrated product in the account', async () => {
+		it.only('creates a product schedule with hydrated product in the account', async () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 
@@ -162,7 +167,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 
 			// then
 			expect(NormalizedProductSchedule.of(productScheduleFromDb))
-				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
+				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule));
 		});
 
 		it('creates a product schedule with cycle product IDs in the account', async () => {
@@ -225,7 +230,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 
 			// then
 			expect(NormalizedProductSchedule.of(productScheduleFromDb))
-				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule))
+				.to.deep.equal(NormalizedProductSchedule.of(aProductSchedule));
 		});
 
 		it('rejects objects with invalid account id', async () => {
@@ -270,7 +275,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 
 			// then
 			expect(NormalizedProductSchedule.of(productScheduleFromDb))
-				.to.deep.equal(NormalizedProductSchedule.of(savedProductSchedule))
+				.to.deep.equal(NormalizedProductSchedule.of(savedProductSchedule));
 		});
 
 		it('enforces product schedule must exist', async () => {
@@ -482,7 +487,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 
 
 			// then
-			expect(() => productScheduleService.get(id)).to.throw;
+			expect(() => productScheduleService.get(id)).to.throw();
 		});
 
 	});
