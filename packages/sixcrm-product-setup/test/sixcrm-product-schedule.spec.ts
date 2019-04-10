@@ -105,6 +105,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 		productScheduleService = await createProductScheduleService({
 			accountId,
 			host: auroraConfig.host,
+			port: auroraConfig.port,
 			username: auroraConfig.user,
 			password: auroraConfig.password,
 			schema: 'product_setup'
@@ -113,6 +114,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 		anotherAccountProductScheduleService = await createProductScheduleService({
 			accountId: anotherAccountId,
 			host: auroraConfig.host,
+			port: auroraConfig.port,
 			username: auroraConfig.user,
 			password: auroraConfig.password,
 			schema: 'product_setup'
@@ -121,6 +123,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 		masterAccountProductScheduleService = await createProductScheduleService({
 			accountId: '*',
 			host: auroraConfig.host,
+			port: auroraConfig.port,
 			username: auroraConfig.user,
 			password: auroraConfig.password,
 			schema: 'product_setup',
