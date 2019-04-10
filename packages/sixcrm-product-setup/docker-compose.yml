@@ -1,7 +1,7 @@
 version: '3'
 services:
   node:
-    image: node:8.10
+    image: circleci/node:8.10
   aurora:
     image: circleci/postgres:9.6
     ports:
