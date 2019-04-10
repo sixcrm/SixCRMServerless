@@ -81,7 +81,7 @@ jobs:
           command: echo "Pausing to allow docker to catch up..." && sleep 15
       - run:
           name: Aurora Create Tables
-          command: cd packages/sixcrm-product-setup && docker-compose run -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless/packages/sixcrm -e stage=circle node node ./deployment/aurora/deploy-schema.js
+          command: cd packages/sixcrm-product-setup && docker-compose run -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless/packages/sixcrm -e stage=circle -e SIX_VERBOSE=3 node node ./deployment/aurora/deploy-schema.js
       - run:
           name: Product Setup Tests
           command: cd packages/sixcrm-product-setup && docker-compose run -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless/packages/sixcrm-product-setup -e stage=circle node yarn run test-productsetup
