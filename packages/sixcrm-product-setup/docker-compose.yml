@@ -2,10 +2,6 @@ version: '3'
 services:
   node:
     image: circleci/node:8.10
-    environment:
-      - stage=circle
-      - CIRCLECI
-      - SIX_VERBOSE
   aurora:
     image: circleci/postgres:9.6
     ports:
