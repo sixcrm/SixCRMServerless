@@ -1,32 +1,41 @@
 import {DynamoConnector} from "./DynamoConnector";
 import {AuroraConnector} from "./AuroraConnector";
 import {connect} from "../../connect";
-import Product from "../../models/Product";
-
-const dynamoConfig = {
-	"region": "us-east-1",
-	"account": "068070110666"
-};
-
-const auroraConfig = {
-	host: 'localhost',
-	username: 'postgres',
-	password: '',
-	schema: 'public',
-	logging: ['error']
-};
 
 export abstract class DataMigration {
+
+	protected dynamoConfig = {
+		"region": "us-east-1",
+		"account": "068070110666"
+	};
+
+	protected auroraConfig = {
+		host: 'localhost',
+		username: 'postgres',
+		password: '',
+		schema: 'public',
+		logging: ['error']
+	};
+
+	protected auroraConfigDev = {
+		host: 'localhost',
+		username: 'root',
+		password: 'Jagodica9',
+		schema: 'product_setup',
+		logging: ['error']
+	};
 
 	protected dynamoConnector: DynamoConnector;
 	protected auroraConnector: AuroraConnector;
 
 	async prepare(): Promise<void> {
-		this.dynamoConnector = new DynamoConnector(dynamoConfig);
-		this.auroraConnector = new AuroraConnector(await connect(auroraConfig), Product);
+		this.dynamoConnector = new DynamoConnector(this.dynamoConfig);
+		this.auroraConnector = new AuroraConnector(await connect(this.auroraConfig), this.getModelClass());
 	}
 
 	abstract migrate(): Promise<void>;
+
+	abstract getModelClass();
 
 	async cleanup(): Promise<void> {
 		this.auroraConnector.connection.close();
