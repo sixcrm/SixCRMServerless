@@ -2,7 +2,7 @@ import { randomBytes } from 'crypto';
 import 'reflect-metadata';
 import { createConnection, getConnection, getConnectionOptions, ConnectionOptions } from 'typeorm';
 import Product from './models/Product';
-import { logger } from './log';
+import { logger } from '@6crm/sixcrm-platform/lib/log';
 import ProductSchedule from "./models/ProductSchedule";
 import CycleProduct from "./models/CycleProduct";
 import Cycle from "./models/Cycle";

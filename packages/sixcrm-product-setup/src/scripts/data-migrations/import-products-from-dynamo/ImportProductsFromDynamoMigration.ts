@@ -1,7 +1,7 @@
 import {DynamoProduct} from "../DynamoProduct";
 import Product from "../../../models/Product";
 import {DataMigration} from "../DataMigration";
-import {logger} from '../../../log';
+import {logger} from '@6crm/sixcrm-platform/lib/log';
 
 const log = logger('ImportProductsFromDynamoMigration');
 

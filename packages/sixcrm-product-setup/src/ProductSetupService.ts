@@ -1,7 +1,7 @@
 import { Connection, Repository, FindConditions } from 'typeorm';
 import Product from './models/Product';
 import { validate, ValidationError } from "class-validator";
-import {LogMethod} from "./log";
+import {LogMethod} from "@6crm/sixcrm-platform/lib/log";
 
 import { MASTER_ACCOUNT_ID } from '@6crm/sixcrm-data/lib/constants';
 

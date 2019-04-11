@@ -1,6 +1,6 @@
 import ProductSetupService from './ProductSetupService';
 import { connect, IDatabaseConfig } from './connect';
-import { logger } from './log';
+import { logger } from '@6crm/sixcrm-platform/lib/log';
 import ProductSetupServiceNotFoundError from './errors/ProductSetupServiceNotFoundError';
 import ProductScheduleService from "./ProductScheduleService";
 import ProductScheduleServiceNotFoundError from "./errors/ProductScheduleServiceNotFoundError";

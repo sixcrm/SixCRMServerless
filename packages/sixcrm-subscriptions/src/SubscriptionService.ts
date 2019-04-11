@@ -1,7 +1,7 @@
 import { Connection, Repository, FindConditions } from 'typeorm';
 import { validate, ValidationError } from "class-validator";
 import { merge } from 'lodash';
-import { LogMethod, logger } from "./log";
+import { LogMethod, logger } from "@6crm/sixcrm-platform/lib/log";
 import Subscription from "./models/Subscription";
 import SubscriptionCycle from './models/SubscriptionCycle';
 import SubscriptionCycleProduct from "./models/SubscriptionCycleProduct";

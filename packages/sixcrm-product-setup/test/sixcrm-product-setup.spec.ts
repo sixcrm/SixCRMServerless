@@ -11,7 +11,7 @@ const expect = chai.expect;
 const assert = chai.assert;
 
 import Configuration from '@6crm/sixcrm-platform/lib/config/Configuration';
-import IAuroraConfig from '@6crm/sixcrm-platform/lib/config/Aurora';
+import IAuroraConfig from '@6crm/sixcrm-data/lib/config/Aurora';
 
 import { createProductSetupService } from '../src';
 import ProductSetupService from '../src/ProductSetupService';

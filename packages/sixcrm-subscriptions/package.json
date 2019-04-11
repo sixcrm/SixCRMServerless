@@ -50,6 +50,7 @@
     "typescript": "^3.2.2"
   },
   "dependencies": {
+    "@6crm/sixcrm-platform": "^1.0.0",
     "@6crm/sixcrm-data": "^1.0.0",
     "@6crm/sixcrm-product-setup": "^1.0.0",
     "chai-exclude": "^1.0.12",
