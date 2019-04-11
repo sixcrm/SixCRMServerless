@@ -71,12 +71,12 @@ const getValidCycle = ({
 		updated_at: new Date()
 	};
 
-	cycle.cycle_products = [ getValidCycleProduct(cycle, getValidProduct(accountId)) ];
+	cycle.cycle_products = [ getValidCycleProduct(getValidProduct(accountId)) ];
 
 	return cycle;
 };
 
-const getValidCycleProduct = (cycle: Cycle, product: Product) => {
+const getValidCycleProduct = (product: Product) => {
 	return {
 		created_at: new Date(),
 		is_shipping: false,
@@ -156,7 +156,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 	};
 
 	describe('create', () => {
-		it.only('creates a product schedule with hydrated product in the account', async () => {
+		it('creates a product schedule with hydrated product in the account', async () => {
 			// given
 			const aProductSchedule = getValidProductSchedule(accountId);
 
@@ -490,7 +490,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 
 
 			// then
-			expect(() => productScheduleService.get(id)).to.throw();
+			await expect(productScheduleService.get(id)).to.be.rejected;
 		});
 
 	});
