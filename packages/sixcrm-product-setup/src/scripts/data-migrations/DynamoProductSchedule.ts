@@ -78,14 +78,7 @@ export class DynamoProductSchedule {
 	}
 
 	toProductSchedule() : ProductSchedule {
-		let cycles = sortBy(this.schedule, 'start').reduce(sortedScheduleReducer, []);
-		cycles = cycles.map(({ cycle_products, ...cycle}) => ({
-			...cycle,
-			cycle_products: cycle_products.map(({ product, ...cycleProduct }) => ({
-				...cycleProduct,
-				product: { id: product }
-			}))
-		}));
+		let cycles = DynamoProductSchedule.cyclesFromSchedule(this.schedule);
 
 		return Object.assign(new ProductSchedule(this.id, this.account, this.name.substring(0, 55).trim(), !!this.trial_required),{
 			created_at: new Date(this.created_at),
@@ -94,6 +87,18 @@ export class DynamoProductSchedule {
 			cycles
 
 		});
+	}
+
+	static cyclesFromSchedule(schedule) {
+		let cycles = sortBy(schedule, 'start').reduce(sortedScheduleReducer, []);
+		cycles = cycles.map(({cycle_products, ...cycle}) => ({
+			...cycle,
+			cycle_products: cycle_products.map(({product, ...cycleProduct}) => ({
+				...cycleProduct,
+				product: {id: product}
+			}))
+		}));
+		return cycles;
 	}
 
 	private get(object: any, path: string): any {
