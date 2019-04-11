@@ -1,3 +1,4 @@
+import * as util from 'util';
 import * as Logger from 'js-logger';
 
 Logger.useDefaults({
@@ -30,7 +31,7 @@ export function LogMethod(level: 'info' | 'debug' = 'info') {
 		const classname = target.constructor.name;
 
 		descriptor.value = function() {
-			const args = Array.from(arguments).map( a => JSON.stringify(a)).join(',');
+			const args = Array.from(arguments).map(a => util.inspect(a, false, null)).join(',');
 			const result = originalMethod.apply(this, arguments);
 			const message = getMessage(target, key, args,result);
 

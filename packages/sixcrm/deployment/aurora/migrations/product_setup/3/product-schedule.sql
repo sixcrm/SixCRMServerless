@@ -12,7 +12,7 @@ CREATE INDEX ix_product_schedule_account_id ON product_setup.product_schedule(ac
 
 CREATE TABLE product_setup.cycle (
 	id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-	product_schedule_id UUID NOT NULL REFERENCES product_setup.product_schedule(id),
+	product_schedule_id UUID REFERENCES product_setup.product_schedule(id),
 	name VARCHAR(55),
 	created_at TIMESTAMP NOT NULL DEFAULT now(),
 	updated_at TIMESTAMP NOT NULL DEFAULT now(),
@@ -24,12 +24,12 @@ CREATE TABLE product_setup.cycle (
 );
 
 CREATE TABLE product_setup.cycle_product (
-	cycle_id UUID NOT NULL REFERENCES product_setup.cycle(id),
-	product_id UUID NOT NULL REFERENCES product_setup.product(id),
+	cycle_id UUID REFERENCES product_setup.cycle(id),
+	product_id UUID REFERENCES product_setup.product(id),
 	PRIMARY KEY (cycle_id, product_id),
 	created_at TIMESTAMP NOT NULL DEFAULT now(),
 	updated_at TIMESTAMP NOT NULL DEFAULT now(),
 	quantity INT NOT NULL CHECK (quantity > 0),
 	is_shipping BOOLEAN NOT NULL,
-	position INT NOT NULL CHECK (position > 0)
+	position INT NOT NULL CHECK (position >= 0)
 );

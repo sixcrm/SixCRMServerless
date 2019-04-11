@@ -26,11 +26,13 @@ jobs:
           paths:
             - node_modules
             - packages/sixcrm/node_modules
+            - packages/sixcrm-platform/node_modules
             - packages/sixcrm-product-setup/node_modules
       - persist_to_workspace:
           root: .
           paths:
             - packages/sixcrm/lib
+            - packages/sixcrm-platform/lib
             - packages/sixcrm-product-setup/lib
   lint:
     <<: *job-defaults
@@ -61,6 +63,8 @@ jobs:
       - checkout
       - restore_cache:
           key: v2-dependency-cache-{{ checksum "yarn.lock" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Install Docker Compose
           command: |
@@ -73,8 +77,14 @@ jobs:
             set -x
             cd packages/sixcrm-product-setup && docker-compose up -d
       - run:
+          name: Wait for Docker
+          command: echo "Pausing to allow docker to catch up..." && sleep 15
+      - run:
+          name: Aurora Create Tables
+          command: cd packages/sixcrm-product-setup && docker-compose run -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless/packages/sixcrm -e CIRCLECI -e SIX_VERBOSE -e stage=circle node node ./deployment/aurora/deploy-schema.js
+      - run:
           name: Product Setup Tests
-          command: cd packages/sixcrm-product-setup && docker-compose run -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless/packages/sixcrm-product-setup node yarn run test-productsetup
+          command: cd packages/sixcrm-product-setup && docker-compose run -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless/packages/sixcrm-product-setup -e CIRCLECI -e SIX_VERBOSE -e stage=circle node yarn run test-productsetup
   pre_deploy:
     <<: *job-defaults
     steps:
