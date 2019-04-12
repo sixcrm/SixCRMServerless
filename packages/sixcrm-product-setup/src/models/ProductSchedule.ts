@@ -44,6 +44,12 @@ export default class ProductSchedule extends DomainEntity {
 	updated_at: Date;
 
 	@Column({
+		type: 'text',
+		nullable: true
+	})
+	description: string | null;
+
+	@Column({
 		type: 'uuid',
 		nullable: true
 	})
@@ -55,6 +61,14 @@ export default class ProductSchedule extends DomainEntity {
 	@Column()
 	@IsNotEmpty()
 	requires_confirmation: boolean;
+
+	@Column({
+		type: 'uuid',
+		nullable: true
+	})
+	@IsUUID()
+	@IsOptional()
+	sms_provider_id: string;
 
 	public validate(): boolean {
 		return new ProductScheduleValidator(this).validate();

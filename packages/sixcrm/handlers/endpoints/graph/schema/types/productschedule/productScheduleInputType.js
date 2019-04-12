@@ -12,12 +12,13 @@ module.exports.graphObj = new GraphQLInputObjectType({
 	fields: () => ({
 		id:					    { type: GraphQLString },
 		name:           { type: GraphQLString },
+		description:	{ type: GraphQLString },
 		schedule:			  { type: new GraphQLList(productScheduleProductConfigurationInputType.graphObj), deprecationReason: 'The `schedule` field is deprecated and will be removed soon.' },
 		cycles:			  { type: new GraphQLList(cycleInputType.graphObj) },
 		merchantprovidergroup:  { type: GraphQLString },
 		trial_required: { type: GraphQLBoolean, deprecationReason: 'The `trial_required` field is deprecated and will be removed soon.' },
 		requires_confirmation: { type: GraphQLBoolean },
-		trial_sms_provider:  { type: GraphQLString },
+		confirmation_sms_provider_id:  { type: GraphQLString },
 		updated_at:     { type: GraphQLString }
 	})
 });
@@ -72,6 +73,7 @@ const sortedScheduleReducer = (
 };
 
 module.exports.toProductScheduleInput = ({
+	confirmation_sms_provider_id: sms_provider_id,
 	cycles,
 	schedule,
 	requires_confirmation,
@@ -90,6 +92,7 @@ module.exports.toProductScheduleInput = ({
 
 	return {
 		...productScheduleInput,
+		...(sms_provider_id ? { sms_provider_id } : {}),
 		merchant_provider_group_id: merchantprovidergroup,
 		requires_confirmation: !!(requires_confirmation || trial_required),
 		cycles

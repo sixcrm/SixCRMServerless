@@ -30,6 +30,10 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: GraphQLString,
 			description: 'The name of product schedule.',
 		},
+		description: {
+			type: GraphQLString,
+			description: 'The product schedule description.',
+		},
 		schedule: {
 			type: new GraphQLList(scheduleType.graphObj),
 			description: '`schedule` will be removed. Use `ProductSchedule.cycles` instead.',
@@ -42,7 +46,7 @@ module.exports.graphObj = new GraphQLObjectType({
 		merchantprovidergroup: {
 			type: merchantProviderGroupType.graphObj,
 			description: 'The merchant provider group associated with the product schedule.',
-			resolve: (productschedule) => {
+			resolve: async (productschedule) => {
 				if (!productschedule.merchant_provider_group_id) {
 					return null;
 				}
@@ -64,13 +68,13 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: GraphQLBoolean,
 			description: 'Confirmation required after the initial purchase before the next cycle is billed'
 		},
-		trial_sms_provider:  {
+		confirmation_sms_provider:  {
 			type: smsProviderType.graphObj,
-			resolve: (productschedule) => {
-				if (!productschedule.trial_sms_provider) {
-					return Promise.resolve(null);
+			resolve: async (productschedule) => {
+				if (!productschedule.sms_provider_id) {
+					return null
 				}
-				return smsProviderController.get({id: productschedule.trial_sms_provider})
+				return smsProviderController.get({ id: productschedule.sms_provider_id })
 			}
 		},
 		created_at: {

@@ -4,8 +4,10 @@ CREATE TABLE product_setup.product_schedule (
 	name VARCHAR(55) NOT NULL,
 	created_at TIMESTAMP NOT NULL DEFAULT now(),
 	updated_at TIMESTAMP NOT NULL DEFAULT now(),
+	description TEXT,
 	merchant_provider_group_id UUID,
-	requires_confirmation BOOLEAN NOT NULL
+	requires_confirmation BOOLEAN NOT NULL,
+	sms_provider_id UUID
 );
 
 CREATE INDEX ix_product_schedule_account_id ON product_setup.product_schedule(account_id);
