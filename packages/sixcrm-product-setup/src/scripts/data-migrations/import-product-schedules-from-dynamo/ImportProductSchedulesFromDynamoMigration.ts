@@ -28,7 +28,7 @@ export class ImportProductSchedulesFromDynamoMigration extends DataMigration {
 				await this.saveOneToAurora(productSchedule);
 				await productScheduleService.update(productSchedule);
 			} catch (e) {
-				log.warn(`Can't insert cycles for product schedule ${productSchedule.id}`)
+				log.warn(`Can't insert cycles for product schedule ${productSchedule.id}`);
 			}
 		}
 

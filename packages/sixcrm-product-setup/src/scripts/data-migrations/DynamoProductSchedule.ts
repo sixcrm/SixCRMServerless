@@ -1,7 +1,6 @@
-const sortBy = require('lodash');
-
 import ProductSchedule from "../../models/ProductSchedule";
 import DynamoDB = require("aws-sdk/clients/dynamodb");
+import _ = require('lodash');
 
 const nextPositionReducer = ({ schedules, position, end }) => {
 	if (!end) {
@@ -74,11 +73,11 @@ export class DynamoProductSchedule {
 		this.updated_at = this.get(data, 'updated_at.S');
 		this.trial_required = this.get(data, 'trial_required.BOOL');
 		this.merchantprovidergroup = this.get(data, 'merchantprovidergroup.S');
-		this.schedule = DynamoDB.Converter.unmarshall(data).schedule
+		this.schedule = DynamoDB.Converter.unmarshall(data).schedule;
 	}
 
 	toProductSchedule() : ProductSchedule {
-		let cycles = sortBy(this.schedule, 'start').reduce(sortedScheduleReducer, []);
+		let cycles = _.sortBy(this.schedule, 'start').reduce(sortedScheduleReducer, []);
 		cycles = cycles.map(({ cycle_products, ...cycle}) => ({
 			...cycle,
 			cycle_products: cycle_products.map(({ product, ...cycleProduct }) => ({
