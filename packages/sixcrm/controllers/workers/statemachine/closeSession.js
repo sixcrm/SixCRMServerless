@@ -23,7 +23,7 @@ module.exports = class CloseSessionController extends stepFunctionWorkerControll
 	}
 
 	async handleTrialConfirmation(session) {
-		const trialProductSchedule = session.watermark.product_schedules.find(ps => ps.product_schedule.trial_required);
+		const trialProductSchedule = session.watermark.product_schedules.find(ps => ps.product_schedule.requires_confirmation);
 
 		if (!trialProductSchedule) {
 			du.debug(`Trial confirmation not required for session with id ${session.id}`);
@@ -34,7 +34,7 @@ module.exports = class CloseSessionController extends stepFunctionWorkerControll
 			session: session.id,
 			account: session.account,
 			customer: session.customer,
-			sms_provider: trialProductSchedule.product_schedule.confirmation_sms_provider,
+			sms_provider: trialProductSchedule.product_schedule.sms_provider_id,
 			confirmed_at: 'null' // Special value so we can query this later.
 		});
 
