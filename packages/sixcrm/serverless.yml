@@ -406,7 +406,7 @@ functions:
     events:
       - schedule:
           rate: rate(24 hours)
-          enabled: true
+          enabled: false
 
 ########################
 # Utility
