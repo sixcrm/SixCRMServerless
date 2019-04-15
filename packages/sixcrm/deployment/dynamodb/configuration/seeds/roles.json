@@ -42,6 +42,7 @@
 			"shippingreceipt/*",
 			"smtpprovider/*",
 			"smsprovider/*",
+			"trialconfirmation/*",
 			"transaction/*",
 			"notification/*",
 			"notificationread/*",
