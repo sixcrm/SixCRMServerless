@@ -30,6 +30,10 @@ export class ImportProductsFromDynamoMigration extends DataMigration {
 		log.info(`Inserted ${insertedProductCount}/${productsToInsert.length} products to Aurora.`);
 	}
 
+	getModelClass() {
+		return Product;
+	}
+
 }
 
 new ImportProductsFromDynamoMigration().execute();
