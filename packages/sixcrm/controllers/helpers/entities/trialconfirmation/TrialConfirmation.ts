@@ -16,12 +16,25 @@ export default class TrialConfirmation {
 	private readonly trialconfirmationController = new TrialConfirmationController();
 	private readonly smsProviderController = new SMSProvider();
 
-	private async sendDeliveryConfirmationSms(phone: string, code: string, provider_id: string) {
+	private async sendDeliveryConfirmationSms(phone: string, code: string, provider_id: string, message: string) {
 		du.debug('sendDeliveryConfirmationSms', phone, code);
 
-		const message = `Please confirm your trial at ${this.buildConfirmationLink(code)}`;
-
 		return this.smsProviderController.sendSMS(provider_id, phone, message);
+	}
+
+	private buildConfirmationMessage(
+		scheduleName: string,
+		code: string,
+		firstName?: string
+	) {
+		const truncatedFirstName = firstName ? firstName.substring(0, 14) : undefined;
+		const truncatedScheduleName = scheduleName.substring(0, 32);
+	
+		return `${
+			firstName ? truncatedFirstName + ", t" : "T"
+		}hank you for your order of ${truncatedScheduleName}. Please confirm here: ${this.buildConfirmationLink(
+			code
+		)}`;
 	}
 
 	private buildConfirmationLink(code: string) {
@@ -50,7 +63,14 @@ export default class TrialConfirmation {
 		if (markAsDelivered) {
 			await this.trialconfirmationController.markDelivered({confirmation});
 		}
-		return this.sendDeliveryConfirmationSms(customer.phone, confirmation.code, confirmation.sms_provider);
+
+		const message = this.buildConfirmationMessage(
+			session.watermark.product_schedules[0].product_schedule.name,
+			confirmation.code,
+			customer.firstname
+		);
+
+		return this.sendDeliveryConfirmationSms(customer.phone, confirmation.code, confirmation.sms_provider, message);
 	}
 
 	async retryNotification(sessionId: string) {
