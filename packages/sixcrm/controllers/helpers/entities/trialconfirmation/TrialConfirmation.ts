@@ -61,7 +61,14 @@ export default class TrialConfirmation {
 		this.assure(confirmation.sms_provider, `Confirmation with ID ${session.trial_confirmation} has no SMS provider.`);
 
 		if (markAsDelivered) {
-			await this.trialconfirmationController.markDelivered({confirmation});
+			const { delivered_at } = await this.trialconfirmationController.markDelivered({confirmation});
+
+			await this.sessionController.updateProperties({
+				id: session.id,
+				properties: {
+					started_at: delivered_at
+				}
+			});
 		}
 
 		const message = this.buildConfirmationMessage(
