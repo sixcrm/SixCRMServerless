@@ -533,7 +533,7 @@ module.exports = class SessionController extends entityController {
 			session = this.trimSessionWatermark(session);
 
 			if (session.trial_confirmation) {
-				await trialConfirmationController.delete({id: session.trial_confirmation.id});
+				await trialConfirmationController.delete({id: session.trial_confirmation});
 			}
 
 			return this.update({entity: session}).then(() => this.listRebills(session)).then(rebills => {
