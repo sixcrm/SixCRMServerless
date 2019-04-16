@@ -260,6 +260,7 @@ workflows:
                 - priority
       - pre_deploy:
           requires:
+            - build
             - lint
             - unit_tests
             - product_setup_tests
