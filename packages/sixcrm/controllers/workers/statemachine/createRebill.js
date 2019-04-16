@@ -56,7 +56,7 @@ module.exports = class CreateRebillController extends stepFunctionWorkerControll
 			return 'REBILLCREATED';
 		}
 
-		if(_.includes(['CONCLUDED', 'CONCLUDE', 'CANCELLED', 'INCOMPLETE'], rebill)){
+		if(_.includes(['CONCLUDED', 'CONCLUDE', 'CANCELLED', 'INCOMPLETE', 'CONFIRMATION_REQUIRED'], rebill)){
 			return rebill;
 		}
 
