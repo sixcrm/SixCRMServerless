@@ -29,6 +29,7 @@ module.exports = class BillController extends stepFunctionWorkerController {
 		this.validateEvent(event);
 
 		let rebill = await this.getRebill(event.guid);
+		await this.createProductScheduleService(rebill.account);
 
 		let register_result = await this.executeBilling(rebill);
 

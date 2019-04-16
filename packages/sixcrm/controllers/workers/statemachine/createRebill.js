@@ -16,7 +16,11 @@ module.exports = class CreateRebillController extends stepFunctionWorkerControll
 		this.validateEvent(event);
 
 		const session = await this.getSession(event.guid);
-		await this.createProductSetupService(session.account);
+		const { account: accountId } = session;
+		await Promise.all([
+			this.createProductSetupService(accountId),
+			this.createProductScheduleService(accountId)
+		]);
 
 		const rebill = await this.createRebill(session);
 

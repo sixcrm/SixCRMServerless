@@ -23,7 +23,6 @@
 					}
 				},
 				"required": [
-					"product",
 					"amount",
 					"quantity",
 					"merchantprovidergroupassociation"

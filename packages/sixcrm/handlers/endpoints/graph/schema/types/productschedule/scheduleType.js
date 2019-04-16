@@ -4,9 +4,10 @@ const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
 
 let productType = require('../product/productType');
-const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'schedule',
@@ -31,9 +32,16 @@ module.exports.graphObj = new GraphQLObjectType({
 		product: {
 			type: productType.graphObj,
 			description: 'The product associated with the schedule',
-			resolve: (schedule) => {
-				var productScheduleController = new ProductScheduleController();
-				return productScheduleController.getProduct(schedule)
+			resolve: async ({ product, product_id }) => {
+				const productId = product || product_id;
+
+				try {
+					const product = await getProductSetupService().getProduct(productId);
+					return LegacyProduct.hybridFromProduct(product);
+				} catch (e) {
+					du.error('Cannot retrieve product on account', e);
+					return null;
+				}
 			}
 		},
 		samedayofmonth:{

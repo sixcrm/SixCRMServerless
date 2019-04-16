@@ -91,8 +91,6 @@ function getValidCloudsearchDomainResponses(){
 
 describe('controllers/workers/indexEntities', () => {
 
-	let process_env;
-
 	before(() => {
 		mockery.enable({
 			useCleanCache: true,
@@ -101,18 +99,13 @@ describe('controllers/workers/indexEntities', () => {
 		});
 	});
 
-	beforeEach(() => {
-		process_env = process.env;
-		process.env['cloudsearch_domainendpoint'] = 'doc-somethingsomething';
-	});
-	afterEach(() => {
-		mockery.resetCache();
-		process.env = process_env;
-	});
-
 	after(() => {
 		mockery.deregisterAll();
 		mockery.disable();
+	});
+
+	afterEach(() => {
+		mockery.resetCache();
 	});
 
 	describe('constructor', () => {

@@ -17,7 +17,6 @@
 	},
 	"required": [
 		"product",
-		"quantity",
-		"amount"
+		"quantity"
 	]
 }

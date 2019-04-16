@@ -244,6 +244,9 @@ describe('controllers/workers/statemachine/createRebill.js', () => {
 			mockery.registerMock('@6crm/sixcrm-product-setup', {
 				createProductSetupService() {
 					return Promise.resolve();
+				},
+				createProductScheduleService() {
+					return Promise.resolve();
 				}
 			});
 
@@ -282,6 +285,9 @@ describe('controllers/workers/statemachine/createRebill.js', () => {
 			mockery.registerMock('@6crm/sixcrm-product-setup', {
 				createProductSetupService() {
 					return Promise.resolve();
+				},
+				createProductScheduleService() {
+					return Promise.resolve();
 				}
 			});
 
@@ -319,6 +325,9 @@ describe('controllers/workers/statemachine/createRebill.js', () => {
 
 			mockery.registerMock('@6crm/sixcrm-product-setup', {
 				createProductSetupService() {
+					return Promise.resolve();
+				},
+				createProductScheduleService() {
 					return Promise.resolve();
 				}
 			});

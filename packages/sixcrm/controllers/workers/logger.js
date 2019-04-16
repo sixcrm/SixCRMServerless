@@ -9,7 +9,7 @@ module.exports = class LoggerController {
 
 	constructor() {
 
-		this.elasticsearch_endpoint = process.env.elasticsearch_endpoint;
+		this._endpoint = global.SixCRM.configuration.site_config.elasticsearch.endpoint;
 
 	}
 
@@ -81,7 +81,7 @@ module.exports = class LoggerController {
 
 	postData(transformed_data) {
 		let esClient = new elasticsearch.Client({
-			host: this.elasticsearch_endpoint,
+			host: this._endpoint,
 			connectionClass: require('http-aws-es')
 		})
 

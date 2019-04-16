@@ -354,8 +354,18 @@ describe('controllers/Session.js', () => {
 		it('returns null when session does not have a product schedule', () => {
 			let session = getValidSession();
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
-				createINQueryParameters() {
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductScheduleService() {
+					return {
+						getByIds() {
+							return Promise.resolve([]);
+						}
+					};
+				},
+				LegacyProductSchedule: class LegacyProductSchedule {
+					static hybridFromProductSchedule(productSchedule) {
+						return productSchedule;
+					}
 				}
 			});
 
@@ -363,7 +373,7 @@ describe('controllers/Session.js', () => {
 			const sessionController = new SessionController();
 
 			return sessionController.listProductSchedules(session).then((result) => {
-				expect(result).to.deep.equal(null);
+				expect(result).to.deep.equal([]);
 			});
 		});
 
@@ -383,9 +393,18 @@ describe('controllers/Session.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/ProductSchedule.js'), class {
-				listByAccount() {
-					return Promise.resolve(['a_product_schedule']);
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductScheduleService() {
+					return {
+						getByIds() {
+							return Promise.resolve(['a_product_schedule']);
+						}
+					};
+				},
+				LegacyProductSchedule: class LegacyProductSchedule {
+					static hybridFromProductSchedule(productSchedule) {
+						return productSchedule;
+					}
 				}
 			});
 

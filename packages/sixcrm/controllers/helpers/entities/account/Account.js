@@ -20,6 +20,8 @@ const StateMachineHelper = require('../../../helpers/statemachine/StateMachine')
 const eventPushHelperController = new EventPushHelperController();
 const stateMachineHelper = new StateMachineHelper();
 
+const { LegacyProductSchedule } = require('@6crm/sixcrm-product-setup');
+
 module.exports = class AccountHelperController {
 
 	constructor(){
@@ -537,13 +539,15 @@ module.exports = class AccountHelperController {
 					return false;
 				}
 
-				if(!objectutilities.hasRecursive(product_schedule_group, 'product_schedule.schedule') || !arrayutilities.nonEmpty(product_schedule_group.product_schedule.schedule)){
+				const legacySchedule = LegacyProductSchedule.fromProductSchedule(product_schedule_group.product_schedule);
+
+				if(!objectutilities.hasRecursive(legacySchedule, 'schedule') || !arrayutilities.nonEmpty(legacySchedule.schedule)){
 					return false;
 				}
 
-				arrayutilities.map(product_schedule_group.product_schedule.schedule, (schedule_element) => {
-					if(objectutilities.hasRecursive(schedule_element, 'product.id') && _.has(this.subscription_products, schedule_element.product.id)){
-						products.push(schedule_element.product);
+				arrayutilities.map(legacySchedule.schedule, (schedule_element) => {
+					if(objectutilities.hasRecursive(schedule_element, 'product') && _.has(this.subscription_products, schedule_element.product)){
+						products.push({id: schedule_element.product});
 					}
 				});
 

@@ -1,10 +1,20 @@
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
+const { getProductScheduleService } = require('@6crm/sixcrm-product-setup');
 const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 const ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
-const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+
+const loadProductSchedule = async (id) => {
+	try {
+		return await getProductScheduleService().get(id);
+	} catch (e) {
+		du.error('Error retrieving product schedule', e);
+		throw eu.getError('not_found', `Product schedule does not exist: ${id}`);
+	}
+}
 
 module.exports = class CheckoutController extends transactionEndpointController{
 
@@ -30,8 +40,7 @@ module.exports = class CheckoutController extends transactionEndpointController{
 			'rebill/update',
 			'product/read',
 			'affiliate/read',
-			'notification/create',
-			'tracker/read'
+			'notification/create'
 		];
 
 		this.parameter_definitions = {
@@ -52,7 +61,6 @@ module.exports = class CheckoutController extends transactionEndpointController{
 		this.createLeadController = new CreateLeadController();
 		this.createOrderController = new CreateOrderController();
 		this.confirmOrderController = new ConfirmOrderController();
-		this.productScheduleController = new ProductScheduleController();
 
 		this.initialize();
 
@@ -77,22 +85,19 @@ module.exports = class CheckoutController extends transactionEndpointController{
 				throw eu.getError('bad_request', 'There can only be one product schedule per request')
 			}
 
-			for (const product_schedule of event.product_schedules) {
-				let hydrated_product_schedule = null;
-
-				if (stringutilities.isUUID(product_schedule.product_schedule)) {
-					const id = product_schedule.product_schedule;
-					hydrated_product_schedule = await this.productScheduleController.get({id});
-				} else {
-					hydrated_product_schedule = product_schedule.product_schedule;
+			for (const { product_schedule } of event.product_schedules) {
+				const id = stringutilities.isUUID(product_schedule) ? product_schedule : product_schedule.id;
+				if (!id) {
+					throw eu.getError('bad_request', 'Missing product schedule ID');
 				}
 
-				if (hydrated_product_schedule.schedule && hydrated_product_schedule.schedule.length > 1) {
-					throw eu.getError('bad_request', 'Product schedule can only have one product')
+				const productSchedule = await loadProductSchedule(id);
+				for (const cycle of productSchedule.cycles) {
+					if (cycle.cycle_products.length > 1) {
+						throw eu.getError('bad_request', 'Product schedule can only have one product')
+					}
 				}
-
 			}
-
 		}
 	}
 

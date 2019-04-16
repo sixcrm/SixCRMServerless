@@ -10,9 +10,6 @@
 		"session": {
 			"$ref": "../../entities/session.json"
 		},
-		"product_schedules": {
-			"$ref": "../components/productschedules.json"
-		},
 		"products": {
 			"$ref": "../components/products.json"
 		},

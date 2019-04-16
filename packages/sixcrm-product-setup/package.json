@@ -26,7 +26,7 @@
     "lint-fix": "tslint --fix \"src/**/*.ts\"",
     "compile": "tsc --pretty",
     "prettier": "prettier --write \"src/**/*.{ts,json}\"",
-    "test": "mocha --colors --require ts-node/register test/*.spec.ts test/**/*.spec.ts --recursive",
+    "test": "mocha --colors --require ts-node/register 'test/*.spec.ts' 'test/**/*.spec.ts'",
     "test-productsetup": "yarn run test",
     "precommit": "pretty-quick --staged"
   },
@@ -50,11 +50,12 @@
     "typescript": "^3.2.2"
   },
   "dependencies": {
+    "chai-exclude": "^1.0.12",
     "class-validator": "^0.9.1",
     "js-logger": "^1.6.0",
     "lodash": "^4.17.11",
     "pg": "^7.8.0",
     "reflect-metadata": "^0.1.12",
-    "typeorm": "^0.2.11"
+    "typeorm": "^0.2.14"
   }
 }

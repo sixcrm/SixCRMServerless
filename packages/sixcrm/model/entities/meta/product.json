@@ -13,7 +13,14 @@
 			"minLength": 3
 		},
 		"description": {
-			"type": "string"
+			"anyOf": [
+				{
+					"type": "null"
+				},
+				{
+					"type": "string"
+				}
+			]
 		},
 		"sku": {
 			"anyOf": [

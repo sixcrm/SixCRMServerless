@@ -1,6 +1,6 @@
 require('module-alias/register');
 const _ = require('lodash');
-const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
+const { getProductSetupService, getProductScheduleService, LegacyProduct, LegacyProductSchedule } = require('@6crm/sixcrm-product-setup');
 
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
@@ -171,7 +171,6 @@ const UserACLController = global.SixCRM.routes.include('controllers', 'entities/
 const UserDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 const UserSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
-const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const ReturnController = global.SixCRM.routes.include('controllers', 'entities/Return.js');
 const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
@@ -344,26 +343,6 @@ const fields = Object.assign({}, {
 			return customerNoteController.listByCustomer({
 				customer: customernote.customer,
 				pagination: customernote.pagination,
-				fatal: list_fatal
-			});
-		}
-	},
-	productschedulelistbyproduct: {
-		type: productScheduleListType.graphObj,
-		args: {
-			product: {
-				type: GraphQLString
-			},
-			pagination: {
-				type: paginationInputType.graphObj
-			}
-		},
-		resolve: function(root, args) {
-			const productScheduleController = new ProductScheduleController();
-
-			return productScheduleController.listByProduct({
-				product: args.product,
-				pagination: args.pagination,
 				fatal: list_fatal
 			});
 		}
@@ -1623,15 +1602,22 @@ const fields = Object.assign({}, {
 				type: entitySearchInputType.graphObj
 			}
 		},
-		resolve: function(root, productschedule) {
+		resolve: async (root, { pagination: { limit } = {} }) => {
+			const productSchedules = (await getProductScheduleService().getAll(
+				limit
+			)).map(productSchedule =>
+				LegacyProductSchedule.hybridFromProductSchedule(productSchedule)
+			);
 
-			const productScheduleController = new ProductScheduleController();
-
-			return productScheduleController.listByAccount({
-				pagination: productschedule.pagination,
-				fatal: list_fatal,
-				search: productschedule.search
-			});
+			return {
+				productschedules: productSchedules,
+				pagination: {
+					count: productSchedules.length,
+					end_cursor: '',
+					has_next_page: 'false',
+					last_evaluated: ''
+				}
+			};
 		}
 	},
 	transactionlist: {
@@ -1704,13 +1690,9 @@ const fields = Object.assign({}, {
 				type: new GraphQLNonNull(GraphQLString)
 			}
 		},
-		resolve: function(root, productschedule) {
-			const productScheduleController = new ProductScheduleController();
-
-			return productScheduleController.get({
-				id: productschedule.id,
-				fatal: get_fatal
-			});
+		resolve: async (root, { id }) => {
+			const productSchedule = await getProductScheduleService().get(id);
+			return LegacyProductSchedule.hybridFromProductSchedule(productSchedule);
 		}
 	},
 	merchantprovider: {

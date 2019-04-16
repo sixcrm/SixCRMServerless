@@ -7,9 +7,6 @@
 		"session": {
 			"$ref": "../../entities/session.json"
 		},
-		"product_schedules": {
-			"$ref": "../components/productschedules.json"
-		},
 		"customer": {
 			"$ref": "../../entities/customer.json"
 		},

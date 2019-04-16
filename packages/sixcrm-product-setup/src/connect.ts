@@ -3,6 +3,9 @@ import 'reflect-metadata';
 import { createConnection, getConnection, getConnectionOptions, ConnectionOptions } from 'typeorm';
 import Product from './models/Product';
 import { logger } from './log';
+import ProductSchedule from "./models/ProductSchedule";
+import CycleProduct from "./models/CycleProduct";
+import Cycle from "./models/Cycle";
 
 const connectionName = randomBytes(5).toString('hex');
 let connection;
@@ -26,8 +29,8 @@ const toConnectionOptions = (config: IDatabaseConfig) => {
 		port: 5440,
 		database: 'postgres',
 		schema: 'product_setup',
-		entities: [ Product ],
-		synchronize: true,
+		entities: [ Product, ProductSchedule, Cycle, CycleProduct ],
+		synchronize: false,
 		logging: true,
 		...config
 	} as ConnectionOptions;
@@ -36,19 +39,21 @@ const toConnectionOptions = (config: IDatabaseConfig) => {
 export const connect = async (config: IDatabaseConfig) => {
 	if (connection) {
 		try {
+			await connection;
 			return getConnection(connectionName);
 		} catch (e) {
 			log.warn('Replacing connection due to error', e);
 			connection = null;
 		}
 	}
-
 	connection = createConnection(toConnectionOptions(config));
 	return connection;
 };
 
 export const disconnect = async () => {
 	if (connection) {
-		return (await connection).close();
+		const closePromise = (await connection).close();
+		connection = null;
+		return closePromise;
 	}
 };

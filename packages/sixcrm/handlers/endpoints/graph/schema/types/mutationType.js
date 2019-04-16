@@ -1,5 +1,10 @@
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
-const { getProductSetupService, LegacyProduct } = require('@6crm/sixcrm-product-setup');
+const {
+	getProductSetupService,
+	getProductScheduleService,
+	LegacyProduct,
+	LegacyProductSchedule
+} = require("@6crm/sixcrm-product-setup");
 let SMTPProviderInputType = require('./smtpprovider/SMTPProviderInputType');
 let SMTPProviderType = require('./smtpprovider/SMTPProviderType');
 
@@ -153,7 +158,6 @@ const UserACLController = global.SixCRM.routes.include('controllers', 'entities/
 const UserDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 const UserSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
-const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const ReturnController = global.SixCRM.routes.include('controllers', 'entities/Return.js');
 const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
@@ -1502,12 +1506,13 @@ module.exports.graphObj = new GraphQLObjectType({
 					type: productScheduleInputType.graphObj
 				}
 			},
-			resolve: (value, productschedule) => {
-				const productScheduleController = new ProductScheduleController();
-
-				return productScheduleController.create({
-					entity: productschedule.productschedule
-				});
+			resolve: async (value, { productschedule: productSchedule }) => {
+				productSchedule = productScheduleInputType.toProductScheduleInput(productSchedule);
+				const productScheduleService = getProductScheduleService();
+				const {id} = await productScheduleService.create(productSchedule);
+				return LegacyProductSchedule.hybridFromProductSchedule(
+					await productScheduleService.get(id)
+				);
 			}
 		},
 		updateproductschedule: {
@@ -1518,12 +1523,13 @@ module.exports.graphObj = new GraphQLObjectType({
 					type: productScheduleInputType.graphObj
 				}
 			},
-			resolve: (value, productschedule) => {
-				const productScheduleController = new ProductScheduleController();
-
-				return productScheduleController.update({
-					entity: productschedule.productschedule
-				});
+			resolve: async (value, { productschedule: productSchedule }) => {
+				productSchedule = productScheduleInputType.toProductScheduleInput(productSchedule);
+				const productScheduleService = getProductScheduleService();
+				const {id} = await productScheduleService.update(productSchedule);
+				return LegacyProductSchedule.hybridFromProductSchedule(
+					await productScheduleService.get(id)
+				);
 			}
 		},
 		deleteproductschedule: {
@@ -1535,14 +1541,7 @@ module.exports.graphObj = new GraphQLObjectType({
 					type: new GraphQLNonNull(GraphQLString)
 				}
 			},
-			resolve: (value, productschedule) => {
-				var id = productschedule.id;
-				const productScheduleController = new ProductScheduleController();
-
-				return productScheduleController.delete({
-					id: id
-				});
-			}
+			resolve: async (value, { id }) => getProductScheduleService().delete(id)
 		},
 		createreturn: {
 			type: returnType.graphObj,

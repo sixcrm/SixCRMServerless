@@ -282,9 +282,18 @@ describe('controllers/Rebill.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/ProductSchedule.js'), class {
-				listByAccount() {
-					return Promise.resolve({productschedules: [product_schedule]});
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductScheduleService() {
+					return {
+						getByIds() {
+							return Promise.resolve([product_schedule]);
+						}
+					};
+				},
+				LegacyProductSchedule: class LegacyProductSchedule {
+					static hybridFromProductSchedule(productSchedule) {
+						return productSchedule;
+					}
 				}
 			});
 

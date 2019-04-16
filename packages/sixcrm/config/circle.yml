@@ -70,12 +70,10 @@ sns:
 
 cloudsearch:
   domainname: 'sixcrm'
-  domainendpoint: 'cloudsearch'
+  endpoint: 'doc-sixcrm-x5xewjrr254yjyrln4mlvxvfm4.us-east-1.cloudsearch.amazonaws.com'
 
 aurora:
-  release: 10
   region: 'localhost'
-  default_cluster_identifier: 'sixcrm'
   user: 'postgres'
   database: 'postgres'
   password: ''

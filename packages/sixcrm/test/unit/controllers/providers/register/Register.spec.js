@@ -12,6 +12,7 @@ const mathutilities = require('@6crm/sixcrmcore/lib/util/math-utilities').defaul
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
+const { toProductScheduleInput } = require('../../../../../handlers/endpoints/graph/schema/types/productschedule/productScheduleInputType');
 
 function getValidProcessResponse() {
 
@@ -195,7 +196,7 @@ describe('controllers/providers/Register.js', () => {
 
 	describe('hydrateSelectedCreditCard', () => {
 
-		it('fails because the creditcard has neither a token nor a number', () => {
+		it('fails because the creditcard has neither a token nor a number', async () => {
 
 			const selected_creditcard = getValidCreditCard();
 			delete selected_creditcard.token;
@@ -203,17 +204,16 @@ describe('controllers/providers/Register.js', () => {
 
 			const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 			let registerController = new RegisterController();
-			registerController.parameters.store['selectedcreditcard'] = selected_creditcard;
 
 			try {
-				registerController.hydrateSelectedCreditCard();
+				await registerController.hydrateSelectedCreditCard(selected_creditcard);
 			} catch (error) {
 				expect(error.message).to.equal('[500] Selected CreditCard must have either a number or a token.');
 			}
 
 		});
 
-		it('returns true because the creditcard has a number', () => {
+		it('returns selected credit card because the creditcard has a number', async () => {
 
 			const selected_creditcard = getValidCreditCard();
 			selected_creditcard.number = '4111111111111111';
@@ -227,11 +227,9 @@ describe('controllers/providers/Register.js', () => {
 
 			const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 			let registerController = new RegisterController();
-			registerController.parameters.set('selectedcreditcard', selected_creditcard);
 
-			let result = registerController.hydrateSelectedCreditCard();
-			expect(result).to.equal(true);
-
+			const result = await registerController.hydrateSelectedCreditCard(selected_creditcard);
+			expect(result).to.deep.equal(selected_creditcard);
 		});
 
 		it('fails because the creditcard returns null', () => {
@@ -251,9 +249,8 @@ describe('controllers/providers/Register.js', () => {
 
 			const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 			let registerController = new RegisterController();
-			registerController.parameters.set('selectedcreditcard', selected_creditcard);
 
-			return registerController.hydrateSelectedCreditCard().catch(error => {
+			return registerController.hydrateSelectedCreditCard(selected_creditcard).catch(error => {
 				expect(error.message).to.equal('[500] Unable to hydrate the selected creditcard');
 			});
 
@@ -276,15 +273,14 @@ describe('controllers/providers/Register.js', () => {
 
 			const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 			let registerController = new RegisterController();
-			registerController.parameters.set('selectedcreditcard', selected_creditcard);
 
-			return registerController.hydrateSelectedCreditCard().catch(error => {
+			return registerController.hydrateSelectedCreditCard(selected_creditcard).catch(error => {
 				expect(error.message).to.equal('[500] Unable to hydrate the selected creditcard');
 			});
 
 		});
 
-		it('succeeds', () => {
+		it('succeeds', async () => {
 
 			const selected_creditcard = getValidCreditCard();
 			let token_value = '4111111111111111';
@@ -304,13 +300,10 @@ describe('controllers/providers/Register.js', () => {
 
 			const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 			let registerController = new RegisterController();
-			registerController.parameters.set('selectedcreditcard', selected_creditcard);
 
-			return registerController.hydrateSelectedCreditCard().then(result => {
-				expect(result).to.equal(true);
-				expect(registerController.parameters.store['selectedcreditcard']).to.deep.equal(hydrated_creditcard);
-			});
-
+			const result = await registerController.hydrateSelectedCreditCard(selected_creditcard);
+			expect(result).to.deep.equal(hydrated_creditcard);
+			expect(registerController.parameters.store['selectedcreditcard']).to.deep.equal(hydrated_creditcard);
 		});
 
 	});
@@ -1168,6 +1161,10 @@ describe('controllers/providers/Register.js', () => {
 
 			// Get at least one product id to match a subscription on the session.
 			rebill.products[0].product.id = session.watermark.product_schedules[0].product_schedule.schedule[0].product.id;
+
+			session.watermark.product_schedules.forEach(productScheduleGroup => {
+				productScheduleGroup.product_schedule = toProductScheduleInput(productScheduleGroup.product_schedule);
+			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class MockRebill {
 				get({id}) {
@@ -2196,10 +2193,9 @@ describe('controllers/providers/Register.js', () => {
 			registerController.parameters.set('selectedcreditcard', selected_creditcard);
 			registerController.parameters.set('rawcreditcard', raw_creditcard);
 
-			return registerController.selectCustomerCreditCard().then(result => {
-				expect(result).to.equal(true);
-				expect(registerController.parameters.store['selectedcreditcard'].cvv).to.equal(raw_creditcard.cvv);
-			});
+			const result = registerController.selectCustomerCreditCard();
+			expect(result).to.not.be.undefined;
+			expect(registerController.parameters.store['selectedcreditcard'].cvv).to.equal(raw_creditcard.cvv);
 		});
 
 		it('adds the cvv if the selected creditcard is present and the raw creditcard is present', () => {
@@ -2211,18 +2207,16 @@ describe('controllers/providers/Register.js', () => {
 			let registerController = new RegisterController();
 			registerController.parameters.set('selectedcreditcard', selected_creditcard);
 
-			return registerController.selectCustomerCreditCard().then(result => {
-				expect(result).to.equal(true);
-				expect(registerController.parameters.store['selectedcreditcard']).not.to.have.property('cvv');
-			});
-
+			const result = registerController.selectCustomerCreditCard();
+			expect(result).to.not.be.undefined;
+			expect(registerController.parameters.store['selectedcreditcard']).not.to.have.property('cvv');
 		});
 
 	});
 
 	describe('acquireRebillSubProperties', () => {
 
-		it('successfully acquires rebill subproperties', () => {
+		it('successfully acquires rebill subproperties', async () => {
 
 			let rebill = getValidRebill();
 			let parentsession = getValidParentSession();
@@ -2272,22 +2266,19 @@ describe('controllers/providers/Register.js', () => {
 			registerController.parameters.set('rebill', rebill);
 			registerController.parameters.set('parentsession', parentsession);
 
-			return registerController.acquireRebillSubProperties().then(result => {
+			const {
+				creditcards,
+				customer,
+				selected_creditcard,
+				merchant_provider_groups: merchantProviderGroups,
+				watermark_product_schedule
+			} = await registerController.acquireRebillSubProperties();
 
-				expect(result).to.equal(true);
-
-				let creditcards = registerController.parameters.get('creditcards');
-				let customer = registerController.parameters.get('customer');
-				let selected_creditcard = registerController.parameters.get('selectedcreditcard');
-				let merchant_provider_groups = registerController.parameters.get('merchantprovidergroups');
-
-				expect(creditcards).to.not.be.undefined;
-				expect(customer).to.not.be.undefined;
-				expect(selected_creditcard).to.not.be.undefined;
-				expect(merchant_provider_groups).to.not.be.undefined;
-
-			});
-
+			expect(creditcards).to.not.be.undefined;
+			expect(customer).to.not.be.undefined;
+			expect(selected_creditcard).to.not.be.undefined;
+			expect(merchantProviderGroups).to.not.be.undefined;
+			expect(watermark_product_schedule).to.deep.equal(parentsession.watermark.product_schedules[0]);
 		});
 
 	});
@@ -2458,21 +2449,21 @@ describe('controllers/providers/Register.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), class {
-				getID(object) {
+			// mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), class {
+			// 	getID(object) {
 
-					if (_.isString(object)) {
-						return object;
-					} else if (_.isObject(object)) {
-						if (_.has(object, 'id')) {
-							return object['id'];
-						}
-					} else if (_.isNull(object)) {
-						return null;
-					}
+			// 		if (_.isString(object)) {
+			// 			return object;
+			// 		} else if (_.isObject(object)) {
+			// 			if (_.has(object, 'id')) {
+			// 				return object['id'];
+			// 			}
+			// 		} else if (_.isNull(object)) {
+			// 			return null;
+			// 		}
 
-				}
-			});
+			// 	}
+			// });
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'analytics/Activity.js'), class {
 				createActivity() {
@@ -2616,12 +2607,12 @@ describe('controllers/providers/Register.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
-				constructor() {}
-				getTransactionProducts() {
-					return Promise.resolve([]);
-				}
-			});
+			// mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
+			// 	constructor() {}
+			// 	getTransactionProducts() {
+			// 		return Promise.resolve([]);
+			// 	}
+			// });
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
 				constructor() {}
@@ -2757,12 +2748,12 @@ describe('controllers/providers/Register.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
-				constructor() {}
-				getTransactionProducts() {
-					return Promise.resolve([]);
-				}
-			});
+			// mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
+			// 	constructor() {}
+			// 	getTransactionProducts() {
+			// 		return Promise.resolve([]);
+			// 	}
+			// });
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
 				constructor() {}

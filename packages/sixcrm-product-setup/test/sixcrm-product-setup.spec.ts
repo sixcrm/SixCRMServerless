@@ -3,15 +3,23 @@
 import { v4 } from 'uuid';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
+import chaiExclude = require('chai-exclude');
+
 chai.use(chaiAsPromised);
+chai.use(chaiExclude);
 const expect = chai.expect;
+const assert = chai.assert;
+
+import Configuration from '@6crm/sixcrm-platform/lib/config/Configuration';
+import IAuroraConfig from '@6crm/sixcrm-platform/lib/config/Aurora';
 
 import { createProductSetupService } from '../src';
 import ProductSetupService from '../src/ProductSetupService';
 import Product from '../src/models/Product';
 import {disconnect} from "../src/connect";
+import NormalizedProduct from "./models/NormalizedProduct";
 
-let getValidProduct = function(accountId) {
+const getValidProduct = function(accountId) {
 	return new Product(v4(), accountId, 'A product', 100, false, []);
 };
 
@@ -19,34 +27,39 @@ describe('@6crm/sixcrm-product-setup', () => {
 	let productSetupService: ProductSetupService;
 	let anotherProductSetupService: ProductSetupService;
 	let masterAccountProductSetupService: ProductSetupService;
-	let accountId = v4();
-	let anotherAccountId = v4();
+	const accountId = v4();
+	const anotherAccountId = v4();
 
 	before(async () => {
+		const auroraConfig = await Configuration.get<IAuroraConfig>('aurora');
+
 		productSetupService = await createProductSetupService({
 			accountId,
-			host: 'localhost',
-			username: 'postgres',
-			password: '',
-			schema: 'public',
+			host: auroraConfig.host,
+			port: auroraConfig.port,
+			username: auroraConfig.user,
+			password: auroraConfig.password,
+			schema: 'product_setup',
 			logging: ['error']
 		});
 
 		anotherProductSetupService = await createProductSetupService({
 			accountId: anotherAccountId,
-			host: 'localhost',
-			username: 'postgres',
-			password: '',
-			schema: 'public',
+			host: auroraConfig.host,
+			port: auroraConfig.port,
+			username: auroraConfig.user,
+			password: auroraConfig.password,
+			schema: 'product_setup',
 			logging: ['error']
 		});
 
 		masterAccountProductSetupService = await createProductSetupService({
 			accountId: '*',
-			host: 'localhost',
-			username: 'postgres',
-			password: '',
-			schema: 'public',
+			host: auroraConfig.host,
+			port: auroraConfig.port,
+			username: auroraConfig.user,
+			password: auroraConfig.password,
+			schema: 'product_setup',
 			logging: ['error']
 		});
 	});
@@ -65,11 +78,7 @@ describe('@6crm/sixcrm-product-setup', () => {
 			const productFromDb = await productSetupService.getProduct(aProduct.id);
 
 			// then
-			expect(productFromDb.id).to.equal(aProduct.id);
-			expect(productFromDb.account_id).to.equal(aProduct.account_id);
-			expect(productFromDb.name).to.equal(aProduct.name);
-			// expect(productFromDb.price).to.equal(aProduct.price); // this fails cause string conversion
-			expect(productFromDb.is_shippable).to.equal(aProduct.is_shippable);
+			expect(NormalizedProduct.of(productFromDb)).to.deep.equal(NormalizedProduct.of(aProduct));
 		});
 
 		it('creates a product using the ProductSetupService account', async () => {
@@ -82,11 +91,12 @@ describe('@6crm/sixcrm-product-setup', () => {
 			const productFromDb = await productSetupService.getProduct(aProduct.id);
 
 			// then
-			expect(productFromDb.id).to.equal(aProduct.id);
+			assert.deepEqualExcluding(
+				NormalizedProduct.of(productFromDb),
+				NormalizedProduct.of(aProduct),
+				'account_id'
+			);
 			expect(productFromDb.account_id).to.equal(accountId);
-			expect(productFromDb.name).to.equal(aProduct.name);
-			// expect(productFromDb.price).to.equal(aProduct.price); // this fails cause string conversion
-			expect(productFromDb.is_shippable).to.equal(aProduct.is_shippable);
 		});
 
 		it('creates a product in an account as the master account', async () => {
@@ -98,11 +108,7 @@ describe('@6crm/sixcrm-product-setup', () => {
 			const productFromDb = await productSetupService.getProduct(aProduct.id);
 
 			// then
-			expect(productFromDb.id).to.equal(aProduct.id);
-			expect(productFromDb.account_id).to.equal(aProduct.account_id);
-			expect(productFromDb.name).to.equal(aProduct.name);
-			// expect(productFromDb.price).to.equal(aProduct.price); // this fails cause string conversion
-			expect(productFromDb.is_shippable).to.equal(aProduct.is_shippable);
+			expect(NormalizedProduct.of(productFromDb)).to.deep.equal(NormalizedProduct.of(aProduct));
 		});
 
 		it('returns the generated product ID', async () => {
@@ -167,15 +173,14 @@ describe('@6crm/sixcrm-product-setup', () => {
 			// given
 			const aProduct = getValidProduct(accountId);
 			aProduct.id = (await productSetupService.createProduct(aProduct)).id;
-			const description = aProduct.description = 'lorem ipsum';
+			aProduct.description = 'lorem ipsum';
 
 			// when
 			await productSetupService.updateProduct(aProduct);
 			const productFromDb = await productSetupService.getProduct(aProduct.id);
 
 			// then
-			expect(productFromDb.id).to.equal(aProduct.id);
-			expect(productFromDb.description).to.equal(description);
+			expect(NormalizedProduct.of(productFromDb)).to.deep.equal(NormalizedProduct.of(aProduct));
 		});
 
 		it('updates a product using the ProductSetupService account', async () => {
@@ -190,8 +195,12 @@ describe('@6crm/sixcrm-product-setup', () => {
 			const productFromDb = await productSetupService.getProduct(aProduct.id);
 
 			// then
-			expect(productFromDb.id).to.equal(aProduct.id);
-			expect(productFromDb.description).to.equal(description);
+			assert.deepEqualExcluding(
+				NormalizedProduct.of(productFromDb),
+				NormalizedProduct.of(aProduct),
+				'account_id'
+			);
+			expect(productFromDb.account_id).to.equal(accountId);
 		});
 
 		it('updates a product as the master account', async () => {
@@ -199,15 +208,20 @@ describe('@6crm/sixcrm-product-setup', () => {
 			const aProduct = getValidProduct(accountId);
 			aProduct.id = (await productSetupService.createProduct(aProduct)).id;
 			delete aProduct.account_id;
-			const description = aProduct.description = 'lorem ipsum';
+			aProduct.description = 'lorem ipsum';
 
 			// when
 			await masterAccountProductSetupService.updateProduct(aProduct);
 			const productFromDb = await productSetupService.getProduct(aProduct.id);
 
 			// then
-			expect(productFromDb.id).to.equal(aProduct.id);
-			expect(productFromDb.description).to.equal(description);
+			assert.deepEqualExcluding(
+				NormalizedProduct.of(productFromDb),
+				NormalizedProduct.of(aProduct),
+				'account_id'
+			);
+			expect(productFromDb.account_id).to.equal(accountId);
+			expect(productFromDb.account_id).to.equal(accountId);
 		});
 
 		it('enforces same account', async () => {

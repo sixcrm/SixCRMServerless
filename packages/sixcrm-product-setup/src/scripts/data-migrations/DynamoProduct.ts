@@ -39,22 +39,17 @@ export class DynamoProduct {
 	}
 
 	toProduct() : Product {
-		return {
-			id: this.id,
-			name: this.name.substring(0, 55).trim(),
-			account_id: this.account,
-			price: Number(this.default_price),
-			shipping_price: 0,
-			is_shippable: !!this.ship,
-			created_at: new Date(this.created_at),
-			updated_at: new Date(this.updated_at),
-			description: this.description,
-			sku: this.sku,
-			shipping_delay: this.ship && this.shipping_delay ? { seconds: this.shipping_delay } : undefined,
-			fulfillment_provider_id: this.fulfillment_provider,
-			merchant_provider_group_id: this.merchantprovidergroup,
-			image_urls: this.getImages()
-		};
+		return Object.assign(
+			new Product(this.id, this.account, this.name.substring(0, 55).trim(), Number(this.default_price), !!this.ship, this.getImages()), {
+				shipping_price: 0,
+				created_at: new Date(this.created_at),
+				updated_at: new Date(this.updated_at),
+				description: this.description,
+				sku: this.sku,
+				shipping_delay: this.ship && this.shipping_delay ? { seconds: this.shipping_delay } : undefined,
+				fulfillment_provider_id: this.fulfillment_provider,
+				merchant_provider_group_id: this.merchantprovidergroup
+			});
 	}
 
 	private get(object: any, path: string): any {

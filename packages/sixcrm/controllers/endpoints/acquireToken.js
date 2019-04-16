@@ -16,8 +16,7 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
 			'account/read',
 			'campaign/read',
 			'affiliate/read',
-			'affiliate/create',
-			'tracker/read'
+			'affiliate/create'
 		];
 
 		this.parameter_definitions = {

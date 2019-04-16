@@ -20,7 +20,7 @@ module.exports.graphObj = new GraphQLObjectType({
 			description: 'The quantity of the product sold.',
 		},
 		amount: {
-			type: new GraphQLNonNull(GraphQLString),
+			type: GraphQLString,
 			description: 'The amount of the product.',
 		},
 		product: {
