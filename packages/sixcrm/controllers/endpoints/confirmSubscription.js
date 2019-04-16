@@ -27,12 +27,7 @@ module.exports = class ConfirmSubscriptionController {
 
 		await trialConfirmationController.markConfirmed({confirmation});
 
-		const session = await sessionController.updateProperties({
-			id: confirmation.session,
-			properties: {
-				started_at: confirmation.confirmed_at
-			}
-		});
+		const session = await sessionController.get({id: confirmation.session});
 
 		if (!session) {
 			return this.respond('Subscription not found.', 404);

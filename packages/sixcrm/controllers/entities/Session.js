@@ -1,6 +1,7 @@
-
+require('module-alias/register');
 const _ = require('lodash');
 const moment = require("moment");
+
 
 var timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 var du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
@@ -14,6 +15,9 @@ let rebillHelper = new RebillHelper();
 
 const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 let rebillController = new RebillController();
+
+const TrialConfirmationController = require('@root/controllers/entities/TrialConfirmation.js');
+const trialConfirmationController = new TrialConfirmationController();
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -513,8 +517,8 @@ module.exports = class SessionController extends entityController {
 
 	}
 
-	cancelSession({entity}){
-		return this.executeAssociatedEntityFunction('SessionController', 'get', {id: entity.id}).then(session => {
+	async cancelSession({entity}){
+		return this.executeAssociatedEntityFunction('SessionController', 'get', {id: entity.id}).then(async session => {
 
 			if(!session){
 
@@ -527,6 +531,10 @@ module.exports = class SessionController extends entityController {
 			session.cancelled = entity;
 
 			session = this.trimSessionWatermark(session);
+
+			if (session.trial_confirmation) {
+				await trialConfirmationController.delete({id: session.trial_confirmation});
+			}
 
 			return this.update({entity: session}).then(() => this.listRebills(session)).then(rebills => {
 				if (!rebills || !rebills.length) {
