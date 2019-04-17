@@ -23,6 +23,16 @@ module.exports = class CloseSessionController extends stepFunctionWorkerControll
 	}
 
 	async handleTrialConfirmation(session) {
+		if (session.concluded) {
+			du.info(`Session ${session.id} is concluded, not creating trial confirmation.`);
+			return session;
+		}
+
+		if (!session.watermark || !session.watermark.product_schedules) {
+			du.info(`Session ${session.id} has no watermark product schedules, not creating trial confirmation.`);
+			return session;
+		}
+
 		const trialProductSchedule = session.watermark.product_schedules.find(ps => ps.product_schedule.requires_confirmation);
 
 		if (!trialProductSchedule) {
