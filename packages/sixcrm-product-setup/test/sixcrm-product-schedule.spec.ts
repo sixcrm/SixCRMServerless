@@ -12,7 +12,7 @@ const expect = chai.expect;
 const assert = chai.assert;
 
 import Configuration from '@6crm/sixcrm-platform/lib/config/Configuration';
-import IAuroraConfig from '@6crm/sixcrm-data/lib/config/Aurora';
+import IPostgresConfig from '@6crm/sixcrm-data/lib/config/Postgres';
 
 import {createProductScheduleService, createProductSetupService} from '../src';
 import {disconnect} from "../src/connect";
@@ -100,7 +100,7 @@ describe('@6crm/sixcrm-product-schedule', () => {
 	const anotherAccountId = v4();
 
 	before(async () => {
-		const auroraConfig = await Configuration.get<IAuroraConfig>('aurora');
+		const auroraConfig = await Configuration.get<IPostgresConfig>('aurora');
 
 		productScheduleService = await createProductScheduleService({
 			accountId,

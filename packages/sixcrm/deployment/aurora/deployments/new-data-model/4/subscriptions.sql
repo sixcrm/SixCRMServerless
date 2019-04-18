@@ -3,11 +3,12 @@ CREATE SCHEMA subscriptions;
 CREATE TABLE subscriptions.subscription (
 	id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
 	account_id UUID NOT NULL,
+	customer_id UUID NOT NULL,
 	product_schedule_id UUID NOT NULL REFERENCES product_setup.product_schedule(id),
 	name VARCHAR(55) NOT NULL,
 	created_at TIMESTAMP NOT NULL DEFAULT now(),
 	updated_at TIMESTAMP NOT NULL DEFAULT now(),
-	merchant_provider_group_id UUID,
+	merchant_provider_id UUID,
 	requires_confirmation BOOLEAN NOT NULL
 );
 

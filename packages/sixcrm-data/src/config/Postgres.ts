@@ -1,4 +1,4 @@
-export default interface IAuroraConfig {
+export default interface IPostgresConfig {
 	host: string;
 	user: string;
 	database: string;

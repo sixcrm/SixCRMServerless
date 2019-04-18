@@ -12,3 +12,4 @@ npm-debug.log
 test.txt
 yarn-error.log
 /packages/*/lib
+tsconfig.tsbuildinfo

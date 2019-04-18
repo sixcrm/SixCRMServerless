@@ -1,13 +1,3 @@
-import {
-	Entity,
-	Column,
-	PrimaryGeneratedColumn,
-	CreateDateColumn,
-	UpdateDateColumn,
-	Index,
-	OneToMany
-} from 'typeorm';
-
 import { IsUUID, IsNotEmpty, IsOptional } from "class-validator";
 
 import SubscriptionCycle from './SubscriptionCycle';
@@ -15,58 +5,34 @@ import EntityValidationError from "@6crm/sixcrm-data/lib/EntityValidationError";
 import DomainEntity from "@6crm/sixcrm-data/lib/DomainEntity";
 import SubscriptionValidator from "./validators/SubscriptionValidator";
 
-@Entity()
 export default class Subscription extends DomainEntity {
 
-	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
-	@OneToMany(type => SubscriptionCycle, cycle => cycle.subscription, { cascade: true })
 	cycles: SubscriptionCycle[];
 
-	@Index()
-	@Column('uuid')
 	@IsUUID()
 	@IsNotEmpty()
-	@IsOptional()
 	account_id: string;
 
-	@Index()
-	@Column('uuid')
 	@IsUUID()
 	@IsNotEmpty()
-	@IsOptional()
 	customer_id: string;
 
-	@Index()
-	@Column('uuid')
 	@IsUUID()
 	@IsNotEmpty()
-	@IsOptional()
 	product_schedule_id: string;
 
-	@Column({
-		length: 55
-	})
 	@IsNotEmpty()
 	name: string;
 
-	@CreateDateColumn()
 	created_at: Date;
-
-	@UpdateDateColumn()
 	updated_at: Date;
 
-	@Column({
-		type: 'uuid',
-		nullable: true
-	})
 	@IsUUID()
 	@IsNotEmpty()
-	@IsOptional()
-	merchant_provider_group_id: string;
+	merchant_provider_id: string;
 
-	@Column()
 	@IsNotEmpty()
 	requires_confirmation: boolean;
 
@@ -96,7 +62,11 @@ export default class Subscription extends DomainEntity {
 		customer_id: string,
 		product_schedule_id: string,
 		name: string,
-		requires_confirmation: boolean
+		created_at: Date,
+		updated_at: Date,
+		merchant_provider_id: string,
+		requires_confirmation: boolean,
+		cycles: SubscriptionCycle[]
 	) {
 		super();
 		this.id = id;
@@ -104,7 +74,11 @@ export default class Subscription extends DomainEntity {
 		this.customer_id = customer_id;
 		this.product_schedule_id = product_schedule_id;
 		this.name = name;
+		this.created_at = created_at;
+		this.updated_at = updated_at;
+		this.merchant_provider_id = merchant_provider_id;
 		this.requires_confirmation = requires_confirmation;
+		this.cycles = cycles;
 	}
 
 }
