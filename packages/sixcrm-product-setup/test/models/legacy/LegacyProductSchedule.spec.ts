@@ -27,8 +27,8 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProductSchedule', () =>
 				name,
 				trial_required: requiresConfirmation,
 				schedule: [],
-				created_at,
-				updated_at
+				created_at: created_at.toISOString(),
+				updated_at: updated_at.toISOString()
 			});
 		});
 
@@ -76,8 +76,8 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProductSchedule', () =>
 					samedayofmonth: false,
 					start: 14
 				}],
-				created_at,
-				updated_at
+				created_at: created_at.toISOString(),
+				updated_at: updated_at.toISOString()
 			});
 		});
 
@@ -116,8 +116,8 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProductSchedule', () =>
 					samedayofmonth: false,
 					start: 0
 				}],
-				created_at,
-				updated_at
+				created_at: created_at.toISOString(),
+				updated_at: updated_at.toISOString()
 			});
 		});
 
@@ -156,8 +156,8 @@ describe('@6crm/sixcrm-product-setup/models/legacy/LegacyProductSchedule', () =>
 					samedayofmonth: true,
 					start: 0
 				}],
-				created_at,
-				updated_at
+				created_at: created_at.toISOString(),
+				updated_at: updated_at.toISOString()
 			});
 		});
 	});

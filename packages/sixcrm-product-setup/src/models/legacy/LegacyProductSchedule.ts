@@ -29,12 +29,12 @@ export default class LegacyProductSchedule {
 	public static fromProductSchedule(productSchedule: ProductSchedule): LegacyProductSchedule {
 		return new LegacyProductSchedule({
 			account: productSchedule.account_id,
-			created_at: productSchedule.created_at,
+			...(productSchedule.created_at ? { created_at: productSchedule.created_at.toISOString() } : {}),
 			id: productSchedule.id,
 			name: productSchedule.name,
 			schedule: LegacyProductSchedule.toLegacySchedule(productSchedule.cycles),
 			trial_required: productSchedule.requires_confirmation,
-			updated_at: productSchedule.updated_at
+			...(productSchedule.updated_at ? { updated_at: productSchedule.updated_at.toISOString() } : {})
 		});
 	}
 
