@@ -26,6 +26,12 @@ export default class SubscriptionService {
 		this._accountId = accountId;
 	}
 
+	async dispose() {
+
+		return this._connection.dispose();
+
+	}
+
 	@LogMethod()
 	async get(id: string): Promise<Subscription> {
 
@@ -38,9 +44,9 @@ export default class SubscriptionService {
 				cp.created_at as cycle_product_created_at, cp.updated_at AS cycle_product_updated_at,
 				cp.quantity, cp.is_shipping, cp.position as cycle_product_position,
 				p.id as product_id, p.name AS product_name, p.description, p.sku, p.image_urls
-			FROM product_setup.subscription s
-			JOIN product_setup.subscription_cycle c on s.id = c.subscription_id
-			JOIN product_setup.subscription_cycle_product cp on c.id = cp.subscription_cycle_id
+			FROM subscriptions.subscription s
+			JOIN subscriptions.subscription_cycle c on s.id = c.subscription_id
+			JOIN subscriptions.subscription_cycle_product cp on c.id = cp.subscription_cycle_id
 			JOIN product_setup.product p on cp.product_id = p.id
 			WHERE s.id = $1`,
 			[id]);
@@ -107,7 +113,7 @@ export default class SubscriptionService {
 		return this._connection.withTransaction(async () => {
 
 			const subscriptionResult = await this._connection.query(`
-				INSERT INTO product_setup.subscription
+				INSERT INTO subscriptions.subscription
 				(account_id, customer_id, product_schedule_id, name, merchant_provider_id, requires_confirmation)
 				VALUES ($1, $2, $3, $4, $5, $6)
 				RETURNING id`,
@@ -122,7 +128,7 @@ export default class SubscriptionService {
 				.join(',\n');
 
 			const cycleResult = await this._connection.query(`
-				INSERT INTO product_setup.subscription_cycle
+				INSERT INTO subscriptions.subscription_cycle
 				(subscription_id, name, length, position, next_position, price, shipping_price) VALUES
 				${cycleValues}
 				RETURNING id`,
@@ -140,7 +146,7 @@ export default class SubscriptionService {
 				.join(',\n');
 
 			await this._connection.query(`
-				INSERT INTO product_setup.subscription_cycle_product
+				INSERT INTO subscriptions.subscription_cycle_product
 				(subscription_cycle_id, product_id, quantity, is_shipping, position) VALUES
 				${cycleProductValues}`,
 				_.flatten(cycleProductParams));
@@ -155,7 +161,7 @@ export default class SubscriptionService {
 	async update(partialSubscription: Partial<Subscription>): Promise<void> {
 
 		const existingSubscriptionResult = await this._connection.query(
-			`SELECT account_id FROM product_setup.subscription WHERE id = $1`, [partialSubscription.id]);
+			`SELECT account_id FROM subscriptions.subscription WHERE id = $1`, [partialSubscription.id]);
 
 		if (!this._validateAccount(existingSubscriptionResult.rows[0].account_id)) {
 			throw new NotAuthorizedError();
@@ -171,19 +177,19 @@ export default class SubscriptionService {
 			// Remove cycles and cycle_products for cycles that no longer exist.
 			const cycleIds = _.map(partialSubscription.cycles, cycle => cycle.id);
 			await this._connection.query(`
-				DELETE FROM product_setup.subscription_cycle_product scp USING product_setup.subscription_cycle sc
+				DELETE FROM subscriptions.subscription_cycle_product scp USING subscriptions.subscription_cycle sc
 				WHERE
 						scp.subscription_cycle_id = sc.id
 					AND sc.id NOT IN $1
 					AND sc.subscription_id = $2`,
 				[cycleIds, partialSubscription.id]);
 			await this._connection.query(`
-				DELETE FROM product_setup.subscription_cycle
+				DELETE FROM subscriptions.subscription_cycle
 				WHERE id NOT IN $1 AND subscription_id = $2`,
 				[cycleIds, partialSubscription.id]);
 
 			await this._connection.query(`
-				UPDATE product_setup.subscription SET
+				UPDATE subscriptions.subscription SET
 					name = $1,
 					updated_at = now(),
 					merchant_provider_id = $2
@@ -199,7 +205,7 @@ export default class SubscriptionService {
 					'(' + _.map(params, (param, j) => `$${i*params.length + j + 1}`).join(',') + ')')
 					.join(',\n');
 				const cycleResult = await this._connection.query(`
-					INSERT INTO product_setup.subscription_cycle
+					INSERT INTO subscriptions.subscription_cycle
 					(subscription_id, name, length, position, next_position, price, shipping_price) VALUES
 					${newCycleValues}
 					RETURNING id`,
@@ -217,7 +223,7 @@ export default class SubscriptionService {
 					'(' + _.map(params, (param, j) => `$${i*params.length + j + 1}`).join(',') + ')')
 					.join(',\n');
 				await this._connection.query(`
-					UPDATE product_setup.subscription_cycle sc SET
+					UPDATE subscriptions.subscription_cycle sc SET
 						name = nc.name,
 						updated_at = now(),
 						length = nc.length,
@@ -240,7 +246,7 @@ export default class SubscriptionService {
 				'(' + _.map(params, (param, j) => `$${i*params.length + j + 1}`).join(',') + ')')
 				.join(',\n');
 			await this._connection.query(`
-				INSERT INTO product_setup.subscription_cycle_product
+				INSERT INTO subscriptions.subscription_cycle_product
 				(subscription_cycle_id, product_id, quantity, is_shipping, position) VALUES
 				${cycleProductValues}
 				ON CONFLICT(subscription_cycle_id, product_id) DO UPDATE SET
@@ -256,7 +262,7 @@ export default class SubscriptionService {
 				'(' + _.map(params, (param, j) => `$${i*params.length + j + 1}`).join(',') + ')')
 				.join(',\n');
 			await this._connection.query(`
-				DELETE FROM product_setup.subscription_cycle_product scp
+				DELETE FROM subscriptions.subscription_cycle_product scp
 				USING (VALUES
 				${cycleProductIdValues}
 				) d (subscription_cycle_id, product_id)
@@ -270,7 +276,7 @@ export default class SubscriptionService {
 	@LogMethod()
 	async delete(id: string): Promise<void> {
 
-		const result = await this._connection.query(`SELECT account_id FROM product_setup.subscription WHERE id = $1`, [id]);
+		const result = await this._connection.query(`SELECT account_id FROM subscriptions.subscription WHERE id = $1`, [id]);
 		if (!this._validateAccount(result.rows[0].account_id)) {
 			throw new NotAuthorizedError();
 		}
@@ -278,13 +284,13 @@ export default class SubscriptionService {
 		return this._connection.withTransaction(async () => {
 
 			await this._connection.query(`
-				DELETE FROM product_setup.subscription_cycle_product scp USING product_setup.subscription_cycle sc
+				DELETE FROM subscriptions.subscription_cycle_product scp USING product_setup.subscription_cycle sc
 				WHERE scp.subscription_cycle_id = c.id AND sc.subscription_id = $1`,
 				[id]);
 
-			await this._connection.query(`DELETE FROM product_setup.subscription_cycle WHERE subscription_id = $1`, [id]);
+			await this._connection.query(`DELETE FROM subscriptions.subscription_cycle WHERE subscription_id = $1`, [id]);
 
-			await this._connection.query(`DELETE FROM subscription WHERE id = $1`, [id]);
+			await this._connection.query(`DELETE FROM subscriptions.subscription WHERE id = $1`, [id]);
 
 		});
 

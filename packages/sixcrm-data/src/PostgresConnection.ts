@@ -10,6 +10,12 @@ export default class PostgresConnection {
 
 	}
 
+	async dispose() {
+
+		return this._client.end();
+
+	}
+
 	query(queryText: string, parameters?: any[]): Promise<pg.QueryResult> {
 
 		return this._client.query(queryText, parameters);
