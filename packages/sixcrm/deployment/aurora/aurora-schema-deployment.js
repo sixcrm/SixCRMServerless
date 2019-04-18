@@ -45,7 +45,7 @@ module.exports = class AuroraSchemaDeployment {
 		try {
 
 			const currentRevisionRaw = await this._executeQuery(connection,
-				`SELECT id FROM releases.m_release WHERE deployment="${deployment}" ORDER BY id DESC LIMIT 1`);
+				`SELECT id FROM releases.m_release WHERE deployment='${deployment}' ORDER BY id DESC LIMIT 1`);
 
 			currentRevision = Number(currentRevisionRaw.rows.length ? currentRevisionRaw.rows[0].id : 0);
 			du.debug('AuroraSchemaDeployment._doDeployment(): current revision', currentRevision);
