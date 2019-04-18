@@ -24,6 +24,7 @@ lambda:
 elasticsearch:
   domain_name: 'sixcrm-logs'
   index_name: 'cloudwatch-logs'
+  endpoint: 'search-sixcrm-logs-wc5kxrvbvskgmj5pibx2yhommy.us-east-1.es.amazonaws.com'
 
 s3:
   account_resources_bucket: 'account-resources'
