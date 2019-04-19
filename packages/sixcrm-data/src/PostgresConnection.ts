@@ -21,7 +21,13 @@ export default class PostgresConnection {
 
 	query(queryText: string, parameters?: any[]): Promise<pg.QueryResult> {
 
-		log.info('query:', queryText, parameters);
+		if (parameters === undefined) {
+			log.debug('query:', queryText);
+		}
+		else {
+			log.debug('query:', queryText, parameters);
+		}
+
 		return this._client.query(queryText, parameters);
 
 	}
@@ -31,14 +37,14 @@ export default class PostgresConnection {
 		let result: T;
 		try {
 
-			await this._client.query('BEGIN');
+			await this.query('BEGIN');
 			result = await action();
-			await this._client.query('COMMIT');
+			await this.query('COMMIT');
 
 		}
 		catch (error) {
 
-			await this._client.query('ROLLBACK');
+			await this.query('ROLLBACK');
 			throw error;
 
 		}

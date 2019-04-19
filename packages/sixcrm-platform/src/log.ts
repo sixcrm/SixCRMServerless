@@ -24,7 +24,7 @@ function getMessage(target, key: string | symbol, args, result) {
 	return message;
 }
 
-export function LogMethod(level: 'info' | 'debug' = 'info') {
+export function LogMethod(level: 'info' | 'debug' = 'debug') {
 	return (target: any, key: string | symbol, propertyDescriptor?: PropertyDescriptor) => {
 		const descriptor = propertyDescriptor || Object.getOwnPropertyDescriptor(target, key) || {};
 		const originalMethod = descriptor.value;
