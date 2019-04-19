@@ -93,7 +93,7 @@ jobs:
           command: cd packages/sixcrm-product-setup && docker-compose run -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless/packages/sixcrm-product-setup -e CIRCLECI -e SIX_VERBOSE -e stage=circle node yarn run test-productsetup
       - run:
           name: Subscription Tests
-          command: cd packages/sixcrm-subscriptions && docker-compose run -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless/packages/sixcrm-subscriptions -e CIRCLECI -e SIX_VERBOSE -e stage=circle node yarn run test-subscriptions
+          command: cd packages/sixcrm-product-setup && docker-compose run -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless/packages/sixcrm-subscriptions -e CIRCLECI -e SIX_VERBOSE -e stage=circle node yarn run test-subscriptions
   pre_deploy:
     <<: *job-defaults
     steps:

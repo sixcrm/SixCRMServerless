@@ -1,8 +1,0 @@
-version: '3'
-services:
-  node:
-    image: circleci/node:8.10
-  aurora:
-    image: circleci/postgres:9.6
-    ports:
-      - 5440:5432
