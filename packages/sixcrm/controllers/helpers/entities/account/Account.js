@@ -20,8 +20,6 @@ const StateMachineHelper = require('../../../helpers/statemachine/StateMachine')
 const eventPushHelperController = new EventPushHelperController();
 const stateMachineHelper = new StateMachineHelper();
 
-const { LegacyProductSchedule } = require('@6crm/sixcrm-product-setup');
-
 module.exports = class AccountHelperController {
 
 	constructor(){
@@ -534,22 +532,25 @@ module.exports = class AccountHelperController {
 		if(objectutilities.hasRecursive(session, 'watermark.product_schedules') && arrayutilities.nonEmpty(session.watermark.product_schedules)){
 
 			arrayutilities.map(session.watermark.product_schedules, product_schedule_group => {
-
 				if(product_schedule_group.quantity < 1){
 					return false;
 				}
 
-				const legacySchedule = LegacyProductSchedule.fromProductSchedule(product_schedule_group.product_schedule);
-
-				if(!objectutilities.hasRecursive(legacySchedule, 'schedule') || !arrayutilities.nonEmpty(legacySchedule.schedule)){
+				if(!objectutilities.hasRecursive(product_schedule_group.product_schedule, 'cycles') || !arrayutilities.nonEmpty(product_schedule_group.product_schedule.cycles)){
 					return false;
 				}
 
-				arrayutilities.map(legacySchedule.schedule, (schedule_element) => {
-					if(objectutilities.hasRecursive(schedule_element, 'product') && _.has(this.subscription_products, schedule_element.product)){
-						products.push({id: schedule_element.product});
+				const products_in_session = _(product_schedule_group.product_schedule.cycles)
+					.flatMap('cycle_products')
+					.flatMap('product.id')
+					.value();
+
+				for (const product of products_in_session) {
+					if(_.has(this.subscription_products, product)){
+						products.push({id: product});
 					}
-				});
+
+				}
 
 			});
 
