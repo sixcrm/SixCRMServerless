@@ -526,37 +526,20 @@ module.exports = class AccountHelperController {
 	}
 
 	//Technical Debt:  This belongs in the Session Helper
-	_getSessionSubscriptionProducts({session}){
-		let products = [];
-
-		if(objectutilities.hasRecursive(session, 'watermark.product_schedules') && arrayutilities.nonEmpty(session.watermark.product_schedules)){
-
-			arrayutilities.map(session.watermark.product_schedules, product_schedule_group => {
-				if(product_schedule_group.quantity < 1){
-					return false;
-				}
-
-				if(!objectutilities.hasRecursive(product_schedule_group.product_schedule, 'cycles') || !arrayutilities.nonEmpty(product_schedule_group.product_schedule.cycles)){
-					return false;
-				}
-
-				const products_in_session = _(product_schedule_group.product_schedule.cycles)
-					.flatMap('cycle_products')
-					.flatMap('product.id')
-					.value();
-
-				for (const product of products_in_session) {
-					if(_.has(this.subscription_products, product)){
-						products.push({id: product});
-					}
-
-				}
-
-			});
-
+	_getSessionSubscriptionProducts({session}) {
+		if (!_(session).get('watermark.product_schedules')) {
+			return [];
 		}
 
-		return products;
+		const schedules_with_quantity = session.watermark.product_schedules.filter(ps => ps.quantity > 0);
+
+		return _(schedules_with_quantity)
+			.flatMap('product_schedule')
+			.flatMap('cycles')
+			.flatMap('cycle_products')
+			.flatMap('product')
+			.value()
+			.filter((product) => _.has(this.subscription_products, product.id));
 
 	}
 
