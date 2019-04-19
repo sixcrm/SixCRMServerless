@@ -1,4 +1,7 @@
 import * as pg from 'pg';
+import { logger } from '@6crm/sixcrm-platform/lib/log';
+
+const log = logger('PostgresConnection');
 
 export default class PostgresConnection {
 
@@ -18,6 +21,7 @@ export default class PostgresConnection {
 
 	query(queryText: string, parameters?: any[]): Promise<pg.QueryResult> {
 
+		log.info('query:', queryText, parameters);
 		return this._client.query(queryText, parameters);
 
 	}

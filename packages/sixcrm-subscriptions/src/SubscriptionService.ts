@@ -10,7 +10,7 @@ import ProductSchedule from '@6crm/sixcrm-product-setup/lib/models/ProductSchedu
 
 import { MASTER_ACCOUNT_ID } from '@6crm/sixcrm-data/lib/constants';
 
-const log = logger('ProductScheduleService');
+const log = logger('SubscriptionService');
 
 interface ISubscriptionEntityId {
 	id: string;

@@ -35,5 +35,5 @@ CREATE TABLE subscriptions.subscription_cycle_product (
 	updated_at TIMESTAMP NOT NULL DEFAULT now(),
 	quantity INT NOT NULL CHECK (quantity > 0),
 	is_shipping BOOLEAN NOT NULL,
-	position INT NOT NULL CHECK (position > 0)
+	position INT NOT NULL CHECK (position >= 0)
 );

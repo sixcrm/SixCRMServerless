@@ -1,4 +1,6 @@
 import * as uuid from 'uuid';
+import * as _ from 'lodash';
+import * as Bluebird from 'bluebird';
 
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
@@ -20,8 +22,12 @@ import SubscriptionService from '../src/SubscriptionService';
 import Subscription from '../src/models/Subscription';
 import SubscriptionCycle from '../src/models/SubscriptionCycle';
 import SubscriptionCycleProduct from '../src/models/SubscriptionCycleProduct';
-
 import { createSubscriptionService } from '../src';
+
+import ProductSetupService from '@6crm/sixcrm-product-setup/src/ProductSetupService';
+import ProductScheduleService from '@6crm/sixcrm-product-setup/src/ProductScheduleService';
+import { createProductSetupService, createProductScheduleService } from '@6crm/sixcrm-product-setup';
+import { disconnect } from "@6crm/sixcrm-product-setup/lib/connect";
 
 const getValidProductSchedule = (accountId): ProductSchedule => {
 	const productSchedule: any = {
@@ -92,17 +98,36 @@ const getValidProduct = (accountId) => {
 describe('@6crm/sixcrm-subscriptions/lib/SubscriptionService', () => {
 
 	let subscriptionService: SubscriptionService;
+	let productSetupService: ProductSetupService;
+	let productScheduleService: ProductScheduleService;
 	const accountId = uuid.v4();
 
 	before(async () => {
 		const auroraConfig = await Configuration.get<IPostgresConfig>('aurora');
 
 		subscriptionService = await createSubscriptionService(accountId, auroraConfig);
+		productSetupService = await createProductSetupService({
+			accountId,
+			host: auroraConfig.host,
+			port: auroraConfig.port,
+			username: auroraConfig.user,
+			password: auroraConfig.password,
+			schema: 'product_setup'
+		});
+		productScheduleService = await createProductScheduleService({
+			accountId,
+			host: auroraConfig.host,
+			port: auroraConfig.port,
+			username: auroraConfig.user,
+			password: auroraConfig.password,
+			schema: 'product_setup'
+		});
 	});
 
 	after(async () => {
 
-		return subscriptionService.dispose();
+		await subscriptionService.dispose();
+		await disconnect(); // fix this so it's similar to subscriptionService
 
 	});
 
@@ -112,11 +137,19 @@ describe('@6crm/sixcrm-subscriptions/lib/SubscriptionService', () => {
 
 			const customerId = uuid.v4();
 			const merchantProviderId = uuid.v4();
-			const productSchedule = getValidProductSchedule(accountId);
+			const partialProductSchedule = getValidProductSchedule(accountId);
+			const products = _.uniqBy(
+				_.reduce(
+					partialProductSchedule.cycles,
+					(agg, cycle) => _.concat(agg, _.map(cycle.cycle_products, cycle_product => cycle_product.product)),
+					[] as any[]),
+				product => product.id);
 
+			await Bluebird.each(products, async product => productSetupService.createProduct(product));
+			const productSchedule = await productScheduleService.create(partialProductSchedule);
 			const subscription = await subscriptionService.create(productSchedule, customerId, merchantProviderId);
 
-			expect(subscription).to.be.an.instanceOf('string');
+			expect(subscription).to.be.a('string');
 
 		});
 
