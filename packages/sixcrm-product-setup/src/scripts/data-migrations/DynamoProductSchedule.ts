@@ -77,7 +77,7 @@ export class DynamoProductSchedule {
 	}
 
 	toProductSchedule() : ProductSchedule {
-		let cycles = DynamoProductSchedule.cyclesFromSchedule(this.schedule);
+		const cycles = DynamoProductSchedule.cyclesFromSchedule(this.schedule);
 
 		return Object.assign(new ProductSchedule(this.id, this.account, this.name.substring(0, 55).trim(), !!this.trial_required),{
 			created_at: new Date(this.created_at),
