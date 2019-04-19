@@ -63,7 +63,7 @@ jobs:
       - run:
           name: 'Legacy Unit Tests (TypeScript)'
           command: stage=circle yarn run ts-test
-  product_setup_tests:
+  data_model_tests:
     machine: true
     steps:
       - checkout
@@ -258,7 +258,7 @@ workflows:
                 - staging
                 - production
                 - priority
-      - product_setup_tests:
+      - data_model_tests:
           requires:
             - build
           filters:
@@ -271,7 +271,7 @@ workflows:
           requires:
             - lint
             - unit_tests
-            - product_setup_tests
+            - data_model_tests
           filters:
             branches:
               only:
