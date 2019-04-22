@@ -55,8 +55,7 @@ describe('Graph '+entity+' Test', function() {
 
 				tests.forEach((test) => {
 
-					//let account = tu.getAccount(test.query);
-					let account = test_account.id;
+					const account = test_account.id;
 
 					it('Should return only '+test_user.name+' fields for '+entity+' '+test.name+'.', function (done) {
 						const rawQuery = tu.getQuery(test.query);
