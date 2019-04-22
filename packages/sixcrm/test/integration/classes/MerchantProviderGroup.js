@@ -13,24 +13,22 @@ module.exports = class MerchantProviderGroupTest extends IntegrationTest {
 
 	}
 
-	executeProductScheduleBlockTest(){
+	async executeProductScheduleBlockTest(){
 
 		du.info('Execute Product Schedule Block Test');
 
-		let merchantprovidergroup_id = uuidV4();
-		let productschedule_id = uuidV4();
+		const merchantprovidergroup_id = uuidV4();
 
 		du.info('Merchant Provider Group ID: '+merchantprovidergroup_id);
-		du.info('Product Schedule ID: '+productschedule_id);
 
-		return this.createMerchantProviderGroup(merchantprovidergroup_id)
-			.then(() => this.createProductSchedule(productschedule_id, merchantprovidergroup_id))
-			.then(() => this.deleteMerchantProviderGroup(merchantprovidergroup_id, 403))
-			.then(response => {
-				return response;
-			})
-			.then(() => this.deleteProductSchedule(productschedule_id))
-			.then(() => this.deleteMerchantProviderGroup(merchantprovidergroup_id));
+		await this.createMerchantProviderGroup(merchantprovidergroup_id);
+		const { id: productschedule_id } = (await this.createProductSchedule(merchantprovidergroup_id)).body.response.data.createproductschedule;
+
+		du.info(`Product Schedule ID: ${productschedule_id}`);
+
+		await this.deleteMerchantProviderGroup(merchantprovidergroup_id, 403);
+		await this.deleteProductSchedule(productschedule_id);
+		return this.deleteMerchantProviderGroup(merchantprovidergroup_id);
 
 	}
 
@@ -44,13 +42,13 @@ module.exports = class MerchantProviderGroupTest extends IntegrationTest {
 
 	}
 
-	createProductSchedule(productschedule_id, merchantprovidergroup_id){
+	createProductSchedule(merchantprovidergroup_id) {
 
 		du.info('Create Product Schedule');
 
-		let emailtemplate_create_query = `mutation { createproductschedule ( productschedule: { id: "`+productschedule_id+`", name:"Testing Name", merchantprovidergroup:"`+merchantprovidergroup_id+`", schedule: [{ product:"668ad918-0d09-4116-a6fe-0e7a9eda36f8", start:0, end:30, price:49.00, period:30 }]}) { id } }`;
+		const productschedule_create_query = `mutation { createproductschedule ( productschedule: { name:"Testing Name", merchantprovidergroup:"${merchantprovidergroup_id}", cycles: [{cycle_products:[{product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8", is_shipping:true,position:1,quantity:1}],length: "30 days",position:1, next_position:1, price:49.00,shipping_price:30}]}) { id } }`;
 
-		return this.executeQuery(emailtemplate_create_query);
+		return this.executeQuery(productschedule_create_query);
 
 	}
 
