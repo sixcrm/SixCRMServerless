@@ -8,6 +8,7 @@ const stepFunctionWorkerController = global.SixCRM.routes.include('controllers',
 const ShippoTracker = require('../../../lib/controllers/vendors/ShippoTracker').default;
 const RebillController = require('../../entities/Rebill');
 const TrialConfirmationHelper = require('../../../lib/controllers/helpers/entities/trialconfirmation/TrialConfirmation').default;
+const FulfillmentProviderController = global.SixCRM.routes.include('controllers','entities/FulfillmentProvider.js');
 
 module.exports = class GetTrackingInformationController extends stepFunctionWorkerController {
 
@@ -34,6 +35,15 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 	}
 
 	async getTrackingInformation(shipping_receipt) {
+
+		const isTestShipment = await this.isIsuedByTestFulfillmentProvider(shipping_receipt);
+
+		if (isTestShipment) {
+			return {
+				status: 'DELIVERED',
+				detail: 'Your package has been delivered.'
+			}
+		}
 
 		const shippoTracker = new ShippoTracker(global.SixCRM.configuration.site_config.shippo.apiKey);
 
@@ -116,6 +126,14 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 
 		}
 
+	}
+
+	async isIsuedByTestFulfillmentProvider(shipping_receipt) {
+		const fulfillmentProviderController = new FulfillmentProviderController();
+
+		const fulfillmentProvider = await fulfillmentProviderController.get({id: shipping_receipt.fulfillment_provider});
+
+		return fulfillmentProvider.provider.name === 'Test';
 	}
 
 }

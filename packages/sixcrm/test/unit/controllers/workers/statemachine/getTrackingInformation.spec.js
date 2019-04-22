@@ -44,12 +44,20 @@ describe('controllers/workers/statemachine/getTrackingInformation.js', () => {
 		it('returns tracking information', async () => {
 
 			let shipping_receipt = MockEntities.getValidShippingReceipt();
+			const fulfillmentProvider = MockEntities.getValidFulfillmentProvider(null, 'ShipStation');
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
 				constructor() { }
 				get({ id: id }) {
 					expect(id).to.be.a('string');
 					return Promise.resolve(shipping_receipt);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
+				get({ id: id }) {
+					expect(id).to.be.a('string');
+					return Promise.resolve(fulfillmentProvider);
 				}
 			});
 
@@ -76,15 +84,53 @@ describe('controllers/workers/statemachine/getTrackingInformation.js', () => {
 
 		});
 
+		it('returns tracking information of a Test fulfillment provider', async () => {
+
+			const shippingReceipt = MockEntities.getValidShippingReceipt();
+			const fulfillmentProvider = MockEntities.getValidFulfillmentProvider(null, 'Test');
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+				constructor() { }
+				get({ id: id }) {
+					expect(id).to.be.a('string');
+					return Promise.resolve(shippingReceipt);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
+				get({ id: id }) {
+					expect(id).to.be.a('string');
+					return Promise.resolve(fulfillmentProvider);
+				}
+			});
+
+			const GetTrackingInformationController = global.SixCRM.routes.include('workers', 'statemachine/getTrackingInformation.js');
+			let getTrackingInformationController = new GetTrackingInformationController();
+
+			let result = await getTrackingInformationController.getTrackingInformation(shippingReceipt);
+
+			expect(result.status).to.equal('DELIVERED');
+			expect(result.detail).to.equal('Your package has been delivered.');
+
+		});
+
 		it('throws an error for unexpected response (missing status)', async () => {
 
 			let shipping_receipt = MockEntities.getValidShippingReceipt();
+			const fulfillmentProvider = MockEntities.getValidFulfillmentProvider(null, 'ShipStation');
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
 				constructor() { }
 				get({ id: id }) {
 					expect(id).to.be.a('string');
 					return Promise.resolve(shipping_receipt);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
+				get({ id: id }) {
+					expect(id).to.be.a('string');
+					return Promise.resolve(fulfillmentProvider);
 				}
 			});
 
@@ -158,6 +204,8 @@ describe('controllers/workers/statemachine/getTrackingInformation.js', () => {
 				guid: shipping_receipt.id
 			};
 
+			const fulfillmentProvider = MockEntities.getValidFulfillmentProvider(null, 'ShipStation');
+
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
 				constructor() { }
 				pushEvent({ event_type, context, message_attributes }) {
@@ -165,6 +213,13 @@ describe('controllers/workers/statemachine/getTrackingInformation.js', () => {
 					expect(context).to.be.a('object');
 					expect(message_attributes).to.be.a('object');
 					return Promise.resolve(true);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
+				get({ id: id }) {
+					expect(id).to.be.a('string');
+					return Promise.resolve(fulfillmentProvider);
 				}
 			});
 
