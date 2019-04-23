@@ -13,6 +13,9 @@ const assert = chai.assert;
 import Configuration from '@6crm/sixcrm-platform/lib/config/Configuration';
 import IPostgresConfig from '@6crm/sixcrm-data/lib/config/Postgres';
 
+import NotFoundError from '@6crm/sixcrm-platform/lib/errors/NotFoundError';
+import NotAuthorizedError from '@6crm/sixcrm-platform/lib/errors/NotAuthorizedError';
+
 import Product from '@6crm/sixcrm-product-setup/lib/models/Product';
 import ProductSchedule from '@6crm/sixcrm-product-setup/lib/models/ProductSchedule';
 import Cycle from '@6crm/sixcrm-product-setup/lib/models/Cycle';
@@ -28,6 +31,9 @@ import ProductSetupService from '@6crm/sixcrm-product-setup/src/ProductSetupServ
 import ProductScheduleService from '@6crm/sixcrm-product-setup/src/ProductScheduleService';
 import { createProductSetupService, createProductScheduleService } from '@6crm/sixcrm-product-setup';
 import { disconnect } from "@6crm/sixcrm-product-setup/lib/connect";
+import { MASTER_ACCOUNT_ID } from '@6crm/sixcrm-data/lib/constants';
+
+const uuidRegex = /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/;
 
 const getValidProductSchedule = (accountId): ProductSchedule => {
 	const productSchedule: any = {
@@ -98,14 +104,19 @@ const getValidProduct = (accountId) => {
 describe('@6crm/sixcrm-subscriptions/lib/SubscriptionService', () => {
 
 	let subscriptionService: SubscriptionService;
+	let anotherSubscriptionService: SubscriptionService;
+	let masterSubscriptionService: SubscriptionService;
 	let productSetupService: ProductSetupService;
 	let productScheduleService: ProductScheduleService;
 	const accountId = uuid.v4();
+	const anotherAccountId = uuid.v4();
 
 	before(async () => {
 		const auroraConfig = await Configuration.get<IPostgresConfig>('aurora');
 
 		subscriptionService = await createSubscriptionService(accountId, auroraConfig);
+		anotherSubscriptionService = await createSubscriptionService(anotherAccountId, auroraConfig);
+		masterSubscriptionService = await createSubscriptionService(MASTER_ACCOUNT_ID, auroraConfig);
 		productSetupService = await createProductSetupService({
 			accountId,
 			host: auroraConfig.host,
@@ -127,6 +138,8 @@ describe('@6crm/sixcrm-subscriptions/lib/SubscriptionService', () => {
 	after(async () => {
 
 		await subscriptionService.dispose();
+		await anotherSubscriptionService.dispose();
+		await masterSubscriptionService.dispose();
 		await disconnect(); // fix this so it's similar to subscriptionService
 
 	});
@@ -147,11 +160,74 @@ describe('@6crm/sixcrm-subscriptions/lib/SubscriptionService', () => {
 
 			await Bluebird.each(products, async product => productSetupService.createProduct(product));
 			const productSchedule = await productScheduleService.create(partialProductSchedule);
-			const subscription = await subscriptionService.create(productSchedule, customerId, merchantProviderId);
+			const subscriptionId = await subscriptionService.create(productSchedule, customerId, merchantProviderId);
 
-			expect(subscription).to.be.a('string');
+			expect(subscriptionId).to.match(uuidRegex);
 
 		});
+
+		xit('throws NotAuthorizedError when creating in the wrong account', async () => undefined);
+
+	});
+
+	describe('get', () => {
+
+		it('gets a subscription by id', async () => {
+
+			const customerId = uuid.v4();
+			const merchantProviderId = uuid.v4();
+			const partialProductSchedule = getValidProductSchedule(accountId);
+			const products = _.uniqBy(
+				_.reduce(
+					partialProductSchedule.cycles,
+					(agg, cycle) => _.concat(agg, _.map(cycle.cycle_products, cycle_product => cycle_product.product)),
+					[] as any[]),
+				product => product.id);
+
+			await Bluebird.each(products, async product => productSetupService.createProduct(product));
+			const productSchedule = await productScheduleService.create(partialProductSchedule);
+			const subscriptionId = await subscriptionService.create(productSchedule, customerId, merchantProviderId);
+
+			expect(subscriptionId).to.match(uuidRegex);
+
+			const subscription = await subscriptionService.get(subscriptionId);
+			expect(subscription).to.have.property('name', partialProductSchedule.name);
+			expect(subscription).to.have.property('account_id', partialProductSchedule.account_id);
+			expect(subscription).to.have.property('customer_id', customerId);
+			expect(subscription).to.have.property('merchant_provider_id', merchantProviderId);
+			expect(subscription.cycles).to.have.length(partialProductSchedule.cycles.length);
+
+		});
+
+		it('throws NotFoundError for a nonexistent subscription', async () => {
+
+			await expect(subscriptionService.get('00000000-0000-0000-0000-000000000000')).to.be.rejectedWith(NotFoundError);
+
+		});
+
+		it('throws NotAuthorizedError for the wrong account', async () => {
+
+			const customerId = uuid.v4();
+			const merchantProviderId = uuid.v4();
+			const partialProductSchedule = getValidProductSchedule(accountId);
+			const products = _.uniqBy(
+				_.reduce(
+					partialProductSchedule.cycles,
+					(agg, cycle) => _.concat(agg, _.map(cycle.cycle_products, cycle_product => cycle_product.product)),
+					[] as any[]),
+				product => product.id);
+
+			await Bluebird.each(products, async product => productSetupService.createProduct(product));
+			const productSchedule = await productScheduleService.create(partialProductSchedule);
+			const subscriptionId = await subscriptionService.create(productSchedule, customerId, merchantProviderId);
+
+			expect(subscriptionId).to.match(uuidRegex);
+
+			await expect(anotherSubscriptionService.get(subscriptionId)).to.be.rejectedWith(NotAuthorizedError);
+
+		});
+
+		xit('gets a subscription when authorized by the master account', async () => undefined);
 
 	});
 

@@ -53,4 +53,12 @@ export default class PostgresConnection {
 
 	}
 
+	static getValuesSubstitution(rows: any[], startIndex: number = 1) {
+
+		return rows.map((values, i) =>
+			'(' + values.map((value, j) => `$${i*values.length + j + startIndex}`).join(',') + ')')
+			.join(',\n');
+
+	}
+
 }
