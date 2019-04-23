@@ -79,12 +79,17 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 
 	async sendShipmentConfirmedNotification({shipping_receipt, tracking}) {
 
+		du.debug('Sending shipment confirmed notification', shipping_receipt, tracking);
+
 		if(_.includes(['DELIVERED','TRANSIT'], tracking.status)) {
 
 			if (_.has(shipping_receipt, 'rebill')) {
 
 				const rebillController = new RebillController();
 				const rebill = rebillController.get({id: shipping_receipt.rebill});
+
+				du.debug('Shipment notification rebill', rebill);
+
 				if (rebill) {
 
 					const trialConfirmationHelper = new TrialConfirmationHelper();
