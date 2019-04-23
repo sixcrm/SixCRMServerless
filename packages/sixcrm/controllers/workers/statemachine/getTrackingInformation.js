@@ -86,7 +86,7 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 			if (_.has(shipping_receipt, 'rebill')) {
 
 				const rebillController = new RebillController();
-				const rebill = rebillController.get({id: shipping_receipt.rebill});
+				const rebill = await rebillController.get({id: shipping_receipt.rebill});
 
 				du.debug('Shipment notification rebill', rebill);
 
