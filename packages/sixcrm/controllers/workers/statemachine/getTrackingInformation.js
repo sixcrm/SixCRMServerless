@@ -81,14 +81,19 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 
 		if(_.includes(['DELIVERED','TRANSIT'], tracking.status)) {
 
-			if (!_.has(shipping_receipt, 'rebill')) {
+			if (_.has(shipping_receipt, 'rebill')) {
 
 				const rebillController = new RebillController();
-				const rebill = rebillController.get(rebill);
+				const rebill = rebillController.get({id: shipping_receipt.rebill});
 				if (rebill) {
 
 					const trialConfirmationHelper = new TrialConfirmationHelper();
-					await trialConfirmationHelper.confirmTrialDelivery(rebill.parentsession);
+
+					try {
+						await trialConfirmationHelper.confirmTrialDelivery(rebill.parentsession);
+					} catch (error) {
+						du.info(`Ignoring trial confirmation, ${error.message}`);
+					}
 
 				}
 
