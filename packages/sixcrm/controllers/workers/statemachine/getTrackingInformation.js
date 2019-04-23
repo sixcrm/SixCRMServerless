@@ -28,7 +28,7 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 
 		await this.updateShippingReceiptWithTrackingInformation({shipping_receipt: shipping_receipt, tracking: tracking});
 
-		await this.sendShipmentConfirmedNotification(shipping_receipt);
+		await this.sendShipmentConfirmedNotification({shipping_receipt: shipping_receipt, tracking: tracking});
 
 		return tracking.status;
 
