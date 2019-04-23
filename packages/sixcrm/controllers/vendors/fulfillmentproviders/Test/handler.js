@@ -2,6 +2,7 @@
 const _ = require('lodash');
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const HttpProvider = require('@6crm/sixcrmcore/lib/providers/http-provider').default;
+const uuidV4 = require('uuid/v4');
 const httpprovider = new HttpProvider();
 
 const ProductHelperController = global.SixCRM.routes.include('helpers', 'entities/product/Product.js');
@@ -241,6 +242,10 @@ module.exports = class TestController extends FulfillmentProviderController {
 			return result;
 		});
 
+	}
+
+	createReferenceNumber(){
+		return uuidV4();
 	}
 
 }
