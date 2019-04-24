@@ -60,7 +60,16 @@ describe('controllers/workers/statemachine/sendDeliveryNotification.js', () => {
         }
       });
 
-      const SendDeliveryNotificationController = global.SixCRM.routes.include('workers', 'statemachine/sendDeliveryNotification.js');
+      mockery.registerMock('../../helpers/analytics/analytics-event', class {
+        constructor() {}
+        push(eventType, context) {
+          expect(eventType).to.equal('rebill');
+          expect(context).to.have.property('id');
+          expect(context).to.have.property('status', 'delivered');
+        }
+      });
+
+	  const SendDeliveryNotificationController = global.SixCRM.routes.include('workers', 'statemachine/sendDeliveryNotification.js');
       let sendDeliveryNotificationController = new SendDeliveryNotificationController();
 
       let result = await sendDeliveryNotificationController.execute(event);

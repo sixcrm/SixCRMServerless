@@ -4,6 +4,7 @@ const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 const RebillController = require('../../entities/Rebill');
 const TrialConfirmationHelper = require('../../../lib/controllers/helpers/entities/trialconfirmation/TrialConfirmation').default;
+const AnalyticsEvent = require('../../helpers/analytics/analytics-event');
 
 module.exports = class SendDeliveryNotificationController extends stepFunctionWorkerController {
 
@@ -20,6 +21,7 @@ module.exports = class SendDeliveryNotificationController extends stepFunctionWo
 		const shipping_receipt = await this.getShippingReceipt(event.guid);
 
 		await this.confirmSessionDelivery(shipping_receipt);
+		await this.sendAnalyticsUpdate(shipping_receipt);
 
 		return true;
 
@@ -42,6 +44,25 @@ module.exports = class SendDeliveryNotificationController extends stepFunctionWo
 					du.info(`Ignoring trial confirmation, ${error.message}`);
 				}
 
+			}
+
+		}
+
+	}
+
+	async sendAnalyticsUpdate(shipping_receipt) {
+
+		du.debug('Confirm Session Delivery for', shipping_receipt);
+
+		if (_.has(shipping_receipt, 'rebill')) {
+
+			try {
+				await AnalyticsEvent.push('rebill', {
+					id: shipping_receipt.rebill,
+					status: 'delivered'
+				});
+			} catch (error) {
+				du.info(`Ignoring analytics update for delivery, ${error.message}`);
 			}
 
 		}

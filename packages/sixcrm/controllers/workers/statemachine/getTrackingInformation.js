@@ -2,7 +2,6 @@ const _ = require('lodash');
 
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
-const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 const ShippoTracker = require('../../../lib/controllers/vendors/ShippoTracker').default;
@@ -34,7 +33,7 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 
 	async getTrackingInformation(shipping_receipt) {
 
-		const isTestShipment = await this.isIsuedByTestFulfillmentProvider(shipping_receipt);
+		const isTestShipment = await this.isIssuedByTestFulfillmentProvider(shipping_receipt);
 
 		if (isTestShipment) {
 			return {
@@ -79,35 +78,22 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 
 		du.debug('Sending shipment confirmed notification', shipping_receipt, tracking);
 
-		if(_.includes(['DELIVERED','TRANSIT'], tracking.status)) {
+		if (tracking.status === 'TRANSIT' || tracking.status === 'DELIVERED') {
 
-			if(!_.has(shipping_receipt, 'history') || !arrayutilities.nonEmpty(shipping_receipt.history)) {
+			if (_.has(shipping_receipt, 'history') && shipping_receipt.history.length !== 0) {
 
-				await this.pushEvent({
-					event_type: 'shipping_confirmation',
-					context: {
-						shipping_receipt: shipping_receipt
-					}
-				});
+				const existingHistoryIndex = _.findIndex(shipping_receipt.history, historyElement =>
+					historyElement.status === 'TRANSIT' || historyElement.status === 'DELIVERED');
+				if (existingHistoryIndex === -1) {
 
-				return true;
+					await this.pushEvent({
+						event_type: 'shipping_confirmation',
+						context: {
+							shipping_receipt: shipping_receipt
+						}
+					});
 
-			}
-
-			let previous_shipment_record = arrayutilities.find(shipping_receipt.history, history_element => {
-				return(_.includes(['DELIVERED','TRANSIT'], history_element.status));
-			});
-
-			if(_.isNull(previous_shipment_record) || _.isUndefined(previous_shipment_record)){
-
-				await this.pushEvent({
-					event_type: 'shipping_confirmation',
-					context: {
-						shipping_receipt: shipping_receipt
-					}
-				});
-
-				return true;
+				}
 
 			}
 
@@ -115,7 +101,7 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 
 	}
 
-	async isIsuedByTestFulfillmentProvider(shipping_receipt) {
+	async isIssuedByTestFulfillmentProvider(shipping_receipt) {
 		const fulfillmentProviderController = new FulfillmentProviderController();
 
 		const fulfillmentProvider = await fulfillmentProviderController.get({id: shipping_receipt.fulfillment_provider});

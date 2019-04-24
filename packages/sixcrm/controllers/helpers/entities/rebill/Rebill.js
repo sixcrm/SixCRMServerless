@@ -7,7 +7,6 @@ const random = require('@6crm/sixcrmcore/lib/util/random').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
-const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 
 module.exports = class RebillHelper {
 
@@ -202,8 +201,7 @@ module.exports = class RebillHelper {
 			.then(() => this.acquireRebill())
 			.then(() => this.setConditionalProperties())
 			.then(() => this.buildUpdatedRebillPrototype())
-			.then(() => this.updateRebillFromUpdatedRebillPrototype())
-			.then(() => this.pushRebillStateChangeEvent());
+			.then(() => this.updateRebillFromUpdatedRebillPrototype());
 
 	}
 
@@ -602,35 +600,6 @@ module.exports = class RebillHelper {
 
 			});
 
-	}
-
-	async pushRebillStateChangeEvent() {
-		await this.transformRebill();
-		await AnalyticsEvent.push('rebill', { transformedrebill: this.parameters.get('transformedrebill', {fatal: false})});
-		return this.parameters.get('rebill');
-
-	}
-
-	transformRebill() {
-
-		const rebill = this.parameters.get('rebill');
-
-		// A.Zelen
-		// For summary amounts in queries we need amount of rebills to be feed here
-		// I hard-coded zero
-
-		const transformedRebill = {
-			id: rebill.id,
-			current_queuename: rebill.state,
-			previous_queuename: rebill.previous_state || '',
-			account: rebill.account,
-			datetime: rebill.state_changed_at,
-			amount: 0
-		};
-
-		this.parameters.set('transformedrebill', transformedRebill);
-
-		return Promise.resolve();
 	}
 
 	isAvailable({
