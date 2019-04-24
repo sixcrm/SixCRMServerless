@@ -6,8 +6,6 @@ const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').defa
 
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 const ShippoTracker = require('../../../lib/controllers/vendors/ShippoTracker').default;
-const RebillController = require('../../entities/Rebill');
-const TrialConfirmationHelper = require('../../../lib/controllers/helpers/entities/trialconfirmation/TrialConfirmation').default;
 const FulfillmentProviderController = global.SixCRM.routes.include('controllers','entities/FulfillmentProvider.js');
 
 module.exports = class GetTrackingInformationController extends stepFunctionWorkerController {
@@ -82,27 +80,6 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 		du.debug('Sending shipment confirmed notification', shipping_receipt, tracking);
 
 		if(_.includes(['DELIVERED','TRANSIT'], tracking.status)) {
-
-			if (_.has(shipping_receipt, 'rebill')) {
-
-				const rebillController = new RebillController();
-				const rebill = await rebillController.get({id: shipping_receipt.rebill});
-
-				du.debug('Shipment notification rebill', rebill);
-
-				if (rebill) {
-
-					const trialConfirmationHelper = new TrialConfirmationHelper();
-
-					try {
-						await trialConfirmationHelper.confirmTrialDelivery(rebill.parentsession);
-					} catch (error) {
-						du.info(`Ignoring trial confirmation, ${error.message}`);
-					}
-
-				}
-
-			}
 
 			if(!_.has(shipping_receipt, 'history') || !arrayutilities.nonEmpty(shipping_receipt.history)) {
 

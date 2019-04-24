@@ -60,16 +60,6 @@ describe('controllers/workers/statemachine/sendDeliveryNotification.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class{
-        constructor(){}
-        pushEvent({event_type, context, message_attributes}){
-          expect(event_type).to.be.a('string');
-          expect(context).to.be.a('object');
-          //expect(message_attributes).to.be.a('object');
-          return Promise.resolve(true);
-        }
-      });
-
       const SendDeliveryNotificationController = global.SixCRM.routes.include('workers', 'statemachine/sendDeliveryNotification.js');
       let sendDeliveryNotificationController = new SendDeliveryNotificationController();
 
