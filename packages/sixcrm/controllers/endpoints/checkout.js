@@ -1,21 +1,8 @@
-const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
-const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
-const stringutilities = require('@6crm/sixcrmcore/lib/util/string-utilities').default;
-const { getProductScheduleService } = require('@6crm/sixcrm-product-setup');
 const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 const ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
-
-const loadProductSchedule = async (id) => {
-	try {
-		return await getProductScheduleService().get(id);
-	} catch (e) {
-		du.error('Error retrieving product schedule', e);
-		throw eu.getError('not_found', `Product schedule does not exist: ${id}`);
-	}
-}
 
 module.exports = class CheckoutController extends transactionEndpointController{
 
@@ -80,28 +67,9 @@ module.exports = class CheckoutController extends transactionEndpointController{
 		return this.respond();
 	}
 
-	async validateParameters() {
+	validateParameters() {
 		const event = this.parameters.get('event');
-
-		if (event.product_schedules) {
-			if (event.product_schedules.length > 1) {
-				throw eu.getError('bad_request', 'There can only be one product schedule per request')
-			}
-
-			for (const { product_schedule } of event.product_schedules) {
-				const id = stringutilities.isUUID(product_schedule) ? product_schedule : product_schedule.id;
-				if (!id) {
-					throw eu.getError('bad_request', 'Missing product schedule ID');
-				}
-
-				const productSchedule = await loadProductSchedule(id);
-				for (const cycle of productSchedule.cycles) {
-					if (cycle.cycle_products.length > 1) {
-						throw eu.getError('bad_request', 'Product schedule can only have one product')
-					}
-				}
-			}
-		}
+		return this.createOrderController.validateParameters(event);
 	}
 
 	setSession(){
