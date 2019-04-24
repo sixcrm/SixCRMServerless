@@ -368,34 +368,22 @@ class MockEntities {
 	static getValidId(id) {
 		return (!_.isUndefined(id) && !_.isNull(id)) ? id : uuidV4();
 	}
-	/* eslint-disable */
-  static getValidSchedule(ids, expanded) {
-    /* eslint-enable */
 
-		expanded = (_.isUndefined(expanded) || _.isNull(expanded)) ? false : expanded;
-
-		ids = (_.isUndefined(ids) || _.isNull(ids)) ? [uuidV4(), uuidV4(), uuidV4(), uuidV4()] : ids;
-
-		let start = 0;
-
-		return arrayutilities.map(ids, (id) => {
-
-			let this_start = start;
-			let period = randomutilities.randomInt(1, 60);
-			let end = (start + period);
-
-			start = (this_start + period);
-
-			return {
-				product: this.getValidProduct(id, true),
-				price: randomutilities.randomDouble(1.00, 100.00, 2),
-				start: this_start,
-				end: end,
-				period: period
-			}
-
-		});
-
+	static getValidCycle() {
+		return {
+			id: uuidV4(),
+			length: { days: 14 },
+			position: 1,
+			next_position: 1,
+			price: 30,
+			shipping_price: 0,
+			cycle_products: [{
+				product: uuidV4(),
+				is_shipping: true,
+				position: 1,
+				quantity: 1
+			}]
+		}
 	}
 
 	static getValidProductScheduleGroups(ids, expanded) {
@@ -441,18 +429,6 @@ class MockEntities {
 
 	}
 
-	static getProductScheduleWithOneProductAndSchedule(id, expanded) {
-
-		expanded = (_.isUndefined(expanded) || _.isNull(expanded)) ? false : expanded;
-
-		id = (_.isUndefined(id) || _.isNull(id)) ? uuidV4() : id;
-
-		let ps = this.getValidProductSchedule(id, expanded);
-		ps.schedule = [ps.schedule[0]];
-
-		return ps;
-	}
-
 	static getValidProducts(ids) {
 
 		ids = (_.isUndefined(ids) || _.isNull(ids)) ? [uuidV4(), uuidV4(), uuidV4(), uuidV4()] : ids;
@@ -463,18 +439,16 @@ class MockEntities {
 
 	}
 
-	static getValidProductSchedule(id, expanded) {
+	static getValidProductSchedule(id) {
 
-		expanded = (_.isUndefined(expanded) || _.isNull(expanded)) ? false : expanded;
-
-		let schedule = this.getValidSchedule(null, expanded);
+		let cycles = [this.getValidCycle()];
 
 		return {
 			id: this.getValidId(id),
 			name: randomutilities.createRandomString(20),
 			account: this.getTestAccountID(),
 			merchantprovidergroup: uuidV4(),
-			schedule: schedule,
+			cycles: cycles,
 			created_at: timestamp.getISO8601(),
 			updated_at: timestamp.getISO8601()
 		};

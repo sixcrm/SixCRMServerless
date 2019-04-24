@@ -1160,7 +1160,7 @@ describe('controllers/providers/Register.js', () => {
 			merchant_provider_groups[group_id] = [getValidTransactionProducts()];
 
 			// Get at least one product id to match a subscription on the session.
-			rebill.products[0].product.id = session.watermark.product_schedules[0].product_schedule.schedule[0].product.id;
+			rebill.products[0].product.id = session.watermark.product_schedules[0].product_schedule.cycles[0].cycle_products[0].product;
 
 			session.watermark.product_schedules.forEach(productScheduleGroup => {
 				productScheduleGroup.product_schedule = toProductScheduleInput(productScheduleGroup.product_schedule);

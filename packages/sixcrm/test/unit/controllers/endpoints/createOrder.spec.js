@@ -262,11 +262,11 @@ describe('createOrder', function () {
 			let user = MockEntities.getValidUser();
 
 			session.completed = false;
-			event.body = JSON.stringify(getValidEventBody(null, true));
+			event.body = JSON.stringify(getValidEventBody(null, false));
 
 			let body = JSON.parse(event.body);
 			body.product_schedules = [body.product_schedules[0]];
-			const productSchedule = body.product_schedules[0].product_schedule.schedule = [body.product_schedules[0].product_schedule.schedule[0]];
+			const productSchedule = MockEntities.getValidProductSchedule(body.product_schedules[0]);
 			event.body = JSON.stringify(body);
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
@@ -475,7 +475,7 @@ describe('createOrder', function () {
 			let campaign = getValidCampaign();
 
 			session.completed = false;
-			let eventBody = getValidEventBody(null, true);
+			let eventBody = getValidEventBody(null, false);
 			eventBody.customer = getValidCustomerPrototype();
 			event.body = JSON.stringify(eventBody);
 
@@ -492,7 +492,7 @@ describe('createOrder', function () {
 
 			let body = JSON.parse(event.body);
 			body.product_schedules = [body.product_schedules[0]];
-			const productSchedule = body.product_schedules[0].product_schedule.schedule = [body.product_schedules[0].product_schedule.schedule[0]];
+			const productSchedule = MockEntities.getValidProductSchedule(body.product_schedules[0]);
 			event.body = JSON.stringify(body);
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
@@ -704,7 +704,7 @@ describe('createOrder', function () {
 
 			delete event.creditcard;
 			event.transaction_subtype = 'upsell';
-			event.body = JSON.stringify(getValidEventBody(null, true));
+			event.body = JSON.stringify(getValidEventBody(null, false));
 
 			const context = {};
 			let session = getSessionWithoutProductSchedules();
@@ -725,7 +725,7 @@ describe('createOrder', function () {
 
 			let body = JSON.parse(event.body);
 			body.product_schedules = [body.product_schedules[0]];
-			const productSchedule = body.product_schedules[0].product_schedule.schedule = [body.product_schedules[0].product_schedule.schedule[0]];
+			const productSchedule = MockEntities.getValidProductSchedule(body.product_schedules[0]);
 			event.body = JSON.stringify(body);
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
@@ -1684,7 +1684,7 @@ describe('createOrder', function () {
 	describe('createOrder', () => {
 		it('successfully creates a order', () => {
 
-			let event = getValidEventBody(null, true);
+			let event = getValidEventBody(null, false);
 			const context = {};
 			let product_schedule_ids = arrayutilities.map(event.product_schedules, product_schedule_group => product_schedule_group.product_schedule);
 			let product_schedules = getValidProductSchedules(product_schedule_ids, true);

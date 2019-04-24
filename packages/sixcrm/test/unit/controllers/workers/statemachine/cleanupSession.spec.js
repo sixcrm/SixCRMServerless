@@ -2,7 +2,7 @@ const _ = require('lodash');
 const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
-
+const uuidV4 = require('uuid/v4');
 const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
@@ -483,6 +483,41 @@ describe('controllers/workers/statemachine/cleanupSession.js', () => {
 
   });
 
+  describe('createTrialConfirmation', async () => {
+
+    it('does not create confirmation object if session is concluded', async () => {
+      const session = MockEntities.getValidSession();
+      session.concluded = true;
+
+      const CleanupSessionController = global.SixCRM.routes.include('workers', 'statemachine/cleanupSession.js');
+      let cleanupSessionController = new CleanupSessionController();
+
+      const result = await cleanupSessionController.createTrialConfirmation(session);
+      expect(result).to.equal(null);
+    });
+
+    it('create confirmation object if session has product schedule that require confirmation', async () => {
+      const session = MockEntities.getValidSession();
+      session.watermark.product_schedules[0].product_schedule.requires_confirmation = true;
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'TrialConfirmation'), class {
+        constructor(){}
+        create(entity){
+          entity.id = uuidV4();
+          return Promise.resolve(entity);
+        }
+      });
+
+      const CleanupSessionController = global.SixCRM.routes.include('workers', 'statemachine/cleanupSession.js');
+      let cleanupSessionController = new CleanupSessionController();
+
+      const result = await cleanupSessionController.createTrialConfirmation(session);
+      expect(result).to.be.a('object');
+      expect(result.session).to.equal(session.id);
+    });
+
+  });
+
   describe('execute', async () => {
 
     it('successfully cleans up the session', async () => {
@@ -532,8 +567,10 @@ describe('controllers/workers/statemachine/cleanupSession.js', () => {
           expect(id).to.be.a('string');
           return Promise.resolve(session);
 				}
-				updateProperties() {
-					return Promise.resolve();
+				update({entity}) {
+          expect(entity).to.be.a('object');
+          expect(entity.consolidated).to.equal(true);
+          return Promise.resolve(entity);
 				}
       });
 
@@ -541,6 +578,79 @@ describe('controllers/workers/statemachine/cleanupSession.js', () => {
       let cleanupSessionController = new CleanupSessionController();
 
       let result = await cleanupSessionController.execute({guid: session.id});
+      expect(result).to.equal(consolidated_rebill_id);
+
+    });
+
+    it('successfully cleans up the session that requires confirmation', async () => {
+
+      const consolidated_rebill_id = MockEntities.getValidRebill().id;
+      const session = MockEntities.getValidSession();
+      session.watermark.product_schedules[0].product_schedule.requires_confirmation = true;
+
+      const rebills = arrayutilities.map(MockEntities.getValidRebills(), (rebill) => {
+        rebill.parentsession = session.id;
+        return rebill;
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        constructor(){}
+        listBySession({session}){
+          expect(session).to.be.a('object');
+          expect(session).to.have.property('id');
+          return Promise.resolve({rebills: rebills});
+        }
+        create({entity}){
+          expect(entity).to.be.a('object');
+          entity.id = consolidated_rebill_id;
+          return Promise.resolve(entity);
+        }
+        delete({id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(id);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+        constructor(){}
+        listTransactionsByRebillID(rebill){
+          expect(rebill).to.be.a('object');
+          expect(rebill).to.have.property('id');
+          return Promise.resolve({transactions: MockEntities.getValidTransactions()});
+        }
+        update({entity}){
+          expect(entity).to.be.a('object');
+          expect(entity).to.have.property('id');
+          return Promise.resolve(entity);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        constructor(){}
+        get({id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(session);
+        }
+        update({entity}) {
+          expect(entity).to.be.a('object');
+          expect(entity.consolidated).to.equal(true);
+          return Promise.resolve(entity);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'TrialConfirmation'), class {
+        constructor(){}
+        create(entity){
+          entity.id = uuidV4();
+
+          return Promise.resolve(entity);
+        }
+      });
+
+      const CleanupSessionController = global.SixCRM.routes.include('workers', 'statemachine/cleanupSession.js');
+      const cleanupSessionController = new CleanupSessionController();
+
+      const result = await cleanupSessionController.execute({guid: session.id});
       expect(result).to.equal(consolidated_rebill_id);
 
     });
