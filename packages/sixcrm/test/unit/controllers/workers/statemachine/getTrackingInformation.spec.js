@@ -249,6 +249,15 @@ describe('controllers/workers/statemachine/getTrackingInformation.js', () => {
 				}
 			});
 
+			mockery.registerMock('../../helpers/analytics/analytics-event', class {
+				constructor() {}
+				push(eventType, context) {
+					expect(eventType).to.equal('rebill');
+					expect(context).to.have.property('id');
+					expect(context).to.have.property('status', 'delivered');
+				}
+			})
+
 			const GetTrackingInformationController = global.SixCRM.routes.include('workers', 'statemachine/getTrackingInformation.js');
 			let getTrackingInformationController = new GetTrackingInformationController();
 
