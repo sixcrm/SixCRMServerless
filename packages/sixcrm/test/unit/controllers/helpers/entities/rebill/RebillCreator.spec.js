@@ -103,9 +103,9 @@ describe('RebillCreator', () => {
 		});
 
 		context('subscription session', () => {
-			let productSchedule, rebill_prototype, rebill, session;
+			let product, productSchedule, rebill_prototype, rebill, session;
 			beforeEach(() => {
-				const product = {
+				product = {
 					id: 'd3294914-42ed-40fd-9abe-a4bfbc57d970',
 					name: 'Intelligent Plastic Table',
 					price: 30,
@@ -443,6 +443,64 @@ describe('RebillCreator', () => {
 						}
 					});
 					const result = await rebillCreator.createRebill({session, day: 31});
+					expect(result).to.deep.equal(rebill);
+				});
+
+				it('creates a rebill from a product schedule with a repeating set of cycles', async () => {
+					productSchedule.cycles[0].next_position = 2;
+					productSchedule.cycles.push({
+						id: '6c258fb8-f258-4ba2-8450-e573dff3d89f',
+						length: { days: 30 },
+						position: 2,
+						next_position: 1,
+						price: 2,
+						shipping_price: 0,
+						cycle_products: [{
+							product,
+							is_shipping: true,
+							position: 1,
+							quantity: 1
+						}]
+					});
+
+					Object.assign(rebill_prototype, {
+						cycle: 2,
+						bill_at: '2018-03-02T00:00:01.000Z'
+					});
+					rebill = Object.assign({}, rebill_prototype, {
+						id: '6b82508c-a334-4cfe-892a-fdaaec925122',
+						merchant_provider: 'd3ebdbef-982c-4061-bcfe-58c380982285',
+						alias: 'R1F174PWZS',
+						created_at: '2018-01-31T00:00:01.000Z',
+						updated_at: '2018-01-31T00:00:01.000Z'
+					});
+					const previous_rebill_0 = Object.assign({}, rebill_prototype, {
+						id: '6b82508c-a334-4cfe-892a-fdaaec925122',
+						cycle: 0,
+						processing: true,
+						bill_at: '2018-01-01T00:00:01.000Z',
+						created_at: '2018-01-01T00:00:01.000Z',
+						updated_at: '2018-01-01T00:00:01.000Z',
+					});
+					const previous_rebill_1 = Object.assign({}, rebill_prototype, {
+						id: '6b82508c-a334-4cfe-892a-fdaaec925122',
+						cycle: 1,
+						processing: true,
+						bill_at: '2018-01-31T00:00:01.000Z',
+						created_at: '2018-01-01T00:00:01.000Z',
+						updated_at: '2018-01-01T00:00:01.000Z',
+						amount: 2
+					});
+					td.when(SessionController.prototype.listRebills(session)).thenResolve(
+						[previous_rebill_0, previous_rebill_1]
+					);
+					td.when(RebillController.prototype.create({entity: rebill_prototype})).thenResolve(rebill);
+					td.when(getProductScheduleService()).thenReturn({
+						get() {
+							return productSchedule;
+						}
+					});
+					const result = await rebillCreator.createRebill({session, day: 30});
 					expect(result).to.deep.equal(rebill);
 				});
 			});

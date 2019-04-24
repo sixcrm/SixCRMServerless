@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { isArray, orderBy, sortBy, isObject } = require('lodash');
+const { isArray, orderBy, range, sortBy, isObject } = require('lodash');
 const moment = require('moment');
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
@@ -189,8 +189,9 @@ const buildRebillEntity = async ({
 }) => {
 	du.debug(`Build rebill entity: ${JSON.stringify({ session, day, products, product_schedule })}`);
 	const previousRebill = day >= 0 ? await getMostRecentRebill(session) : null;
-	const position = previousRebill ? previousRebill.cycle + 2 : 1;
-	const cycle = product_schedule ? getCurrentCycle({ cycles: product_schedule.cycles, position }) : null;
+	const previousPosition = previousRebill ? previousRebill.cycle + 1 : 0;
+	const position = previousPosition + 1;
+	const cycle = product_schedule ? getCurrentCycle({ cycles: product_schedule.cycles, previousPosition }) : null;
 	const amount = calculateAmount({ products, cycle });
 	const transaction_products = getTransactionProducts({ products, cycle });
 	const billDay = getNextProductScheduleBillDayNumber(
@@ -246,16 +247,14 @@ const getMostRecentRebill = async (session) => {
 	return mostRecentRebill;
 };
 
-const getCurrentCycle = ({ cycles, position }) => {
-	const sortedCycles = sortBy(cycles, 'position');
-	const index = position - 1;
+const getCurrentCycle = ({ cycles, previousPosition }) => {
+	const sortedCycles = sortBy(cycles, "position");
+	const currentCycle = range(previousPosition).reduce(
+		previousCycle => sortedCycles[previousCycle.next_position - 1],
+		sortedCycles[0]
+	);
 
-	if (sortedCycles[index]) {
-		return sortedCycles[index];
-	}
-
-	// TODO handle repeating sets of cycles
-	return sortedCycles.pop();
+	return currentCycle;
 };
 
 const calculateAmount = ({ products, cycle }) => {
@@ -293,7 +292,7 @@ const getNextProductScheduleBillDayNumber = ({ day, product_schedule, position, 
 		return 0;
 	}
 
-	const { length } = current_cycle || product_schedule.cycles.find(cycle => cycle.position === position);
+	const { length } = current_cycle;
 
 	if (length.days) {
 		return day + length.days;
