@@ -6,7 +6,6 @@ const eu = require('@6crm/sixcrmcore/lib/util/error-utilities').default;
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 const ShippoTracker = require('../../../lib/controllers/vendors/ShippoTracker').default;
 const FulfillmentProviderController = global.SixCRM.routes.include('controllers','entities/FulfillmentProvider.js');
-const AnalyticsEvent = require('../../helpers/analytics/analytics-event');
 
 module.exports = class GetTrackingInformationController extends stepFunctionWorkerController {
 
@@ -92,11 +91,6 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 						context: {
 							shipping_receipt: shipping_receipt
 						}
-					});
-
-					await AnalyticsEvent.push('rebill', {
-						id: shipping_receipt.rebill,
-						status: tracking.status === 'TRANSIT' ? 'shipped' : 'delivered'
 					});
 
 				}
