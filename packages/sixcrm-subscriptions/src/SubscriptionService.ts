@@ -51,7 +51,6 @@ export default class SubscriptionService {
 		if (result.rowCount === 0) {
 			throw new NotFoundError();
 		}
-
 		if (!this._validateAccount(result.rows[0].account_id)) {
 			throw new NotAuthorizedError();
 		}
@@ -159,7 +158,9 @@ export default class SubscriptionService {
 
 		const existingSubscriptionResult = await this._connection.query(
 			`SELECT account_id FROM subscriptions.subscription WHERE id = $1`, [partialSubscription.id]);
-
+		if (existingSubscriptionResult.rowCount === 0) {
+			throw new NotFoundError();
+		}
 		if (!this._validateAccount(existingSubscriptionResult.rows[0].account_id)) {
 			throw new NotAuthorizedError();
 		}
@@ -270,6 +271,9 @@ export default class SubscriptionService {
 	async delete(id: string): Promise<void> {
 
 		const result = await this._connection.query(`SELECT account_id FROM subscriptions.subscription WHERE id = $1`, [id]);
+		if (result.rowCount === 0) {
+			throw new NotFoundError();
+		}
 		if (!this._validateAccount(result.rows[0].account_id)) {
 			throw new NotAuthorizedError();
 		}
@@ -278,8 +282,8 @@ export default class SubscriptionService {
 
 			await this._connection.query(`
 				DELETE FROM subscriptions.subscription_cycle_product scp
-				USING product_setup.subscription_cycle sc
-				WHERE scp.subscription_cycle_id = c.id AND sc.subscription_id = $1`,
+				USING subscriptions.subscription_cycle sc
+				WHERE scp.subscription_cycle_id = sc.id AND sc.subscription_id = $1`,
 				[id]);
 
 			await this._connection.query(`DELETE FROM subscriptions.subscription_cycle WHERE subscription_id = $1`, [id]);
