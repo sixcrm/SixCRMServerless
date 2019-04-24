@@ -6,6 +6,7 @@ const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoi
 const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 const ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
+const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
 
 const loadProductSchedule = async (id) => {
 	try {
@@ -61,6 +62,7 @@ module.exports = class CheckoutController extends transactionEndpointController{
 		this.createLeadController = new CreateLeadController();
 		this.createOrderController = new CreateOrderController();
 		this.confirmOrderController = new ConfirmOrderController();
+		this.sessionHelperController = new SessionHelperController();
 
 		this.initialize();
 
@@ -73,6 +75,7 @@ module.exports = class CheckoutController extends transactionEndpointController{
 		await this.setSession();
 		await this.createOrder();
 		await this.confirmOrder();
+		await this.triggerSessionCloseStateMachine(this.parameters.get('session'));
 
 		return this.respond();
 	}
@@ -149,8 +152,9 @@ module.exports = class CheckoutController extends transactionEndpointController{
 	}
 
 	respond() {
-		let {session, customer, orders} = this.parameters.get('confirmation');
 		let {result} = this.parameters.get('createorderresponse');
+		let {session, customer, orders} = this.parameters.get('confirmation');
+		session = this.sessionHelperController.getPublicFields(session);
 
 		return {
 			result,
