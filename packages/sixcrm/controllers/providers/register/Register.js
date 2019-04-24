@@ -196,7 +196,7 @@ module.exports = class Register extends RegisterUtilities {
 			status,
 			amount: cycle.price,
 			item_count: quantity,
-			cycle,
+			cycle: rebill.cycle,
 			interval: cycle.length.months ? 'monthly' : `${cycle.length.days} days`,
 			account: session.account,
 			campaign: session.campaign,
