@@ -1,10 +1,8 @@
-const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const TrialConfirmationController = global.SixCRM.routes.include('entities', 'TrialConfirmation');
 const sessionController = new SessionController();
-const trialConfirmationController = new TrialConfirmationController();
 
 module.exports = class CloseSessionController extends stepFunctionWorkerController {
 	constructor() {
@@ -16,39 +14,9 @@ module.exports = class CloseSessionController extends stepFunctionWorkerControll
 
 		let session = await this.getSession(event.guid);
 		session.completed = true;
-		await this.handleTrialConfirmation(session);
 		await sessionController.update({entity: session});
 
 		return this.respond();
-	}
-
-	async handleTrialConfirmation(session) {
-		if (session.concluded) {
-			du.info(`Session ${session.id} is concluded, not creating trial confirmation.`);
-			return session;
-		}
-
-		if (!session.watermark || !session.watermark.product_schedules) {
-			du.info(`Session ${session.id} has no watermark product schedules, not creating trial confirmation.`);
-			return session;
-		}
-
-		const trialProductSchedule = session.watermark.product_schedules.find(ps => ps.product_schedule.requires_confirmation);
-
-		if (!trialProductSchedule) {
-			du.debug(`Trial confirmation not required for session with id ${session.id}`);
-			return session;
-		}
-
-		const confirmation = await trialConfirmationController.create({
-			session: session.id,
-			account: session.account,
-			customer: session.customer,
-			sms_provider: trialProductSchedule.product_schedule.sms_provider_id,
-			confirmed_at: 'null' // Special value so we can query this later.
-		});
-
-		session.trial_confirmation = confirmation.id;
 	}
 
 	respond(){

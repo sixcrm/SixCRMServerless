@@ -80,13 +80,13 @@ function getValidEvent(){
 
 }
 
-function getValidEventBody(ids, expanded){
+function getValidEventBody(){
 	return {
 		customer: getValidCustomerPrototype(),
 		affiliates: getValidAffiliatesPrototype(),
 		campaign: getValidCampaign().id,
 		product_schedules: [{
-			quantity: 1, product_schedule: MockEntities.getProductScheduleWithOneProductAndSchedule()
+			quantity: 1, product_schedule: uuidV4()
 		}],
 		creditcard: getValidCreditCardPrototype()
 	};
