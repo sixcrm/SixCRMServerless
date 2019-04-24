@@ -237,7 +237,7 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 			return null;
 		}
 
-		return await trialConfirmationController.create({
+		return trialConfirmationController.create({
 			session: session.id,
 			account: session.account,
 			customer: session.customer,

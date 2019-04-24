@@ -1,7 +1,6 @@
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
-const TrialConfirmationController = global.SixCRM.routes.include('entities', 'TrialConfirmation');
 const sessionController = new SessionController();
 
 module.exports = class CloseSessionController extends stepFunctionWorkerController {

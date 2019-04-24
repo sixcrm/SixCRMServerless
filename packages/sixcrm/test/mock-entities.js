@@ -439,7 +439,7 @@ class MockEntities {
 
 	}
 
-	static getValidProductSchedule(id, expanded) {
+	static getValidProductSchedule(id) {
 
 		let cycles = [this.getValidCycle()];
 
