@@ -63,18 +63,19 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 	async execute(event, context) {
 		await this.preamble(event, context);
-		return this.createLead(this.parameters.get('event'));
+		const session = await this.createLead(this.parameters.get('event'));
+		await this.triggerSessionCloseStateMachine(session);
+
+		return this.sessionHelperController.getPublicFields(session);
 	}
 
 	async createLead(event) {
 		let [customer, campaign, affiliates] = await this.getLeadProperties(event);
 		let session_prototype = this.createSessionPrototype(customer, campaign, affiliates);
 		let session = await this.assureSession(session_prototype);
-		await this.triggerSessionCloseStateMachine(session);
 		await this.postProcessing(session, campaign, affiliates, customer);
 
-		return this.sessionHelperController.getPublicFields(session);
-
+		return session;
 	}
 
 	getLeadProperties(event) {

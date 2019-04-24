@@ -1,5 +1,5 @@
 {
 	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
 	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"mutation {updateproduct (product: {id: \"83b43636-6594-4fa8-8ab1-a71f2f1b7b1f\", name: \"testing2\", sku: \"abc12345\", ship: true, shipping_delay:3601,  fulfillment_provider:\"1bd805d0-0062-499b-ae28-00c5d1b827ba\", default_price:9.99, dynamic_pricing: { min: 8.99, max: 10.99 }}) { id, name, sku, ship, shipping_delay, default_price, dynamic_pricing { min, max } fulfillment_provider { id, name, provider { name } }, created_at, updated_at } }"
+	"body":"mutation {updateproduct (product: {id: \"${id}\", name: \"testing2\", sku: \"abc12345\", ship: true, shipping_delay:3601,  fulfillment_provider:\"1bd805d0-0062-499b-ae28-00c5d1b827ba\", default_price:9.99, dynamic_pricing: { min: 8.99, max: 10.99 }}) { id, name, sku, ship, shipping_delay, default_price, dynamic_pricing { min, max } fulfillment_provider { id, name, provider { name } }, created_at, updated_at } }"
 }

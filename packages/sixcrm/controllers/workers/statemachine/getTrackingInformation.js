@@ -6,8 +6,7 @@ const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').defa
 
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 const ShippoTracker = require('../../../lib/controllers/vendors/ShippoTracker').default;
-const RebillController = require('../../entities/Rebill');
-const TrialConfirmationHelper = require('../../../lib/controllers/helpers/entities/trialconfirmation/TrialConfirmation').default;
+const FulfillmentProviderController = global.SixCRM.routes.include('controllers','entities/FulfillmentProvider.js');
 
 module.exports = class GetTrackingInformationController extends stepFunctionWorkerController {
 
@@ -27,13 +26,22 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 
 		await this.updateShippingReceiptWithTrackingInformation({shipping_receipt: shipping_receipt, tracking: tracking});
 
-		await this.sendShipmentConfirmedNotification(shipping_receipt);
+		await this.sendShipmentConfirmedNotification({shipping_receipt: shipping_receipt, tracking: tracking});
 
 		return tracking.status;
 
 	}
 
 	async getTrackingInformation(shipping_receipt) {
+
+		const isTestShipment = await this.isIsuedByTestFulfillmentProvider(shipping_receipt);
+
+		if (isTestShipment) {
+			return {
+				status: 'DELIVERED',
+				detail: 'Your package has been delivered.'
+			}
+		}
 
 		const shippoTracker = new ShippoTracker(global.SixCRM.configuration.site_config.shippo.apiKey);
 
@@ -69,20 +77,9 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 
 	async sendShipmentConfirmedNotification({shipping_receipt, tracking}) {
 
+		du.debug('Sending shipment confirmed notification', shipping_receipt, tracking);
+
 		if(_.includes(['DELIVERED','TRANSIT'], tracking.status)) {
-
-			if (!_.has(shipping_receipt, 'rebill')) {
-
-				const rebillController = new RebillController();
-				const rebill = rebillController.get(rebill);
-				if (rebill) {
-
-					const trialConfirmationHelper = new TrialConfirmationHelper();
-					await trialConfirmationHelper.confirmTrialDelivery(rebill.parentsession);
-
-				}
-
-			}
 
 			if(!_.has(shipping_receipt, 'history') || !arrayutilities.nonEmpty(shipping_receipt.history)) {
 
@@ -116,6 +113,14 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 
 		}
 
+	}
+
+	async isIsuedByTestFulfillmentProvider(shipping_receipt) {
+		const fulfillmentProviderController = new FulfillmentProviderController();
+
+		const fulfillmentProvider = await fulfillmentProviderController.get({id: shipping_receipt.fulfillment_provider});
+
+		return fulfillmentProvider.provider.name === 'Test';
 	}
 
 }

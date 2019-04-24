@@ -6,6 +6,8 @@ const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
 const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
+const TrialConfirmationController = global.SixCRM.routes.include('entities', 'TrialConfirmation');
+const trialConfirmationController = new TrialConfirmationController();
 
 module.exports = class CleanupSessionController extends stepFunctionWorkerController {
 
@@ -18,15 +20,21 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 	async execute(event) {
 		this.validateEvent(event);
 
-		let session = await this.getSession(event.guid);
+		const session = await this.getSession(event.guid);
 
 		if (session.consolidated === true) {
 			return 'CONSOLIDATED';
 		}
 
-		let consolidated_rebill = await this.cleanupSession(session);
+		const consolidated_rebill = await this.cleanupSession(session);
 
-		await this.markAsConsolidated(session);
+		const confirmation = await this.createTrialConfirmation(session);
+
+		if (confirmation && confirmation.id) {
+			session.trial_confirmation = confirmation.id;
+		}
+
+		await this.consolidateAndUpdate(session);
 
 		return this.respond(consolidated_rebill);
 
@@ -201,14 +209,43 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 
 	}
 
-	async markAsConsolidated(session) {
+	async consolidateAndUpdate(session) {
 		if (!_.has(this, 'sessionController')) {
 			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 			this.sessionController = new SessionController();
 		}
 
-		return this.sessionController.updateProperties({ id: session, properties: { consolidated: true } });
+		session.consolidated = true;
+		return this.sessionController.update({entity: session});
 	}
+
+	async createTrialConfirmation(session) {
+		if (session.concluded) {
+			du.info(`Session ${session.id} is concluded, not creating trial confirmation.`);
+			return null;
+		}
+
+		if (!session.watermark || !session.watermark.product_schedules) {
+			du.info(`Session ${session.id} has no watermark product schedules, not creating trial confirmation.`);
+			return null;
+		}
+
+		const trialProductSchedule = session.watermark.product_schedules.find(ps => ps.product_schedule.requires_confirmation);
+
+		if (!trialProductSchedule) {
+			du.debug(`Trial confirmation not required for session with id ${session.id}`);
+			return null;
+		}
+
+		return trialConfirmationController.create({
+			session: session.id,
+			account: session.account,
+			customer: session.customer,
+			sms_provider: trialProductSchedule.product_schedule.sms_provider_id,
+			confirmed_at: 'null' // Special value so we can query this later.
+		});
+	}
+
 
 	respond(rebill = null){
 		if(_.isNull(rebill) || !_.has(rebill, 'id')){

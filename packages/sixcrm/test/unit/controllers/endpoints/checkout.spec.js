@@ -80,13 +80,13 @@ function getValidEvent(){
 
 }
 
-function getValidEventBody(ids, expanded){
+function getValidEventBody(){
 	return {
 		customer: getValidCustomerPrototype(),
 		affiliates: getValidAffiliatesPrototype(),
 		campaign: getValidCampaign().id,
 		product_schedules: [{
-			quantity: 1, product_schedule: MockEntities.getProductScheduleWithOneProductAndSchedule()
+			quantity: 1, product_schedule: uuidV4()
 		}],
 		creditcard: getValidCreditCardPrototype()
 	};
@@ -757,8 +757,9 @@ describe('checkout', function () {
 			let transactions = getValidTransactions();
 			let processor_response = getValidProcessorResponse();
 			let response_type = 'success';
-			let product_schedules = getValidProductSchedules(null, true);
-			let user = MockEntities.getValidUser();
+			const user = MockEntities.getValidUser();
+			const product_schedules = getValidProductSchedules(null, true);
+			const [productSchedule] = product_schedules;
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
 				publish() {
@@ -991,10 +992,8 @@ describe('checkout', function () {
 				},
 				getProductScheduleService() {
 					return {
-						get() {
-							return Promise.resolve(
-								toProductScheduleInput(product_schedules[0])
-							);
+						async get() {
+							return productSchedule;
 						}
 					};
 				},
