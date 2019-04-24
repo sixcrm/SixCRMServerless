@@ -178,6 +178,9 @@ module.exports = class Register extends RegisterUtilities {
 		const rebill = this.parameters.get('rebill');
 		const session = this.parameters.get('parentsession');
 		const { product_schedule, quantity } = watermark_product_schedule;
+		const { id: product_schedule_id } = product_schedule;
+		const merchantProviderSelection = rebill.merchant_provider_selections.find(selection => selection.productScheduleId === product_schedule_id);
+		const merchant_provider = merchantProviderSelection ? merchantProviderSelection.merchant_provider : rebill.merchant_provider;
 		const cycle = product_schedule.cycles.find(cycle => cycle.position === rebill.cycle || 0 + 1);
 		const cycleProduct = cycle.cycle_products[0];
 
@@ -187,7 +190,7 @@ module.exports = class Register extends RegisterUtilities {
 
 		await AnalyticsEvent.push('subscription', {
 			session_id: session.id,
-			product_schedule_id: product_schedule.id,
+			product_schedule_id,
 			product_id: cycleProduct.product.id,
 			session_alias: session.alias,
 			product_schedule_name: product_schedule.name,
@@ -200,7 +203,7 @@ module.exports = class Register extends RegisterUtilities {
 			interval: cycle.length.months ? 'monthly' : `${cycle.length.days} days`,
 			account: session.account,
 			campaign: session.campaign,
-			merchant_provider: rebill.merchant_provider,
+			merchant_provider,
 			customer: session.customer
 		});
 	}
