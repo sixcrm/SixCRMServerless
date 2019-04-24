@@ -123,10 +123,21 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 				}
 
 				const productSchedule = await loadProductSchedule(id);
-				for (const cycle of productSchedule.cycles) {
-					if (cycle.cycle_products.length > 1) {
-						throw eu.getError('bad_request', 'Product schedule can only have one product')
-					}
+				const allCycleProductIds = productSchedule.cycles.reduce(
+					(cycleProductIds, { cycle_products }) => {
+						for (const cycleProduct of cycle_products) {
+							const { id: productId } = cycleProduct.product;
+							if (!cycleProductIds.includes(productId)) {
+								cycleProductIds.push(productId);
+							}
+						}
+						return cycleProductIds;
+					},
+					[]
+				);
+
+				if (allCycleProductIds.length > 1) {
+					throw eu.getError('bad_request', 'Product schedule can only have one product')
 				}
 			}
 		}

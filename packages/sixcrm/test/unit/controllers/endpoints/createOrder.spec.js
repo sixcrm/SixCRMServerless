@@ -1,7 +1,7 @@
 const mockery = require('mockery');
-let chai = require('chai');
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
 const uuidV4 = require('uuid/v4');
-const expect = chai.expect;
 const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 const arrayutilities = require('@6crm/sixcrmcore/lib/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
@@ -9,6 +9,9 @@ const random = require('@6crm/sixcrmcore/lib/util/random').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const { toProductScheduleInput } = require('../../../../handlers/endpoints/graph/schema/types/productschedule/productScheduleInputType');
+
+chai.use(chaiAsPromised);
+const expect = chai.expect;
 
 function getValidResponseType(){
 	return 'success';
@@ -927,7 +930,109 @@ describe('createOrder', function () {
 				expect(global.SixCRM.validate(info, global.SixCRM.routes.path('model', 'endpoints/createOrder/info.json'))).to.equal(true);
 			});
 		});
+	});
 
+	describe('validateParameters', () => {
+		it('validates an event body with a single product schedule with a single product', async () => {
+			const eventBody = getValidEventBody(null, false);
+			const productSchedule = MockEntities.getValidProductSchedule(eventBody.product_schedules[0]);
+
+			eventBody.product_schedules = [eventBody.product_schedules[0]];
+
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductScheduleService() {
+					return {
+						async get() {
+							return productSchedule;
+						}
+					};
+				}
+			});
+
+			const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+			const createOrderController = new CreateOrderController();
+
+			await expect(createOrderController.validateParameters(eventBody)).to.be.fulfilled;
+		});
+
+		it('validates an event body without product_schedules', async () => {
+			const eventBody = getValidEventBody(null, false);
+			delete eventBody.product_schedules;
+
+			const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+			const createOrderController = new CreateOrderController();
+
+			await expect(createOrderController.validateParameters(eventBody)).to.be.fulfilled;
+		});
+
+		it('throws an error if a single cycle has multiple products', async () => {
+			const eventBody = getValidEventBody(null, false);
+			const productSchedule = MockEntities.getValidProductSchedule(eventBody.product_schedules[0]);
+
+			eventBody.product_schedules = [eventBody.product_schedules[0]];
+
+			const [{ cycle_products }] = productSchedule.cycles;
+			const [cycleProduct] = cycle_products;
+			const anotherCycleProduct = {
+				...cycleProduct,
+				position: 2,
+				product: {
+					id: uuidV4()
+				}
+			};
+			cycle_products.push(anotherCycleProduct);
+
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductScheduleService() {
+					return {
+						async get() {
+							return productSchedule;
+						}
+					};
+				}
+			});
+
+			const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+			const createOrderController = new CreateOrderController();
+
+			await expect(createOrderController.validateParameters(eventBody)).to.be.rejectedWith('[400] Product schedule can only have one product');
+		});
+
+		it('throws an error if the schedule has multiple products across cycles', async () => {
+			const eventBody = getValidEventBody(null, false);
+			const productSchedule = MockEntities.getValidProductSchedule(eventBody.product_schedules[0]);
+			eventBody.product_schedules = [eventBody.product_schedules[0]];
+
+			const { cycles } = productSchedule;
+			const [cycle] = cycles;
+			const { cycle_products: [cycleProduct]} = cycle;
+			cycle.next_position = 2;
+			cycles.push({
+				...cycle,
+				position: 2,
+				cycle_products: [{
+					...cycleProduct,
+					product: {
+						id: uuidV4()
+					}
+				}]
+			});
+
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductScheduleService() {
+					return {
+						async get() {
+							return productSchedule;
+						}
+					};
+				}
+			});
+
+			const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+			const createOrderController = new CreateOrderController();
+
+			await expect(createOrderController.validateParameters(eventBody)).to.be.rejectedWith('[400] Product schedule can only have one product');
+		});
 	});
 
 	describe('hydrateSession', () => {
