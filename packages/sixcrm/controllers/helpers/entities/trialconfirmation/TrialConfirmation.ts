@@ -59,6 +59,7 @@ export default class TrialConfirmation {
 		const confirmation = await this.trialconfirmationController.get({id: session.trial_confirmation, fatal: true});
 		this.assure(confirmation, `Can't find confirmation with ID ${session.trial_confirmation}`);
 		this.assure(confirmation.sms_provider, `Confirmation with ID ${session.trial_confirmation} has no SMS provider.`);
+		this.assureConfirmationNotConfirmed(confirmation, `Confirmation already confirmed ${confirmation}`);
 
 		if (markAsDelivered) {
 			const { delivered_at } = await this.trialconfirmationController.markDelivered({confirmation});
@@ -84,6 +85,12 @@ export default class TrialConfirmation {
 		return this.confirmTrialDelivery(sessionId, false);
 	}
 
+
+	assureConfirmationNotConfirmed(confirmation: any, message: string) {
+		const notConfirmed = !confirmation.confirmed_at || confirmation.confirmed_at === 'null';
+
+		this.assure(notConfirmed, message);
+	}
 
 	assure(object: any, message: string) {
 		if (object) {
