@@ -257,34 +257,8 @@ describe('Checkout', () => {
 			let sale_object = {
 				products:[{
 					product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
-					quantity:2
-				}]
-			};
-
-			return acquireToken(campaign)
-				.then((token) => {
-					expect(token).to.be.defined;
-					let checkout_body = createCheckoutBody(campaign, sale_object);
-
-					return checkout(token, checkout_body);
-				})
-				.then(result => {
-					let validated = global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
-
-					expect(validated).to.equal(true);
-				});
-
-		});
-	});
-
-	describe('Straight Sale With Dynamic Price', () => {
-		it('returns a confirmed sale', () => {
-
-			let sale_object = {
-				products:[{
-					product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
 					quantity:2,
-					price: 12.99
+					amount: 12.99
 				}]
 			};
 
@@ -315,90 +289,7 @@ describe('Checkout', () => {
 				products:[{
 					product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
 					quantity:2,
-					price: 12.99
-				}]
-			};
-
-			return acquireToken(campaign)
-				.then((token) => {
-					expect(token).to.be.defined;
-					let checkout_body = createCheckoutBody(campaign, sale_object);
-
-					return checkout(token, checkout_body);
-				})
-				.then(result => {
-					let validated = global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
-
-					expect(validated).to.equal(true);
-				});
-
-		});
-
-	});
-
-	describe('Dynamic Product Schedule', () => {
-		it('returns a confirmed sale', () => {
-
-			let sale_object = {
-				product_schedules:[{
-					product_schedule: {
-						schedule:[
-							{
-								product: {
-									id: "aba9a683-85a4-45e7-9004-576c99a811ce",
-									name: "Dynamic Watermark Product"
-								},
-								start: 0,
-								period: 30,
-								price: 12.49
-							}
-						]
-					},
-					quantity:1
-				}]
-			};
-
-			return acquireToken(campaign)
-				.then((token) => {
-					expect(token).to.be.defined;
-					let checkout_body = createCheckoutBody(campaign, sale_object);
-
-					return checkout(token, checkout_body);
-				})
-				.then(result => {
-					let validated = global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
-
-					expect(validated).to.equal(true);
-				});
-
-		});
-
-	});
-
-	describe('Mixed Sale with Dynamic Product Schedule', () => {
-		it('returns a confirmed sale', () => {
-
-			let sale_object = {
-				product_schedules:[{
-					product_schedule: {
-						schedule:[
-							{
-								product: {
-									id: "aba9a683-85a4-45e7-9004-576c99a811ce",
-									name: "Dynamic Watermark Product"
-								},
-								start: 0,
-								period: 30,
-								price: 12.49
-							}
-						]
-					},
-					quantity:1
-				}],
-				products:[{
-					product: "aba9a683-85a4-45e7-9004-576c99a811ce",
-					quantity:2,
-					price: 12.99
+					amount: 12.99
 				}]
 			};
 
