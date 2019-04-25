@@ -10,7 +10,7 @@ const random = require('@6crm/sixcrmcore/lib/util/random').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const timestamp = require('@6crm/sixcrmcore/lib/util/timestamp').default;
 
-describe.only('/helpers/entities/TrialConfirmation.js', () => {
+describe('/helpers/entities/TrialConfirmation.js', () => {
 
 	before(() => {
 		mockery.enable({
