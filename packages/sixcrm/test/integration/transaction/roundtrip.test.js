@@ -336,14 +336,15 @@ function sleep(ms){
 	})
 }
 
-describe('Transaction Endpoints Round Trip Test',() => {
+describe.only('Transaction Endpoints Round Trip Test',() => {
 	describe('Straight Sale', () => {
 		it('successfully executes', () => {
 
 			let sale_object = {
 				products:[{
 					product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
-					quantity:2
+					quantity:2,
+					amount: 12.99
 				}]
 			};
 
@@ -364,7 +365,8 @@ describe('Transaction Endpoints Round Trip Test',() => {
 			let sale_object = {
 				products:[{
 					product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
-					quantity:2
+					quantity:2,
+					amount: 12.99
 				}]
 			};
 
@@ -389,14 +391,16 @@ describe('Transaction Endpoints Round Trip Test',() => {
 			let sale_object = {
 				products:[{
 					product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
-					quantity:2
+					quantity:2,
+					amount: 12.99
 				}]
 			};
 
 			let upsale_sale_object = {
 				products:[{
 					product: "4d3419f6-526b-4a68-9050-fc3ffcb552b4",
-					quantity:1
+					quantity:1,
+					amount: 12.99
 				}]
 			};
 
@@ -515,116 +519,12 @@ describe('Transaction Endpoints Round Trip Test',() => {
 			let sale_object = {
 				products:[{
 					product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
-					quantity:2
+					quantity:2,
+					amount: 12.99
 				}],
 				product_schedules:[{
 					product_schedule: "0e3652bf-f1d3-4325-840e-c93806289d7e",
 					quantity:2
-				}]
-			};
-
-			return acquireToken(campaign)
-				.then((token) => {
-
-					return createLead(token, campaign)
-						.then((session) => {
-							return createOrder(token, session, sale_object)
-								.then(() => confirmOrder(token, session));
-						});
-
-				});
-
-		});
-
-	});
-
-	describe('Dynamically Priced Products', () => {
-		it('successfully executes', () => {
-
-			let sale_object = {
-				products:[{
-					product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
-					quantity:2,
-					price: 12.99
-				}]
-			};
-
-			return acquireToken(campaign)
-				.then((token) => {
-
-					return createLead(token, campaign)
-						.then((session) => {
-							return createOrder(token, session, sale_object)
-								.then(() => confirmOrder(token, session));
-						});
-
-				});
-
-		});
-
-	});
-
-	describe('Dynamic Product Schedule', () => {
-		it('successfully executes', () => {
-
-			let sale_object = {
-				product_schedules:[{
-					product_schedule: {
-						schedule:[
-							{
-								product: {
-									id: "aba9a683-85a4-45e7-9004-576c99a811ce",
-									name: "Dynamic Watermark Product"
-								},
-								start: 0,
-								period: 30,
-								price: 12.49
-							}
-						]
-					},
-					quantity:1
-				}]
-			};
-
-			return acquireToken(campaign)
-				.then((token) => {
-
-					return createLead(token, campaign)
-						.then((session) => {
-							return createOrder(token, session, sale_object)
-								.then(() => confirmOrder(token, session));
-						});
-
-				});
-
-		});
-
-	});
-
-	describe('Dynamic Product Schedule', () => {
-		it('successfully executes', () => {
-
-			let sale_object = {
-				product_schedules:[{
-					product_schedule: {
-						schedule:[
-							{
-								product: {
-									id: "aba9a683-85a4-45e7-9004-576c99a811ce",
-									name: "Dynamic Watermark Product"
-								},
-								start: 0,
-								period: 30,
-								price: 12.49
-							}
-						]
-					},
-					quantity:1
-				}],
-				products:[{
-					product: "aba9a683-85a4-45e7-9004-576c99a811ce",
-					quantity:2,
-					price: 12.99
 				}]
 			};
 
