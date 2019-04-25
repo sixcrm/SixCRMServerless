@@ -336,7 +336,7 @@ function sleep(ms){
 	})
 }
 
-describe.only('Transaction Endpoints Round Trip Test',() => {
+describe('Transaction Endpoints Round Trip Test',() => {
 	describe('Straight Sale', () => {
 		it('successfully executes', () => {
 
