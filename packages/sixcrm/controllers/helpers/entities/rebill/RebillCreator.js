@@ -191,7 +191,7 @@ const buildRebillEntity = async ({
 	const previousRebill = day >= 0 ? await getMostRecentRebill(session) : null;
 	const previousPosition = previousRebill ? previousRebill.cycle + 1 : 0;
 	const position = previousPosition + 1;
-	const cycle = product_schedule ? getCurrentCycle({ cycles: product_schedule.cycles, previousPosition }) : null;
+	const cycle = product_schedule ? getCurrentCycle({ cycles: product_schedule.cycles, position }) : null;
 	const amount = calculateAmount({ products, cycle });
 	const transaction_products = getTransactionProducts({ products, cycle });
 	const billDay = getNextProductScheduleBillDayNumber(
@@ -247,9 +247,9 @@ const getMostRecentRebill = async (session) => {
 	return mostRecentRebill;
 };
 
-const getCurrentCycle = ({ cycles, previousPosition }) => {
+const getCurrentCycle = ({ cycles, position }) => {
 	const sortedCycles = sortBy(cycles, "position");
-	const currentCycle = range(previousPosition).reduce(
+	const currentCycle = range(position - 1).reduce(
 		previousCycle => sortedCycles[previousCycle.next_position - 1],
 		sortedCycles[0]
 	);
