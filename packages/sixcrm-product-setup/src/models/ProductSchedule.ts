@@ -7,6 +7,7 @@ import {
 	Index,
 	OneToMany
 } from 'typeorm';
+import { range, sortBy } from 'lodash';
 
 import { IsUUID, IsNotEmpty, IsOptional } from "class-validator";
 
@@ -72,6 +73,16 @@ export default class ProductSchedule extends DomainEntity {
 
 	public validate(): boolean {
 		return new ProductScheduleValidator(this).validate();
+	}
+
+	public currentCycle(currentCycleNumber: number): Cycle | undefined {
+		const sortedCycles = sortBy(this.cycles, 'position');
+		const currentCycle = range(currentCycleNumber - 1).reduce(
+			previousCycle => sortedCycles[previousCycle.next_position - 1],
+			sortedCycles[0]
+		);
+
+		return currentCycle;
 	}
 
 	public nextCycle(current: Cycle): Cycle | null {
