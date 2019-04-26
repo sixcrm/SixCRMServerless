@@ -682,6 +682,17 @@ class MockEntities {
 
 	}
 
+	static getValidTrialConfirmation(id) {
+
+		let trialConfirmation = {
+			id: this.getValidId(id),
+			account: this.getTestAccountID(),
+			sms_provider: uuidV4()
+		};
+
+		return trialConfirmation;
+	}
+
 	static getValidProduct(id) {
 
 		return {
