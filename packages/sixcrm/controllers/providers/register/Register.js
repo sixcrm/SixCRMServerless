@@ -416,11 +416,16 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	issueProductGroupReceipt({amount, processor_result, transaction_type, merchant_provider, creditcard}){
+		du.info('issue product group receipt', amount, processor_result, transaction_type, merchant_provider, creditcard);
+
 		const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
 		let registerReceiptController = new RegisterReceiptController();
 
 		let rebill = this.parameters.get('rebill');
 		let transaction_products = this.getTransactionProductsFromMerchantProviderGroup({merchant_provider: merchant_provider});
+
+		du.info('issue product group receipt rebill', rebill);
+		du.info('issue product group receipt transaction products', transaction_products);
 
 		let argumentation_object = {
 			rebill: rebill,
@@ -456,7 +461,7 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	executeProcesses() {
-		du.debug('Execute Processes');
+		du.info('Execute Processes');
 		let merchant_provider_groups = this.parameters.get('merchantprovidergroups');
 		du.warning('Process merchant provider groups', merchant_provider_groups);
 

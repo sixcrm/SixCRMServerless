@@ -171,7 +171,12 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		this.validateSession(session);
 
 		let rebill = await this.createRebill(session, event.product_schedules, event.products);
+
+		du.info('create order rebill', rebill);
+
 		let processed_rebill = await this.processRebill(rebill, event, rawcreditcard);
+
+		du.info('create order processed rebill', processed_rebill);
 
 		// We'll leave this one in for now to not break too many tests.
 		//Technical Debt:  Eliminate
@@ -374,7 +379,12 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		let register_response = await this.registerController.processTransaction(argumentation);
 
+		du.info('create order register response', register_response);
+
 		const transactions = register_response.getTransactions();
+
+		du.info('create order transactions', transactions);
+
 		if (transactions[0]) {
 			rebill.merchant_provider = transactions[0].merchant_provider;
 			await this.rebillController.update({entity: rebill});
