@@ -1,5 +1,7 @@
 
 const _ = require('lodash');
+const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
+
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
@@ -108,6 +110,8 @@ module.exports = class RegisterRecieptGenerator {
 
 	transformTransactionPrototypeObject(){
 		let transaction_prototype = this.parameters.get('transactionprototype');
+
+		du.info('transform transaction prototype object', transaction_prototype);
 
 		var transformed_transaction_prototype = {
 			account: transaction_prototype.rebill.account,

@@ -165,6 +165,8 @@ module.exports = class RegisterUtilities extends PermissionedController {
 		if (_.has(rebill, 'merchant_provider_selections')) {
 			const selections = rebill.merchant_provider_selections;
 
+			du.info('acquireMerchantProviderGroups selections', selections);
+
 			const merchant_provider_groups = selections.reduce((result, { merchant_provider, product: product_id }) => {
 				const rebill_product = rebill.products.find(rebill_product => rebill_product.product.id === product_id);
 				if (!rebill_product) {
@@ -176,6 +178,8 @@ module.exports = class RegisterUtilities extends PermissionedController {
 				result[merchant_provider][0].push(rebill_product);
 				return result;
 			}, {});
+
+			du.info('acquireMerchantProviderGroups groups', merchant_provider_groups);
 
 			this.parameters.set('merchantprovidergroups', merchant_provider_groups);
 			return merchant_provider_groups;
