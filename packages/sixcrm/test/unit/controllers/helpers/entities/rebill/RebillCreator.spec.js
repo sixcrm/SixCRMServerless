@@ -297,6 +297,44 @@ describe('RebillCreator', () => {
 					});
 				});
 
+				it('calculates shipping into price if cycle is shipping ', async () => {
+					const productSchedule = session.watermark.product_schedules[0];
+					const validRebillArgs = {
+						session,
+						day: 2,
+						product_schedules: [productSchedule]
+					};
+
+					productSchedule.product_schedule.cycles[0].is_shipping = true;
+					productSchedule.product_schedule.cycles[0].shipping_price = 50;
+
+					td.when(RebillController.prototype.create(), { ignoreExtraArgs: true })
+						.thenDo(args => args.entity);
+
+					const newRebill = await rebillCreator.createRebill(validRebillArgs);
+
+					expect(newRebill.amount).to.equal(80.00);
+				});
+
+				it('does not calculate shipping into price if cycle is not shipping ', async () => {
+					const productSchedule = session.watermark.product_schedules[0];
+					const validRebillArgs = {
+						session,
+						day: 2,
+						product_schedules: [productSchedule]
+					};
+
+					productSchedule.product_schedule.cycles[0].is_shipping = false;
+					productSchedule.product_schedule.cycles[0].shipping_price = 50;
+
+					td.when(RebillController.prototype.create(), { ignoreExtraArgs: true })
+						.thenDo(args => args.entity);
+
+					const newRebill = await rebillCreator.createRebill(validRebillArgs);
+
+					expect(newRebill.amount).to.equal(30.00);
+				});
+
 				it('throws an error when no schedules provided', async () => {
 					expect(rebillCreator.createRebill({session, day: -1})).to.eventually.be.rejected;
 				});

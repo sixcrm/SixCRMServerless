@@ -285,7 +285,8 @@ const getTransactionProducts = ({ products = [], cycle }) => {
 };
 
 // TODO use a real currency library
-const calculateCycleAmount = ({ price, shipping_price = 0 }) => numberutilities.formatFloat(parseFloat(price) + parseFloat(shipping_price), 2);
+const calculateCycleAmount = ({ price, shipping_price = 0, is_shipping }) =>
+	numberutilities.formatFloat(parseFloat(price) + (is_shipping ? parseFloat(shipping_price) : 0), 2);
 
 const getNextProductScheduleBillDayNumber = ({ day, product_schedule, position, previousRebill, current_cycle }) => {
 	if (position <= 0 || !product_schedule) {

@@ -91,8 +91,10 @@ class TransactionController extends entityController {
 			if(_.has(transactionproduct, 'amount') && _.has(transactionproduct, 'product')){
 
 				let base_product = {
-					"amount": transactionproduct.amount,
-					"product": transactionproduct.product
+					amount: transactionproduct.amount,
+					product: transactionproduct.product,
+					is_cycle_product: transactionproduct.is_cycle_product,
+					is_shipping: transactionproduct.is_shipping
 				};
 
 				if(_.has(transactionproduct, "shipping_receipt")){
