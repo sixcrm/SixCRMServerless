@@ -370,8 +370,6 @@ module.exports = class Register extends RegisterUtilities {
 			creditcard: creditcard
 		});
 
-		//du.info(register_response);
-
 		return Promise.resolve(register_response);
 
 	}
@@ -416,16 +414,11 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	issueProductGroupReceipt({amount, processor_result, transaction_type, merchant_provider, creditcard}){
-		du.info('issue product group receipt', amount, processor_result, transaction_type, merchant_provider, creditcard);
-
 		const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
 		let registerReceiptController = new RegisterReceiptController();
 
 		let rebill = this.parameters.get('rebill');
 		let transaction_products = this.getTransactionProductsFromMerchantProviderGroup({merchant_provider: merchant_provider});
-
-		du.info('issue product group receipt rebill', rebill);
-		du.info('issue product group receipt transaction products', transaction_products);
 
 		let argumentation_object = {
 			rebill: rebill,
@@ -461,9 +454,8 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	executeProcesses() {
-		du.info('Execute Processes');
 		let merchant_provider_groups = this.parameters.get('merchantprovidergroups');
-		du.warning('Process merchant provider groups', merchant_provider_groups);
+		du.info('Execute Process: merchant provider groups', merchant_provider_groups);
 
 		let process_promises = objectutilities.map(merchant_provider_groups, merchant_provider => {
 			let amount = this.calculateAmountFromProductGroups(merchant_provider_groups[merchant_provider]);

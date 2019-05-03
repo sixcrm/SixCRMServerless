@@ -2,6 +2,7 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 describe('controllers/Transaction.js', () => {
 
@@ -160,6 +161,96 @@ describe('controllers/Transaction.js', () => {
 					},
 					transactions: ['a_transaction']
 				});
+			});
+		});
+	});
+
+	describe('getProducts', () => {
+
+
+		it('returns null if transaction has no products', () => {
+
+			const transaction = {};
+
+			const TransactionController = global.SixCRM.routes.include('controllers','entities/Transaction.js');
+			const transactionController = new TransactionController();
+
+			expect(transactionController.getProducts(transaction)).to.equal(null);
+		});
+
+		it('it does not override products shipment if transaction product is not cycle based', () => {
+
+			const transaction = MockEntities.getValidTransaction();
+
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductSetupService() {
+
+					return {
+						getProduct(id) {
+							const product = MockEntities.getValidProduct(id);
+							product.is_shippable = true;
+
+							return Promise.resolve(product);
+						}
+					}
+
+				},
+
+				LegacyProduct: class LegacyProduct {
+					static hybridFromProduct(product) {
+						product.ship = product.is_shippable;
+
+						return product;
+					}
+				}
+			});
+
+			const TransactionController = global.SixCRM.routes.include('controllers','entities/Transaction.js');
+			const transactionController = new TransactionController();
+
+			return transactionController.getProducts(transaction).then((result) => {
+				expect(result.map(result => result.product).every(product => product.ship)).to.equal(true);
+			});
+		});
+
+		it('it successfully override products shipment if transaction product is cycle based', () => {
+
+			const transaction = MockEntities.getValidTransaction();
+			transaction.products = transaction.products.map(product => {
+				product.is_cycle_product = true;
+				product.is_shipping = false;
+
+				return product;
+			});
+
+			mockery.registerMock('@6crm/sixcrm-product-setup', {
+				getProductSetupService() {
+
+					return {
+						getProduct(id) {
+							const product = MockEntities.getValidProduct(id);
+							product.is_shippable = true;
+
+							return Promise.resolve(product);
+						}
+					}
+
+				},
+
+				LegacyProduct: class LegacyProduct {
+					static hybridFromProduct(product) {
+						product.ship = product.is_shippable;
+
+						return product;
+					}
+				}
+			});
+
+			const TransactionController = global.SixCRM.routes.include('controllers','entities/Transaction.js');
+			const transactionController = new TransactionController();
+
+			return transactionController.getProducts(transaction).then((result) => {
+				expect(result.map(result => result.product).every(product => !product.ship)).to.equal(true);
 			});
 		});
 	});
