@@ -301,7 +301,10 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 			married_product_groups.push({
 				productSchedule,
 				product: initialCycle.cycle_products[0].product,
-				amount: numberutilities.formatFloat(parseFloat(initialCycle.price) + parseFloat(initialCycle.shipping_price), 2),
+				amount: numberutilities.formatFloat(
+					parseFloat(initialCycle.price) + (initialCycle.is_shipping ? parseFloat(initialCycle.shipping_price) : 0),
+					2
+				),
 				quantity: 1,
 				merchantprovidergroupassociation: {
 					merchantprovidergroup: productSchedule.merchant_provider_group_id
