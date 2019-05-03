@@ -91,8 +91,10 @@ class TransactionController extends entityController {
 			if(_.has(transactionproduct, 'amount') && _.has(transactionproduct, 'product')){
 
 				let base_product = {
-					"amount": transactionproduct.amount,
-					"product": transactionproduct.product
+					amount: transactionproduct.amount,
+					product: transactionproduct.product,
+					is_cycle_product: transactionproduct.is_cycle_product,
+					is_shipping: transactionproduct.is_shipping
 				};
 
 				if(_.has(transactionproduct, "shipping_receipt")){
@@ -156,7 +158,16 @@ class TransactionController extends entityController {
 		du.info(transaction);
 		if(!_.has(transaction, "products")){ return null; }
 
-		return Promise.all(transaction.products.map(transaction_product => this.getTransactionProduct(transaction_product)));
+		return Promise.all(transaction.products.map(transaction_product =>
+			this.getTransactionProduct(transaction_product)
+				.then(transaction_product => {
+					if(transaction_product.is_cycle_product) {
+						transaction_product.product.ship = !!transaction_product.is_shipping;
+					}
+
+					return transaction_product;
+				})
+		));
 
 	}
 

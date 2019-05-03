@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { range, sortBy } = require('lodash');
 const moment = require('moment-timezone');
 const BBPromise = require('bluebird');
 const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
@@ -181,7 +182,10 @@ module.exports = class Register extends RegisterUtilities {
 		const { id: product_schedule_id } = product_schedule;
 		const merchantProviderSelection = rebill.merchant_provider_selections.find(selection => selection.productScheduleId === product_schedule_id);
 		const merchant_provider = merchantProviderSelection ? merchantProviderSelection.merchant_provider : rebill.merchant_provider;
-		const cycle = product_schedule.cycles.find(cycle => cycle.position === rebill.cycle || 0 + 1);
+		const cycle = getCurrentCycle({
+			cycles: product_schedule.cycles,
+			position: rebill.cycle + 1
+		});
 		const cycleProduct = cycle.cycle_products[0];
 
 		const response_type = this.getProcessorResponseCategory();
@@ -366,8 +370,6 @@ module.exports = class Register extends RegisterUtilities {
 			creditcard: creditcard
 		});
 
-		//du.info(register_response);
-
 		return Promise.resolve(register_response);
 
 	}
@@ -452,9 +454,8 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	executeProcesses() {
-		du.debug('Execute Processes');
 		let merchant_provider_groups = this.parameters.get('merchantprovidergroups');
-		du.warning('Process merchant provider groups', merchant_provider_groups);
+		du.info('Execute Process: merchant provider groups', merchant_provider_groups);
 
 		let process_promises = objectutilities.map(merchant_provider_groups, merchant_provider => {
 			let amount = this.calculateAmountFromProductGroups(merchant_provider_groups[merchant_provider]);
@@ -582,3 +583,13 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 }
+
+const getCurrentCycle = ({ cycles, position }) => {
+	const sortedCycles = sortBy(cycles, "position");
+	const currentCycle = range(position - 1).reduce(
+		previousCycle => sortedCycles[previousCycle.next_position - 1],
+		sortedCycles[0]
+	);
+
+	return currentCycle;
+};

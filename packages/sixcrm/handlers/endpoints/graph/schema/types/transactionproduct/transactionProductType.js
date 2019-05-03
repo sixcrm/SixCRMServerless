@@ -1,5 +1,6 @@
 const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
@@ -47,7 +48,15 @@ module.exports.graphObj = new GraphQLObjectType({
 		returns: {
 			type: new GraphQLList(transactionProductReturnType.graphObj),
 			description: 'Returns associated with the transaction product'
-		}
+		},
+		is_shipping: {
+			type: GraphQLBoolean,
+			description: 'Is transaction product to be shipped, applies only for cycle based products.',
+		},
+		is_cycle_product: {
+			type: GraphQLBoolean,
+			description: 'Is transaction product cycle based.',
+		},
 	}),
 	interfaces: []
 });

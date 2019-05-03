@@ -191,7 +191,7 @@ const buildRebillEntity = async ({
 	const previousRebill = day >= 0 ? await getMostRecentRebill(session) : null;
 	const previousPosition = previousRebill ? previousRebill.cycle + 1 : 0;
 	const position = previousPosition + 1;
-	const cycle = product_schedule ? getCurrentCycle({ cycles: product_schedule.cycles, previousPosition }) : null;
+	const cycle = product_schedule ? getCurrentCycle({ cycles: product_schedule.cycles, position }) : null;
 	const amount = calculateAmount({ products, cycle });
 	const transaction_products = getTransactionProducts({ products, cycle });
 	const billDay = getNextProductScheduleBillDayNumber(
@@ -247,9 +247,9 @@ const getMostRecentRebill = async (session) => {
 	return mostRecentRebill;
 };
 
-const getCurrentCycle = ({ cycles, previousPosition }) => {
+const getCurrentCycle = ({ cycles, position }) => {
 	const sortedCycles = sortBy(cycles, "position");
-	const currentCycle = range(previousPosition).reduce(
+	const currentCycle = range(position - 1).reduce(
 		previousCycle => sortedCycles[previousCycle.next_position - 1],
 		sortedCycles[0]
 	);
@@ -285,7 +285,8 @@ const getTransactionProducts = ({ products = [], cycle }) => {
 };
 
 // TODO use a real currency library
-const calculateCycleAmount = ({ price, shipping_price = 0 }) => numberutilities.formatFloat(parseFloat(price) + parseFloat(shipping_price), 2);
+const calculateCycleAmount = ({ price, shipping_price = 0, is_shipping }) =>
+	numberutilities.formatFloat(parseFloat(price) + (is_shipping ? parseFloat(shipping_price) : 0), 2);
 
 const getNextProductScheduleBillDayNumber = ({ day, product_schedule, position, previousRebill, current_cycle }) => {
 	if (position <= 0 || !product_schedule) {
