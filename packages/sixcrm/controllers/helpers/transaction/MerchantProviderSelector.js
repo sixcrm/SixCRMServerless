@@ -307,7 +307,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 					merchantprovidergroup: productSchedule.merchant_provider_group_id
 				},
 				is_cycle_product: true,
-				is_shipping: !initialCycle.cycle_products[0].is_shipping
+				is_shipping: !!initialCycle.cycle_products[0].is_shipping
 			});
 		}
 
