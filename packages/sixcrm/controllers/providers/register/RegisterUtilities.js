@@ -189,13 +189,14 @@ module.exports = class RegisterUtilities extends PermissionedController {
 			merchant_provider_groups[rebill.merchant_provider] = [rebill.products];
 
 			this.parameters.set('merchantprovidergroups', merchant_provider_groups);
+			du.info('acquireMerchantProviderGroups groups', merchant_provider_groups);
 			return merchant_provider_groups;
 		} else {
 			const MerchantProviderSelectorHelperController = global.SixCRM.routes.include('helpers','transaction/MerchantProviderSelector.js');
 			const merchantProviderSelectorHelperController = new MerchantProviderSelectorHelperController();
 
 			const merchant_provider_groups = await merchantProviderSelectorHelperController.buildMerchantProviderGroups({rebill: rebill, creditcard: creditcard})
-			du.debug(`Merchant provider groups: ${JSON.stringify(merchant_provider_groups)}`);
+			du.info('Merchant provider groups', merchant_provider_groups);
 			this.parameters.set('merchantprovidergroups', merchant_provider_groups);
 			await this.updateRebillMerchantProviderSelections();
 			return merchant_provider_groups;

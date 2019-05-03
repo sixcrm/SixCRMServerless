@@ -111,8 +111,6 @@ module.exports = class RegisterRecieptGenerator {
 	transformTransactionPrototypeObject(){
 		let transaction_prototype = this.parameters.get('transactionprototype');
 
-		du.info('transform transaction prototype object', transaction_prototype);
-
 		var transformed_transaction_prototype = {
 			account: transaction_prototype.rebill.account,
 			rebill: transaction_prototype.rebill.id,
