@@ -1,6 +1,5 @@
 
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/lib/util/debug-utilities').default;
 
 const objectutilities = require('@6crm/sixcrmcore/lib/util/object-utilities').default;
 
