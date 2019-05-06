@@ -298,11 +298,13 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
 		if (productSchedule) {
 			const initialCycle = productSchedule.cycles.find(cycle => cycle.position === 1);
+			const initialCycleProduct = initialCycle.cycle_products[0];
+
 			married_product_groups.push({
 				productSchedule,
-				product: initialCycle.cycle_products[0].product,
+				product: initialCycleProduct.product,
 				amount: numberutilities.formatFloat(
-					parseFloat(initialCycle.price) + (initialCycle.is_shipping ? parseFloat(initialCycle.shipping_price) : 0),
+					parseFloat(initialCycle.price) + (initialCycleProduct.is_shipping ? parseFloat(initialCycle.shipping_price) : 0),
 					2
 				),
 				quantity: 1,
@@ -310,7 +312,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 					merchantprovidergroup: productSchedule.merchant_provider_group_id
 				},
 				is_cycle_product: true,
-				is_shipping: !!initialCycle.cycle_products[0].is_shipping
+				is_shipping: !!initialCycleProduct.is_shipping
 			});
 		}
 
