@@ -305,8 +305,8 @@ describe('RebillCreator', () => {
 						product_schedules: [productSchedule]
 					};
 
-					productSchedule.product_schedule.cycles[0].is_shipping = true;
 					productSchedule.product_schedule.cycles[0].shipping_price = 50;
+					productSchedule.product_schedule.cycles[0].cycle_products[0].is_shipping = true;
 
 					td.when(RebillController.prototype.create(), { ignoreExtraArgs: true })
 						.thenDo(args => args.entity);
@@ -325,7 +325,7 @@ describe('RebillCreator', () => {
 					};
 
 					productSchedule.product_schedule.cycles[0].is_shipping = false;
-					productSchedule.product_schedule.cycles[0].shipping_price = 50;
+					productSchedule.product_schedule.cycles[0].cycle_products[0].is_shipping = true;
 
 					td.when(RebillController.prototype.create(), { ignoreExtraArgs: true })
 						.thenDo(args => args.entity);
